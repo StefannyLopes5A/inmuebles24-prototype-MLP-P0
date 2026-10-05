@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="keyboard_arrow_down">
+<mask id="mask0_0_4" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+<rect id="Bounding box" width="48" height="48" fill="#FF5500"/>
+</mask>
+<g mask="url(#mask0_0_4)">
+<path id="keyboard_arrow_down_2" d="M23.1 30.85C22.8 30.7167 22.5333 30.5333 22.3 30.3L12.45 20.45C11.9833 19.9833 11.7583 19.425 11.775 18.775C11.7917 18.125 12.0333 17.5667 12.5 17.1C12.9667 16.6333 13.525 16.4 14.175 16.4C14.825 16.4 15.3833 16.6333 15.85 17.1L24 25.3L32.2 17.1C32.6667 16.6333 33.2167 16.4083 33.85 16.425C34.4833 16.4417 35.0333 16.6833 35.5 17.15C35.9667 17.6167 36.2 18.175 36.2 18.825C36.2 19.475 35.9667 20.0333 35.5 20.5L25.7 30.3C25.4667 30.5333 25.2 30.7167 24.9 30.85C24.6 30.9833 24.3 31.05 24 31.05C23.7 31.05 23.4 30.9833 23.1 30.85Z" fill="#FF5500"/>
+</g>
+</g>
+</svg>

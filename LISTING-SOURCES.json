@@ -1,0 +1,908 @@
+{
+  "capturedAt": "2026-09-28",
+  "sourceId": "SRC-20260928-inmuebles24-listings-with-photos",
+  "selection": "50 sale + 50 rental public PROPERTY cards priced in MXN. No development-range cards. Snapshot, not live availability. Each home keeps its own photograph and URL.",
+  "fields": "Values from visible card fields; m² is the published card area, not independently verified interior area. Full rendered text retained in private raw snapshot. No inferred rent, price, floor plan, broker identity or window claim.",
+  "listings": [
+    {
+      "id": "buy-148816386",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-la-narvarte-poniente-148816386.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/81/63/86/360x266/1584999612.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148816386.jpg",
+      "sha256": "c0bc7ccb9a35865ff5f56381f1586e031a1182bd4c8b0cab5622a8d5535cfa0e",
+      "downloadSha256": "a3151cfcec305aa4a4fb27ac7f2079700d80d667144e4cc7f5cfe20e6755aef4"
+    },
+    {
+      "id": "buy-147346296",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-calle-maximino-avila-camacho-147346296.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/47/34/62/96/360x266/1554072072.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-147346296.jpg",
+      "sha256": "91fd448545a691d47df8c9d324b50aafc4302b87bf1a0cadeca65f9319f6187c",
+      "downloadSha256": "4bcb816cf9715ebfe0a9ca04fdedf919e08f50730488a92a957aee245d5c8a6a"
+    },
+    {
+      "id": "buy-150851727",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-en-la-colonia-hipodromo-condesa-150851727.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/85/17/27/360x266/1626769901.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150851727.webp",
+      "sha256": "a1c87a0b053d8b6065ee46637b96e5986cd054702567c3caaa3fb93e55b43c19",
+      "downloadSha256": "a1c87a0b053d8b6065ee46637b96e5986cd054702567c3caaa3fb93e55b43c19"
+    },
+    {
+      "id": "buy-150849643",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-de-2-pisos-en-narvarte-oriente-150849643.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/84/96/43/360x266/1626726427.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150849643.jpg",
+      "sha256": "1c4955c0c2e27fa9afc501ee77faf05f9461bcbf0503a3adfd3976e66f7c3c12",
+      "downloadSha256": "267a0b97bf9db0ac355a3e0677997f3898d4d021d3fbcf01184c5e7e971d6b93"
+    },
+    {
+      "id": "buy-150135691",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-narvarte-poniente-150135691.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/13/56/91/360x266/1611901225.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150135691.webp",
+      "sha256": "b9e4a2d22709f2fe59a98045d4ce6c0b4ca3a28374c575bc548c0e21f0441118",
+      "downloadSha256": "b9e4a2d22709f2fe59a98045d4ce6c0b4ca3a28374c575bc548c0e21f0441118"
+    },
+    {
+      "id": "buy-150915472",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-pent-house-en-portales-150915472.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/91/54/72/360x266/1628199583.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150915472.webp",
+      "sha256": "33014c93953c320bd4f296333c8daa2bbac84b630eefdad1a0c0a80a9a953665",
+      "downloadSha256": "33014c93953c320bd4f296333c8daa2bbac84b630eefdad1a0c0a80a9a953665"
+    },
+    {
+      "id": "buy-150467705",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta.-eje-8.-balcon-alberca-150467705.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/46/77/05/360x266/1618713979.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150467705.jpg",
+      "sha256": "bc015f8d7d7eafaa5fd58c8c1f50732ff188f6344851fd95c66b0689c236dbc1",
+      "downloadSha256": "ad6d0d97277dc3e6a5286b999fb6fdda583832009619fb93dc864c8802b31d2a"
+    },
+    {
+      "id": "buy-150949347",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-un-clasico-de-la-colonia-roma:-amplitud-caracter-y-150949347.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/94/93/47/360x266/1629153515.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150949347.jpg",
+      "sha256": "fa5cd48aace39325c7b4c7b825e30f32ac45916b4ed2b9b1bdeb096913504109",
+      "downloadSha256": "3f7999677ab331dfcd1ffba96f30302555d380884d42032f94e63a3d5f2b073f"
+    },
+    {
+      "id": "buy-150911591",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-ticoman-150911591.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/91/15/91/360x266/1627978404.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150911591.webp",
+      "sha256": "7c93de5ef9332e2263b238d94d0fde9b2f566a11e08697e23cd18ad7f104c05f",
+      "downloadSha256": "7c93de5ef9332e2263b238d94d0fde9b2f566a11e08697e23cd18ad7f104c05f"
+    },
+    {
+      "id": "buy-150951578",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-residencia-exclusiva-en-alcaldia-benito-juarez-cdmx-150951578.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/95/15/78/360x266/1628779829.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150951578.jpg",
+      "sha256": "fefaa729b5d661c872b0886284554c0ab2fed41a8739e7c3af6eb0a5732646c7",
+      "downloadSha256": "511cb89d581e9dee75e3e8745f8f4ff1b503ffaa484f24aced04b11a1c8db615"
+    },
+    {
+      "id": "buy-151101154",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-renta-o-venta-en-lomas-de-bezares-en-151101154.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/10/11/54/360x266/1631761935.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151101154.webp",
+      "sha256": "9b51fdeb2c53d7c8c688819fbced1e235a841a1a59fdc60b0723b0e25089b00e",
+      "downloadSha256": "9b51fdeb2c53d7c8c688819fbced1e235a841a1a59fdc60b0723b0e25089b00e"
+    },
+    {
+      "id": "buy-150754333",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-newton-polanco-seccion-v-150754333.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/75/43/33/360x266/1624750878.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150754333.jpg",
+      "sha256": "c726e3fa2647317d7aba1261a5679a5eb046cbccc4f8e19353fe0296d4c139d3",
+      "downloadSha256": "f00afcef548d2a9de049b939a378ba5dbd743fd59735442561298ac05c97b7dd"
+    },
+    {
+      "id": "buy-151031662",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-ph-en-lomas-de-chapultepec-151031662.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/03/16/62/360x266/1630355953.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151031662.jpg",
+      "sha256": "502f30a231962af89c422811f570b3f969e7329a67a6036ea400df32c42fe739",
+      "downloadSha256": "6d18c107b024928c805ae8cd2d614e9e74d31eace574e789fb8bc81de62aade6"
+    },
+    {
+      "id": "buy-149807401",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-bosques-de-las-lomas-bosques-149807401.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/80/74/01/360x266/1605303696.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-149807401.jpg",
+      "sha256": "10ac23ed7cf2640d82a473c7de4698cc4942e55d2fc240dbb65b60cbdbeed0a9",
+      "downloadSha256": "46ac3f58e402f86bc398ae842dca61102cb0a3a0451c2f172ed1a7de57a2937c"
+    },
+    {
+      "id": "buy-148024230",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-302-departamento-venta-campestre-churubusco-148024230.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/02/42/30/360x266/1632957984.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148024230.webp",
+      "sha256": "6273a19024fad1511e50c180405e03f86ea0b59c9bd691314f529d96706ae5d4",
+      "downloadSha256": "6273a19024fad1511e50c180405e03f86ea0b59c9bd691314f529d96706ae5d4"
+    },
+    {
+      "id": "buy-151043557",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-depto-en-venta-bosque-de-las-lomas-tabachines-151043557.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/04/35/57/360x266/1630587867.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151043557.jpg",
+      "sha256": "43934457cc442d877e059706a56544ad08a501ef98229084f9761960c02e9870",
+      "downloadSha256": "290e6c85eb0dd935a721672caa2fda8c7f302d24ca4630392bb1a873984f13bd"
+    },
+    {
+      "id": "buy-150189219",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-en-vasco-de-quiroga-santa-fe-150189219.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/18/92/19/360x266/1612994936.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150189219.webp",
+      "sha256": "f6024e1e110ca1cad55af4cfe981672da1443475065ce574fae99b2434eaa9a5",
+      "downloadSha256": "f6024e1e110ca1cad55af4cfe981672da1443475065ce574fae99b2434eaa9a5"
+    },
+    {
+      "id": "buy-150963369",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-dpto-venta-para-remodelar-av-chapultepec-332-col-roma-150963369.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/96/33/69/360x266/1629008963.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150963369.jpg",
+      "sha256": "c6314420232379cf98d89b31bdabf5086f4cdbb1aa5e3068039d4cd9ec60b130",
+      "downloadSha256": "c831010665d2e8d7c9c3451a4f72617618c3a491192bf7c376a2b6386425cfed"
+    },
+    {
+      "id": "buy-150907005",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-sendero-santa-fe-venta-o-renta-150907005.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/90/70/05/360x266/1627889367.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150907005.webp",
+      "sha256": "36d2c55d541cb916b90aa9cf59a9b403d96c9059fb56ef4e0af63fae4fd2c153",
+      "downloadSha256": "36d2c55d541cb916b90aa9cf59a9b403d96c9059fb56ef4e0af63fae4fd2c153"
+    },
+    {
+      "id": "buy-150754546",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-o-en-club-residencial-bosques-150754546.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/75/45/46/360x266/1624757519.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150754546.jpg",
+      "sha256": "d47cb75716026d19c47a2e49191d680164a939c5df313e3b7db2858ac1fe30e8",
+      "downloadSha256": "6cf9159678cdb297e92a5660b9f9595f1f05aab35261b8bffb7c6aa054b9ef07"
+    },
+    {
+      "id": "buy-143024880",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-plaza-carso-torre-vip-3-recamaras-con-aire-143024880.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/43/02/48/80/360x266/1447645139.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-143024880.jpg",
+      "sha256": "10e8d3ef5236b1eeda1dab40c6b776b4e22a5a81329d8a2a3fe3293c91ac3960",
+      "downloadSha256": "c8ab7ac0e25b27ad052320e423370dfdcb2a0248b3e1edc4f24fcbe433c362c3"
+    },
+    {
+      "id": "buy-148018986",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-jardines-del-pedregal-alvaro-148018986.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/01/89/86/360x266/1580368488.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148018986.jpg",
+      "sha256": "a5541942cd14b6c2b26f11785d454d17ecacd9ce7bf7dec229d8cd0470f6b334",
+      "downloadSha256": "477076f61a81939acfcf81cb2944d82190fe2d40b068dbf4712eb732bdd23924"
+    },
+    {
+      "id": "buy-148031421",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-colonia-del-valle-ciudad-de-mexico-148031421.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/03/14/21/360x266/1568992913.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148031421.jpg",
+      "sha256": "cc23c75bad8065a76b477ee158bf3298ffa0f77a93874cdebc8eb1d7e7abf25d",
+      "downloadSha256": "b6e2b699e748e7c2021bc802bea756dd1ec793e4b322d8525008178744db8ad1"
+    },
+    {
+      "id": "buy-150725481",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-penthouse-en-dos-niveles-en-venta-en-la-cuauhtemoc-150725481.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/72/54/81/360x266/1625046101.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150725481.jpg",
+      "sha256": "f74192a8d515c29fe3c1ebdf127a4de2634f78f28b0aad4e8b2bd3b4ab9ccecf",
+      "downloadSha256": "6cb1fe2683bb69a72ca87b93e1a0605cd0be7e0cc129d6b3ff039fdea58d3f6b"
+    },
+    {
+      "id": "buy-150159787",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-renta-y-venta-plaza-carso-nuevo-150159787.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/15/97/87/360x266/1632055445.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150159787.jpg",
+      "sha256": "828dab69c46d4069f699203ce36b44b2aec6558e144b408ba14dba76c086938d",
+      "downloadSha256": "9099f5ccec6d4b4948a55467300439fd253155f929062cc53ef0be97a584f9a7"
+    },
+    {
+      "id": "buy-150922505",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-penthouse-en-venta-col.-narvarte-150922505.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/92/25/05/360x266/1628196574.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150922505.jpg",
+      "sha256": "92e5bd6c7fa2d4b5f14739d035898fdcf5e4cb7efb8a5b5d18a64db1b20dee61",
+      "downloadSha256": "14a1a9e66437de6572ecea4949fac22644a67de5a51ca163d3c9ea6026d58bfa"
+    },
+    {
+      "id": "buy-151139590",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-loft-exterior-moderno-en-edificio-con-amenidades-ideal-151139590.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/13/95/90/360x266/1632517308.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151139590.webp",
+      "sha256": "9c6ba3c6d4c753bae936151c270d69090a1afbcf46e56ebe9fde68818c6c66e0",
+      "downloadSha256": "9c6ba3c6d4c753bae936151c270d69090a1afbcf46e56ebe9fde68818c6c66e0"
+    },
+    {
+      "id": "buy-150713138",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-con-balcon-en-xola-a-unos-pasos-del-wtc-150713138.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/71/31/38/360x266/1630390356.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150713138.jpg",
+      "sha256": "ca5c31a6503167105729501ea05cb18644a62239abc84bf87cac93f4c8afd68d",
+      "downloadSha256": "10963e0644f73ae2cd40a99b545b9fe8f85dc445ef49d17c8293444b64b1fec1"
+    },
+    {
+      "id": "buy-149385762",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-residencia-boutique-colonia-la-florida-cdmx-149385762.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/38/57/62/360x266/1607394778.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-149385762.jpg",
+      "sha256": "af8180fa37ce0c3431683b6908f6300467c54e92d797930fd24f1c19b02e1157",
+      "downloadSha256": "83f28b91717f4a6ae5f1bc714f4ad32f93ffd5fe81150d7b445332d20fdc6671"
+    },
+    {
+      "id": "buy-148035154",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-penthouse-en-venta-en-lomas-de-148035154.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/03/51/54/360x266/1570623921.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148035154.jpg",
+      "sha256": "53f2685eeeca7e9f160b612b4cd96217f0de97531709074a7dc9bba2ffd55116",
+      "downloadSha256": "96e2406069fb4cce369de2894e5b3bf593749c70b47c27979c7c98192ad23203"
+    },
+    {
+      "id": "buy-149136228",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamentos-en-venta-de-magnifica-oportunidad-para-149136228.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/13/62/28/360x266/1591226621.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-149136228.jpg",
+      "sha256": "8b4b9725d3f12e2e30785bf1d883b0e354353df5e1d117ee07c585af67b12645",
+      "downloadSha256": "338ccaacf6dc10ad31db2086dbe2a51bc96014fcb15d419c1289e6dadc22d032"
+    },
+    {
+      "id": "buy-145266556",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-en-olivar-de-los-padres-145266556.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/45/26/65/56/360x266/1500193456.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-145266556.webp",
+      "sha256": "a4c48890e27622c87027517012404dac0724544100f569b24b8dc05e7e61f9bd",
+      "downloadSha256": "a4c48890e27622c87027517012404dac0724544100f569b24b8dc05e7e61f9bd"
+    },
+    {
+      "id": "buy-148485545",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-con-balcon-en-del-valle-norte-148485545.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/48/55/45/360x266/1578154972.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148485545.jpg",
+      "sha256": "9b7bb6c30b78a8e1640377d34bcde548d06ab1a5a906f84473193320e2c2dd58",
+      "downloadSha256": "85bfb5549e75992009ad6f608e5afbd515588d06bd2abbc3d63d457e02b7dea9"
+    },
+    {
+      "id": "buy-148741903",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-con-balcon-en-colonia-cuauhtemoc-148741903.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/74/19/03/360x266/1583598146.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148741903.jpg",
+      "sha256": "42cdea827e1584bce57de4d44698366d97ce963d4e4fd9ecccf1967816745344",
+      "downloadSha256": "a488a14b22ce0232fd271e114a00d703084e0eadec8941788a326dde1bb5a057"
+    },
+    {
+      "id": "buy-150590132",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-la-colonia-portales-norte-150590132.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/59/01/32/360x266/1621416824.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150590132.webp",
+      "sha256": "05949a34d400c5bfd5569b4f48ee83abc265131150f053d5b6110aba915596b7",
+      "downloadSha256": "05949a34d400c5bfd5569b4f48ee83abc265131150f053d5b6110aba915596b7"
+    },
+    {
+      "id": "buy-148011657",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-colonia-juarez-148011657.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/01/16/57/360x266/1593275887.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148011657.jpg",
+      "sha256": "3ba5888445dfd97e9d0660e4b5e979d84888ca589f9e7baac71077a96eaecf34",
+      "downloadSha256": "fecdd0ece7047b8a8e7530ec9533b508f970e2f0f6e50b96c21d2327cc57bf99"
+    },
+    {
+      "id": "buy-148419165",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-penthouse-en-san-jose-insurgentes-148419165.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/41/91/65/360x266/1576755384.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148419165.jpg",
+      "sha256": "141acbb90ccef390f7e39e951a71a01ad4f919fe36cc81bce348479ccc6c72fa",
+      "downloadSha256": "fcefae8f9288466fdc4c6f67432768479199229c6e8470062219bb0e8c6ec844"
+    },
+    {
+      "id": "buy-150341189",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-para-remodelar-en-la-colonia-del-valle-150341189.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/34/11/89/360x266/1616165986.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150341189.jpg",
+      "sha256": "dbb34e7b0e38a654b2f7d556dae5cbdcc9b58f057d30feb84d2805e277e3e418",
+      "downloadSha256": "505722fafbd552f4b606a0b9e7e73bdf3d810cfdea476ab3c0ca6e5c2dbb689a"
+    },
+    {
+      "id": "buy-151005500",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-pent-house-atico-de-lujo-con-terraza-en-campos-151005500.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/00/55/00/360x266/1629860929.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151005500.jpg",
+      "sha256": "2ee062e248724ec555e2ab77b9b043c7f97d4ecbc4f76fbb536c484d8fea26f9",
+      "downloadSha256": "9ff515d7ede6f99e4d207be6454525c77c68e51e397143a70722f3cf405c3f56"
+    },
+    {
+      "id": "buy-150761947",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-torre-amsterdam-con-vista-frontal-a-la-150761947.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/76/19/47/360x266/1624972772.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150761947.jpg",
+      "sha256": "b3e39824c4beba9a8f9f6d8a0f42abdb1ea349d76c2a0eb0c3b7c887354e7bc5",
+      "downloadSha256": "327b99c9e36284e64c858fb0f8a91355c1ba503e1306eb77c3842908f91a912b"
+    },
+    {
+      "id": "buy-150855987",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-en-venta-departamento-ph-en-polanco-150855987.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/85/59/87/360x266/1626859401.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150855987.jpg",
+      "sha256": "a118c0dfe3a27ace4af489d873bd13f4d4f5d16bb338aef560b182547a4086f8",
+      "downloadSha256": "0b2663920d630d6781f755ccfbe8e08da4ae35be12eb6f3612f2c1ca34c2e5fb"
+    },
+    {
+      "id": "buy-151157034",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-vista-hermosa-151157034.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/15/70/34/360x266/1632865428.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-151157034.webp",
+      "sha256": "e15f955cb829847d2c12fb3350825fe8b4649dc910dffff08c6d891161775785",
+      "downloadSha256": "e15f955cb829847d2c12fb3350825fe8b4649dc910dffff08c6d891161775785"
+    },
+    {
+      "id": "buy-149024502",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-en-la-colonia-roma-norte-149024502.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/02/45/02/360x266/1589058961.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-149024502.jpg",
+      "sha256": "2b69f4ac1a5c5585bb1429ffeec5b8541af29db561e0832a5ef758496c91730f",
+      "downloadSha256": "23198c530a0e38a6074dfe58e1d842d3aed76b925e7e71cb0a70b2c76678ffe6"
+    },
+    {
+      "id": "buy-150108941",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-narvarte-poniente-150108941.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/10/89/41/360x266/1611346398.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150108941.webp",
+      "sha256": "581adf7f1a5b0ec9153579c7ac5e7061ea2fcabad3285113b06fd3a0076568cb",
+      "downloadSha256": "581adf7f1a5b0ec9153579c7ac5e7061ea2fcabad3285113b06fd3a0076568cb"
+    },
+    {
+      "id": "buy-148951246",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-penthouse-en-narvarte-poniente-148951246.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/95/12/46/360x266/1587592507.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-148951246.webp",
+      "sha256": "a1842c4c5894a52811d5386f84b0e81cf854c38c7bba4f0098c67885b3a737a5",
+      "downloadSha256": "a1842c4c5894a52811d5386f84b0e81cf854c38c7bba4f0098c67885b3a737a5"
+    },
+    {
+      "id": "buy-150591738",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-cumbres-de-santa-fe-3-150591738.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/59/17/38/360x266/1621446855.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150591738.jpg",
+      "sha256": "42f073c39561b2fd737248778b3c454efb86ca329a5782d2b65bf8fe2bf1ddd0",
+      "downloadSha256": "74590f4aca72e013737b6259a0728c67778481d3a821f4b3da4ae3bbd5ef9aca"
+    },
+    {
+      "id": "buy-144229147",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-jardines-del-pedregal-144229147.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/44/22/91/47/360x266/1478182482.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-144229147.jpg",
+      "sha256": "c01ed406dee9538483e2d2ed5e727d75dcd1ca0f6cc090cbd8c1c9940746bf98",
+      "downloadSha256": "f94b067164a30343c7314df4c46a5347c6c2bcee06f793abdb896ffd70f81922"
+    },
+    {
+      "id": "buy-147581307",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-de-entrega-inmediata-en-mier-y-pesado-147581307.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/47/58/13/07/360x266/1559931120.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-147581307.webp",
+      "sha256": "075492a70c0d372928c24a39c9a98fe06fb6dce10cd076ff8e5757f9207c5d50",
+      "downloadSha256": "075492a70c0d372928c24a39c9a98fe06fb6dce10cd076ff8e5757f9207c5d50"
+    },
+    {
+      "id": "buy-146236735",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-av-santa-fe-parque-mexicana-146236735.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/46/23/67/35/360x266/1526992866.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-146236735.jpg",
+      "sha256": "88f1206bc29c4cd3354c80d4ddb0a99407308ad9cefea41aa1669951bc84c2b6",
+      "downloadSha256": "dcada181fb4f6471865cd500b320bc3a9eb849ee7648b276603d4f5d624d44ae"
+    },
+    {
+      "id": "buy-150876848",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-roma-norte-doble-altura-150876848.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-venta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/87/68/48/360x266/1627300624.jpg?isFirstImage=true",
+      "file": "/assets/listings/buy-150876848.jpg",
+      "sha256": "18319d42a432995d37da5a37740c3365d25efd1aaa6b5dfb85b619d504248771",
+      "downloadSha256": "bb58ae8bd188fcce974f4bbdb87cdd16fd3ffc163bf7d09d6e7a9b70c13da2a4"
+    },
+    {
+      "id": "rent-146675644",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-be-grand-reforma-la-fragua-plaza-de-la-republica-146675644.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/46/67/56/44/360x266/1624839021.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-146675644.webp",
+      "sha256": "eab404d48aebebfeff8ec20e214b49e382474a3bea6236a1f1387caefd0beff5",
+      "downloadSha256": "eab404d48aebebfeff8ec20e214b49e382474a3bea6236a1f1387caefd0beff5"
+    },
+    {
+      "id": "rent-151195683",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-amueblado-en-renta-en-polanco-2-151195683.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/19/56/83/360x266/1633872426.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151195683.webp",
+      "sha256": "0ad8936afb23cbed85c82689f41aedd678f7f6e216fca64c5f914e294ce3fcfb",
+      "downloadSha256": "0ad8936afb23cbed85c82689f41aedd678f7f6e216fca64c5f914e294ce3fcfb"
+    },
+    {
+      "id": "rent-150361155",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-polanco-150361155.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/36/11/55/360x266/1616572400.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150361155.jpg",
+      "sha256": "03cc3a2a6f8d1700e6700f06857e08e2454c173de5be9e5af0490f6e2f8021c2",
+      "downloadSha256": "84b845a6dc2a1a745ef03065bf224b9e3ca98d547a7c013ad5f7d979d73aacb0"
+    },
+    {
+      "id": "rent-150646708",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-en-renta-departamento-en-grand-tower-sin-muebles-150646708.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/64/67/08/360x266/1622557014.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150646708.jpg",
+      "sha256": "212ef479fa233e69bf73a41a2f1019f55651c6369148fcbb7c38512cc3473e22",
+      "downloadSha256": "10753de1a467c9cc22f40c7ecab4380995c3b4437b850b9c3028705952fd5c3d"
+    },
+    {
+      "id": "rent-150793726",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-amueblado-en-ampliacion-granada-150793726.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/79/37/26/360x266/1625600966.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150793726.jpg",
+      "sha256": "d32322e85494da1a71f82e21dc49b4ceef906fd5ce48b63a8a40dcbba52d3a7e",
+      "downloadSha256": "1e5880f4ecbd22395fb735e0d96c9ea35bb80e25e4a9304f876ccb84fadbdb66"
+    },
+    {
+      "id": "rent-59424717",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso-amueblado-3-recamaras-59424717.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/00/59/42/47/17/360x266/229824740.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-59424717.jpg",
+      "sha256": "bdf550ed2f00b364827e9efd2f19414015bd813084ac9d3d85fa193004776e02",
+      "downloadSha256": "9cf1a921848193f114c391fb43ca6b8b3eff8f9e58abea14f839ea5741ce493e"
+    },
+    {
+      "id": "rent-145802889",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso-moliere-amueblado-de-lujo-2-recamaras-145802889.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/45/80/28/89/360x266/1515151333.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-145802889.jpg",
+      "sha256": "7407e3a37feee31979867e8affd3b49730eeb0eb5a498435dcb0fba4bfd1ef7d",
+      "downloadSha256": "710916cc720fef16d952211049560f75a5b9bf3d2e780617277c4057aeb76bb5"
+    },
+    {
+      "id": "rent-151168678",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-loft-ejecutivo-frente-a-torre-wtc-napoles.-151168678.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/16/86/78/360x266/1633123856.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151168678.jpg",
+      "sha256": "6f062b4818146bf13360d5773476a64611a7adf905e82c8e93547bea4546e29f",
+      "downloadSha256": "995b9297c2e725130cb70d318d3efda361d51e2a52479d1073c86d37c9cf4bb6"
+    },
+    {
+      "id": "rent-151028386",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-plaza-carso-nuevo-polanco-y-151028386.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/02/83/86/360x266/1630289675.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151028386.jpg",
+      "sha256": "bc1ffae4dbc720cb17a09de8d14c413a3909d510e615bf1d8228cfa7b11a4481",
+      "downloadSha256": "a266d4d6059b22655e8db092bf000ebbafbab71997c00a72a61af2fe90bcc3d4"
+    },
+    {
+      "id": "rent-150911330",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-con-acabados-de-lujo-en-polanco-150911330.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/91/13/30/360x266/1627973128.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150911330.jpg",
+      "sha256": "34ee95c8049b2d4c4998b7751884044dfc8a6300159180e2cfb589eb7a930cd8",
+      "downloadSha256": "7505182a7b8e535c02cdb16d3fc36d2f95df60c3a9e70a7b0063ccd55a5aabfa"
+    },
+    {
+      "id": "rent-151055752",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-espectaculares-vistas-3-recamaras-sin-muebles-151055752.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/05/57/52/360x266/1630847809.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151055752.jpg",
+      "sha256": "8ea40ff2306629ffd065200abb2d38a1ceebfcd1d55552cf580d33d84d9ca409",
+      "downloadSha256": "1e45952f63c8b8b54457780c0a23f71d257dfa097c6c29354860bb5083b72678"
+    },
+    {
+      "id": "rent-149237001",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-tipo-estudio-en-renta-en-reforma-cdmx-149237001.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/23/70/01/360x266/1599727508.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-149237001.jpg",
+      "sha256": "3f1b0011ca002ea645c640efa2a2a89fc02a733acdddeaa0861ced1a4ae92c7e",
+      "downloadSha256": "663d3ef84942576f80cb9edd5197ffa354e69388e8fa4d46364e93db5f77011a"
+    },
+    {
+      "id": "rent-151080658",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-polanco-151080658.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/08/06/58/360x266/1631344857.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151080658.webp",
+      "sha256": "b12543acc63332bcb7716d5788c048dc83432b286cafe6313f97bd339d559e50",
+      "downloadSha256": "b12543acc63332bcb7716d5788c048dc83432b286cafe6313f97bd339d559e50"
+    },
+    {
+      "id": "rent-151005518",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-amueblado-lope-de-vega-polanco-151005518.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/00/55/18/360x266/1629861214.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151005518.jpg",
+      "sha256": "0750d77349ba59006c0b34f3c22f209c05240bb09f3d0c75acbb22aa96009a23",
+      "downloadSha256": "0c754238a6e0897cd1db4dfb1c9dfc90290c3152cd8380ba03d52b7afb14e822"
+    },
+    {
+      "id": "rent-150726512",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-exclusivo-penthouse-en-tres-niveles-con-roof-garden-150726512.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/72/65/12/360x266/1626518994.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150726512.webp",
+      "sha256": "a0034398fe16ffeef3ac77e3ac3a12e18ed203edd41f8850eff93e28dd2674a6",
+      "downloadSha256": "a0034398fe16ffeef3ac77e3ac3a12e18ed203edd41f8850eff93e28dd2674a6"
+    },
+    {
+      "id": "rent-150683847",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-departamento-en-polanco-150683847.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/68/38/47/360x266/1623332866.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150683847.jpg",
+      "sha256": "8c10bacdd63f305c9a74133d310700dce47bf720a3c251d1ec50fe891a06176c",
+      "downloadSha256": "63d0100f09a4372c8a26007f4618323aa6421d6403e923c67ef79f224323db33"
+    },
+    {
+      "id": "rent-145153912",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-nuevo-en-renta-en-napoles-cdmx-a-2-145153912.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/45/15/39/12/360x266/1588747912.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-145153912.jpg",
+      "sha256": "1aa4d617a626d5eb1322854f6beb64a1cad26ca38c649639704a34b95054061c",
+      "downloadSha256": "aba57dd3dabbfe78649563446826ec59603dd6ab1e50b47253ff75dbaa626378"
+    },
+    {
+      "id": "rent-143071417",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso:-esquinero-amueblado-de-3-recamaras-143071417.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/43/07/14/17/360x266/1633421184.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-143071417.jpg",
+      "sha256": "963d7c79f5bdb8ebf519f078d5074e99055f6098ca0e068d69e7617516355554",
+      "downloadSha256": "af4b171daae1d55f2dcd55692bcee62f3994d8d9fa43d06a493a76419f4a506f"
+    },
+    {
+      "id": "rent-149569971",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-vista-panoramica:-penthouse-en-renta-en-roma-sur-149569971.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/56/99/71/360x266/1601382293.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-149569971.jpg",
+      "sha256": "51c168b08583eed6b2bd36d78963ef8fcc27cf26ab1aa149de05372e87f5fd07",
+      "downloadSha256": "7a827b632699d0aef8e06c11f15924359c3c818720c8f753eb38a9ac88848e6b"
+    },
+    {
+      "id": "rent-60712682",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso-2-recamaras-torre-dali-60712682.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/00/60/71/26/82/360x266/250566987.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-60712682.webp",
+      "sha256": "1c8fa02e1ce2cc26b72423b2c4595882f8b3d016942f8b1ad3412f9d88836ef4",
+      "downloadSha256": "1c8fa02e1ce2cc26b72423b2c4595882f8b3d016942f8b1ad3412f9d88836ef4"
+    },
+    {
+      "id": "rent-151081827",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-polanco-151081827.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/08/18/27/360x266/1631364078.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151081827.webp",
+      "sha256": "075477fc3581d2e28b1d373f6b88cdb760b37286aedf382e5233732cb0332eb5",
+      "downloadSha256": "075477fc3581d2e28b1d373f6b88cdb760b37286aedf382e5233732cb0332eb5"
+    },
+    {
+      "id": "rent-150840914",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-con-2-estacionamientos-en-alvaro-150840914.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/84/09/14/360x266/1626676507.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150840914.jpg",
+      "sha256": "8dda4541f9ad1093300494a6e36fbee600006487b93d600fff3ca364eddf151f",
+      "downloadSha256": "65767a7471ed640bbe115b5b240807bde4e638ef55eabe68e59fe44b59bb30f6"
+    },
+    {
+      "id": "rent-151185331",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-prolongacion-bosques-de-reforma-151185331.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/18/53/31/360x266/1633652990.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151185331.jpg",
+      "sha256": "a6b4de06d07beb1ae1804eb74bb5819e4684e6ed482314a4466cbea675510a13",
+      "downloadSha256": "e8dbb71cc8efd0d065ba39443f023367071ad7dca19265dd8e06b6f1f93893b4"
+    },
+    {
+      "id": "rent-144007758",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-nuevo-polanco:-sin-muebles-3-recamaras-con-144007758.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/44/00/77/58/360x266/1629769263.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-144007758.jpg",
+      "sha256": "9ded482658d5f3f7c73d69c4b90ec993ca49ca58319303017072662462a2fa09",
+      "downloadSha256": "1e45952f63c8b8b54457780c0a23f71d257dfa097c6c29354860bb5083b72678"
+    },
+    {
+      "id": "rent-150961337",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-bellas-artes-centro-historico-150961337.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/96/13/37/360x266/1628965100.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150961337.jpg",
+      "sha256": "1ebb4bf8e46cf5361aa0dcb0672371356bfd012f1cf7fa5e87653b257e92c7f8",
+      "downloadSha256": "4ebecd80d52f086c28c834574d1c553ec8b57555181053f03546b41abd10cca4"
+    },
+    {
+      "id": "rent-144233633",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-amueblado-en-renta-miyana-polanco-2-144233633.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/44/23/36/33/360x266/1478318097.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-144233633.jpg",
+      "sha256": "4c5685cfd4993281331161be5130aa35d2327af6e8bfe6574e55d93e9a8bfa35",
+      "downloadSha256": "28d7742f9759305a17b7d3d6b121452b8a8e24da6ef749c60cd09774a8d413da"
+    },
+    {
+      "id": "rent-54416733",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-departamento-en-plaza-carso-3-recamaras-54416733.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/00/54/41/67/33/360x266/98084822.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-54416733.jpg",
+      "sha256": "a44a1a5a60e17de97f8c1abd5adacf7580185e72655dd80646106668cd952095",
+      "downloadSha256": "e0f6a5c981b8038a79a75e7446e1b1a0179bbb54e48372d2e77e09046ce66e9e"
+    },
+    {
+      "id": "rent-150894511",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-reforma-222-juarez-150894511.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/89/45/11/360x266/1627645449.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150894511.webp",
+      "sha256": "899ecac56dc01b2b321ac9a0a612290256ed3e86ca99371acd57b4ec4766ad65",
+      "downloadSha256": "899ecac56dc01b2b321ac9a0a612290256ed3e86ca99371acd57b4ec4766ad65"
+    },
+    {
+      "id": "rent-141878267",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-departamento-roma-condesa-cdmx-sin-aval-141878267.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/41/87/82/67/360x266/1490658026.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-141878267.jpg",
+      "sha256": "4af0fe67a9243db03f55231ab31c5c9fab9059c901ed0b689a51fdf0fddd6ef0",
+      "downloadSha256": "3cc84dea880afa1cb6d91db8ccede40185366fc82582674dafd592a94fffd69d"
+    },
+    {
+      "id": "rent-150601679",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-carso-nuevo-polanco-y-150601679.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/60/16/79/360x266/1621634483.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150601679.jpg",
+      "sha256": "7eb6c552852488da4dff17432132eb7a3c1d30532cb12778b8de90e396679d60",
+      "downloadSha256": "cf8b2fbbc9832802a2b36712f54919495021869dea331f213cd27e3406649863"
+    },
+    {
+      "id": "rent-66660606",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-a-un-lado-de-walmart-toreo-1-recamara-66660606.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/00/66/66/06/06/360x266/365232484.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-66660606.jpg",
+      "sha256": "22fed364b5c4ae26c2cd2d88bbbb682865c6d80f73a08b6c91d2989d026d2a8b",
+      "downloadSha256": "152f696fb7d9d8b90ed9b5ef5a13443d27143174e1edcf1a6af9304f41b8b404"
+    },
+    {
+      "id": "rent-148031116",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-tipo-estudio-en-renta-en-nuevo-polanco-148031116.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/03/11/16/360x266/1604039212.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-148031116.webp",
+      "sha256": "564f0c56588614a633b7786a93e496b0087b26ef14ef72b4980bda4ee781e668",
+      "downloadSha256": "564f0c56588614a633b7786a93e496b0087b26ef14ef72b4980bda4ee781e668"
+    },
+    {
+      "id": "rent-150878909",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-renta-o-venta-en-av-juarez-carso-la-150878909.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/87/89/09/360x266/1627330320.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150878909.jpg",
+      "sha256": "afeee19f1ec39c5732e206d51f2699908adcc526408642c2aae3bce94642eff5",
+      "downloadSha256": "9b2904392501fa0e9bd98a00b74c5d2de410c553bec8bc523f3e51585cac637d"
+    },
+    {
+      "id": "rent-150700152",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-renta-o-venta-para-estrenar-en-polanco-150700152.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/70/01/52/360x266/1623651002.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150700152.jpg",
+      "sha256": "d3e57b30f9b59e131e8001c79b801df25f75f00552e32318a8d1a29dd12f1392",
+      "downloadSha256": "91b52c4164c5a17836a0e35ca561cb5c84b7dc364821cd7d81b9113e1158d7d3"
+    },
+    {
+      "id": "rent-148171992",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-departamento-en-plaza-carso-3-recamaras-y-cuarto-148171992.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/48/17/19/92/360x266/1571794501.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-148171992.webp",
+      "sha256": "b3cb346e16b96385aa543fdec64c9a472d1cc968300331a1df2b377593cc8b90",
+      "downloadSha256": "b3cb346e16b96385aa543fdec64c9a472d1cc968300331a1df2b377593cc8b90"
+    },
+    {
+      "id": "rent-60764795",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso-3-recamaras-amueblado-de-super-lujo-60764795.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/00/60/76/47/95/360x266/363881149.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-60764795.jpg",
+      "sha256": "c4323f8c20598e42189c778c1717609481e538810e3b5380cd76ba2c5983b063",
+      "downloadSha256": "430df5211792b6b3b2cc1cd3a033cf7f514b27b4da92a4db2eeb71f127f5f2d3"
+    },
+    {
+      "id": "rent-147622948",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-excelente-departamento-con-balcon-y-orientacion-sur-en-147622948.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/47/62/29/48/360x266/1633633367.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-147622948.webp",
+      "sha256": "e360272ebc9235143ea69f5f1a996b521c6778e581cc0f03176b41459da799ed",
+      "downloadSha256": "e360272ebc9235143ea69f5f1a996b521c6778e581cc0f03176b41459da799ed"
+    },
+    {
+      "id": "rent-151140370",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-nuevo-polanco:-amueblado-de-2-recamaras-151140370.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/14/03/70/360x266/1633551848.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151140370.jpg",
+      "sha256": "f4744f78b7891f5e39cdbfa07c18333550bdd4bafd2aa6b3324bfcc375ac9eaa",
+      "downloadSha256": "5869ccafe49a4e904c6f93cb44ae679b7c2e12f36c10246a160162839162db5d"
+    },
+    {
+      "id": "rent-149273735",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-departamento-amueblado-2-recamaras-en-carso-149273735.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/27/37/35/360x266/1594042900.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-149273735.webp",
+      "sha256": "42c1d673ac31ad563c3998e8bf775ba4e45b9abe287139b631b7b8d7a6743e58",
+      "downloadSha256": "42c1d673ac31ad563c3998e8bf775ba4e45b9abe287139b631b7b8d7a6743e58"
+    },
+    {
+      "id": "rent-150873370",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-renta-de-departamento-en-polanco-150873370.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/87/33/70/360x266/1627210327.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150873370.jpg",
+      "sha256": "3f6c1f4c0537bad9381a1803ef047fe4e7497a00b6a5e7c499a7ccca12c07da5",
+      "downloadSha256": "2e66d975969c9063cd2506b3b386346ed5440715f7108feebb88f4f25bc98330"
+    },
+    {
+      "id": "rent-147186324",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso:-amueblado-de-1-recamara-147186324.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/47/18/63/24/360x266/1633530604.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-147186324.webp",
+      "sha256": "88a4a13ce9e90396fd0b7978edd2665daa27e7c823e70e2f83735495471fae69",
+      "downloadSha256": "88a4a13ce9e90396fd0b7978edd2665daa27e7c823e70e2f83735495471fae69"
+    },
+    {
+      "id": "rent-150600146",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-university-tower-reforma-2-recamaras-amueblado-con-150600146.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/60/01/46/360x266/1621612245.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150600146.jpg",
+      "sha256": "652328b9a45d7f64bedcb64715fd33c85c296dc3f759f3c651e0830375f06be6",
+      "downloadSha256": "ebc0a2913b12aea9ad09717699768b859522c31d78892b1f1982a41347e3bb4d"
+    },
+    {
+      "id": "rent-150942090",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-plaza-carso-ph-3-recamaras-con-roof-garden-privado-y-150942090.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/94/20/90/360x266/1628588430.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150942090.jpg",
+      "sha256": "c3aa31e90dd0301c916e2ec8c13ef7567016df001ca2cbf711654a9ad8647b73",
+      "downloadSha256": "85ce998b90ea8144cc5b5ba254e7bbd69bf315d635bdd3891872769fe8cdf030"
+    },
+    {
+      "id": "rent-150663809",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-amplio-departamento-en-renta-torre-viena-sin-muebles-150663809.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/66/38/09/360x266/1622894493.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150663809.jpg",
+      "sha256": "6eb6953efc0881c107aa5c74f5b69a3b843d26ff3c5966eaafb1c3655db7b0d2",
+      "downloadSha256": "1f95d45c028af0edf7c8ad17658694ab51acc75cf01c48b2df2c5283587fb21b"
+    },
+    {
+      "id": "rent-151139135",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-ph-en-renta-en-polanco-con-terraza-amplia-151139135.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/51/13/91/35/360x266/1632507967.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-151139135.webp",
+      "sha256": "56049c91dd07168e9d9b8657840ea16c302ecd4b4c0e6e1a80ffd09173018a53",
+      "downloadSha256": "56049c91dd07168e9d9b8657840ea16c302ecd4b4c0e6e1a80ffd09173018a53"
+    },
+    {
+      "id": "rent-150722048",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-parque-lincon-polanco-150722048.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/72/20/48/360x266/1626488604.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150722048.jpg",
+      "sha256": "c8be70fdbe75c0e92c6fd96dc293f951512e2dd532e8e4189411dbce49c7e434",
+      "downloadSha256": "9acf3f83ebbe39d7b52171d8f82b5a0ea25451198c827b254d3d630e700af514"
+    },
+    {
+      "id": "rent-149965894",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-santa-fe-bosques-agwa-bosques-149965894.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/49/96/58/94/360x266/1608543047.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-149965894.jpg",
+      "sha256": "69fd50d82367a05378ef8f561d9fe55497bad5d9b077a79fb64bde4aa331af74",
+      "downloadSha256": "aac5f475e976ddf70fdb34a5e99310258e4fa5652b0a4b493f1c701e813b9693"
+    },
+    {
+      "id": "rent-150809656",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-en-renta-en-polanquito-polanco-emilio-150809656.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/80/96/56/360x266/1630303617.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150809656.webp",
+      "sha256": "25acd7e5d63792d0b127382dca410729279acb622ef2b052b3b644e94377b54f",
+      "downloadSha256": "25acd7e5d63792d0b127382dca410729279acb622ef2b052b3b644e94377b54f"
+    },
+    {
+      "id": "rent-147227208",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-excelente-departamento-amueblado-en-l-ateliere-147227208.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/47/22/72/08/360x266/1551196503.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-147227208.jpg",
+      "sha256": "4b233260e3c33b3b301aef8d6cc617d250597af9db21b217eb5d87d8ec3ddc32",
+      "downloadSha256": "2d0e4ed77db2884c2167eba5106de23e25bd4bce2f2fdddd7542c0f34e494663"
+    },
+    {
+      "id": "rent-150732400",
+      "url": "https://www.inmuebles24.com/propiedades/clasificado/alclapin-departamento-amueblado-en-renta-en-polanco-150732400.html",
+      "sourcePage": "https://www.inmuebles24.com/departamentos-en-renta-en-ciudad-de-mexico-pagina-2.html",
+      "photo": "https://img10.naventcdn.com/avisos/18/01/50/73/24/00/360x266/1624303117.jpg?isFirstImage=true",
+      "file": "/assets/listings/rent-150732400.jpg",
+      "sha256": "0c15536218f106abb35b5b9325198565e168a2b07a984156e61c0a6e3bcedcd7",
+      "downloadSha256": "1febf19ecf30de4d58c9cc15b6d7939ea903dee8a08fb7dee25aee249d7c1219"
+    }
+  ]
+}

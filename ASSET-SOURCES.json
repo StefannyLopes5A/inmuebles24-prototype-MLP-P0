@@ -1,0 +1,79 @@
+[
+  {
+    "name": "home-1",
+    "source_page": "https://unsplash.com/photos/sunny-modern-apartment-living-room-with-balcony-and-kitchen-counter-eDKrWCFn8is",
+    "image_url": "https://images.unsplash.com/photo-1781249144484-f5969c55e54e?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "Sunny modern apartment living room with balcony and kitchen counter - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/home-1.jpg",
+    "download_info": "200 image/jpeg 198808",
+    "author": "Irena Oze",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Irena Oze on Unsplash"
+  },
+  {
+    "name": "home-2",
+    "source_page": "https://unsplash.com/photos/modern-living-room-with-white-entertainment-unit-and-tv-NqIScyTd3NQ",
+    "image_url": "https://images.unsplash.com/photo-1774716925810-e923c8206ed5?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "Modern living room with white entertainment unit and tv - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/home-2.jpg",
+    "download_info": "200 image/jpeg 121601",
+    "author": "Lukáš Parničan",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Lukáš Parničan on Unsplash"
+  },
+  {
+    "name": "home-3",
+    "source_page": "https://unsplash.com/photos/a-living-room-with-a-white-window-7MGj75YLNTw",
+    "image_url": "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "A living room with a white window - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/home-3.jpg",
+    "download_info": "200 image/jpeg 100457",
+    "author": "Bozica Uglesic",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Bozica Uglesic on Unsplash"
+  },
+  {
+    "name": "home-4",
+    "source_page": "https://unsplash.com/photos/a-living-room-with-a-couch-and-a-coffee-table-cDZDabUe1Zs",
+    "image_url": "https://images.unsplash.com/photo-1739191064358-908e3f8dd43f?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "A living room with a couch and a coffee table - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/home-4.jpg",
+    "download_info": "200 image/jpeg 307160",
+    "author": "Vikas Shetty",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Vikas Shetty on Unsplash"
+  },
+  {
+    "name": "home-5",
+    "source_page": "https://unsplash.com/photos/white-wooden-framed-glass-door-nQlVMCHPysY",
+    "image_url": "https://images.unsplash.com/photo-1630699144919-681cf308ae82?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "White wooden framed glass door - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/home-5.jpg",
+    "download_info": "200 image/jpeg 100716",
+    "author": "Point3D Commercial Imaging Ltd.",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Point3D Commercial Imaging Ltd. on Unsplash"
+  },
+  {
+    "name": "office",
+    "source_page": "https://unsplash.com/photos/an-empty-modern-office-with-a-desk-and-window-K9DZz7B8sCU",
+    "image_url": "https://images.unsplash.com/photo-1746021535490-cd4d7fe7ab2a?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "An empty, modern office with a desk and window - Free Photo on Unsplash",
+    "path": "/tmp/inmuebles24-assets/office.jpg",
+    "download_info": "200 image/jpeg 85424",
+    "author": "Deliberate Directions",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Deliberate Directions on Unsplash"
+  },
+  {
+    "name": "home-6",
+    "source_page": "https://unsplash.com/photos/living-room-interior-6japTIjUQoI",
+    "image_url": "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=85&fm=jpg",
+    "title": "Living room interior",
+    "path": "/tmp/inmuebles24-assets/home-6.jpg",
+    "download_info": "200 image/jpeg 166058",
+    "author": "Francesca Tosolini",
+    "license": "https://unsplash.com/license",
+    "attribution": "Photo by Francesca Tosolini on Unsplash"
+  }
+]

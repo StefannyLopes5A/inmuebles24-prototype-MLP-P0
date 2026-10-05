@@ -1,0 +1,40 @@
+.transition-scene{position:fixed;inset:0;z-index:65;pointer-events:none;overflow:hidden}
+.transition-scene *{animation:none!important;transition:none!important}
+.transition-plane{position:absolute;left:0;right:0;background:#fff;transform-origin:50% 0}
+.transition-collapse-mask{will-change:clip-path,transform}
+.transition-old{position:absolute;left:0;background:transparent;pointer-events:none}
+.transition-divider{position:absolute;left:0;right:0;height:1px;background:#00000014}
+/* Keep Onda's edge above the destination, with its resting color over the sweep. */
+.transition-scene[data-direction="Onda"] .transition-divider,.transition-scene[data-direction="Onda"] .mora-bar-divider{z-index:3;background:#ebebeb}
+.transition-destination{position:absolute!important;pointer-events:none;z-index:2!important}
+/* Each third is one full bar: the three gradient states drawn in Figma. */
+.transition-bar-wash{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.transition-bar-sweep{position:absolute;inset:0 auto 0 0;pointer-events:none;background:linear-gradient(90deg,rgba(255,85,59,0) 0%,var(--motion-orange) 33.333333%,var(--motion-blue) 66.666667%,rgba(7,53,143,0) 100%)}
+.transition-control-content{display:inline-flex;align-items:center;gap:inherit;white-space:inherit;min-width:0}
+.mora-smart-trigger>.transition-control-content{flex:1;justify-content:space-between}
+.flow-grid.transition-skeleton-loading .flow-result-item{animation:none}
+.transition-house-skeleton{position:absolute;inset:0 0 auto;pointer-events:none}
+/* Prevent the gradient's dark last row from repeating into the top border. */
+.transition-skeleton-media{position:relative;width:100%;aspect-ratio:1;border-radius:16px;border:1px solid #00000014;overflow:hidden;background:linear-gradient(180deg,transparent 50%,#00000059 100%),#fff;background-origin:border-box;background-repeat:no-repeat}
+.transition-skeleton-heart{position:absolute;top:19px;right:19px;width:28px;height:26px}
+.transition-skeleton-heart img{position:absolute;top:0;left:0}
+.transition-skeleton-price{position:absolute;bottom:19px;left:19px;right:19px;display:flex;flex-direction:column;gap:4px}
+.transition-skeleton-price span{display:block;border-radius:4px;background:#ffffff8f}
+.transition-skeleton-price span:first-child{width:127px;height:16px;max-width:100%}
+.transition-skeleton-price span:last-child{width:122px;height:24px;max-width:100%}
+.transition-skeleton-meta{display:flex;align-items:center;gap:16px;padding-top:16px}
+.transition-skeleton-meta>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.transition-skeleton-meta>div>span{display:block;height:16px;border-radius:4px;background:#00000029}
+.transition-skeleton-meta>div>span:first-child{width:183px;max-width:100%}
+.transition-skeleton-logo{flex:none;width:32px;height:32px;border-radius:50%;background:#00000029}
+@media(prefers-reduced-motion:reduce){.transition-scene{display:none}}
+
+/* Keep token anatomy while borrowing the home word reveal. */
+.search-flow-page .mora-extra-term.home-soft-word{display:inline-flex}
+.search-flow-page [data-streamed-results] .home-chevron.home-soft-word{display:inline-flex}
+/* Keep the gesture on its button while the streamed glyphs are replaced. */
+.search-flow-page [data-streamed-results] button.home-word-control>*{pointer-events:none}
+/* Reserve the finished controls so streamed words cannot collide or move the divider. */
+.search-flow-page [data-streamed-results] .home-word-control{grid-area:1/1}
+.search-flow-page [data-streamed-results] .home-word-stream{top:50%;transform:translateY(-50%)}
+.search-flow-page [data-streamed-results] .home-skip-intro{top:-10px}

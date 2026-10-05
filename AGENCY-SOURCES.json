@@ -1,0 +1,132 @@
+{
+  "source": "Inmuebles24 listing pages, rendered Información del anunciante section",
+  "verifiedAt": "2026-09-28",
+  "logos": [
+    {
+      "listingId": "150911591",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-ticoman-150911591.html",
+      "advertiser": "CDMX DESARROLADORES",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/51/15/05/65/130x70/logo_cdmx-desarroladores_1741101488742.jpg",
+      "file": "/assets/agencies/cdmx-desarrolladores.webp",
+      "sha256": "92af59ef6c55ccbc460891cd2fcb18cc0c41c0781ec84774cb5f0681f8a20734",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "150922505",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-penthouse-en-venta-col.-narvarte-150922505.html",
+      "advertiser": "CDMX DESARROLADORES",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/51/15/05/65/130x70/logo_cdmx-desarroladores_1741101488742.jpg",
+      "file": "/assets/agencies/cdmx-desarrolladores.webp",
+      "sha256": "92af59ef6c55ccbc460891cd2fcb18cc0c41c0781ec84774cb5f0681f8a20734",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "150951578",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-residencia-exclusiva-en-alcaldia-benito-juarez-cdmx-150951578.html",
+      "advertiser": "GCI REAL ESTATE",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/23/42/65/130x70/logo_fiesole_7.jpg",
+      "file": "/assets/agencies/gci-real-estate.webp",
+      "sha256": "339ac184d072f8051d0914fcc3b1a309d483a51277c67f48622c7672f22ab277",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "148011657",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-colonia-juarez-148011657.html",
+      "advertiser": "Casas En Venta",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/19/87/41/130x70/logo_casas-en-venta_1699659773834.jpg",
+      "file": "/assets/agencies/casas-en-venta.webp",
+      "sha256": "9826461704c843d3bcad90fa6baf9023eaa8d756db83eb2b5a5a1f18e15138d4",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "151031662",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-ph-en-lomas-de-chapultepec-151031662.html",
+      "advertiser": "OMA Real Estate",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/92/75/17/130x70/logo_oma-real-estate_1597873949133.jpg",
+      "file": "/assets/agencies/oma-real-estate.webp",
+      "sha256": "cf46047e1162c981fd91b9565fa935e0d14280799b8270f09138c6e3c8d2376a",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "148035154",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-penthouse-en-venta-en-lomas-de-148035154.html",
+      "advertiser": "Rayo Vende.",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/06/31/44/130x70/logo_rayo-vende_1695327312608.jpg",
+      "file": "/assets/agencies/rayo-vende.webp",
+      "sha256": "91ac0a2b7910e29cb514b570c15420dd783aa2ee64347599bb8f7cf0cdbeaa99",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "150876848",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-roma-norte-doble-altura-150876848.html",
+      "advertiser": "Inmuebles CDMX",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/01/02/87/25/85/130x70/logo_inmuebles-cdmx_1759702118523.jpg",
+      "file": "/assets/agencies/inmuebles-cdmx.webp",
+      "sha256": "a0cc20ae057158697f840451f15a6f0abc45a0d2c158f59704fedc1bb297d451",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "148816386",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-en-la-narvarte-poniente-148816386.html",
+      "advertiser": "Remax Interr",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/00/01/98/46/130x70/logo_remax-interr_1619749747113.jpg",
+      "file": "/assets/agencies/remax-interr.webp",
+      "sha256": "8caa8535d2a07e45a46fd5d0452ab2b3669f4b02e486d00a14b566ae83399f05",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "143024880",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-plaza-carso-torre-vip-3-recamaras-con-aire-143024880.html",
+      "advertiser": "D´CASA Inmobiliaria",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/06/25/86/130x70/logo_d-casa-inmobiliaria_1714148035554.jpg",
+      "file": "/assets/agencies/d-casa-inmobiliaria.webp",
+      "sha256": "84ab4af7de3ae096406b6a6c5229c28e2129cd831771f0e2d082e39b10a37f89",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "150108941",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-narvarte-poniente-150108941.html",
+      "advertiser": "RAM HOUSE Agencia Inmobiliaria",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/51/31/64/68/130x70/logo_ram-house-agencia-inmobiliaria_1739056004805.jpg",
+      "file": "/assets/agencies/ram-house.webp",
+      "sha256": "75e243241cc65033d1487f720642359a1b8883e0efe3af47e405b4be2c3b0dbb",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "145266556",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-venta-departamento-en-olivar-de-los-padres-145266556.html",
+      "advertiser": "Cattori Inmobiliaria",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/00/05/13/17/130x70/51317.jpg",
+      "file": "/assets/agencies/cattori-inmobiliaria.webp",
+      "sha256": "ed863cf10b8e5c68123d0b09c7ba8b91050be9783dfadd045b3bdf0690bd8d72",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "150963369",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-dpto-venta-para-remodelar-av-chapultepec-332-col-roma-150963369.html",
+      "advertiser": "RE/MAX Consulting",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/00/02/05/40/130x70/logo_re-max-consulting_1727977975881.jpg",
+      "file": "/assets/agencies/remax-consulting.webp",
+      "sha256": "318a319f6c299d4e6913464fd94c8234fb9b6083f2efacbc14200fd0d09da793",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "151005500",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-pent-house-atico-de-lujo-con-terraza-en-campos-151005500.html",
+      "advertiser": "TU CASA HOY",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/00/02/14/85/130x70/logo_tu-casa-hoy_1770923574678.jpg",
+      "file": "/assets/agencies/tu-casa-hoy.webp",
+      "sha256": "635f9ef08301ddabc2fe781d48023815ecb3d2656122ea8dbb302e80ca5c0560",
+      "verifiedAt": "2026-09-28"
+    },
+    {
+      "listingId": "147346296",
+      "listingUrl": "https://www.inmuebles24.com/propiedades/clasificado/veclapin-departamento-en-venta-calle-maximino-avila-camacho-147346296.html",
+      "advertiser": "TERRABROKERS.",
+      "logoUrl": "https://img10.naventcdn.com/empresas/18/00/50/16/80/91/130x70/logo_terrabrokers_1705431820399.jpg",
+      "file": "/assets/agencies/terrabrokers.webp",
+      "sha256": "bccfbee5ee7e08d2bf66e46c402ea69b38c4b5d9872c62884938937f9dd946a8",
+      "verifiedAt": "2026-09-28"
+    }
+  ]
+}

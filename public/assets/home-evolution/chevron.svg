@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="keyboard_arrow_down" clip-path="url(#clip0_0_32)">
+<mask id="mask0_0_32" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="40" height="40">
+<rect id="Bounding box" width="40" height="40" fill="#FF5500"/>
+</mask>
+<g mask="url(#mask0_0_32)">
+<path id="keyboard_arrow_down_2" d="M19.3066 25.4033C19.0814 25.3091 18.8764 25.1697 18.6916 24.985L10.6596 16.9529C10.3021 16.5954 10.1279 16.1621 10.1371 15.6529C10.1462 15.1434 10.3296 14.71 10.6871 14.3525C11.0446 13.995 11.478 13.8162 11.9875 13.8162C12.4966 13.8162 12.93 13.995 13.2875 14.3525L20.0012 21.0941L26.7429 14.3525C27.1004 13.995 27.5291 13.8209 28.0291 13.8304C28.5291 13.8396 28.9579 14.0229 29.3154 14.3804C29.6729 14.7379 29.8516 15.1712 29.8516 15.6804C29.8516 16.1898 29.6729 16.6233 29.3154 16.9808L21.3108 24.985C21.1261 25.1697 20.9211 25.3091 20.6958 25.4033C20.4703 25.4975 20.2387 25.5446 20.0012 25.5446C19.7637 25.5446 19.5322 25.4975 19.3066 25.4033Z" fill="#FF5500"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_32">
+<rect width="32" height="40" fill="white"/>
+</clipPath>
+</defs>
+</svg>

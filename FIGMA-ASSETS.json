@@ -1,0 +1,143 @@
+{
+  "fileKey": "KcIrcsopqwSQCWp6s8omaI",
+  "frame": "71:2670",
+  "source": "Figma get_design_context, QuintoAndar connection",
+  "downloaded": "2026-09-27",
+  "assets": [
+    {
+      "node": "71:2671",
+      "name": "imgImageLogoDeInmuebles24",
+      "path": "public/assets/figma-home/d0d59.svg"
+    },
+    {
+      "node": "71:3556",
+      "name": "imgKeyboardArrowDown",
+      "path": "public/assets/figma-home/4e7a6.svg"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaCosteiraExterior",
+      "path": "public/assets/figma-home/6473a.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaCosteiraSala",
+      "path": "public/assets/figma-home/a2891.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaCosteiraSuite",
+      "path": "public/assets/figma-home/6b009.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelApartamentoUrbanoFachada",
+      "path": "public/assets/figma-home/63b11.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelApartamentoUrbanoSala",
+      "path": "public/assets/figma-home/d9a69.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelApartamentoUrbanoCozinha",
+      "path": "public/assets/figma-home/5fb1c.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCabanaNaMontanhaExterior",
+      "path": "public/assets/figma-home/c4ffa.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCabanaNaMontanhaSala",
+      "path": "public/assets/figma-home/863b3.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCabanaNaMontanhaQuarto",
+      "path": "public/assets/figma-home/1f3b3.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaFamiliarFachada",
+      "path": "public/assets/figma-home/53d29.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaFamiliarSala",
+      "path": "public/assets/figma-home/977d9.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelCasaFamiliarQuintal",
+      "path": "public/assets/figma-home/7c09e.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelTownhouseMediterraneaFachada",
+      "path": "public/assets/figma-home/a872a.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelTownhouseMediterraneaSala",
+      "path": "public/assets/figma-home/1fdbc.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgFotoDoImovelTownhouseMediterraneaPatio",
+      "path": "public/assets/figma-home/6b7f8.png"
+    },
+    {
+      "node": "71:2711",
+      "name": "imgArrowForward",
+      "path": "public/assets/figma-home/8f3fd.svg"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgContainer",
+      "path": "public/assets/figma-home/1fdbc.png"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgContainer1",
+      "path": "public/assets/figma-home/6b7f8.png"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgContainer2",
+      "path": "public/assets/figma-home/1f3b3.png"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgContainer3",
+      "path": "public/assets/figma-home/5fb1c.png"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgContainer4",
+      "path": "public/assets/figma-home/a2891.png"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgH2DSvgUse0",
+      "path": "public/assets/figma-home/a2bd2.svg"
+    },
+    {
+      "node": "71:2774",
+      "name": "imgH2DSvgUse1",
+      "path": "public/assets/figma-home/1eb6f.svg"
+    },
+    {
+      "node": "79:5482",
+      "name": "imgHeartOutline",
+      "path": "public/assets/figma-home/e7dd9.svg"
+    },
+    {
+      "node": "79:5482",
+      "name": "imgHeartDetail",
+      "path": "public/assets/figma-home/d9746.svg"
+    }
+  ]
+}

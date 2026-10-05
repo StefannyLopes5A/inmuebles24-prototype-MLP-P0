@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.sites-runtime/
+.env*
+!.env.example
+
+.npm-cache/
+.DS_Store
+*.log
+coverage/
+video-frames/

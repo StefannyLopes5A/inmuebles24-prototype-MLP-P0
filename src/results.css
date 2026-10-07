@@ -3,8 +3,8 @@
 .results-layout{display:block;max-width:none;margin:0;padding:0;overflow:visible}
 .results-page{--results-line:#00000014;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#000;min-width:0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.home-header.results-header nav.figma-header-links{gap:32px}
-.results-header .figma-header-links a.figma-login{background:#000;height:48px}
+.home-header.results-header nav.figma-header-links{gap:24px}
+.results-header .figma-header-links a.figma-login{background:#000;height:48px;border-radius:999px}
 .results-header .header-currency>button{height:48px}
 .results-header .header-currency img{display:block;flex:none}
 .results-filterbar{display:flex;align-items:stretch;min-height:97px;padding:0 var(--home-page-gutter);border-top:1px solid var(--results-line)}

@@ -1,8 +1,9 @@
 /* Touch and compact viewports only. Approved desktop layout and timing stay intact. */
 @media(max-width:700px){
   .home-header{position:relative;gap:10px}
+  .home-header-bar{position:relative}
   .home-header .brand{margin-right:80px}
-  .home-header nav.figma-header-links{flex-wrap:nowrap}
+  .home-header nav.figma-header-links{flex-wrap:wrap}
   .home-header .figma-header-links a.figma-login{position:absolute;right:var(--home-page-gutter);top:18px;min-height:44px}
   .footer-controls .footer-language{font-size:16px;min-height:44px}
   .mora-close{width:44px;height:44px}

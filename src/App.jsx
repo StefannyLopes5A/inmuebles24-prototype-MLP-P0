@@ -27,7 +27,7 @@ export function App(){
  const lastSearchChange=useRef({time:0,keys:''});
  const toastTimer=useRef(),detailOrigin=useRef(null),routeRef=useRef(route);routeRef.current=route;
  const selected=homes.find(h=>h.id===propertyId)||null;
- useLayoutEffect(()=>{const header=document.querySelector('.home-header');if(!header)return;const measure=()=>document.documentElement.style.setProperty('--flow-header-height',`${header.offsetHeight}px`);const observer=new ResizeObserver(measure);observer.observe(header);measure();return()=>observer.disconnect();},[]);
+ useLayoutEffect(()=>{const header=document.querySelector('.home-header');if(!header)return;const measure=()=>{if(header.classList.contains('is-header-hidden')){document.documentElement.style.setProperty('--flow-header-height','0px');return;}const bar=header.querySelector('.home-header-bar');document.documentElement.style.setProperty('--flow-header-height',`${(bar||header).offsetHeight}px`)};const observer=new ResizeObserver(measure);observer.observe(header);const classObserver=new MutationObserver(measure);classObserver.observe(header,{attributes:true,attributeFilter:['class']});measure();return()=>{observer.disconnect();classObserver.disconnect()}},[]);
  function announce(text){setToast(text);clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),6500)}
  function navigate(next,{replace=false,scroll,layer=null}={}){
    history.replaceState({...history.state,scroll:window.scrollY},'',window.location.href);

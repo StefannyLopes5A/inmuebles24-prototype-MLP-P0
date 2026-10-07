@@ -5,6 +5,7 @@ import {listingPrice,areaLabel, propertyPhoto, cardAgencyLogo, inspirationCollec
 import {Icon} from './App';
 import {HomeSearch} from './HomeSearch.jsx';
 import {canStartSearch} from './homeSearchModel.js';
+import {headerMenus, padMenuColumns} from './headerMenuData.js';
 import {useLanguage,roomCount,bathCount} from './i18n';
 import {installHomeMotion,playIdeaPreview} from './homeMotion.js';
 
@@ -12,22 +13,138 @@ const asset = name => `/assets/figma-home/${name}`;
 
 export function HomeHeader({onHome,onAction,inert=false,results=false}) {
   const [currencyInfo,setCurrencyInfo]=useState(false);
+  const [openMenu,setOpenMenu]=useState(null);
+  const [headerHidden,setHeaderHidden]=useState(false);
   const currencyControl=useRef(null);
+  const headerRef=useRef(null);
+  const closeMenuTimer=useRef(null);
+  const lastScrollY=useRef(typeof window!=='undefined'?window.scrollY:0);
+  const panelId=useId();
+  const {t,currency,setCurrency}=useLanguage();
+  const activeMenu=headerMenus.find(menu=>menu.id===openMenu) || null;
+
+  useEffect(()=>()=>{clearTimeout(closeMenuTimer.current)},[]);
+
+  useEffect(()=>{
+    lastScrollY.current=window.scrollY;
+    const onScroll=()=>{
+      const y=window.scrollY;
+      const delta=y-lastScrollY.current;
+      if(y<=8){
+        setHeaderHidden(false);
+      }else if(delta>6){
+        setHeaderHidden(true);
+        setOpenMenu(null);
+        setCurrencyInfo(false);
+      }else if(delta<-2){
+        setHeaderHidden(false);
+      }
+      lastScrollY.current=y;
+    };
+    window.addEventListener('scroll',onScroll,{passive:true});
+    return()=>window.removeEventListener('scroll',onScroll);
+  },[]);
+
   useEffect(()=>{
     if(!currencyInfo)return;
     const close=e=>{if(e.type==='keydown'&&e.key==='Escape'){setCurrencyInfo(false);currencyControl.current?.querySelector('button')?.focus();}else if(e.type!=='keydown'&&!currencyControl.current?.contains(e.target))setCurrencyInfo(false)};
     document.addEventListener('pointerdown',close);document.addEventListener('focusin',close);document.addEventListener('keydown',close);
     return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('focusin',close);document.removeEventListener('keydown',close)};
   },[currencyInfo]);
-  const {t,currency,setCurrency}=useLanguage();
-  return <header className={'site-header home-header'+(results?' results-header':'')} inert={inert}>
-    <button className="brand" onClick={onHome} aria-label={t('Inmuebles24, inicio')}><img src={asset('d0d59.svg')} alt="Inmuebles24"/></button>
-    <nav className="figma-header-links" aria-label={t('Navegación principal')}>
-      <a href="#publicar" onClick={event=>{event.preventDefault();onAction?.('publish');}}>{t('Publicar')}</a>
-      <a href="#imobiliarias" onClick={event=>{event.preventDefault();onAction?.('agencies');}}>{t('Buscar imobiliárias')}</a>
-      <div className="header-currency" ref={currencyControl}><button type="button" aria-expanded={currencyInfo} aria-label={`${t('Moneda de visualización')}: ${currency}`} onClick={()=>setCurrencyInfo(!currencyInfo)}>${currency}<img src="/assets/figma-results/currency-chevron.svg" alt=""/></button>{currencyInfo&&<div className="currency-info"><strong>{t('Moneda de visualización')}</strong><div className="currency-options" role="group" aria-label={t('Moneda de visualización')}><button type="button" aria-pressed={currency==='USD'} onClick={()=>{setCurrency('USD');setCurrencyInfo(false)}}>{t('Dólar estadounidense (USD)')}</button><button type="button" aria-pressed={currency==='MXN'} onClick={()=>{setCurrency('MXN');setCurrencyInfo(false)}}>{t('Peso mexicano (MXN)')}</button></div>{currency==='USD'&&<p>{t('Conversión ilustrativa: 1 USD = 20 MXN. Confirma el precio en el anuncio original.')}</p>}</div>}</div>
-      <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onAction?.('login');}}>{t('Entrar')}</a>
-    </nav>
+
+  useEffect(()=>{
+    if(!openMenu)return;
+    const close=e=>{
+      if(e.type==='keydown'&&e.key==='Escape'){
+        setOpenMenu(null);
+        headerRef.current?.querySelector(`[data-menu-trigger="${openMenu}"]`)?.focus();
+        return;
+      }
+      if(e.type!=='keydown'&&headerRef.current&&!headerRef.current.contains(e.target))setOpenMenu(null);
+    };
+    document.addEventListener('pointerdown',close);
+    document.addEventListener('keydown',close);
+    return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',close)};
+  },[openMenu]);
+
+  function fineHover(){
+    return typeof window!=='undefined'&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  }
+  function cancelCloseMenu(){
+    clearTimeout(closeMenuTimer.current);
+  }
+  function openFromHover(id){
+    if(!fineHover())return;
+    cancelCloseMenu();
+    setOpenMenu(id);
+  }
+  function closeFromHover(){
+    if(!fineHover())return;
+    cancelCloseMenu();
+    closeMenuTimer.current=setTimeout(()=>setOpenMenu(null),60);
+  }
+  function leaveMenuZone(event){
+    if(!fineHover())return;
+    const next=event.relatedTarget;
+    if(next instanceof Element&&(next.closest('.header-menu-item')||next.closest('.header-mega')))return;
+    closeFromHover();
+  }
+  function ignoreSeoLink(event){
+    event.preventDefault();
+  }
+
+  return <header
+    ref={headerRef}
+    className={'site-header home-header'+(results?' results-header':'')+(openMenu?' has-mega-menu':'')+(headerHidden?' is-header-hidden':'')}
+    inert={inert}
+    onMouseLeave={closeFromHover}
+  >
+    <div className="home-header-bar">
+      <button className="brand" onClick={onHome} onMouseEnter={closeFromHover} aria-label={t('Inmuebles24, inicio')}><img src={asset('d0d59.svg')} alt="Inmuebles24"/></button>
+      <nav className="figma-header-links" aria-label={t('Navegación principal')}>
+        <div className="figma-header-nav">
+          {headerMenus.map(menu=>{
+            const expanded=openMenu===menu.id;
+            return <div
+              key={menu.id}
+              className={'header-menu-item'+(expanded?' is-open':'')}
+              onMouseEnter={()=>openFromHover(menu.id)}
+              onMouseLeave={leaveMenuZone}
+            >
+              <button
+                type="button"
+                className="header-menu-trigger"
+                data-menu-trigger={menu.id}
+                aria-expanded={expanded}
+                aria-controls={panelId}
+                onClick={()=>setOpenMenu(expanded?null:menu.id)}
+              >
+                <span>{t(menu.labelKey)}</span>
+                <img className="header-menu-chevron" src="/assets/figma-results/currency-chevron.svg" alt="" />
+              </button>
+            </div>;
+          })}
+          <a href="#imobiliarias" onMouseEnter={closeFromHover} onClick={event=>{event.preventDefault();onAction?.('agencies');}}>{t('Buscar imobiliárias')}</a>
+          <a href="#publicar" onMouseEnter={closeFromHover} onClick={event=>{event.preventDefault();onAction?.('publish');}}>{t('Publicar')}</a>
+        </div>
+        <div className="figma-header-actions" onMouseEnter={closeFromHover}>
+          <div className="header-currency" ref={currencyControl}><button type="button" aria-expanded={currencyInfo} aria-label={`${t('Moneda de visualización')}: ${currency}`} onClick={()=>setCurrencyInfo(!currencyInfo)}>${currency}<img src="/assets/figma-results/currency-chevron.svg" alt=""/></button>{currencyInfo&&<div className="currency-info"><strong>{t('Moneda de visualización')}</strong><div className="currency-options" role="group" aria-label={t('Moneda de visualización')}><button type="button" aria-pressed={currency==='USD'} onClick={()=>{setCurrency('USD');setCurrencyInfo(false)}}>{t('Dólar estadounidense (USD)')}</button><button type="button" aria-pressed={currency==='MXN'} onClick={()=>{setCurrency('MXN');setCurrencyInfo(false)}}>{t('Peso mexicano (MXN)')}</button></div>{currency==='USD'&&<p>{t('Conversión ilustrativa: 1 USD = 20 MXN. Confirma el precio en el anuncio original.')}</p>}</div>}</div>
+          <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onAction?.('login');}}>{t('Entrar')}</a>
+        </div>
+      </nav>
+    </div>
+    {activeMenu&&<div className="header-mega" id={panelId} role="region" aria-label={t(activeMenu.labelKey)} onMouseEnter={()=>openFromHover(activeMenu.id)} onMouseLeave={leaveMenuZone}>
+      <div className="header-mega-grid">
+        {padMenuColumns(activeMenu.columns).map((column,index)=>column
+          ? <div className="header-mega-column" key={`${activeMenu.id}-${column.titleKey}`}>
+              <p className="header-mega-title">{t(column.titleKey)}</p>
+              <ul>
+                {column.items.map(item=><li key={item}><a href="#seo" onClick={ignoreSeoLink}>{t(item)}</a></li>)}
+              </ul>
+            </div>
+          : <div className="header-mega-column is-empty" key={`${activeMenu.id}-empty-${index}`} aria-hidden="true" />)}
+      </div>
+    </div>}
   </header>;
 }
 

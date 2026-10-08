@@ -19,12 +19,11 @@ function gridColumns() {
   return 4;
 }
 
-export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onCompare,receipts,assistantProps,blocked,miniProps}) {
+export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onFavorites,receipts,assistantProps,blocked,miniProps}) {
   const {language,t}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const root=useRef(null),[updating,setUpdating]=useState(false);
   const [columns,setColumns]=useState(gridColumns);
   const signature=JSON.stringify(search),prior=useRef(signature),refresh=useRef(null);
-  const savedCount=saved?.length||0;
   const ordered=spreadTourListings(visible, columns);
   const splitAt=Math.min(ordered.length, FIRST_ROWS * columns);
   const leading=ordered.slice(0, splitAt);
@@ -55,7 +54,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onC
     <div className="flow-results-content" inert={!!miniProps?.activeHome}>
       <div className="flow-results-heading">
         <h1>{say('Todos os resultados','Todos los resultados')}<span aria-label={say('imóveis encontrados','inmuebles encontrados')} className="results-count">{visible.length}</span></h1>
-        {savedCount>=2&&onCompare&&<button className="compare-favorites-link" type="button" onClick={onCompare}>{say(`Comparar ${savedCount} favoritos`,`Comparar ${savedCount} favoritos`)}</button>}
+        {onFavorites&&<button className="compare-favorites-link" type="button" onClick={onFavorites}>{say('Ver favoritos','Ver favoritos')}</button>}
       </div>
       {assistantProps.pref!=='none'&&<div className="flow-current-state">
         {assistantProps.pref!=='none'&&<button onClick={()=>assistantProps.onPref('none')}>{assistantProps.pref==='extra'?say('Prioridade: 3+ quartos','Prioridad: 3+ recámaras'):say('Preferência: espaço na sala','Preferencia: espacio en la sala')}<Icon name="close" size={14}/></button>}

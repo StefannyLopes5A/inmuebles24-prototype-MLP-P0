@@ -16,6 +16,8 @@ import "./search-flow.css";
 import "./search-transition.css";
 import "./mini-listing.css";
 import "./compare-favorites.css";
+import "./favorite-folders.css";
+import "./account.css";
 import "./mobile-polish.css";
 
 const finalUrl = migratePrototypeUrl(location.href);

@@ -1,43 +1,40 @@
-.compare-page{padding:32px var(--home-page-gutter,48px) 72px;max-width:1600px;margin-inline:auto}
-.compare-page-header{margin-bottom:28px;max-width:920px}
-.compare-page-header h1{font-size:32px;line-height:1.2;font-weight:600;outline:none;margin:0 0 12px}
-.compare-search-context,.compare-shared,.compare-empty-copy{font-size:15px;line-height:1.45;color:#555;margin:0 0 12px}
-.compare-verdict{display:flex;align-items:flex-start;gap:12px;margin:16px 0 12px;padding:16px 18px;border:1px solid #00000014;border-radius:16px;background:#fff}
-.compare-verdict .mini-mora-name{margin:0;flex:none}
-.compare-verdict p{margin:2px 0 0;font-size:16px;line-height:1.4;font-weight:590;color:#111}
-.compare-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,1fr);gap:24px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
-.compare-column{min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;gap:20px;padding:4px 4px 8px;border-right:1px solid #00000014}
-.compare-column:last-child{border-right:0}
-.compare-column.is-leader{background:linear-gradient(180deg,#fff7f2 0%,#fff 48%);border-radius:16px;padding:12px;border-right:0}
-.compare-column-sticky{position:sticky;top:calc(var(--flow-header-height,97px) + 12px);background:inherit;z-index:1;padding-bottom:4px}
-.compare-photo{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#f2f2f2}
-.compare-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.compare-unlike{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:#fff!important;color:#e32636;display:grid;place-items:center;box-shadow:0 2px 10px #0002}
-.compare-unlike .figma-heart{width:22px;height:20px}
-.compare-kind{margin:14px 0 4px;font-size:13px;color:#666}
-.compare-column h2{font-size:18px;line-height:1.3;font-weight:600;margin:0;text-wrap:balance}
-.compare-area{margin:4px 0 0;font-size:14px;color:#555}
-.compare-price{margin:10px 0 0;font-size:22px;font-weight:600;line-height:1.2}
-.compare-price small{font-size:14px;font-weight:400}
-.compare-leader-badge{display:inline-flex;margin-top:10px;padding:6px 10px;border-radius:999px;background:#ff550014;color:#b43c00;font-size:12px;font-weight:590}
-.compare-insights{margin:0;display:grid;gap:14px}
-.compare-insights dt{font-size:12px;font-weight:590;letter-spacing:.02em;text-transform:uppercase;color:#888;margin:0 0 4px}
-.compare-insights dd{margin:0;font-size:15px;line-height:1.45;color:#222}
+.compare-page{padding:24px 0 0;max-width:none;margin:0;overflow:visible}
+.compare-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:0 auto 32px;padding-inline:var(--home-page-gutter,48px);max-width:1600px;width:100%;box-sizing:border-box}
+.compare-page-heading{min-width:0;flex:1}
+.compare-back{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line,#00000014);background:#0000000f;margin:0 0 20px;color:#111}
+.compare-back:focus-visible,.compare-batch:focus-visible,.compare-open:focus-visible{outline:2px solid #b43c00;outline-offset:4px}
+@media(hover:hover) and (pointer:fine){.compare-back:hover{background:#00000014}}
+.compare-page-header h1{font-size:32px;line-height:1.2;font-weight:600;outline:none;margin:0}
+.compare-empty-copy{font-size:15px;line-height:1.45;color:#555;margin:12px 0 0}
+.compare-batch{flex:none;align-self:center;min-height:48px;padding-inline:20px;font-size:14px;white-space:nowrap}
+.compare-route{overflow:visible}
+.compare-rail{--compare-rail-pad:max(var(--home-page-gutter,48px),calc((100vw - 1600px) / 2 + var(--home-page-gutter,48px)));display:flex;align-items:flex-start;gap:24px;padding:0 var(--compare-rail-pad);overflow-x:auto;overflow-y:visible;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--compare-rail-pad);scrollbar-width:none;-ms-overflow-style:none}
+.compare-rail::-webkit-scrollbar{display:none;width:0;height:0}
+.compare-column{width:296px;flex:0 0 296px;min-width:296px;scroll-snap-align:start;display:flex;flex-direction:column;gap:20px;overflow:visible}
+.compare-column .discovery-item{width:100%;flex:none;overflow:visible}
+.compare-column .discovery-meta-copy>b,.compare-column .discovery-meta-copy>span{white-space:normal;overflow:visible;text-overflow:unset}
+.compare-column.is-leader .compare-mora{outline:1px solid #ff550033;background:#fff7f2;border-radius:16px}
+.compare-mora{display:flex;flex-direction:column;gap:16px;padding:4px 0 0;min-width:0;overflow:visible}
+.compare-mora .mini-mora-name{margin:0}
+.compare-mora .mini-highlights{display:grid;gap:16px}
+.compare-mora .mini-highlights h3{font-size:15px;line-height:1.35;font-weight:600;margin:0 0 8px;color:#111}
+.compare-mora .mini-highlights ul{margin:0;padding-left:20px;color:#000000b8;font-size:14px;line-height:1.45;list-style:disc}
+.compare-mora .mini-highlights li{padding:0;overflow-wrap:anywhere}
+.compare-profile{margin:0;font-size:14px;line-height:1.45;color:#555}
 .compare-open{width:100%;min-height:52px}
-@media(min-width:1100px){
-  .compare-rail{grid-auto-columns:minmax(300px,calc((100% - 48px) / 3))}
-}
 @media(max-width:700px){
-  .compare-page{padding:24px 20px calc(48px + env(safe-area-inset-bottom,0px))}
+  .compare-page{padding:20px 0 env(safe-area-inset-bottom,0px)}
+  .compare-page-header{flex-direction:column;align-items:stretch;gap:16px;margin-bottom:24px;padding-inline:20px}
+  .compare-back{width:44px;height:44px;margin-bottom:16px}
   .compare-page-header h1{font-size:26px}
-  .compare-rail{grid-auto-columns:minmax(260px,86vw);gap:16px}
-  .compare-column-sticky{top:calc(var(--flow-header-height,66px) + 8px)}
-  .compare-price{font-size:20px}
+  .compare-batch{width:100%;white-space:normal}
+  .compare-rail{--compare-rail-pad:20px;gap:16px}
+  .compare-column{width:min(296px,86vw);flex-basis:min(296px,86vw)}
 }
 @media(max-width:360px){
-  .compare-rail{grid-auto-columns:minmax(240px,88vw)}
   .compare-page-header h1{font-size:24px}
+  .compare-column{width:min(280px,88vw);flex-basis:min(280px,88vw)}
 }
 @media(prefers-reduced-motion:reduce){
-  .compare-rail{scroll-behavior:auto}
+  .compare-rail{scroll-behavior:auto;scroll-snap-type:none}
 }

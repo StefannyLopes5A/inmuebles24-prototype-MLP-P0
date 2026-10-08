@@ -23,7 +23,7 @@ Abra o endereço informado pelo Vite. Não é necessário criar `.env` nem confi
 npm run check
 ```
 
-Esse comando gera o build e executa **57 testes V2 + 4 testes Sites**. Para executar cada parte:
+Esse comando gera o build e executa **69 testes V2 + 4 testes Sites**. Para executar cada parte:
 
 | Comando | Resultado |
 | --- | --- |

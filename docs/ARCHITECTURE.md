@@ -21,11 +21,11 @@ Os CSS entram somente por `main.jsx`. A ordem termina em `home-evolution.css` �
 
 ## Estado e rotas
 
-`App` lê `readJourney()` no carregamento e em `popstate`. `journeyUrl()` produz URLs com `view=home|results|listing`, critérios, preferência e `property`. Essa rota é suficiente para reabrir a mesma busca ou página interna. O histórico guarda posição de rolagem e camada de navegação; abrir/fechar o mini-listing e entrar/voltar da interna preserva o anúncio de origem.
+`App` lê `readJourney()` no carregamento e em `popstate`. `journeyUrl()` produz URLs com `view=home|results|listing|favorites|compare`, critérios, preferência, `property` e, no interior de uma lista, `list` (só o id da lista, nunca ids de anúncio). As listas de favoritos vivem em `src/favoriteLists.js` (lógica pura) e `src/FavoriteFolders.jsx` (modal, aviso e grade, animados com `motion/react`); um id de lista que não existe na sessão abre a grade. Essa rota é suficiente para reabrir a mesma busca ou página interna. O histórico guarda posição de rolagem e camada de navegação; abrir/fechar o mini-listing e entrar/voltar da interna preserva o anúncio de origem.
 
 Nome, e-mail, telefone, mensagens de contato, destinatários e recibos não são serializados pela URL. O texto livre de busca (`note`) faz parte dos critérios compartilháveis; mantenha dados pessoais fora desse campo.
 
-`matchingHomes()` calcula correspondências estritas. `prototypeResults()` começa por elas e completa até pelo menos 40 anúncios distintos com sugestões ordenadas do catálogo. `App` mantém as correspondências na frente e pode priorizar preferência de quartos e favoritos. Não substitua a contagem estrita usada pela assistência pela quantidade de cards de demonstração.
+`matchingHomes()` calcula correspondências estritas. `prototypeResults()` começa por elas e completa até pelo menos 40 anúncios distintos com sugestões ordenadas do catálogo. `App` mantém as correspondências na frente e pode priorizar preferência de quartos. Favoritos não alteram a ordem: o card favoritado permanece na mesma posição. Não substitua a contagem estrita usada pela assistência pela quantidade de cards de demonstração.
 
 A barra tem estados `collapsed`, `edit`, `input`, `suggest`, `qualify`, `answer` e `listing`. Quando há `activeHome`, ela renderiza `MiniListing`, que mantém seus estados de resumo, pergunta, contato e confirmação. A reutilização do perfil é um subestado do contato. A página interna usa `PropertyDetail`; suas ações passam a intenção de contato à mesma barra.
 
@@ -36,7 +36,7 @@ A sugestão proativa é disparada por rolagem efetiva seguida de 750 ms de pausa
 | Local | Chave / conteúdo | Duração |
 | --- | --- | --- |
 | `localStorage` | `inmuebles24-v2-contact-profile`: `name`, `email`, `phone`. | Entre visitas no mesmo navegador e origem. |
-| `sessionStorage` | `inmuebles24-v2-session`: `saved`, `receipts`, cópia legada `profile`. | Sessão da aba; pode sobreviver a recarregamento. |
+| `sessionStorage` | `inmuebles24-v2-session`: `folders` (`{id, name, homeIds, createdAt}`), `recent` (`{id, viewedAt}`, até 24), `saved` derivado das listas, `receipts`, cópia legada `profile`. Uma sessão antiga só com `saved` vira a lista “Favoritos”. | Sessão da aba; pode sobreviver a recarregamento. |
 | `localStorage` | `inmuebles24-v2-language`, `inmuebles24-v2-currency`. | Idioma e moeda entre visitas. |
 | Estado React | Edição, pergunta, canal, animações e estado transitório do contato. | Enquanto o componente está montado. |
 
@@ -80,7 +80,7 @@ O snapshot tem 100 anúncios, com IDs, preço MXN, endereço e foto corresponden
 
 ## Build, CI e hospedagem
 
-`npm run check` gera o build primeiro e então executa 57 testes V2 e 4 testes Sites. A ordem permite validar o pacote de hospedagem também em um clone novo. Os testes usam o runner nativo `node --test`; não há banco de dados ou credenciais para preparar. Eles cobrem lógica, normalização, armazenamento, mensagens, identidade e worker. Conferência de layout, toque, teclado e movimentos segue [FLOW.md](FLOW.md).
+`npm run check` gera o build primeiro e então executa 69 testes V2 e 4 testes Sites. A ordem permite validar o pacote de hospedagem também em um clone novo. Os testes usam o runner nativo `node --test`; não há banco de dados ou credenciais para preparar. Eles cobrem lógica, normalização, armazenamento, mensagens, identidade e worker. Conferência de layout, toque, teclado e movimentos segue [FLOW.md](FLOW.md).
 
 Vite gera `dist/client/`. `scripts/prepare-sites-build.mjs` copia o worker para `dist/server/index.js` e a configuração para `dist/.openai/hosting.json`. O worker serve `env.ASSETS`; em uma rota HTML desconhecida de GET/HEAD, devolve o `index.html` para a aplicação resolver a URL. Ele não recebe contatos nem executa IA.
 

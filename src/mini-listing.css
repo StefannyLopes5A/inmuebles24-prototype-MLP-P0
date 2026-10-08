@@ -5,7 +5,8 @@
 .mini-home-context .mini-backdrop{z-index:-1}
 .mora-bar.has-mini-listing{overflow:clip;--mini-gutter:48px}
 .mini-listing.mora-expanded{position:relative;display:block;min-height:0;padding:0;color:#000;overflow:hidden}
-.mini-listing-scroll{display:grid;grid-template-columns:minmax(0,1fr) 536px;min-height:490px;max-height:calc(100dvh - var(--flow-header-height,97px));overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#ccc transparent;scroll-padding:24px}
+.mini-listing-scroll{display:grid;grid-template-columns:minmax(0,1fr) 536px;min-height:490px;max-height:calc(100dvh - var(--flow-header-height,97px));overflow:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none;scroll-padding:24px}
+.mini-listing-scroll::-webkit-scrollbar{display:none;width:0;height:0}
 .mini-listing .mini-close{top:24px;right:24px;border:0;background:#00000014}
 .mini-close img{width:24px;height:24px;filter:none}
 .mini-property-presentation{padding:var(--mini-gutter,48px);display:flex;flex-direction:column;gap:48px;min-width:0}

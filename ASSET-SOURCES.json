@@ -75,5 +75,14 @@
     "author": "Francesca Tosolini",
     "license": "https://unsplash.com/license",
     "attribution": "Photo by Francesca Tosolini on Unsplash"
+  },
+  {
+    "name": "account-avatar",
+    "source_page": "Provided by the prototype owner for the simulated account",
+    "path": "public/assets/account/avatar.png",
+    "download_info": "local file, image/png 201x201",
+    "author": "Prototype owner",
+    "license": "Internal prototype use only",
+    "attribution": "Avatar image supplied for the simulated signed-in state; not a real user profile"
   }
 ]

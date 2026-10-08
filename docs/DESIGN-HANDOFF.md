@@ -66,8 +66,23 @@ Fotos usam cantos de 16 px; inputs, 12 px; CTAs em cápsula, 33 px. As ações p
 | `ListingOverview` | Foto do anúncio, operação, endereço, preço, atributos e anunciante. A foto abre a interna. |
 | `PropertyDetail` | Página interna com identidade preservada, informações e ações que abrem contato na barra. |
 | `HouseCard` | Componente compartilhado entre home e resultados; favorito continua independente da abertura. |
+| `SearchMap` | `mini`, `half`, `full`; card de prévia só em `full`. Carregado sob demanda. |
 
 No primeiro contato, mostrar nome e um canal por vez. Erros ficam junto ao campo e recebem foco; os dados válidos permanecem. Durante os 420 ms de registro simulado, bloquear duplicação. Perguntas anteriores acompanham o contato; o segundo imóvel reutiliza o perfil sem reutilizar seu destinatário ou recibo.
+
+### Mapa de resultados
+
+Referência do flutuante: [Figma 717:16218](https://www.figma.com/design/KcIrcsopqwSQCWp6s8omaI/-Concepts--Inmuebles24?node-id=717-16218). Em 1512 × 982 ele mede 192 × 192 px, raio 24, a 48 px da direita e da base; o título da área fica no canto superior esquerdo (inset 16, branco sobre sombreado) e o botão circular branco de 48 px no canto inferior direito (inset 8). No mobile mede 128 px a 16 px das bordas. O mapa fica em cinza no flutuante e ganha cor ao abrir.
+
+| Estado | Geometria | Interação |
+| --- | --- | --- |
+| Flutuante | `position: fixed`, não acompanha a rolagem. | Um único botão: abre metade (≥ 951 px) ou tela cheia. |
+| Metade | `clamp(360px, 42vw, 760px)` à direita, 24 px abaixo da barra e das bordas, raio 16. | Coluna de controles à direita: ampliar, reduzir (ícone de picture-in-picture) e zoom. Pins sem card. Hover/foco no card da grade destaca o pin. |
+| Tela cheia | 16 px abaixo da barra e 24 px nas laterais (sem margem e sem raio abaixo de 951 px), sobre um fundo branco que esconde a grade (fade de 200 ms). | Pin abre um preview com o próprio `HouseCard` da grade (mesma foto, textos, coração e logo), num painel branco de 296 px com “Localização aproximada” e fechar sobre a foto; no mobile, 280 px na base do mapa. O card leva à interna. |
+
+Paleta inspirada no Airbnb (`src/mapStyle.js`): terreno `#f5f4f0`, quadras `#efede8`, parques `#d3ebc9`, água `#aad3ee`, vias brancas com contorno `#e2e0db`, rótulos `#6f6f6f` com halo branco; colônias em caixa alta, 11 px. Pin: cápsula branca de 28 px com preço compacto; visto fica `#ebebeb`; hover e selecionado ficam `#222` com texto branco.
+
+Movimento: a mudança de estado anima um `clip-path: inset(... round R)` do retângulo antigo ao novo, com `cubic-bezier(0.77, 0, 0.175, 1)`, em 360 ms (flutuante ↔ metade) ou 420 ms (qualquer troca com tela cheia). O conteúdo do mapa fica parado durante o recorte e a transição pode ser interrompida a partir do ponto atual. A grade some por 120 ms e reaparece com a nova contagem de colunas. O card entra em 200 ms (escala 0,96 → 1) ou sobe como folha em 300 ms no mobile; sai em 150 ms. Pins entram em sequência de 20 ms. Com movimento reduzido, os estados trocam direto com um fade de 150 ms.
 
 **Mesma superfície:** não converter os estados do mini-listing em modais adicionais. O diálogo de “Mais filtros” é outro componente e conserva sua função atual.
 

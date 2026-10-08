@@ -8,14 +8,17 @@
     "build": "vite build && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
-    "test:v2": "node --test tests/journey.test.mjs tests/contact-flow.test.mjs tests/contact-profile.test.mjs tests/search-input.test.mjs tests/home-search.test.mjs tests/price-range.test.mjs tests/search-flow.test.mjs tests/listing-presentation.test.mjs tests/favorite-folders.test.mjs",
+    "test:v2": "node --test tests/journey.test.mjs tests/contact-flow.test.mjs tests/contact-profile.test.mjs tests/search-input.test.mjs tests/home-search.test.mjs tests/price-range.test.mjs tests/search-flow.test.mjs tests/listing-presentation.test.mjs tests/favorite-folders.test.mjs tests/map-locations.test.mjs",
     "test": "npm run test:v2 && npm run test:sites",
     "check": "npm run build && npm test"
   },
   "dependencies": {
+    "@protomaps/basemaps": "^5.7.2",
     "@vitejs/plugin-react": "5.0.4",
     "dialkit": "^2.0.2",
+    "maplibre-gl": "^6.13.0",
     "motion": "^14.0.0",
+    "pmtiles": "^4.5.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "vite": "6.4.2"

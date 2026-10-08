@@ -444,7 +444,16 @@ Object.assign(portuguese,{
   "Explora los barrios de tu búsqueda": "Explore os bairros da sua busca",
   "Mapa de referencia. Los anuncios no incluyen coordenadas verificadas.": "Mapa de referência. Os anúncios não incluem coordenadas verificadas.",
   "Cuéntanos cómo imaginas tu rutina y afinamos la búsqueda contigo.": "Conte como imagina sua rotina para ajustarmos a busca com você.",
-  "Cerrar asistencia": "Fechar assistência"
+  "Cerrar asistencia": "Fechar assistência",
+  "Mapa de resultados": "Mapa de resultados",
+  "Abrir mapa": "Abrir mapa",
+  "Ampliar mapa": "Ampliar mapa",
+  "Reducir mapa": "Reduzir mapa",
+  "Zoom": "Zoom",
+  "Acercar": "Aproximar",
+  "Alejar": "Afastar",
+  "Ubicación aproximada": "Localização aproximada",
+  "Ver inmueble: ": "Ver imóvel: "
 });
 
 const LanguageContext = createContext(null);

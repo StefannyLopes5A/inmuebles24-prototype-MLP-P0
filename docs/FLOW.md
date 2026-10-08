@@ -32,6 +32,7 @@ Percurso implementado em **05/10/2026**. O objetivo é verificar se alguém cons
 | Prévia por foto, foco ou toque | Abre o imóvel correspondente e conserva sua identidade. |
 | Fechar, clicar fora ou Escape | Recolhe a superfície e preserva os critérios; devolve a exploração. |
 | Favoritar e trocar idioma/moeda | Mantém o imóvel e a busca; o coração muda de cor. USD continua demonstrativo. |
+| Comparar favoritos | Com 2+ salvos, o aviso de guardado e o atalho nos resultados abrem `view=compare`. Confira veredito, colunas só com diferenças, estados de 0/1 salvo, remover na página e “Ver imóvel”. Recarregar preserva a rota; ids salvos não entram na URL. |
 | Armazenamento bloqueado | Permite ensaiar contato em memória; reutilização futura pode não persistir. |
 
 Em desktop de 1512 × 982, confira as duas colunas do mini-listing. Em 390 px e 320 px, percorra resumo, pergunta, formulário e sucesso: o conteúdo rola dentro da barra, fechar permanece alcançável e os campos de contato usam 16 px. Teste Tab, Shift+Tab e Escape, além de movimento reduzido. Essas verificações no navegador não equivalem a teste em aparelho físico.

@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync} from 'node:fs';
 import {homes, listingPrice} from '../src/data.js';
-import {DEFAULT_SEARCH, normalizeSearch, readJourney, journeyUrl} from '../src/journey.js';
-import {listingDetails, listingSummary, answerListingQuestion} from '../src/listingPresentation.js';
+import {DEFAULT_SEARCH, normalizeSearch, matchingHomes, readJourney, journeyUrl} from '../src/journey.js';
+import {listingDetails, listingSummary, answerListingQuestion, compareFavorites, profileFitReason} from '../src/listingPresentation.js';
 
 test('the local listing page round-trips its property and search without contact identity', () => {
   const home = homes.find(item => item.area !== DEFAULT_SEARCH.area);
@@ -44,4 +44,37 @@ test('every gallery resolves to local catalog photos and unknown details remain 
   }
   const unknown=homes.find(item=>listingDetails(item).pets===null);
   assert.match(answerListingQuestion(unknown,'Aceita pets?','pt-BR'),/precisa ser confirmada/);
+});
+
+test('compare favorites lifts shared lines and leaves a single strongest insight per column', () => {
+  const matched = matchingHomes(normalizeSearch(DEFAULT_SEARCH)).slice(0, 2);
+  assert.equal(matched.length, 2);
+  const search = normalizeSearch({...DEFAULT_SEARCH, areas:matched.map(home => home.area).filter((area, index, all) => all.indexOf(area) === index)});
+  const reading = compareFavorites(matched, search, 'none', 'pt-BR');
+  assert.ok(reading.sharedMatches.includes('Dentro do seu orçamento'));
+  for (const card of reading.cards) {
+    assert.equal(card.goodAt === null || !reading.sharedMatches.includes(card.goodAt), true);
+    assert.equal(card.consider === null || !reading.sharedConsiderations.includes(card.consider), true);
+  }
+});
+
+test('compare favorites keeps a leader only when ranks differ and never invents office facts', () => {
+  const search = normalizeSearch(DEFAULT_SEARCH);
+  const exactMatches = matchingHomes(search);
+  const exact = exactMatches[0];
+  const outside = homes.find(home => home.mode === search.mode && !exactMatches.some(match => match.id === home.id));
+  assert.ok(exact && outside);
+  const clear = compareFavorites([exact, outside], search, 'none', 'pt-BR');
+  assert.equal(clear.leaderId, exact.id);
+  assert.match(clear.verdict, new RegExp(exact.street));
+
+  const twin = exactMatches.find(home => home.id !== exact.id);
+  assert.ok(twin);
+  const tied = compareFavorites([exact, twin], search, 'none', 'pt-BR');
+  assert.equal(tied.leaderId, null);
+  assert.match(tied.verdict, /igualmente perto/);
+
+  const profile = profileFitReason(exact, search, 'open', 'pt-BR');
+  assert.match(profile, /espaço de trabalho na sala/);
+  assert.equal(/tem escritório|home office confirmado/i.test(profile), false);
 });

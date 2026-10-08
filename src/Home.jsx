@@ -2,8 +2,10 @@ import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react'
 import {FavoriteHeart} from './FavoriteHeart';
 import {createPortal} from 'react-dom';
 import {listingPrice,areaLabel, propertyPhoto, cardAgencyLogo, inspirationCollections} from './data';
+import {listingDetails} from './listingPresentation';
 import {Icon} from './App';
 import {HomeSearch} from './HomeSearch.jsx';
+import {NeighborhoodRail} from './NeighborhoodRail.jsx';
 import {canStartSearch} from './homeSearchModel.js';
 import {headerMenus, padMenuColumns} from './headerMenuData.js';
 import {useLanguage,roomCount,bathCount} from './i18n';
@@ -148,124 +150,55 @@ export function HomeHeader({onHome,onAction,inert=false,results=false}) {
   </header>;
 }
 
-export function SentenceChoice({label,value,options,onChange,compact=false}) {
-  const [open,setOpen]=useState(false);
-  const [activeIndex,setActiveIndex]=useState(0);
-  const trigger=useRef(null);
-  const menu=useRef(null);
-  const menuId=useId();
-  const selected=options.find(option=>option[0]===value)||options[0];
-  const ordered=[selected,...options.filter(option=>option[0]!==selected[0])];
-
-  function close(restoreFocus=false){
-    setOpen(false);
-    if(restoreFocus)trigger.current?.focus({preventScroll:true});
-  }
-  function choose(nextValue){
-    onChange(nextValue);
-    close(true);
-  }
-  function openMenu(index=0){
-    setActiveIndex(index);
-    setOpen(true);
-  }
-
-  useLayoutEffect(()=>{
-    if(!open||!menu.current)return;
-    const place=()=>{
-      const anchor=trigger.current?.getBoundingClientRect();
-      const panel=menu.current;
-      if(!anchor||!panel)return;
-      panel.style.maxWidth=`${window.innerWidth-32}px`;
-      panel.style.minWidth=`${Math.min(window.innerWidth-32,Math.ceil(anchor.width+48))}px`;
-      const width=panel.getBoundingClientRect().width;
-      const height=panel.scrollHeight;
-      let top=Math.max(16,anchor.top-10);
-      if(top+height>window.innerHeight-16&&anchor.bottom-height>=16)top=anchor.bottom-height+10;
-      top=Math.min(top,window.innerHeight-Math.min(200,window.innerHeight-32)-16);
-      const left=Math.max(16,Math.min(anchor.left-24,window.innerWidth-width-16));
-      panel.style.left=`${left}px`;
-      panel.style.top=`${top}px`;
-      panel.style.maxHeight=`${Math.max(120,window.innerHeight-top-16)}px`;
-      panel.style.visibility='visible';
-    };
-    place();
-    window.addEventListener('resize',place);
-    window.addEventListener('scroll',place,true);
-    return()=>{window.removeEventListener('resize',place);window.removeEventListener('scroll',place,true)};
-  },[open,value,options.length]);
-
-  useLayoutEffect(()=>{
-    if(!open||!menu.current)return;
-    const option=menu.current.querySelectorAll('[role="option"]')[activeIndex];
-    option?.focus({preventScroll:true});
-    if(option){
-      if(option.offsetTop<menu.current.scrollTop)menu.current.scrollTop=option.offsetTop;
-      else if(option.offsetTop+option.offsetHeight>menu.current.scrollTop+menu.current.clientHeight)menu.current.scrollTop=option.offsetTop+option.offsetHeight-menu.current.clientHeight;
-    }
-  },[open,activeIndex]);
-
-  useEffect(()=>{
-    if(!open)return;
-    const outside=event=>{
-      if(!trigger.current?.contains(event.target)&&!menu.current?.contains(event.target))setOpen(false);
-    };
-    document.addEventListener('pointerdown',outside);
-    document.addEventListener('focusin',outside);
-    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('focusin',outside)};
-  },[open]);
-
-  function onTriggerKeyDown(event){
-    if(event.key==='ArrowDown'||event.key==='ArrowUp'){
-      event.preventDefault();
-      openMenu(event.key==='ArrowDown'?Math.min(1,ordered.length-1):ordered.length-1);
-    }
-  }
-  function onOptionKeyDown(event){
-    if(event.key==='ArrowDown'||event.key==='ArrowUp'||event.key==='Home'||event.key==='End'){
-      event.preventDefault();
-      setActiveIndex(index=>event.key==='Home'?0:event.key==='End'?ordered.length-1:(index+(event.key==='ArrowDown'?1:-1)+ordered.length)%ordered.length);
-    }else if(event.key==='Escape'){
-      event.preventDefault();
-      close(true);
-    }else if(event.key==='Tab'){
-      event.preventDefault();
-      setOpen(false);
-      const controls=Array.from(document.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex="0"]')).filter(element=>!menu.current?.contains(element)&&element.getClientRects().length&&!element.closest('[inert]'));
-      const next=controls[controls.indexOf(trigger.current)+(event.shiftKey?-1:1)];
-      next?.focus();
-    }
-  }
-
-  return <span className={"sentence-choice"+(compact?" compact-choice":"")}>
-    <button ref={trigger} className="sentence-choice-trigger" type="button" aria-label={`${label}: ${selected[1]}`} aria-haspopup="listbox" aria-expanded={open} aria-controls={open?menuId:undefined} onClick={()=>{if(!open)openMenu()}} onKeyDown={onTriggerKeyDown}>
-      <span>{selected[1]}</span><span className="sentence-chevron" aria-hidden="true"><img src={asset('4e7a6.svg')} alt=""/></span>
-    </button>
-    {open&&createPortal(<div ref={menu} id={menuId} className={"sentence-choice-menu"+(compact?" compact-choice-menu":"")} role="listbox" aria-label={label} onKeyDown={onOptionKeyDown}>
-      {ordered.map(([optionValue,text],index)=><button type="button" role="option" key={optionValue} className="sentence-choice-option" aria-selected={optionValue===value} data-active={index===activeIndex} tabIndex={index===activeIndex?0:-1} onFocus={()=>setActiveIndex(index)} onClick={()=>choose(optionValue)}><span>{text}</span>{optionValue===value&&<span className="sentence-chevron" aria-hidden="true"><img src={asset('4e7a6.svg')} alt=""/></span>}</button>)}
-    </div>,document.body)}
-  </span>;
-}
-
 function ListingCopy({home:h}) {
   const {t,language,money,currency}=useLanguage();
   return <><span>{t(h.mode==='buy'?'Venta':'Renta')} · {t('Departamento')}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong><b>{h.street} · {h.area}</b><span>{t(areaLabel(h))} · {roomCount(h.beds,language)} · {bathCount(h.baths,language)}</span></>;
 }
 
-function RailListingCopy({home:h}) {
+function canPlayHoverVideo() {
+  return matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches;
+}
+
+function ListingPhotos({home}) {
+  const photos = listingDetails(home).gallery.slice(0, 8);
+  if (photos.length < 2) return <img src={photos[0] || propertyPhoto(home)} alt={home.imageAlt} loading="lazy"/>;
+  return <span className="discovery-slides">{photos.map((src, index) => <img className="discovery-slide" key={src} src={src} alt={index ? '' : home.imageAlt} loading="lazy"/>)}</span>;
+}
+
+function RailListingCopy({home:h, videoRef}) {
   const {t,language,money,currency}=useLanguage();
   return <>
-    <span className="discovery-media"><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/><span className="discovery-copy"><span className="discovery-kind"><span>{t(h.mode==='buy'?'Venta':'Renta')}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{t('Departamento')}</span></span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>
+    <span className={"discovery-media"+(h.video?" has-video":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true"/>}<span className="discovery-copy"><span className="discovery-kind"><span>{t(h.mode==='buy'?'Venta':'Renta')}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{t('Departamento')}</span></span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>
     <span className="discovery-meta"><span className="discovery-meta-copy"><b title={`${h.street} · ${h.area}`}>{h.street} · {h.area}</b><span className="discovery-facts"><span>{t(areaLabel(h))}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{roomCount(h.beds,language)}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{bathCount(h.baths,language)}</span></span></span><img className="discovery-agency-logo" src={cardAgencyLogo(h)} alt={h.brokerLogo?h.broker:''} loading="lazy"/></span>
   </>;
 }
 
+function listingChips(home) {
+  const chips = [];
+  if (home.video) chips.push('Tour virtual');
+  return chips;
+}
+
 export function HouseCard({home, saved, onLike, onOpen, contacted=false}) {
   const {t,language}=useLanguage();
+  const videoRef=useRef(null);
+  const chips=listingChips(home);
+  function playVideo(event) {
+    if (event?.pointerType==='touch' || !home.video || !canPlayHoverVideo()) return;
+    const el=videoRef.current;
+    if (!el || !el.paused) return;
+    el.play()?.catch(()=>{});
+  }
+  function stopVideo() {
+    const el=videoRef.current;
+    if (!el) return;
+    el.pause();
+    try { el.currentTime=0; } catch { /* The file can still be loading. */ }
+  }
   return <article className="discovery-item" data-listing-id={home.listingId}>
-    <div className="discovery-card">
-      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home}/></button>
-      <span className="discovery-tag">{home.area}</span>
+    <div className="discovery-card" onPointerEnter={playVideo} onPointerLeave={event=>{if (event.pointerType!=='touch') stopVideo();}} onFocus={playVideo} onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) stopVideo();}}>
+      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef}/></button>
+      {chips.length>0&&<span className="discovery-tags">{chips.map(chip=><span className="discovery-tag" key={chip}>{t(chip)}</span>)}</span>}
       <button className={'discovery-like '+(saved?'is-liked':'')} aria-label={t(saved?'Quitar de favoritos ':'Me gusta ')+home.street} aria-pressed={saved} onClick={()=>onLike(home)}>
         <FavoriteHeart/>
       </button>
@@ -398,7 +331,14 @@ export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],
     </div>
     </div>
     <div className="home-discovery-reveal" inert={stage<3}>
-      {collections.map((collection,i)=><InspirationRail key={search.mode+collection.id} {...collection} compact={i>0} {...common}/>)}
+      {collections.map((collection,i)=><React.Fragment key={search.mode+collection.id}>
+        <InspirationRail {...collection} compact={i>0} {...common}/>
+        {i===1&&<NeighborhoodRail
+          mode={search.mode}
+          onModeChange={(mode,budget)=>setSearch(current=>({...current,mode,budget,minBudget:0}))}
+          onSelect={(area,mode)=>{onIntroDone();onChoose('template');onSearch({...search,mode,propertyType:'apartment',criteria:[],minBudget:0,budget:mode==='rent'?28000:7500000,area,areas:[area],address:'',fromIdea:false});}}
+        />}
+      </React.Fragment>)}
     </div>
   </div>;
 }

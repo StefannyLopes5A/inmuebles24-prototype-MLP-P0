@@ -48,6 +48,7 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 .flow-results-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:0 var(--home-page-gutter);margin-bottom:48px}
 .flow-results-heading h1{display:flex;align-items:center;gap:12px;font-size:24px;line-height:34px;font-weight:590;letter-spacing:-.22px;margin:0;color:#000}
 .flow-results-heading .results-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:99px;color:#fff;background:#000;font-size:14px;line-height:20px;font-weight:700;padding:4px 6px}
+.compare-favorites-link{min-height:44px;padding:0 4px;font-size:14px;font-weight:590;color:#b43c00;text-decoration:underline;text-underline-offset:3px;flex:none}
 
 .flow-current-state{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:-24px var(--home-page-gutter) 24px;font-size:13px;color:#666}.flow-current-state button{display:inline-flex;align-items:center;gap:8px;min-height:32px}
 .flow-results-workspace{display:flex;align-items:flex-start;gap:0}.flow-listings{flex:1;min-width:0}.flow-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:48px 16px;margin:0;padding-inline:var(--home-page-gutter)}
@@ -67,6 +68,17 @@ body:has(.search-flow-page) .home-popover-area{width:445px}
 .mora-bar[data-view=qualify] .mora-conversation{min-height:289px}
 
 body[data-home-motion=holofote] .search-flow-page .flow-grid .discovery-item{width:100%;flex-basis:auto}
+
+/* Neighborhood rail on results: same column width/gap as .flow-grid; 48px breathing room. */
+.search-flow-page .neighborhood-section{padding:48px 0}
+.search-flow-page .neighborhood-rail{gap:16px;padding-top:8px;padding-bottom:8px;margin-top:0;margin-bottom:0}
+.search-flow-page .neighborhood-item{width:calc((100% - 48px)/4);flex:0 0 calc((100% - 48px)/4);max-width:calc((100% - 48px)/4)}
+body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-section{padding:48px 0}
+body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-rail{gap:16px;padding-block:8px;margin-block:0}
+body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-item{width:calc((100% - 48px)/4);flex:0 0 calc((100% - 48px)/4);max-width:calc((100% - 48px)/4)}
+@media(max-width:1200px){.search-flow-page .neighborhood-item,body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-item{width:calc((100% - 32px)/3);flex-basis:calc((100% - 32px)/3);max-width:calc((100% - 32px)/3)}}
+@media(max-width:950px){.search-flow-page .neighborhood-item,body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-item{width:calc((100% - 16px)/2);flex-basis:calc((100% - 16px)/2);max-width:calc((100% - 16px)/2)}}
+@media(max-width:700px){.search-flow-page .neighborhood-item,body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-item{width:100%;flex-basis:100%;max-width:100%}}
 @media(max-width:700px){.mora-editor .home-detail-row{flex-direction:row;align-items:center}.mora-editor .home-details{flex:1;min-width:0;width:auto}}
 
 @media(max-width:700px){.mora-editor .home-details-editor[data-empty=true]::before{content:attr(data-mobile-placeholder)}}

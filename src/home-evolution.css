@@ -69,6 +69,11 @@
 .home-popover-variant-propertyType{width:497px}
 .home-popover-variant-mode{width:445px}
 .home-popover-variant-furnishing{min-width:320px}
+.home-popover-variant-neighborhoodMode,.home-popover-variant-neighborhoodCity{width:max-content;min-width:220px;font-size:22px;line-height:1.15;border-radius:18px}
+.home-popover-variant-neighborhoodMode>.home-option,.home-popover-variant-neighborhoodCity>.home-option{min-height:52px;padding:12px 20px}
+.home-popover-variant-neighborhoodMode>.home-option:first-child,.home-popover-variant-neighborhoodCity>.home-option:first-child{padding-top:20px;min-height:64px}
+.home-popover-variant-neighborhoodMode>.home-option:last-child,.home-popover-variant-neighborhoodCity>.home-option:last-child{padding-bottom:20px;min-height:64px}
+@media(max-width:700px){.home-popover-variant-neighborhoodMode,.home-popover-variant-neighborhoodCity{font-size:20px;border-radius:16px}.home-popover-variant-neighborhoodMode>.home-option,.home-popover-variant-neighborhoodCity>.home-option{min-height:48px;padding:12px 18px}}
 .home-option{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:80px;padding:16px 24px;text-align:left;font:inherit;color:#111;white-space:normal}
 .home-option[aria-selected=true]{color:#f50}
 .home-option:focus-visible{outline:none;background:#fff1ea;color:#f50}
@@ -130,6 +135,7 @@ body[data-home-motion=holofote] .home-evolution .discovery-heading h2{font-size:
 body[data-home-motion=holofote] .home-evolution .discovery-heading p{margin:0;font-size:16px;line-height:1.4}
 body[data-home-motion=holofote] .home-evolution .discovery-rail{gap:24px}
 body[data-home-motion=holofote] .home-evolution .discovery-item{width:318px;flex-basis:318px}
+body[data-home-motion=holofote] .discovery-home.home-evolution .neighborhood-item{width:318px;flex-basis:318px}
 .home-evolution[data-intro-stage='0'] .home-ideas-reveal,.home-evolution[data-intro-stage='0'] .home-discovery-reveal,.home-evolution[data-intro-stage='1'] .home-discovery-reveal,.home-evolution[data-intro-stage='2'] .home-discovery-reveal{visibility:hidden}
 .home-evolution[data-intro-stage='1'] .idea-rail{visibility:hidden}
 .home-evolution[data-intro-animate=true]:not([data-intro-stage='0']) .idea-section h2{animation:home-heading-enter 500ms var(--home-motion) both}
@@ -167,5 +173,5 @@ body[data-home-motion=holofote] .home-evolution .discovery-item{width:318px;flex
 .home-evolution[data-intro-animate=true][data-intro-stage="3"] .home-discovery-reveal>.discovery-section:nth-child(3){animation-delay:160ms}
 .home-evolution[data-intro-animate=true][data-intro-stage="3"] .home-discovery-reveal>.discovery-section:nth-child(n+4){animation-delay:240ms}
 .v2-catalog-note{margin:16px var(--home-page-gutter);font-size:14px;line-height:1.5;color:#555}
-@media(max-width:700px){body[data-home-motion=holofote] .home-evolution .home-discovery-reveal{gap:48px;padding-block:32px 48px}body[data-home-motion=holofote] .home-evolution .discovery-item{width:280px;flex-basis:280px}.price-histogram-bars{gap:1px}}
+@media(max-width:700px){body[data-home-motion=holofote] .home-evolution .home-discovery-reveal{gap:48px;padding-block:32px 48px}body[data-home-motion=holofote] .home-evolution .discovery-item,body[data-home-motion=holofote] .discovery-home.home-evolution .neighborhood-item{width:280px;flex-basis:280px}.price-histogram-bars{gap:1px}}
 @media(forced-colors:active){.price-histogram-bar{background:GrayText}.price-histogram-bar.in-range{background:Highlight}.price-range-handle[data-keyboard-focus=true]:focus-visible{outline-color:Highlight}}

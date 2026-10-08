@@ -1,6 +1,7 @@
 import {homes, listingPrice} from './data.js';
 import {normalizeCriteria, matchesCriteria, criteriaFromText} from './searchCriteria.js';
 import {PROPERTY_TYPES, OPERATIONS} from './homeSearchModel.js';
+import {isFolderId} from './favoriteLists.js';
 
 const ALL_AREAS = 'Ambas zonas';
 const knownAreas = new Set(homes.map(home => home.area));
@@ -140,6 +141,7 @@ export function readJourney(locationLike = {}) {
   const url = asUrl(locationLike);
   const params = url.searchParams;
   const page = params.get('view') === 'compare' ? 'compare'
+    : params.get('view') === 'favorites' ? 'favorites'
     : params.get('view') === 'listing' ? 'listing'
     : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results'
     : 'home';
@@ -156,13 +158,15 @@ export function readJourney(locationLike = {}) {
   const requestedId = params.get('property');
   const propertyId = knownProperties.has(requestedId)
     && (page !== 'results' || prototypeResults(search).some(home => home.id === requestedId)) ? requestedId : null;
-  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId};
+  const listId = page === 'compare' && isFolderId(params.get('list')) ? params.get('list') : null;
+  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {})};
 }
 
-/** Shareable URLs contain criteria only; never contact identity, recipient drafts, receipts or saved ids. */
-export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null} = {}) {
+/** Shareable URLs contain criteria and a folder id at most; never contact identity, receipts or saved listing ids. */
+export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'compare' ? 'compare'
+    : page === 'favorites' ? 'favorites'
     : page === 'listing' && knownProperties.has(propertyId) ? 'listing'
     : page === 'results' || page === 'listing' ? 'results'
     : 'home';
@@ -180,6 +184,7 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
   const canonicalPref = canonicalPreference(pref);
   if (canonicalPref !== 'none') params.set('pref', canonicalPref);
   if (knownProperties.has(propertyId) && (page !== 'results' || prototypeResults(current).some(home => home.id === propertyId))) params.set('property', propertyId);
+  if (page === 'compare' && isFolderId(listId)) params.set('list', listId);
   return `/?${params}`;
 }
 

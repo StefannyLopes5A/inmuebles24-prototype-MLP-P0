@@ -1,4 +1,5 @@
 import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
+import {AccountMenu} from './Account';
 import {FavoriteHeart} from './FavoriteHeart';
 import {createPortal} from 'react-dom';
 import {listingPrice,areaLabel, propertyPhoto, cardAgencyLogo, inspirationCollections} from './data';
@@ -13,7 +14,7 @@ import {installHomeMotion,playIdeaPreview} from './homeMotion.js';
 
 const asset = name => `/assets/figma-home/${name}`;
 
-export function HomeHeader({onHome,onAction,inert=false,results=false}) {
+export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,inert=false,results=false}) {
   const [currencyInfo,setCurrencyInfo]=useState(false);
   const [openMenu,setOpenMenu]=useState(null);
   const [headerHidden,setHeaderHidden]=useState(false);
@@ -131,7 +132,9 @@ export function HomeHeader({onHome,onAction,inert=false,results=false}) {
         </div>
         <div className="figma-header-actions" onMouseEnter={closeFromHover}>
           <div className="header-currency" ref={currencyControl}><button type="button" aria-expanded={currencyInfo} aria-label={`${t('Moneda de visualización')}: ${currency}`} onClick={()=>setCurrencyInfo(!currencyInfo)}>${currency}<img src="/assets/figma-results/currency-chevron.svg" alt=""/></button>{currencyInfo&&<div className="currency-info"><strong>{t('Moneda de visualización')}</strong><div className="currency-options" role="group" aria-label={t('Moneda de visualización')}><button type="button" aria-pressed={currency==='USD'} onClick={()=>{setCurrency('USD');setCurrencyInfo(false)}}>{t('Dólar estadounidense (USD)')}</button><button type="button" aria-pressed={currency==='MXN'} onClick={()=>{setCurrency('MXN');setCurrencyInfo(false)}}>{t('Peso mexicano (MXN)')}</button></div>{currency==='USD'&&<p>{t('Conversión ilustrativa: 1 USD = 20 MXN. Confirma el precio en el anuncio original.')}</p>}</div>}</div>
-          <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onAction?.('login');}}>{t('Entrar')}</a>
+          {signedIn
+            ? <AccountMenu onSelect={action=>onAccount?.(action)}/>
+            : <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onLogin?.();}}>{t('Entrar')}</a>}
         </div>
       </nav>
     </div>

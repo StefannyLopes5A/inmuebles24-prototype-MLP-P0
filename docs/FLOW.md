@@ -32,7 +32,9 @@ Percurso implementado em **05/10/2026**. O objetivo é verificar se alguém cons
 | Prévia por foto, foco ou toque | Abre o imóvel correspondente e conserva sua identidade. |
 | Fechar, clicar fora ou Escape | Recolhe a superfície e preserva os critérios; devolve a exploração. |
 | Favoritar e trocar idioma/moeda | Mantém o imóvel e a busca; o coração muda de cor. USD continua demonstrativo. |
-| Comparar favoritos | Com 2+ salvos, o aviso de guardado e o atalho nos resultados abrem `view=compare`. Confira veredito, colunas só com diferenças, estados de 0/1 salvo, remover na página e “Ver imóvel”. Recarregar preserva a rota; ids salvos não entram na URL. |
+| Listas de favoritos | O coração vazio abre o modal de listas; o preenchido desfavorita direto, sem modal (sem listas, vai direto a “Criar lista”, com nome pré-preenchido e contador de 50). Criar ou escolher mostra “Salvo em {lista}” com **Ver pasta** e **Alterar**. O card favoritado não muda de posição. Escape, clique fora e foco devem funcionar; no mobile o modal vira folha inferior. |
+| Convite e conta simulada | No terceiro favorito sem conta, a lista encolhe e dá lugar ao convite com as três fotos em leque (uma vez por sessão). **Ignorar** mostra “Salvo em {lista}”; **Fazer login** fecha tudo e abre o login simulado — qualquer botão entra. O header troca “Entrar” pelo avatar; o menu abre com clique ou seta, navega com setas, fecha com Escape ou clique fora e devolve o foco ao avatar. **Sair da conta** volta a “Entrar”. |
+| Grade e interior de lista | “Ver favoritos” nos resultados abre `view=favorites`: “Vistos recentemente” (imóveis abertos) e as listas. Uma lista abre `view=compare&list={id}` com título da lista, leitura da Mora, “Falar com imobiliária” e falar com todas; voltar leva à grade. Recarregar preserva a rota; ids de anúncio não entram na URL. |
 | Armazenamento bloqueado | Permite ensaiar contato em memória; reutilização futura pode não persistir. |
 
 Em desktop de 1512 × 982, confira as duas colunas do mini-listing. Em 390 px e 320 px, percorra resumo, pergunta, formulário e sucesso: o conteúdo rola dentro da barra, fechar permanece alcançável e os campos de contato usam 16 px. Teste Tab, Shift+Tab e Escape, além de movimento reduzido. Essas verificações no navegador não equivalem a teste em aparelho físico.
@@ -43,4 +45,4 @@ O roteiro é desktop, sem áudio, narração, legendas ou elementos de apresenta
 
 ## Estado da entrega
 
-O percurso está implementado e a revisão visual final liberou a entrega após a correção da ordem de conteúdo da interna no mobile. As capturas e os limites estão em [DESIGN-HANDOFF.md](DESIGN-HANDOFF.md#evidências-e-limites). Para a verificação automatizada, execute `npm run check`: 57 testes V2, 4 testes Sites e build. Safari nativo, aparelhos físicos e eficácia do conceito com usuários ainda não foram validados.
+O percurso está implementado e a revisão visual final liberou a entrega após a correção da ordem de conteúdo da interna no mobile. As capturas e os limites estão em [DESIGN-HANDOFF.md](DESIGN-HANDOFF.md#evidências-e-limites). Para a verificação automatizada, execute `npm run check`: 69 testes V2, 4 testes Sites e build. Safari nativo, aparelhos físicos e eficácia do conceito com usuários ainda não foram validados.

@@ -61,6 +61,28 @@ test("does not turn missing API or write requests into the app shell", async () 
   }
 });
 
+test("forwards byte ranges for the local map tiles untouched", async () => {
+  const ranges = [];
+  const response = await worker.fetch(
+    new Request("https://example.test/assets/map/cdmx.pmtiles", { headers: { range: "bytes=0-16383" } }),
+    {
+      ASSETS: {
+        fetch: async (request) => {
+          ranges.push(request.headers.get("range"));
+          return new Response(new Uint8Array(16384), {
+            status: 206,
+            headers: { "content-range": "bytes 0-16383/22000000" },
+          });
+        },
+      },
+    },
+  );
+
+  assert.equal(response.status, 206);
+  assert.equal(response.headers.get("content-range"), "bytes 0-16383/22000000");
+  assert.deepEqual(ranges, ["bytes=0-16383"]);
+});
+
 test("emits the files required by Sites packaging", async () => {
   await access(new URL("../dist/client/index.html", import.meta.url));
   await access(new URL("../dist/server/index.js", import.meta.url));

@@ -159,11 +159,15 @@ export function readJourney(locationLike = {}) {
   const propertyId = knownProperties.has(requestedId)
     && (page !== 'results' || prototypeResults(search).some(home => home.id === requestedId)) ? requestedId : null;
   const listId = page === 'compare' && isFolderId(params.get('list')) ? params.get('list') : null;
-  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {})};
+  const map = (page === 'results' || page === 'listing') ? canonicalMapMode(params.get('map')) : 'mini';
+  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {}), ...(map !== 'mini' ? {map} : {})};
 }
 
+export const MAP_MODES = Object.freeze(['mini', 'half', 'full']);
+export const canonicalMapMode = value => MAP_MODES.includes(value) ? value : 'mini';
+
 /** Shareable URLs contain criteria and a folder id at most; never contact identity, receipts or saved listing ids. */
-export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null} = {}) {
+export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini'} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'compare' ? 'compare'
     : page === 'favorites' ? 'favorites'
@@ -185,6 +189,8 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
   if (canonicalPref !== 'none') params.set('pref', canonicalPref);
   if (knownProperties.has(propertyId) && (page !== 'results' || prototypeResults(current).some(home => home.id === propertyId))) params.set('property', propertyId);
   if (page === 'compare' && isFolderId(listId)) params.set('list', listId);
+  const mapMode = canonicalMapMode(map);
+  if ((view === 'results' || view === 'listing') && mapMode !== 'mini') params.set('map', mapMode);
   return `/?${params}`;
 }
 

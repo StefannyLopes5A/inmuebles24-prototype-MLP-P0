@@ -147,3 +147,19 @@ test('URL serialization ignores contact identity and normalizes duplicate areas'
   assert.doesNotMatch(url, /private|example|phone|profile|551234/);
   assert.deepEqual(readJourney(url).search.areas, ['Narvarte Poniente']);
 });
+
+test('map mode survives results and listing routes but stays out of other views', () => {
+  const at = url => readJourney(new URL(url, 'https://example.test'));
+  const property = prototypeResults(DEFAULT_SEARCH)[0].id;
+  for (const map of ['half', 'full']) {
+    const results = journeyUrl({page:'results', search:DEFAULT_SEARCH, map});
+    assert.equal(new URL(results, 'https://example.test').searchParams.get('map'), map);
+    assert.equal(at(results).map, map);
+    assert.equal(at(journeyUrl({page:'listing', search:DEFAULT_SEARCH, propertyId:property, map})).map, map);
+  }
+  assert.equal(at(journeyUrl({page:'results', search:DEFAULT_SEARCH, map:'mini'})).map, undefined);
+  assert.doesNotMatch(journeyUrl({page:'results', search:DEFAULT_SEARCH, map:'mini'}), /map=/);
+  assert.doesNotMatch(journeyUrl({page:'favorites', search:DEFAULT_SEARCH, map:'full'}), /map=/);
+  assert.equal(at('/?view=favorites&map=full').map, undefined);
+  assert.equal(at('/?view=results&map=giant').map, undefined);
+});

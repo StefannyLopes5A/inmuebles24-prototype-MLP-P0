@@ -16,12 +16,16 @@ Aplicação cliente em React 19.2.0 e Vite 6.4.2, sem backend de negócio. Reque
 | `src/listingPresentation.js`, `src/listing-details.json` | Apresentação baseada no anúncio, fotos e atributos adicionais confirmados. |
 | `src/i18n.jsx`, `src/data.js`, `src/real-listings.json` | Idioma, moeda e snapshot do catálogo. |
 | `src/homeIntro.js`, `src/homeMotion.js`, `src/searchFlowMotion.js` | Holofote, interações dos cards, expansão da barra e Onda. |
+| `src/SearchMap.jsx`, `src/searchMapMotion.js` | Mapa dos resultados (`mini`, `half`, `full`), pins, card de prévia e morph por `clip-path`. Carregado com `React.lazy`. |
+| `src/mapStyle.js`, `src/mapLocations.js`, `public/assets/map/` | Estilo MapLibre sobre Protomaps, centroides das colônias, preço compacto e tiles/fontes locais ([proveniência](../public/assets/map/MAP-SOURCES.md)). |
 
-Os CSS entram somente por `main.jsx`. A ordem termina em `home-evolution.css` → `home-motion.css` → `search-flow.css` → `search-transition.css` → `mini-listing.css` → `mobile-polish.css`. Há camadas históricas anteriores; confira a cascata antes de adicionar regras. Ajustes de mobile pertencem às media queries, preservando o desktop.
+Os CSS entram somente por `main.jsx`. A ordem termina em `home-evolution.css` → `home-motion.css` → `search-flow.css` → `search-transition.css` → `mini-listing.css` → `search-map.css` → `mobile-polish.css`. O CSS do MapLibre chega depois, no chunk do mapa; por isso as regras de `search-map.css` que disputam com `.maplibregl-*` usam o seletor `.map-shell`. Há camadas históricas anteriores; confira a cascata antes de adicionar regras. Ajustes de mobile pertencem às media queries, preservando o desktop.
 
 ## Estado e rotas
 
 `App` lê `readJourney()` no carregamento e em `popstate`. `journeyUrl()` produz URLs com `view=home|results|listing|favorites|compare`, critérios, preferência, `property` e, no interior de uma lista, `list` (só o id da lista, nunca ids de anúncio). As listas de favoritos vivem em `src/favoriteLists.js` (lógica pura) e `src/FavoriteFolders.jsx` (modal, aviso e grade, animados com `motion/react`); um id de lista que não existe na sessão abre a grade. Essa rota é suficiente para reabrir a mesma busca ou página interna. O histórico guarda posição de rolagem e camada de navegação; abrir/fechar o mini-listing e entrar/voltar da interna preserva o anúncio de origem.
+
+O estado do mapa vai em `map=half|full` apenas em `results` e `listing`; `mini` é o padrão e não aparece na URL. Entrar na tela cheia cria uma entrada de histórico (camada `map`), então voltar fecha o mapa; flutuante ↔ metade usa `replaceState`. Abaixo de 951 px, `half` é exibido como `mini`. O mapa usa MapLibre GL 6 com o protocolo `pmtiles://` sobre um arquivo local lido por requisições `Range`. O worker do MapLibre é registrado com `setWorkerUrl` a partir de um import `?url`, e `maplibre-gl` fica fora do `optimizeDeps` do Vite; sem isso o mapa fica em branco em desenvolvimento.
 
 Nome, e-mail, telefone, mensagens de contato, destinatários e recibos não são serializados pela URL. O texto livre de busca (`note`) faz parte dos critérios compartilháveis; mantenha dados pessoais fora desse campo.
 
@@ -80,8 +84,8 @@ O snapshot tem 100 anúncios, com IDs, preço MXN, endereço e foto corresponden
 
 ## Build, CI e hospedagem
 
-`npm run check` gera o build primeiro e então executa 69 testes V2 e 4 testes Sites. A ordem permite validar o pacote de hospedagem também em um clone novo. Os testes usam o runner nativo `node --test`; não há banco de dados ou credenciais para preparar. Eles cobrem lógica, normalização, armazenamento, mensagens, identidade e worker. Conferência de layout, toque, teclado e movimentos segue [FLOW.md](FLOW.md).
+`npm run check` gera o build primeiro e então executa os testes V2 e os testes Sites. A ordem permite validar o pacote de hospedagem também em um clone novo. Os testes usam o runner nativo `node --test`; não há banco de dados ou credenciais para preparar. Eles cobrem lógica, normalização, armazenamento, mensagens, identidade e worker. Conferência de layout, toque, teclado e movimentos segue [FLOW.md](FLOW.md).
 
-Vite gera `dist/client/`. `scripts/prepare-sites-build.mjs` copia o worker para `dist/server/index.js` e a configuração para `dist/.openai/hosting.json`. O worker serve `env.ASSETS`; em uma rota HTML desconhecida de GET/HEAD, devolve o `index.html` para a aplicação resolver a URL. Ele não recebe contatos nem executa IA.
+Vite gera `dist/client/`. `scripts/prepare-sites-build.mjs` copia o worker para `dist/server/index.js` e a configuração para `dist/.openai/hosting.json`. O worker serve `env.ASSETS`; em uma rota HTML desconhecida de GET/HEAD, devolve o `index.html` para a aplicação resolver a URL. Requisições com `Range` (tiles do mapa) passam sem alteração e o 206 volta intacto. Cada arquivo estático precisa ficar abaixo de 25 MiB; o recorte `cdmx.pmtiles` tem cerca de 22,7 MB. Ele não recebe contatos nem executa IA.
 
 O handoff do GitHub usa `.openai/hosting.json` genérico, sem `project_id`, e não contém destino privado de publicação ou credenciais. `.github/workflows/verify.yml` roda `npm ci` e `npm run check` em pushes para `main` e pull requests, com permissão de leitura. Não faz deploy. A V2 já publicada mantém seu acesso restrito separadamente; clonar o repositório não altera essa audiência.

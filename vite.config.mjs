@@ -7,6 +7,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ["react", "react-dom/client"],
+    exclude: ["maplibre-gl"],
   },
   server: {
     host: "0.0.0.0",

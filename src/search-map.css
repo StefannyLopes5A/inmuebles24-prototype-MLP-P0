@@ -1,0 +1,85 @@
+/* Search map: floating mini (Figma 717:16218), half screen and full screen. Geometry comes from SearchMap.jsx. */
+.map-shell{--map-ease-out:cubic-bezier(0.23,1,0.32,1);position:fixed;z-index:45;overflow:hidden;border-radius:24px;background:#f5f4f0;box-shadow:0 8px 24px #00000024,0 0 0 1px #0000000f;transform-origin:100% 100%;font-family:'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#222}
+.map-shell[data-mode=full]{z-index:55}
+.map-backdrop{position:fixed;inset:0;z-index:54;background:#fff;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 150ms ease-out,visibility 0s 150ms}
+.map-backdrop[data-active=true]{opacity:1;visibility:visible;transition:opacity 200ms ease-out,visibility 0s}
+.map-shell[data-entered=false]{visibility:hidden;opacity:0}
+.map-shell[data-entered=true]{animation:map-float-in 220ms var(--map-ease-out) both}
+.map-shell[data-hidden=true]{visibility:hidden;opacity:0;pointer-events:none}
+@keyframes map-float-in{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.map-safe-probe{position:absolute;width:0;height:0;padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none}
+.map-shell .map-canvas{position:absolute;inset:0}
+.map-canvas .maplibregl-canvas{transition:filter 200ms ease}
+.map-shell[data-mode=mini] .maplibregl-canvas{filter:saturate(0)}
+.map-shell .maplibregl-ctrl-attrib{font-size:10px;line-height:14px}
+.map-shell .maplibregl-ctrl-bottom-left{z-index:1;transition:opacity 150ms ease}
+.map-shell[data-mode=mini] .maplibregl-ctrl-bottom-left{opacity:0;visibility:hidden}
+
+/* Mini */
+.map-mini-trigger{position:absolute;inset:0;z-index:3;display:block;width:100%;height:100%;padding:0;border:0;border-radius:inherit;background:transparent;text-align:left;color:#fff;cursor:pointer;opacity:1;visibility:visible;transition:opacity 120ms var(--map-ease-out),visibility 0s}
+.map-mini-trigger:active{transform:none}
+.map-mini-trigger:focus-visible{outline:3px solid #242b29;outline-offset:-3px}
+.map-mini-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0000006b 0%,#00000014 48%,#0000 70%)}
+.map-mini-title{position:absolute;top:16px;left:16px;right:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:16px;line-height:22px;font-weight:600;letter-spacing:-.01em;text-shadow:0 1px 2px #0000003d}
+.map-mini-expand{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#fff;color:#111;box-shadow:0 2px 8px #0000001f;transition:transform 160ms var(--map-ease-out)}
+@media(hover:hover) and (pointer:fine){.map-mini-trigger:hover .map-mini-expand{transform:scale(1.06)}}
+.map-shell:not([data-mode=mini]) .map-mini-trigger{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 120ms var(--map-ease-out),visibility 0s 120ms}
+
+/* Half / full controls */
+.map-controls{position:absolute;inset:16px;z-index:2;pointer-events:none;opacity:0;visibility:hidden;transition:opacity 120ms var(--map-ease-out),visibility 0s 120ms}
+.map-shell:not([data-mode=mini]) .map-controls{opacity:1;visibility:visible;transition:opacity 160ms var(--map-ease-out) 200ms,visibility 0s 200ms}
+.map-controls-end{position:absolute;top:0;right:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.map-control,.map-zoom{pointer-events:auto;box-shadow:0 2px 6px #00000026,0 0 0 1px #0000000d}
+.map-control{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:#fff;color:#222}
+.map-control svg{width:20px;height:20px}
+.map-zoom{display:flex;flex-direction:column;overflow:hidden;border-radius:20px;background:#fff}
+.map-zoom button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;background:#fff;color:#222}
+.map-zoom button+button{border-top:1px solid #0000001a}
+.map-shell[data-mode=half] [data-only=full],.map-shell[data-mode=full] [data-only=half]{display:none}
+@media(hover:hover) and (pointer:fine){.map-control:hover,.map-zoom button:hover{background:#f7f7f7}}
+
+/* Price pins */
+.map-pin-host{z-index:1}
+.map-pin{display:flex;align-items:center;height:28px;padding:0 10px;border:0;border-radius:999px;background:#fff;color:#222;font:600 14px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 4px #0000002e,0 0 0 1px #00000014;cursor:pointer;transition:background-color 150ms ease,color 150ms ease,transform 150ms ease}
+.map-pin:active{transform:scale(.96)}
+.map-pin[data-state=seen]{background:#ebebeb}
+.map-pin[data-state=hovered],.map-pin[data-state=selected]{background:#222;color:#fff}
+.map-pin[data-state=hovered]{transform:scale(1.06)}
+@media(hover:hover) and (pointer:fine){.map-pin:hover{transform:scale(1.04)}}
+.map-pin:focus-visible{outline:3px solid #242b29;outline-offset:2px}
+.map-shell[data-mode=mini] .map-pin-host{visibility:hidden}
+.map-shell:not([data-mode=mini]) .map-pin{animation:map-pin-in 180ms var(--map-ease-out) backwards;animation-delay:calc(var(--pin-order,0) * 20ms + 160ms)}
+@keyframes map-pin-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+
+/* Listing card */
+.map-card-host{z-index:10;pointer-events:none}
+.map-card{--map-card-pad:12px;position:relative;width:296px;padding:var(--map-card-pad) var(--map-card-pad) 10px;border-radius:24px;background:#fff;color:#111;box-shadow:0 8px 28px #00000038,0 0 0 1px #0000000d;pointer-events:auto;transform-origin:50% 100%}
+.map-card .discovery-item{width:100%;flex:none;min-width:0}
+.map-card .discovery-media{clip-path:inset(0 round 16px)}
+.map-card .discovery-meta{padding-top:12px}
+.map-card .discovery-like{right:52px}
+.map-card-note{margin:8px 0 0;font-size:11px;line-height:1.4;color:#0000008a}
+.map-card-close{position:absolute;top:calc(var(--map-card-pad) + 11px);right:calc(var(--map-card-pad) + 8px);z-index:3;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:#fff;filter:drop-shadow(0 1px 2px #00000066)}
+.map-card-close:active{transform:none}
+.map-card.is-compact{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:4;width:min(280px,calc(100% - 32px));margin-left:calc(min(280px,calc(100% - 32px)) / -2)}
+
+/* Results layout while the map takes the right half */
+.flow-results-workspace{transition:opacity 120ms cubic-bezier(0.23,1,0.32,1)}
+.flow-results-workspace.is-map-reflow{opacity:0}
+@media(min-width:951px){
+  .flow-results-content[data-map-layout=half]{padding-right:calc(clamp(360px,42vw,760px) + 24px)}
+  .flow-results-content[data-map-layout=half] .flow-results-heading{padding-right:24px}
+  .flow-results-content[data-map-layout=half] .flow-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding-right:24px}
+  html[data-map-mode=half] .site-footer{margin-right:calc(clamp(360px,42vw,760px) + 48px)}
+}
+@media(min-width:951px) and (max-width:1200px){.flow-results-content[data-map-layout=half] .flow-grid{grid-template-columns:minmax(0,1fr)}}
+html[data-map-mode=full]{overflow:hidden}
+
+@media(prefers-reduced-motion:reduce){
+  .map-shell[data-entered=true]{animation:map-fade-in 150ms ease both}
+  .map-pin,.map-shell:not([data-mode=mini]) .map-pin{animation:none;transition:background-color 150ms ease,color 150ms ease}
+  .map-pin[data-state=hovered]{transform:none}
+  .map-mini-trigger,.map-controls,.map-shell:not([data-mode=mini]) .map-mini-trigger,.map-shell:not([data-mode=mini]) .map-controls{transition:opacity 150ms ease,visibility 0s}
+  .map-canvas .maplibregl-canvas,.map-mini-expand,.flow-results-workspace{transition:none}
+}
+@keyframes map-fade-in{from{opacity:0}to{opacity:1}}

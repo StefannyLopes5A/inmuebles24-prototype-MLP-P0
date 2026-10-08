@@ -15,6 +15,7 @@ import "./home-motion.css";
 import "./search-flow.css";
 import "./search-transition.css";
 import "./mini-listing.css";
+import "./search-map.css";
 import "./compare-favorites.css";
 import "./favorite-folders.css";
 import "./account.css";

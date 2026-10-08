@@ -103,7 +103,7 @@ function HomePopoverSurface({open, animate, anchor, label, kind='list', variant=
   }}>{children}</div>, document.body);
 }
 
-function HomeChevron({reveal=false}) {
+export function HomeChevron({reveal=false}) {
   return <span className={`home-chevron${reveal ? ' home-soft-word' : ''}`} aria-hidden="true"><svg width="32" height="40" viewBox="0 0 32 40" fill="none" stroke="#f50" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><path className="home-chevron-left" d="M12 15.7 20 23.7"/><path className="home-chevron-right" d="M20 23.7 28 15.7"/></svg></span>;
 }
 

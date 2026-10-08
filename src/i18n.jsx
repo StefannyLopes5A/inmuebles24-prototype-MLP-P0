@@ -178,6 +178,15 @@ const portuguese = {
   'Todavía hay más por descubrir':'Ainda há mais para descobrir',
   'Sigue explorando. Tu próximo lugar puede sorprenderte.':'Continue explorando. Seu próximo lugar pode surpreender você.',
   'Quiero seguir descubriendo qué me gusta':'Quero continuar descobrindo do que gosto',
+  'Barrios recomendados para':'Bairros recomendados para',
+  'departamentos en':'apartamentos em',
+  'Ciudad':'Cidade',
+  '{count} departamentos para comprar':'{count} apartamentos para comprar',
+  '{count} departamentos para rentar':'{count} apartamentos para alugar',
+  '{count} departamentos en desarrollos':'{count} apartamentos em desenvolvimentos',
+  '{count} departamentos en remate':'{count} apartamentos em liquidação',
+  'Valor promedio':'Valor médio',
+  'Explorar barrios en ':'Explorar bairros em ',
   'Departamento de 1 recámara':'Apartamento de 1 quarto',
   'Departamento amplio de 3 recámaras':'Apartamento amplo de 3 quartos',
   'Departamento de 2 recámaras':'Apartamento de 2 quartos',
@@ -377,6 +386,8 @@ const portuguese = {
   'Continuar aquí':'Continuar aqui',
   'Se quitó de tus favoritos.':'Removido dos favoritos.',
   'Guardado. Lo tendremos en cuenta al ordenar tu búsqueda.':'Salvo. Vamos considerar isso ao ordenar sua busca.',
+  'Comparar favoritos':'Comparar favoritos',
+  'Comparar ${count} favoritos':'Comparar ${count} favoritos',
   'Dejaremos de mostrar este inmueble. Puedes deshacerlo.':'Vamos deixar de mostrar este imóvel. Você pode desfazer.',
   'Volvimos a mostrar todos los inmuebles.':'Voltamos a mostrar todos os imóveis.',
   'Quitado de tus guardados.':'Removido dos salvos.',
@@ -456,10 +467,12 @@ export function translateKnownNote(note, language) {
 }
 
 export function roomCount(count, language) {
+  if (count == null) return language==='pt-BR' ? 'Quartos a confirmar' : 'Recámaras a confirmar';
   return `${count} ${language==='pt-BR' ? (count===1?'quarto':'quartos') : (count===1?'recámara':'recámaras')}`;
 }
 
 export function bathCount(count, language) {
+  if (count == null) return language==='pt-BR' ? 'Banheiros a confirmar' : 'Baños a confirmar';
   return `${count} ${language==='pt-BR' ? (count===1?'banheiro':'banheiros') : (count===1?'baño':'baños')}`;
 }
 

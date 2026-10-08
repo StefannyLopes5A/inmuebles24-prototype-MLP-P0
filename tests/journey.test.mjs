@@ -41,6 +41,17 @@ test('multi-area criteria, context and selected property round-trip through shar
   assert.equal(readJourney('/results/').page, 'results');
 });
 
+test('compare favorites is a shareable route that keeps search and omits saved ids', () => {
+  const search = normalizeSearch({...DEFAULT_SEARCH, areas:['Narvarte Poniente'], note:'Trabalho de casa'});
+  const state = {page:'compare', search, pref:'extra', propertyId:null};
+  const url = journeyUrl(state);
+  assert.deepEqual(readJourney(url), state);
+  assert.match(url, /view=compare/);
+  assert.equal(url.includes('saved'), false);
+  assert.equal(url.includes('property='), false);
+  assert.equal(readJourney('/?view=compare&mode=buy&areas=Narvarte+Poniente&budget=7500000&beds=2').page, 'compare');
+});
+
 test('legacy separate preference is canonicalized to the current three-bedroom priority', () => {
   assert.equal(readJourney('/?view=results&pref=separate').pref, 'extra');
   assert.equal(readJourney(journeyUrl({page:'results', pref:'separate'})).pref, 'extra');

@@ -74,7 +74,7 @@ export function prototypeResults(search) {
     const priceDistance = Math.max(0, price - current.budget, (current.minBudget || 0) - price) / Math.max(1, current.budget);
     return (current.areas.length && !current.areas.includes(home.area) ? 60 : 0)
       + (address && !fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address) ? 80 : 0)
-      + Math.max(0, current.beds - home.beds) * 8
+      + Math.max(0, current.beds - (home.beds ?? 0)) * 8
       + current.criteria.filter(id => !matchesCriteria(home, [id])).length * 12
       + Math.min(priceDistance, 10) * 20;
   };
@@ -82,6 +82,28 @@ export function prototypeResults(search) {
     .sort((a,b) => distance(a) - distance(b) || listingPrice(a) - listingPrice(b) || a.id.localeCompare(b.id))
     .slice(0, PROTOTYPE_MIN_RESULTS - exact.length);
   return [...exact, ...suggestions];
+}
+
+/** Keep tour cards near the top of a results grid without placing them next to each other. */
+export function spreadTourListings(items, columns) {
+  const width = Math.max(1, columns | 0);
+  const tours = items.filter(home => home.video);
+  if (!tours.length) return items;
+  const slots = [];
+  const claim = index => {
+    let slot = Math.max(0, index);
+    while (slots.some(other => Math.abs(other - slot) < 2)) slot += 1;
+    slots.push(slot);
+  };
+  claim(0);
+  if (tours.length > 1) claim(width === 1 ? 2 : width + 1);
+  for (let index = 2; index < tours.length; index += 1) {
+    const column = width === 1 ? 0 : index % width;
+    claim((index + 1) * width + column);
+  }
+  const ordered = items.filter(home => !home.video);
+  tours.forEach((home, index) => ordered.splice(Math.min(slots[index], ordered.length), 0, home));
+  return ordered;
 }
 
 /** Only an explicit call can extend the area selection; all other constraints remain intact. */
@@ -117,7 +139,10 @@ function asUrl(locationLike) {
 export function readJourney(locationLike = {}) {
   const url = asUrl(locationLike);
   const params = url.searchParams;
-  const page = params.get('view') === 'listing' ? 'listing' : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results' : 'home';
+  const page = params.get('view') === 'compare' ? 'compare'
+    : params.get('view') === 'listing' ? 'listing'
+    : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results'
+    : 'home';
   const rawAreas = params.has('areas') ? params.get('areas').split('|').filter(Boolean) : undefined;
   const search = normalizeSearch({
     mode:params.get('mode'), area:params.get('area') || DEFAULT_SEARCH.area,
@@ -134,10 +159,14 @@ export function readJourney(locationLike = {}) {
   return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId};
 }
 
-/** Shareable URLs contain criteria only; never contact identity, recipient drafts or receipts. */
+/** Shareable URLs contain criteria only; never contact identity, recipient drafts, receipts or saved ids. */
 export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null} = {}) {
   const current = normalizeSearch(search);
-  const params = new URLSearchParams({view:page === 'listing' && knownProperties.has(propertyId) ? 'listing' : page === 'results' || page === 'listing' ? 'results' : 'home', mode:current.mode,
+  const view = page === 'compare' ? 'compare'
+    : page === 'listing' && knownProperties.has(propertyId) ? 'listing'
+    : page === 'results' || page === 'listing' ? 'results'
+    : 'home';
+  const params = new URLSearchParams({view, mode:current.mode,
     areas:current.areas.join('|'), budget:String(current.budget), beds:String(current.beds)});
   if (current.propertyType) params.set('type', current.propertyType);
   if (current.minBudget) params.set('minBudget', String(current.minBudget));

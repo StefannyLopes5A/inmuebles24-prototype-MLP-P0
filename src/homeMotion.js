@@ -195,8 +195,9 @@ function createHomeMotion(root) {
 
   function resetCardHover(card) {
     delete card.dataset.motionHover;
-    card.querySelector('.photo-stack,.discovery-media').style.transform = '';
-    card.querySelectorAll('.discovery-tag,.discovery-like').forEach(control => {control.style.translate = '';});
+    const surface = card.querySelector('.photo-stack,.discovery-media,.neighborhood-card');
+    if (surface) surface.style.transform = '';
+    card.querySelectorAll('.discovery-tags,.discovery-like').forEach(control => {control.style.translate = '';});
   }
   function stop() {
     for (const id of pending) cancelAnimationFrame(id);
@@ -204,28 +205,32 @@ function createHomeMotion(root) {
     for (const animation of animations) animation.cancel();
     animations.clear(); layoutMoves.clear();
     for (const close of [...sweeps.values()]) close();
-    root.querySelectorAll('.idea-card[data-motion-hover],.discovery-item[data-motion-hover]').forEach(resetCardHover);
+    root.querySelectorAll('.idea-card[data-motion-hover],.discovery-item[data-motion-hover],.neighborhood-item[data-motion-hover]').forEach(resetCardHover);
     root.querySelectorAll('[data-next-selecting]').forEach(el => delete el.dataset.nextSelecting);
   }
   function move(event) {
     if (!enabled() || !finePointer.matches) return;
-    const card = event.target.closest('.idea-card,.home-evolution .discovery-item');
+    const card = event.target.closest('.idea-card,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
     if (card && root.contains(card)) {
       const bounds = card.getBoundingClientRect(), x = (event.clientX-bounds.left)/bounds.width-.5, y = (event.clientY-bounds.top)/bounds.height-.5;
       if (card.matches('.idea-card')) card.querySelector('.photo-stack').style.transform = `perspective(600px) rotateY(${x*18}deg) rotateX(${-y*12}deg) translateY(-6px) scale(1.06)`;
-      else {
+      else if (card.matches('.neighborhood-item')) {
+        const surface = card.querySelector('.neighborhood-card'), dx = x*9, dy = y*6;
+        surface.style.transform = `translate(${dx}px,${dy}px) scale(1.05)`;
+      } else {
         const photo = card.querySelector('.discovery-media'), dx = x*9, dy = y*6;
         // The photo scales from center 60%; fixed-size controls follow its top corners.
         const side = photo.offsetWidth*.05*.5, top = photo.offsetHeight*.05*.6;
         photo.style.transform = `translate(${dx}px,${dy}px) scale(1.05)`;
-        card.querySelector('.discovery-tag').style.translate = `${dx-side}px ${dy-top}px`;
+        const tags = card.querySelector('.discovery-tags');
+        if (tags) tags.style.translate = `${dx-side}px ${dy-top}px`;
         card.querySelector('.discovery-like').style.translate = `${dx+side}px ${dy-top}px`;
       }
       card.dataset.motionHover = 'true';
     }
   }
   function leave(event) {
-    const card = event.target.closest('.idea-card,.home-evolution .discovery-item');
+    const card = event.target.closest('.idea-card,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
     if (card && root.contains(card) && !card.contains(event.relatedTarget)) {
       resetCardHover(card);
     }

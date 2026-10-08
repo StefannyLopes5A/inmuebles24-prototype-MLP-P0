@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {interpretSmartInput,smartDetailTokens,matchesCriteria,updateSearchNote,criteriaFromText} from '../src/searchCriteria.js';
-import {normalizeSearch,matchingHomes,prototypeResults,journeyUrl,readJourney,expansionOptions,addArea} from '../src/journey.js';
+import {normalizeSearch,matchingHomes,prototypeResults,spreadTourListings,journeyUrl,readJourney,expansionOptions,addArea} from '../src/journey.js';
 import {areas} from '../src/data.js';
 import {OPERATIONS,PROPERTY_TYPES} from '../src/homeSearchModel.js';
 
@@ -106,4 +106,20 @@ test('criteria survive refresh and region suggestions preserve every active cons
   assert.equal(matchingHomes(expanded).length,option.total);
   assert.equal(expanded.budget,initial.budget);assert.equal(expanded.minBudget,initial.minBudget);assert.equal(expanded.beds,initial.beds);
   assert.deepEqual(addArea(search,option.area).criteria,search.criteria);
+});
+test('tour listings lead the first two rows without sitting next to each other',()=>{
+  const items=Array.from({length:16},(_,index)=>({id:`h${index}`,video:index===7||index===9||index===12?'/v.mp4':undefined}));
+  const ordered=spreadTourListings(items,4);
+  const videos=ordered.flatMap((home,index)=>home.video?[index]:[]);
+  assert.deepEqual(videos,[0,5,14]);
+  assert.equal(Math.floor(videos[0]/4),0);
+  assert.equal(Math.floor(videos[1]/4),1);
+  assert.ok(videos.every((index,position)=>position===0||index-videos[position-1]>=2));
+  assert.deepEqual(ordered.filter(home=>!home.video).map(home=>home.id),items.filter(home=>!home.video).map(home=>home.id));
+  const narrow=spreadTourListings(items,2);
+  const narrowVideos=narrow.flatMap((home,index)=>home.video?[index]:[]);
+  assert.equal(Math.floor(narrowVideos[0]/2),0);
+  assert.equal(Math.floor(narrowVideos[1]/2),1);
+  assert.ok(narrowVideos.every((index,position)=>position===0||index-narrowVideos[position-1]>=2));
+  assert.deepEqual(spreadTourListings(items,1).flatMap((home,index)=>home.video?[index]:[]),[0,2,4]);
 });

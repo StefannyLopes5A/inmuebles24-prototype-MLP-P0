@@ -26,7 +26,8 @@ body[data-home-motion=holofote] .home-evolution {overflow-x:clip}
 body[data-home-motion=holofote] .home-evolution .idea-rail {padding-top:56px;padding-bottom:56px;margin-top:-56px;margin-bottom:-52px;scroll-padding-inline:var(--home-page-gutter)}
 body[data-home-motion=holofote] .home-evolution .idea-card {scroll-snap-align:start}
 body[data-home-motion=holofote] .photo-stack,
-body[data-home-motion=holofote] .home-evolution .discovery-media {transition:transform 500ms cubic-bezier(.22,1,.36,1);transform-origin:center 60%}
+body[data-home-motion=holofote] .home-evolution .discovery-media,
+body[data-home-motion=holofote] .home-evolution .neighborhood-card {transition:transform 500ms cubic-bezier(.22,1,.36,1);transform-origin:center 60%}
 body[data-home-motion=holofote] .home-evolution .photo-stack {position:relative;z-index:1}
 body[data-home-motion=holofote] .photo-stack .idea-photo {transition:translate 450ms cubic-bezier(.22,1,.36,1),rotate 450ms cubic-bezier(.22,1,.36,1)}
 body[data-home-motion=holofote] .idea-card[data-motion-hover=true] .idea-photo:first-child {translate:-10px -3px;rotate:-10deg}
@@ -39,7 +40,7 @@ body[data-home-motion=holofote] .idea-property-preview[data-open=true][data-prev
 
 /* Onda discovery: enough room for entrance/hover up to the viewport edge. */
 body[data-home-motion=holofote] .home-evolution .discovery-card {overflow:visible}
-body[data-home-motion=holofote] .home-evolution :is(.discovery-tag,.discovery-like) {transition:translate 500ms cubic-bezier(.22,1,.36,1)}
+body[data-home-motion=holofote] .home-evolution :is(.discovery-tags,.discovery-like) {transition:translate 500ms cubic-bezier(.22,1,.36,1)}
 body[data-home-motion=holofote] .home-evolution .discovery-rail {padding-top:36px;padding-bottom:52px;margin-top:-36px;margin-bottom:-52px}
 body[data-home-motion=holofote] .discovery-section[data-motion-pending=true] {opacity:0}
 body[data-home-motion=holofote] .discovery-section:focus-within {opacity:1}

@@ -1,5 +1,6 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {PropertyDetail} from './PropertyDetail';
+import {CompareFavorites} from './CompareFavorites';
 import {SearchBar} from './SearchBar';
 import {readContactProfile,writeContactProfile} from './contactProfile.js';
 
@@ -23,12 +24,13 @@ export function App(){
  const [contact,setContact]=useState(null);
  const [profile,setProfile]=useState(()=>readContactProfile(stored().profile));
  const [saved,setSaved]=useState(()=>stored().saved||[]),[receipts,setReceipts]=useState(()=>stored().receipts||[]);
- const [toast,setToast]=useState('');
+ const [toast,setToast]=useState(null);
  const lastSearchChange=useRef({time:0,keys:''});
  const toastTimer=useRef(),detailOrigin=useRef(null),routeRef=useRef(route);routeRef.current=route;
  const selected=homes.find(h=>h.id===propertyId)||null;
+ const savedHomes=saved.map(id=>homes.find(home=>home.id===id)).filter(Boolean);
  useLayoutEffect(()=>{const header=document.querySelector('.home-header');if(!header)return;const measure=()=>{if(header.classList.contains('is-header-hidden')){document.documentElement.style.setProperty('--flow-header-height','0px');return;}const bar=header.querySelector('.home-header-bar');document.documentElement.style.setProperty('--flow-header-height',`${(bar||header).offsetHeight}px`)};const observer=new ResizeObserver(measure);observer.observe(header);const classObserver=new MutationObserver(measure);classObserver.observe(header,{attributes:true,attributeFilter:['class']});measure();return()=>{observer.disconnect();classObserver.disconnect()}},[]);
- function announce(text){setToast(text);clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),6500)}
+ function announce(text,{compare=false}={}){setToast({text,compare});clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(null),6500)}
  function navigate(next,{replace=false,scroll,layer=null}={}){
    history.replaceState({...history.state,scroll:window.scrollY},'',window.location.href);
    history[replace?'replaceState':'pushState']({scroll:scroll??window.scrollY,layer},'',journeyUrl(next));routeRef.current=next;setRoute(next);setContact(null);
@@ -38,25 +40,35 @@ export function App(){
  useEffect(()=>{try{sessionStorage.setItem(SESSION,JSON.stringify({profile,saved,receipts}))}catch{/* Session can continue without browser storage. */}},[profile,saved,receipts]);
  useEffect(()=>{writeContactProfile(profile)},[profile]);
  useEffect(()=>{if(history.state?.scroll)requestAnimationFrame(()=>window.scrollTo(0,history.state.scroll))},[]);
- function updateSearch(next,label){const normalized=normalizeSearch(next);if(JSON.stringify(normalized)===JSON.stringify(search))return;const keys=Object.keys(normalized).filter(key=>JSON.stringify(normalized[key])!==JSON.stringify(search[key])).sort().join('|');const time=performance.now();const continuous=keys===lastSearchChange.current.keys&&time-lastSearchChange.current.time<600;navigate({...route,page:page==='listing'?'results':page,propertyId:null,search:normalized},{replace:continuous});lastSearchChange.current={time,keys};if(label)announce(label)}
+ function updateSearch(next,label){const normalized=normalizeSearch(next);if(JSON.stringify(normalized)===JSON.stringify(search))return;const keys=Object.keys(normalized).filter(key=>JSON.stringify(normalized[key])!==JSON.stringify(search[key])).sort().join('|');const time=performance.now();const continuous=keys===lastSearchChange.current.keys&&time-lastSearchChange.current.time<600;const nextPage=page==='listing'||page==='compare'?'results':page;navigate({...route,page:nextPage,propertyId:null,search:normalized},{replace:continuous});lastSearchChange.current={time,keys};if(label)announce(label)}
  function changePref(next){navigate({...route,pref:next});announce(say('Preferencia actualizada. Los límites no cambiaron.','Preferência atualizada. Os limites não mudaram.'))}
  function begin(next){captureHomeTransition();navigate({page:'results',search:normalizeSearch(next),pref:'none',propertyId:null},{scroll:0})}
  function open(home){detailOrigin.current=document.activeElement;navigate({...routeRef.current,propertyId:home.id},{layer:'detail'})}
  function closeDetail(){if(history.state?.layer==='detail'){history.back()}else{navigate({...route,propertyId:null},{replace:true})};requestAnimationFrame(()=>detailOrigin.current?.focus?.({preventScroll:true}))}
  function openDetails(){if(page==='listing'){setContact(null);window.scrollTo({top:0,behavior:'instant'});return;}navigate({...route,page:'listing'},{layer:'listing',scroll:0});}
  function returnFromListing(){if(history.state?.layer==='listing')history.back();else navigate({...route,page:'results',propertyId:null},{replace:true,scroll:0});}
+ function openCompare(){setToast(null);navigate({...routeRef.current,page:'compare',propertyId:null},{layer:'compare',scroll:0})}
+ function returnFromCompare(){if(history.state?.layer==='compare')history.back();else navigate({...route,page:'results',propertyId:null},{replace:true,scroll:0});}
+ function openListingFromCompare(home){navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0})}
  function headerAction(action){announce(action==='login'?say('Puedes explorar y simular contactos sin iniciar sesión.','Você pode explorar e simular contatos sem entrar em uma conta.'):action==='agencies'?say('Abre un inmueble para conocer a su anunciante y simular un contacto.','Abra um imóvel para conhecer seu anunciante e simular um contato.'):say('Este prototipo demuestra la búsqueda de inmuebles. La publicación no forma parte de este recorrido.','Este protótipo demonstra a busca de imóveis. A publicação não faz parte deste percurso.'));}
- function toggleSave(home){setSaved(ids=>ids.includes(home.id)?ids.filter(id=>id!==home.id):[...ids,home.id]);announce(t(saved.includes(home.id)?'Se quitó de tus favoritos.':'Guardado. Lo tendremos en cuenta al ordenar tu búsqueda.'))}
+ function toggleSave(home){
+   const removing=saved.includes(home.id);
+   const nextCount=removing?saved.length-1:saved.length+1;
+   setSaved(ids=>removing?ids.filter(id=>id!==home.id):[...ids,home.id]);
+   if(removing)announce(t('Se quitó de tus favoritos.'));
+   else announce(t('Guardado. Lo tendremos en cuenta al ordenar tu búsqueda.'),{compare:nextCount>=2});
+ }
  function changeLanguage(next){const updated={...route,search:{...search,note:translateKnownNote(search.note,next)}};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated);setLanguage(next)}
  const exactIds=new Set(matchingHomes(search).map(home=>home.id));
  const visible=prototypeResults(search).sort((a,b)=>Number(exactIds.has(b.id))-Number(exactIds.has(a.id))||((pref==='extra'||pref==='separate')?Number(b.beds>=3)-Number(a.beds>=3):0)||Number(saved.includes(b.id))-Number(saved.includes(a.id))||(exactIds.has(a.id)?listingPrice(a)-listingPrice(b):0));
- const miniProps={activeHome:page==='listing'?(contact?selected:null):selected,onCloseHome:page==='listing'?()=>setContact(null):closeDetail,onDetails:openDetails,profile,onProfile:setProfile,onReceipt:receipt=>setReceipts(current=>[receipt,...current.filter(r=>r.id!==receipt.id)]),contactRequest:contact};
+ const miniProps={activeHome:page==='listing'||page==='compare'?(contact?selected:null):selected,onCloseHome:page==='listing'||page==='compare'?()=>setContact(null):closeDetail,onDetails:openDetails,profile,onProfile:setProfile,onReceipt:receipt=>setReceipts(current=>[receipt,...current.filter(r=>r.id!==receipt.id)]),contactRequest:contact};
  const barProps={search,onChange:updateSearch,pref,onPref:changePref,onOpen:open,proactive:false,...miniProps};
+ const showResults=page!=='home'&&page!=='listing'&&page!=='compare';
  return <><HomeHeader results={page!=='home'} onAction={headerAction} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/>
  {page==='home'&&selected&&<div className="search-flow-page home-evolution mini-home-context"><SearchBar {...barProps}/></div>}
- <main>{page==='home'?<div inert={!!selected}><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={toggleSave}/></div>:page==='listing'&&selected?<div className="search-flow-page home-evolution listing-route"><SearchBar {...barProps}/><div inert={!!contact}><PropertyDetail key={selected.id} home={selected} search={search} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} onContact={(type,question='')=>setContact({type,question})}/></div></div>:<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId||!!contact} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={toggleSave} onOpen={open} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} miniProps={miniProps}/></div></div>}</main>
+ <main>{page==='home'?<div inert={!!selected}><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={toggleSave}/></div>:page==='listing'&&selected?<div className="search-flow-page home-evolution listing-route"><SearchBar {...barProps}/><div inert={!!contact}><PropertyDetail key={selected.id} home={selected} search={search} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} onContact={(type,question='')=>setContact({type,question})}/></div></div>:page==='compare'?<div className="search-flow-page home-evolution compare-route"><SearchBar {...barProps}/><div inert={!!contact}><CompareFavorites homes={savedHomes} search={search} pref={pref} onClose={returnFromCompare} onOpen={openListingFromCompare} onUnlike={toggleSave}/></div></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId||!!contact} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={toggleSave} onOpen={open} onCompare={openCompare} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} miniProps={miniProps}/></div></div>:null}</main>
  <footer className="site-footer"><span>inmuebles24</span><p>{say('Prototipo V2 · Contacto simulado','Protótipo V2 · Contato simulado')}</p><div className="footer-controls"><select className="footer-language" aria-label={t('Idioma')} value={language} onChange={e=>changeLanguage(e.target.value)}>{languages.map(o=><option key={o.code} value={o.code}>{o.label}</option>)}</select></div></footer>
 
- {toast&&<div className="toast" role="status"><span>{toast}</span><button className="icon-button" onClick={()=>setToast('')} aria-label={t('Cerrar aviso')}><Icon name="close" size={16}/></button></div>}
+ {toast&&<div className="toast" role="status"><span>{toast.text}</span>{toast.compare&&<button className="toast-action" type="button" onClick={openCompare}>{t('Comparar favoritos')}</button>}<button className="icon-button" onClick={()=>setToast(null)} aria-label={t('Cerrar aviso')}><Icon name="close" size={16}/></button></div>}
  </>;
 }

@@ -18,3 +18,5 @@ pmtiles extract https://build.protomaps.com/20261007.pmtiles public/assets/map/c
 A bbox cobre as colônias do catálogo local (Cidade do México). Zoom acima de 15 usa overzoom dos tiles vetoriais. O arquivo precisa ficar abaixo de 25 MiB, limite por arquivo dos assets estáticos da hospedagem; o worker repassa o cabeçalho `Range` sem alterar (teste em `tests/sites-worker.test.mjs`). Só as faixas latinas dos glifos foram copiadas; rótulos em outros alfabetos não são exibidos.
 
 As coordenadas dos imóveis não vêm do anúncio: `src/mapLocations.js` usa o centroide aproximado da colônia e um deslocamento determinístico. Por isso o mapa sempre apresenta a localização como aproximada.
+
+Os contornos do seletor de localização ficam em `src/data/colonias.json` (arquivo local do protótipo). Cada feature usa `properties.name` igual ao texto do seletor e `properties.nivel` `colonia` ou `alcaldia`. **Ciudad de México** não tem polígono. Nove colonias do catálogo ainda não entram no arquivo; nesses casos o mapa não desenha recorte e só enquadra os anúncios. O runtime não busca geometria em serviço externo.

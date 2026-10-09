@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes} from '../src/data.js';
-import {homeCoordinates, neighborhoodCentroid, resultsBounds, compactPrice} from '../src/mapLocations.js';
+import {homeCoordinates, neighborhoodCentroid, resultsBounds, searchBounds, compactPrice} from '../src/mapLocations.js';
 
 const BBOX = {west: -99.36, south: 19.25, east: -99.05, north: 19.55};
 
@@ -34,6 +34,21 @@ test('results bounds cover every visible pin', () => {
     assert.ok(lng >= west && lng <= east && lat >= south && lat <= north);
   }
   assert.equal(resultsBounds([]), null);
+});
+
+test('search bounds stay on the queried colonia instead of the whole catalog', () => {
+  const search = {areas: ['Narvarte Poniente']};
+  const [[west, south], [east, north]] = searchBounds(homes, search);
+  const narvarte = homes.filter(home => home.area === 'Narvarte Poniente');
+  const outsider = homes.find(home => home.area !== 'Narvarte Poniente');
+  assert.ok(narvarte.length);
+  for (const home of narvarte) {
+    const [lng, lat] = homeCoordinates(home);
+    assert.ok(lng >= west && lng <= east && lat >= south && lat <= north);
+  }
+  const [lng, lat] = homeCoordinates(outsider);
+  assert.equal(lng >= west && lng <= east && lat >= south && lat <= north, false);
+  assert.deepEqual(searchBounds(homes, {}), resultsBounds(homes));
 });
 
 test('compact pin prices follow language and demo currency', () => {

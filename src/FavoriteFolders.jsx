@@ -1,4 +1,4 @@
-import React, {useId, useState} from 'react';
+import React, {useId, useLayoutEffect, useRef, useState} from 'react';
 import {AnimatePresence, motion, useIsPresent, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
 import {LoginNudge} from './Account';

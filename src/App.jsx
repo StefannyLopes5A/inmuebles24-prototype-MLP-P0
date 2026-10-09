@@ -31,8 +31,10 @@ export function App(){
  const [profile,setProfile]=useState(()=>readContactProfile(stored().profile));
  const [folders,setFolders]=useState(()=>{const session=stored();return normalizeFolders(session.folders,session.saved,KNOWN_HOMES)});
  const [recent,setRecent]=useState(()=>normalizeRecent(stored().recent,KNOWN_HOMES));
- const [receipts,setReceipts]=useState(()=>stored().receipts||[]);
+ const [receipts,setReceipts]=useState([]);
+ const [compareView,setCompareView]=useState(()=>{const value=stored().compare;return {hidden:value?.hidden&&typeof value.hidden==='object'?value.hidden:{},seen:Array.isArray(value?.seen)?value.seen:[]}});
  const [account,setAccount]=useState(()=>({signedIn:stored().account?.signedIn===true})),[loginOpen,setLoginOpen]=useState(false);
+ const [askPrompt,setAskPrompt]=useState(null);
  const saved=savedIds(folders);
  const [toast,setToast]=useState(null),[folderToast,setFolderToast]=useState(null),[picker,setPicker]=useState(null);
  const lastSearchChange=useRef({time:0,keys:''});
@@ -51,7 +53,7 @@ export function App(){
    if(scroll!==undefined)requestAnimationFrame(()=>window.scrollTo({top:scroll,behavior:'instant'}));
  }
  useEffect(()=>{history.scrollRestoration='manual';const onPop=()=>{setRoute(initialRoute());setContact(null);requestAnimationFrame(()=>window.scrollTo({top:history.state?.scroll||0,behavior:'instant'}))};window.addEventListener('popstate',onPop);const saveScroll=()=>history.replaceState({...history.state,scroll:window.scrollY},'',window.location.href);window.addEventListener('pagehide',saveScroll);return()=>{window.removeEventListener('popstate',onPop);window.removeEventListener('pagehide',saveScroll);clearTimeout(toastTimer.current)}},[]);
- useEffect(()=>{try{sessionStorage.setItem(SESSION,JSON.stringify({profile,folders,recent,saved:savedIds(folders),receipts,account}))}catch{/* Session can continue without browser storage. */}},[profile,folders,recent,receipts,account]);
+ useEffect(()=>{try{sessionStorage.setItem(SESSION,JSON.stringify({profile,folders,recent,saved:savedIds(folders),account,compare:compareView}))}catch{/* Session can continue without browser storage. */}},[profile,folders,recent,account,compareView]);
  useEffect(()=>{if(propertyId)setRecent(current=>recordView(current,propertyId))},[propertyId]);
  useEffect(()=>{writeContactProfile(profile)},[profile]);
  useEffect(()=>{if(history.state?.scroll)requestAnimationFrame(()=>window.scrollTo(0,history.state.scroll))},[]);
@@ -75,18 +77,9 @@ export function App(){
  }
  function openListingFromMap(home){navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0})}
  function openListingFromCompare(home){navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0})}
- function contactFromCompare(home,type='message'){
-   navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0});
-   requestAnimationFrame(()=>setContact({type,question:''}));
- }
- function contactAllFromCompare(){
-   const total=folderHomes.length;
-   if(!total)return;
-   announce(say(
-     total===1?'Contacto simulado registrado con 1 inmobiliaria.':`Contacto simulado registrado con ${total} inmobiliarias.`,
-     total===1?'Contato simulado registrado com 1 imobiliária.':`Contato simulado registrado com ${total} imobiliárias.`,
-   ));
- }
+ function hideFromCompare(folderId,homeId){setCompareView(current=>({...current,hidden:{...current.hidden,[folderId]:[...new Set([...(current.hidden[folderId]||[]),homeId])]}}))}
+ function showAllInCompare(folderId){setCompareView(current=>{const hidden={...current.hidden};delete hidden[folderId];return {...current,hidden}})}
+ function markCompareSeen(folderId){setCompareView(current=>current.seen.includes(folderId)?current:{...current,seen:[...current.seen,folderId]})}
  function openLogin(){hideToasts();setLoginOpen(true)}
  function headerAction(action){announce(action==='agencies'?say('Abre un inmueble para conocer a su anunciante y simular un contacto.','Abra um imóvel para conhecer seu anunciante e simular um contato.'):say('Este prototipo demuestra la búsqueda de inmuebles. La publicación no forma parte de este recorrido.','Este protótipo demonstra a busca de imóveis. A publicação não faz parte deste percurso.'));}
  function requestSave(home){
@@ -128,13 +121,13 @@ export function App(){
  const exactIds=new Set(matchingHomes(search).map(home=>home.id));
  const visible=prototypeResults(search).sort((a,b)=>Number(exactIds.has(b.id))-Number(exactIds.has(a.id))||((pref==='extra'||pref==='separate')?Number(b.beds>=3)-Number(a.beds>=3):0)||(exactIds.has(a.id)?listingPrice(a)-listingPrice(b):0));
  const miniProps={activeHome:page==='listing'?(contact?selected:null):selected,onCloseHome:page==='listing'?()=>setContact(null):closeDetail,onDetails:openDetails,profile,onProfile:setProfile,onReceipt:receipt=>setReceipts(current=>[receipt,...current.filter(r=>r.id!==receipt.id)]),contactRequest:contact};
- const barProps={search,onChange:updateSearch,pref,onPref:changePref,onOpen:open,proactive:false,...miniProps};
+ const barProps={search,onChange:updateSearch,pref,onPref:changePref,onOpen:open,proactive:false,askPrompt,...miniProps};
  const showResults=page!=='home'&&page!=='listing'&&page!=='compare'&&page!=='favorites';
  const favoritesPage=page==='favorites'||(page==='compare'&&!activeFolder);
  const folderMeta=activeFolder?.id===RECENT_ID?say(`${folderHomes.length} vistos en esta sesión`,`${folderHomes.length} vistos nesta sessão`):savedCountLabel(folderHomes.length,language);
  return <><HomeHeader results={page!=='home'} signedIn={account.signedIn} onAction={headerAction} onLogin={openLogin} onAccount={accountAction} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/>
  {page==='home'&&selected&&<div className="search-flow-page home-evolution mini-home-context"><SearchBar {...barProps}/></div>}
- <main>{page==='home'?<div inert={!!selected}><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?<div className="search-flow-page home-evolution listing-route"><SearchBar {...barProps}/><div inert={!!contact}><PropertyDetail key={selected.id} home={selected} search={search} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} onContact={(type,question='')=>setContact({type,question})}/></div></div>:favoritesPage?<FavoritesIndex folders={folders} recent={recent} onOpenFolder={id=>openFolder(id,true)} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} title={activeFolder.name} meta={folderMeta} homes={folderHomes} isSaved={id=>saved.includes(id)} search={search} pref={pref} onClose={returnFromCompare} onOpen={openListingFromCompare} onUnlike={requestSave} onContact={contactFromCompare} onContactAll={contactAllFromCompare}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId||!!contact} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} onFavorites={saved.length||recent.length?openFavorites:null} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} miniProps={miniProps} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:!!propertyId||!!contact}}/></div></div>:null}</main>
+ <main>{page==='home'?<div inert={!!selected}><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?<div className="search-flow-page home-evolution listing-route"><SearchBar {...barProps}/><div inert={!!contact}><PropertyDetail key={selected.id} home={selected} search={search} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} onContact={(type,question='')=>setContact({type,question})}/></div></div>:favoritesPage?<FavoritesIndex folders={folders} recent={recent} onOpenFolder={id=>openFolder(id,true)} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} folderName={activeFolder.name} meta={folderMeta} homes={folderHomes} hiddenIds={(compareView.hidden[activeFolder.id]||[]).filter(id=>folderHomes.some(home=>home.id===id))} onHide={id=>hideFromCompare(activeFolder.id,id)} onShowAll={()=>showAllInCompare(activeFolder.id)} receipts={receipts} profile={profile} onProfile={setProfile} onReceipts={list=>setReceipts(current=>[...list,...current])} intro={!compareView.seen.includes(activeFolder.id)&&!folderHomes.some(home=>receipts.some(receipt=>receipt.propertyId===home.id))} onIntroSeen={()=>markCompareSeen(activeFolder.id)} onClose={returnFromCompare} onOpen={openListingFromCompare}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId||!!contact} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} onFavorites={saved.length||recent.length?openFavorites:null} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} miniProps={miniProps} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:!!propertyId||!!contact,signedIn:account.signedIn,onLogin:openLogin,onAskMora:text=>setAskPrompt({text,id:Date.now()})}}/></div></div>:null}</main>
  {page!=='compare'&&page!=='favorites'&&<footer className="site-footer"><span>inmuebles24</span><p>{say('Prototipo V2 · Contacto simulado','Protótipo V2 · Contato simulado')}</p><div className="footer-controls"><select className="footer-language" aria-label={t('Idioma')} value={language} onChange={e=>changeLanguage(e.target.value)}>{languages.map(o=><option key={o.code} value={o.code}>{o.label}</option>)}</select></div></footer>}
 
  {toast&&<div className="toast" role="status"><span>{toast.text}</span><button className="icon-button" onClick={()=>setToast(null)} aria-label={t('Cerrar aviso')}><Icon name="close" size={16}/></button></div>}

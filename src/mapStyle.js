@@ -46,12 +46,16 @@ export const MAP_FLAVOR={
 };
 
 const QUIET_POIS=['park','garden','zoo','stadium','university','museum','attraction','station'];
+const COLONIA_POIS=['school','grocery','marketplace','cafe'];
 const HIDDEN_LAYERS=new Set(['address_label','roads_oneway','roads_shields','boundaries_country','boundaries']);
 
 export function buildMapStyle({lang='es'}={}){
   const origin=typeof window==='undefined'?'':window.location.origin;
   const base=layers(MAP_SOURCE,MAP_FLAVOR,{lang:lang.startsWith('pt')?'pt':'es'}).filter(layer=>!HIDDEN_LAYERS.has(layer.id)).map(layer=>{
-    if(layer.id==='pois')return {...layer,filter:['all',['in',['get','kind'],['literal',QUIET_POIS]],['>=',['zoom'],['+',['get','min_zoom'],0]]]};
+    if(layer.id==='pois')return {...layer,filter:['any',
+      ['all',['in',['get','kind'],['literal',QUIET_POIS]],['>=',['zoom'],['get','min_zoom']]],
+      ['all',['in',['get','kind'],['literal',COLONIA_POIS]],['>=',['zoom'],13]],
+    ]};
     if(layer.id==='places_subplace')return {...layer,layout:{...layer.layout,'text-transform':'uppercase','text-letter-spacing':.12,'text-size':11}};
     return layer;
   });

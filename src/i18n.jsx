@@ -9,6 +9,10 @@ export const DEMO_MXN_PER_USD = 20;
 export const formatMoney = (amount, currency) => currency==='USD'
   ? new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(amount/DEMO_MXN_PER_USD)
   : new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(amount);
+export const formatCompactMoney = (amount, currency) => {
+  const value = currency==='USD' ? amount/DEMO_MXN_PER_USD : amount;
+  return value < 1000 ? formatMoney(amount, currency) : `$${Number((value/1000).toFixed(1))}k`;
+};
 
 const portuguese = {
   'O empieza por algo que te inspire':'Ou comece por algo que te inspire',
@@ -509,7 +513,7 @@ export function LanguageProvider({children}) {
     try { localStorage.setItem('inmuebles24-v2-language',language); } catch { /* Browsers may block storage. */ }
   },[language]);
   useEffect(()=>{try { localStorage.setItem('inmuebles24-v2-currency',currency); } catch { /* Browsers may block storage. */ }},[currency]);
-  const value=useMemo(()=>({language,setLanguage,currency,setCurrency,money:amount=>formatMoney(amount,currency),t:(text,values)=>translate(text,language,values)}),[language,currency]);
+  const value=useMemo(()=>({language,setLanguage,currency,setCurrency,money:amount=>formatMoney(amount,currency),compactMoney:amount=>formatCompactMoney(amount,currency),t:(text,values)=>translate(text,language,values)}),[language,currency]);
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 

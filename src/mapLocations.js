@@ -93,6 +93,22 @@ export function resultsBounds(homes) {
   return [[west, south], [east, north]];
 }
 
+/** Frame the search colonias, not catalog suggestions outside the query. */
+export function searchBounds(homes, search) {
+  const areas = (search?.areas || []).filter(name => NEIGHBORHOOD_CENTROIDS[name]);
+  if (!areas.length) return resultsBounds(homes);
+  const focused = (homes || []).filter(home => areas.includes(home.area));
+  if (focused.length) return resultsBounds(focused);
+  let west = Infinity, south = Infinity, east = -Infinity, north = -Infinity;
+  for (const name of areas) {
+    const [lng, lat] = NEIGHBORHOOD_CENTROIDS[name];
+    west = Math.min(west, lng); east = Math.max(east, lng);
+    south = Math.min(south, lat); north = Math.max(north, lat);
+  }
+  const pad = 0.008;
+  return [[west - pad, south - pad], [east + pad, north + pad]];
+}
+
 /** Short pin label: `$4.8 M`, `$28 mil` (es-MX) / `$4,8 mi`, `$28 mil` (pt-BR). USD stays demonstrative. */
 export function compactPrice(amount, currency = 'MXN', language = 'es-MX') {
   if (!Number.isFinite(amount) || amount <= 0) return '—';

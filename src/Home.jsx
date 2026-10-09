@@ -168,7 +168,7 @@ function ListingPhotos({home}) {
   return <span className="discovery-slides">{photos.map((src, index) => <img className="discovery-slide" key={src} src={src} alt={index ? '' : home.imageAlt} loading="lazy"/>)}</span>;
 }
 
-function RailListingCopy({home:h, videoRef}) {
+export function RailListingCopy({home:h, videoRef}) {
   const {t,language,money,currency}=useLanguage();
   return <>
     <span className={"discovery-media"+(h.video?" has-video":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true"/>}<span className="discovery-copy"><span className="discovery-kind"><span>{t(h.mode==='buy'?'Venta':'Renta')}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{t('Departamento')}</span></span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>

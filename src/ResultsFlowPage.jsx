@@ -102,7 +102,8 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
     </div>
     <Suspense fallback={null}>
       <SearchMap mode={mapProps.mode} onMode={mapProps.onMode} homes={visible} hoveredId={hoveredId} saved={saved} recent={mapProps.recent}
-        areaLabel={mapAreaLabel(search,say)} hidden={mapProps.hidden} onOpenListing={mapProps.onOpenListing} onSave={onSave}/>
+        areaLabel={mapAreaLabel(search,say)} hidden={mapProps.hidden} onOpenListing={mapProps.onOpenListing} onSave={onSave}
+        search={search} signedIn={mapProps.signedIn} onLogin={mapProps.onLogin} onAskMora={mapProps.onAskMora}/>
     </Suspense>
   </div>;
 }

@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 export const EASE_OUT = [0.23, 1, 0.32, 1];
 export const EASE_DRAWER = [0.32, 0.72, 0, 1];
 export const EASE = [0.25, 0.1, 0.25, 1];
+export const EASE_IN_OUT = [0.77, 0, 0.175, 1];
 export const STAGGER = 0.05;
 export const MAX_STAGGERED = 8;
 

@@ -16,7 +16,7 @@ const noop=()=>{};
 const asset=name=>`/assets/search-flow/${name}.svg`;
 const Chevron=()=> <img className="mora-chevron" src={asset('chevron')} alt=""/>;
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,activeHome,onCloseHome,onDetails,profile,onProfile,onReceipt,contactRequest}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,activeHome,onCloseHome,onDetails,profile,onProfile,onReceipt,contactRequest}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState(activeHome?'listing':'collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[allFilters,setAllFilters]=useState(false);
@@ -109,6 +109,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     }
   };
   useEffect(()=>{if(request)expand(request.key||'input',request.animate!==false);},[request]);
+  useEffect(()=>{if(!askPrompt?.text)return;setDraft(askPrompt.text);expand('input');},[askPrompt?.id]);
   useEffect(()=>{
     let startedInDetails=false;
     const cancelPointer=()=>{startedInDetails=false;};

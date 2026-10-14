@@ -1,0 +1,296 @@
+{
+  "meta": {
+    "listingId": "buy-150754333",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150754333",
+      "address": "Newton 89, Polanco V Sección, Miguel Hidalgo",
+      "street": "Newton 89",
+      "colonia": "Polanco V Sección",
+      "alcaldia": "Miguel Hidalgo",
+      "addressRaw": "Newton 89, Polanco V Sección, Polanco",
+      "zone": "Polanco V Sección",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 10000000,
+      "m2": 287,
+      "bedrooms": 4,
+      "bathrooms": 2,
+      "parking": 6,
+      "agency": {
+        "name": "Vértice Bienes Raíces",
+        "verified": true,
+        "rating": 4.4,
+        "reviews": 50,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 34843,
+      "comparablesCount": 246,
+      "comparablesMedianPerM2": 51000,
+      "comparablesP10PerM2": 32600,
+      "comparablesP90PerM2": 74500,
+      "diffVsMedianPct": -32,
+      "classification": "opportunity",
+      "daysListed": 113,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 3.1,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 5,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 52,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "calle",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 10
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 30
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 15
+        },
+        {
+          "feature": "parking",
+          "confidence": "medium",
+          "photoIndex": 2
+        },
+        {
+          "feature": "roof_garden",
+          "confidence": "medium",
+          "photoIndex": 20
+        }
+      ],
+      "missing": [],
+      "note": "Luz media y azotea en el último piso"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 29,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Polanco",
+          "minutes": 10,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Plaza Uruguay",
+          "minutes": 7,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Plaza Uruguay",
+        "minutes": 7,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Polanco V Sección"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 2500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 10
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 108,
+        "m2DiffPct": 49,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 29,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 33,
+        "m2DiffPct": 124,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 29,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Polanco a 32% menos por m² que parecidos, con Metro a 10 min; lleva 113 días publicado y pide actualizarse por las fotos.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Polanco V Sección, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 10 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $34.8k/m² contra una mediana de $51k/m² en 246 parecidos. Pregunta si el precio ya descuenta la obra.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la obra",
+          "payload": {
+            "question": "¿El precio ya considera la renovación que necesita?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Abajo del mercado",
+      "badge": "−32% vs. parecidos",
+      "p10": 32600,
+      "p90": 74500,
+      "median": 51000,
+      "value": 34843,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Se puede usar la azotea?",
+      "¿Cuántos estacionamientos incluye?"
+    ],
+    "extractedTags": [],
+    "address": "Newton 89, Polanco V Sección, Miguel Hidalgo",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "29 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Polanco",
+        "meta": "10 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Plaza Uruguay",
+        "meta": "7 min a pie"
+      }
+    ]
+  }
+}

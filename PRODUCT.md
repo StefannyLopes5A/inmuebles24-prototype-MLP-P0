@@ -22,7 +22,7 @@ O mapa dos resultados tem três estados, no padrão do Airbnb. **Flutuante**: um
 
 ## Imóvel e contato
 
-O [mini-listing de referência no Figma](https://www.figma.com/design/KcIrcsopqwSQCWp6s8omaI/?node-id=518-16812) ocupa a barra expandida. Resumo, pergunta, formulário breve, reutilização de dados e confirmação usam essa mesma superfície. O resumo combina fatos publicados, compatibilidade com critérios explícitos e pontos a confirmar.
+O [mini-listing de referência no Figma](https://www.figma.com/design/KcIrcsopqwSQCWp6s8omaI/?node-id=518-16812) deu origem ao resumo do imóvel, que hoje é um painel que nasce do card clicado, na linha dele, com a grade recuada atrás. Resumo, pergunta, formulário breve, reutilização de dados e confirmação usam esse mesmo painel. O resumo combina fatos publicados, a leitura da Mora (o que o preço significa contra parecidos da zona, o que o anúncio não diz e vale perguntar, favoritos parecidos e entorno) e o anunciante com nome, @ e nota no Google. A Mora interpreta em vez de descrever; voz, marca e movimento seguem [MORA.md](docs/MORA.md). Preço de mercado, nota do anunciante e tempos de deslocamento são dados de demonstração estáveis por anúncio.
 
 “Ver imóvel” abre uma página interna com a mesma identidade e busca. No mobile, a leitura segue foto → preço e ações de contato → informações. Voltar, avançar e recarregar preservam a rota. Contato e solicitação de visita reabrem a barra; solicitar visita só muda a intenção do contato simulado, sem reservar horário.
 
@@ -34,6 +34,7 @@ No contato seguinte, os dados aparecem resumidos e podem ser editados. Nome, e-m
 
 - Catálogo local de 100 anúncios públicos capturados em 28/09/2026: 50 de compra e 50 de aluguel. Uma foto real por imóvel acompanha sua identidade entre cards, mini-listing, interna e contato.
 - Não se inventam galeria adicional, selo Premium, andar, vagas, política de pets, medidas de ambientes, janelas ou disponibilidade. Informações ausentes são tratadas como “a confirmar”. O valor de área anômalo de 1 m² não vira medida confiável.
+- Exceção, só na página interna: para condensar tudo sobre o imóvel, ela completa com conteúdo fictício e estável por anúncio (`src/listingStory.js`) o que o catálogo não tem: galeria por cômodo (aluguéis de uma foto emprestam um conjunto de outro anúncio), andar, vagas, pets, condomínio, descrição, comodidades, seis avaliações da imobiliária e um trilho de parecidos. Fatos do catálogo sempre prevalecem. Card, painel, comparação e Mora continuam sem inventar e mantêm “a confirmar”.
 - Há 13 logos de origem registrada e 14 associações verificadas entre anúncio e logo; usos ilustrativos nos cards não determinam o destinatário do contato. Atribuição e arquivos originais permanecem na proveniência.
 - Espanhol mexicano é o idioma inicial; português brasileiro e moeda são preferências locais. USD usa conversão demonstrativa fixa de 20 MXN/USD. Endereços, nomes de anunciantes e fatos do catálogo não são traduzidos ou recriados.
 - Toda IA, sugestão e ação de contato é simulada no navegador. Não há serviços externos acionados pelos controles, envio de dados, login real, pagamento, crédito, agenda, contato em lote ou análise de fotografias.

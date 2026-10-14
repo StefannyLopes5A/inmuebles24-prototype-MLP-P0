@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "listingId": "buy-150876848",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150876848",
+      "address": "Av. Insurgentes Sur S/n, Roma Norte, Cuauhtémoc",
+      "street": "Av. Insurgentes Sur S/n",
+      "colonia": "Roma Norte",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Av. Insurgentes Sur S/N, Roma Norte, Cuauhtémoc",
+      "zone": "Roma Norte",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 14500000,
+      "m2": 291,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Inmuebles CDMX",
+        "verified": true,
+        "rating": 4.9,
+        "reviews": 177,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 49828,
+      "comparablesCount": 125,
+      "comparablesMedianPerM2": 52800,
+      "comparablesP10PerM2": 33800,
+      "comparablesP90PerM2": 77100,
+      "diffVsMedianPct": -6,
+      "classification": "fair",
+      "daysListed": 59,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.6,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 19,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 24,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 8
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 19
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 18
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 23
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz, jardín y terraza en la azotea"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 25,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes",
+          "minutes": 10,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Jardín Juan Rulfo",
+          "minutes": 2,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Jardín Juan Rulfo",
+        "minutes": 2,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Roma Norte"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 7000000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 10
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 202,
+        "m2DiffPct": 51,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 25,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 93,
+        "m2DiffPct": 127,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 25,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Terraza en la azotea y jardín por las fotos, con Metro Insurgentes a 10 min y un m² 6% abajo de parecidos.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Roma Norte, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 10 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $49.8k/m² contra $52.8k/m² en 125 parecidos, dentro del rango.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la azotea",
+          "payload": {
+            "question": "¿La terraza de la azotea es privada?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "En la mediana de la zona",
+      "badge": "−6% vs. parecidos",
+      "p10": 33800,
+      "p90": 77100,
+      "median": 52800,
+      "value": 49828,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿El número exterior es S/N?",
+      "¿Se escucha Insurgentes desde adentro?"
+    ],
+    "extractedTags": [],
+    "address": "Av. Insurgentes Sur S/n, Roma Norte, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "25 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes",
+        "meta": "10 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Jardín Juan Rulfo",
+        "meta": "2 min a pie"
+      }
+    ]
+  }
+}

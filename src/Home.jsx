@@ -1,8 +1,9 @@
-import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {AccountMenu} from './Account';
 import {FavoriteHeart} from './FavoriteHeart';
 import {createPortal} from 'react-dom';
-import {listingPrice,areaLabel, propertyPhoto, cardAgencyLogo, inspirationCollections} from './data';
+import {listingPrice,areaLabel, propertyPhoto, inspirationCollections} from './data';
+import {advertiserFor} from './listingAdvertiser';
 import {listingDetails} from './listingPresentation';
 import {Icon} from './App';
 import {HomeSearch} from './HomeSearch.jsx';
@@ -11,6 +12,10 @@ import {canStartSearch} from './homeSearchModel.js';
 import {headerMenus, padMenuColumns} from './headerMenuData.js';
 import {useLanguage,roomCount,bathCount} from './i18n';
 import {installHomeMotion,playIdeaPreview} from './homeMotion.js';
+import {useHoverIntent} from './listingPreload';
+import {listingCardTags} from './listingCardTags';
+import {ListingAgencyLogo, ListingTagList} from './ListingCardChrome';
+import {developmentFacts, developmentKind} from './development/listingFacts';
 
 const asset = name => `/assets/figma-home/${name}`;
 
@@ -33,6 +38,11 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
     const onScroll=()=>{
       const y=window.scrollY;
       const delta=y-lastScrollY.current;
+      // The listing panel scrolls the page to fit itself; the header keeps whatever state it had.
+      if(document.documentElement.dataset.listingPanel!=null){
+        lastScrollY.current=y;
+        return;
+      }
       if(y<=8){
         setHeaderHidden(false);
       }else if(delta>6){
@@ -155,6 +165,7 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
 
 function ListingCopy({home:h}) {
   const {t,language,money,currency}=useLanguage();
+  if (h.development) return <><span>{developmentKind(language)}</span><strong>{money(listingPrice(h))} <small>{currency}</small></strong><b>{h.street} · {h.area}</b><span>{developmentFacts(language).join(' · ')}</span></>;
   return <><span>{t(h.mode==='buy'?'Venta':'Renta')} · {t('Departamento')}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong><b>{h.street} · {h.area}</b><span>{t(areaLabel(h))} · {roomCount(h.beds,language)} · {bathCount(h.baths,language)}</span></>;
 }
 
@@ -170,47 +181,53 @@ function ListingPhotos({home}) {
 
 export function RailListingCopy({home:h, videoRef}) {
   const {t,language,money,currency}=useLanguage();
+  const say=(br,es)=>language==='pt-BR'?br:es;
+  const advertiser=advertiserFor(h);
+  const kind=h.development?[developmentKind(language)]:[t(h.mode==='buy'?'Venta':'Renta'),t('Departamento')];
+  const facts=h.development?developmentFacts(language):[t(areaLabel(h)),roomCount(h.beds,language),bathCount(h.baths,language)];
+  const dotted=items=>items.flatMap((item,index)=>index?[<span key={`dot-${index}`} className="discovery-separator" aria-hidden="true">•</span>,<span key={item}>{item}</span>]:[<span key={item}>{item}</span>]);
   return <>
-    <span className={"discovery-media"+(h.video?" has-video":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true"/>}<span className="discovery-copy"><span className="discovery-kind"><span>{t(h.mode==='buy'?'Venta':'Renta')}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{t('Departamento')}</span></span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>
-    <span className="discovery-meta"><span className="discovery-meta-copy"><b title={`${h.street} · ${h.area}`}>{h.street} · {h.area}</b><span className="discovery-facts"><span>{t(areaLabel(h))}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{roomCount(h.beds,language)}</span><span className="discovery-separator" aria-hidden="true">•</span><span>{bathCount(h.baths,language)}</span></span></span><img className="discovery-agency-logo" src={cardAgencyLogo(h)} alt={h.brokerLogo?h.broker:''} loading="lazy"/></span>
+    <span className={"discovery-media"+(h.video?" has-video":"")+(h.development?" is-development":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>
+    <span className="discovery-meta"><span className="discovery-meta-copy"><b title={`${h.street} · ${h.area}`}>{h.street} · {h.area}</b><span className="discovery-facts">{dotted(facts)}</span></span><ListingAgencyLogo home={h} say={say} alt={h.brokerLogo?h.broker:(advertiser.logo?advertiser.name:'')}/></span>
   </>;
 }
 
-function listingChips(home) {
-  const chips = [];
-  if (home.video) chips.push('Tour virtual');
-  return chips;
-}
-
-export function HouseCard({home, saved, onLike, onOpen, contacted=false}) {
+export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none'}) {
   const {t,language}=useLanguage();
   const videoRef=useRef(null);
-  const chips=listingChips(home);
+  const tags=useMemo(()=>listingCardTags(home,{search,pref,language,contacted}),[home,search,pref,language,contacted]);
+  const intent=useHoverIntent(home);
+  const videoDelay=useRef(null);
+  useEffect(()=>()=>clearTimeout(videoDelay.current),[]);
   function playVideo(event) {
     if (event?.pointerType==='touch' || !home.video || !canPlayHoverVideo()) return;
-    const el=videoRef.current;
-    if (!el || !el.paused) return;
-    el.play()?.catch(()=>{});
+    const start=()=>{const el=videoRef.current;if (el?.paused) el.play()?.catch(()=>{});};
+    // The development's film is a render; a short dwell keeps a pass over the grid from starting it.
+    if (home.development) {clearTimeout(videoDelay.current);videoDelay.current=setTimeout(start,400);return;}
+    start();
   }
   function stopVideo() {
+    clearTimeout(videoDelay.current);
     const el=videoRef.current;
     if (!el) return;
     el.pause();
     try { el.currentTime=0; } catch { /* The file can still be loading. */ }
   }
-  return <article className="discovery-item" data-listing-id={home.listingId}>
-    <div className="discovery-card" onPointerEnter={playVideo} onPointerLeave={event=>{if (event.pointerType!=='touch') stopVideo();}} onFocus={playVideo} onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) stopVideo();}}>
+  return <article className="discovery-item" data-listing-id={home.listingId} data-home-id={home.id}>
+    <div className="discovery-card" onPointerEnter={event=>{playVideo(event);intent.onPointerEnter(event);}} onPointerLeave={event=>{intent.onPointerLeave();if (event.pointerType!=='touch') stopVideo();}} onFocus={()=>{playVideo();intent.onFocus();}} onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) stopVideo();}}>
       <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef}/></button>
-      {chips.length>0&&<span className="discovery-tags">{chips.map(chip=><span className="discovery-tag" key={chip}>{t(chip)}</span>)}</span>}
+      {(tags.length>0||contacted)&&<span className="discovery-tags">
+        {contacted&&<span className="discovery-tag is-contacted"><Icon name="check" size={12}/>{language==='pt-BR'?'Contato enviado':'Contacto enviado'}</span>}
+        <ListingTagList tags={tags}/>
+      </span>}
       <button className={'discovery-like '+(saved?'is-liked':'')} aria-label={t(saved?'Quitar de favoritos ':'Me gusta ')+home.street} aria-pressed={saved} onClick={()=>onLike(home)}>
         <FavoriteHeart/>
       </button>
     </div>
-    {contacted&&<span className="v2-contacted"><Icon name="check" size={14}/>{language==='pt-BR'?'Contato simulado registrado':'Contacto simulado registrado'}</span>}
   </article>;
 }
 
-function InspirationRail({title,subtitle,items,saved,onLike,onOpen,receipts=[],compact=false}) {
+function InspirationRail({title,subtitle,items,saved,onLike,onOpen,receipts=[],compact=false,search,pref='none'}) {
   const {t}=useLanguage();
   const rail=useRef(null);
   const [position,setPosition]=useState({start:true,end:false});
@@ -219,7 +236,7 @@ function InspirationRail({title,subtitle,items,saved,onLike,onOpen,receipts=[],c
   function measure(){const el=rail.current;if(el)setPosition({start:el.scrollLeft<2,end:el.scrollLeft+el.clientWidth>=el.scrollWidth-2});}
   return <section className={'discovery-section '+(compact?'compact-rail':'')} aria-label={t(title)}>
     <div className="discovery-heading"><div><h2>{t(title)}</h2><p>{t(subtitle)}</p></div><div className="rail-controls"><button className="icon-button" aria-label={t('Anterior: ')+t(title)} disabled={position.start} onClick={()=>move(-1)}><Icon name="back"/></button><button className="icon-button" aria-label={t('Siguiente: ')+t(title)} disabled={position.end||items.length<2} onClick={()=>move(1)}><Icon name="arrow"/></button></div></div>
-    <div className="discovery-rail" ref={rail} onScroll={measure}>{items.map(h=><HouseCard key={h.id} home={h} contacted={receipts.some(r=>r.propertyId===h.id)} saved={saved.includes(h.id)} onLike={onLike} onOpen={onOpen}/>)}</div>
+    <div className="discovery-rail" ref={rail} onScroll={measure}>{items.map(h=><HouseCard key={h.id} home={h} search={search} pref={pref} contacted={receipts.some(r=>r.propertyId===h.id)} saved={saved.includes(h.id)} onLike={onLike} onOpen={onOpen}/>)}</div>
   </section>;
 }
 

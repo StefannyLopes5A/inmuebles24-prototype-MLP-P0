@@ -3,7 +3,11 @@ import {listingPrice} from './data.js';
 import {matchingHomes} from './journey.js';
 import {criterionLabel, matchesCriteria} from './searchCriteria.js';
 
+import {GALLERY} from './development/torreOlmo.js';
+
 export function listingDetails(home) {
+  // Parking and floor change per unit, so a development leaves them to the unit view.
+  if (home.development) return {gallery:GALLERY.map(photo => photo.src), parking:null, pets:true, floor:null};
   return details[home.id] || {gallery:[home.image], parking:null, pets:null, floor:null};
 }
 

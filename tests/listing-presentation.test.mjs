@@ -40,7 +40,7 @@ test('every gallery resolves to local catalog photos and unknown details remain 
     const data=listingDetails(home);
     assert.ok(data.gallery.length);
     assert.equal(data.gallery[0],home.image);
-    for(const photo of data.gallery){assert.match(photo,/^\/assets\/listings\//);assert.ok(existsSync(new URL(`../public${photo}`,import.meta.url)));}
+    for(const photo of data.gallery){assert.match(photo,home.development?/^\/assets\/developments\//:/^\/assets\/listings\//);assert.ok(existsSync(new URL(`../public${photo}`,import.meta.url)));}
   }
   const unknown=homes.find(item=>listingDetails(item).pets===null);
   assert.match(answerListingQuestion(unknown,'Aceita pets?','pt-BR'),/precisa ser confirmada/);

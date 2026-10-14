@@ -1,0 +1,1503 @@
+{
+  "65158513": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 23
+      },
+      {
+        "kind": "recámara",
+        "photo": 15
+      },
+      {
+        "kind": "terraza",
+        "photo": 26
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media en la sala y una terraza al fondo",
+      "pt": "Luz média na sala e um terraço no fundo"
+    }
+  },
+  "80458745": {
+    "light": "alta",
+    "view": "calle",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 4
+      },
+      {
+        "kind": "baño",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 7
+      },
+      {
+        "kind": "balcón",
+        "photo": 13
+      },
+      {
+        "kind": "jardín",
+        "photo": 5
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz en la sala y balcón hacia la calle",
+      "pt": "Muita luz na sala e varanda para a rua"
+    }
+  },
+  "150928012": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 2
+      },
+      {
+        "kind": "cocina",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 12
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Mucha luz y jardín; no hay fotos de los baños",
+      "pt": "Muita luz e jardim; não há fotos dos banheiros"
+    }
+  },
+  "150928014": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 1
+      },
+      {
+        "kind": "cocina",
+        "photo": 4
+      },
+      {
+        "kind": "baño",
+        "photo": 18
+      },
+      {
+        "kind": "recámara",
+        "photo": 16
+      },
+      {
+        "kind": "terraza",
+        "photo": 13
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, jardín y terraza con vista al verde",
+      "pt": "Muita luz, jardim e terraço com vista para o verde"
+    }
+  },
+  "150934952": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "terraza",
+        "photo": 1
+      },
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "recámara",
+        "photo": 9
+      },
+      {
+        "kind": "baño",
+        "photo": 16
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Patio interior y sala con luz media",
+      "pt": "Pátio interno e sala com luz média"
+    }
+  },
+  "151087221": {
+    "light": "media",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 3
+      },
+      {
+        "kind": "cocina",
+        "photo": 5
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      },
+      {
+        "kind": "recámara",
+        "photo": 13
+      },
+      {
+        "kind": "terraza",
+        "photo": 4
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Cuartos vacíos, jardín y una terraza cubierta",
+      "pt": "Cômodos vazios, jardim e um terraço coberto"
+    }
+  },
+  "151203098": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 5
+      },
+      {
+        "kind": "baño",
+        "photo": 15
+      },
+      {
+        "kind": "terraza",
+        "photo": 26
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Vacío, con cocina nueva y terraza",
+      "pt": "Vazio, com cozinha nova e terraço"
+    }
+  },
+  "151231685": {
+    "light": "media",
+    "view": "interior",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 6
+      },
+      {
+        "kind": "recámara",
+        "photo": 12
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Cocina nueva y recámaras; no hay fotos de los baños",
+      "pt": "Cozinha nova e quartos; não há fotos dos banheiros"
+    }
+  },
+  "151250217": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 15
+      },
+      {
+        "kind": "recámara",
+        "photo": 11
+      },
+      {
+        "kind": "jardín",
+        "photo": 20
+      },
+      {
+        "kind": "estudio",
+        "photo": 25
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, patio con plantas y un estudio",
+      "pt": "Muita luz, pátio com plantas e um estúdio"
+    }
+  },
+  "151293636": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 1
+      },
+      {
+        "kind": "cocina",
+        "photo": 8
+      },
+      {
+        "kind": "baño",
+        "photo": 19
+      },
+      {
+        "kind": "recámara",
+        "photo": 18
+      },
+      {
+        "kind": "terraza",
+        "photo": 23
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, jardín y terraza en la azotea",
+      "pt": "Muita luz, jardim e terraço na cobertura"
+    }
+  },
+  "147754497": {
+    "light": "media",
+    "view": "calle",
+    "condition": "para actualizar",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 4
+      },
+      {
+        "kind": "terraza",
+        "photo": 9
+      },
+      {
+        "kind": "jardín",
+        "photo": 1
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y terraza techada hacia la calle",
+      "pt": "Luz média e terraço coberto para a rua"
+    }
+  },
+  "147888784": {
+    "light": "media",
+    "view": "calle",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 10
+      },
+      {
+        "kind": "baño",
+        "photo": 30
+      },
+      {
+        "kind": "recámara",
+        "photo": 15
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 2
+      },
+      {
+        "kind": "roof",
+        "photo": 20
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y azotea en el último piso",
+      "pt": "Luz média e cobertura no último andar"
+    }
+  },
+  "148011739": {
+    "light": "media",
+    "view": "calle",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 20
+      },
+      {
+        "kind": "baño",
+        "photo": 10
+      },
+      {
+        "kind": "recámara",
+        "photo": 3
+      },
+      {
+        "kind": "terraza",
+        "photo": 23
+      },
+      {
+        "kind": "roof",
+        "photo": 19
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y terraza privada desde la sala",
+      "pt": "Luz média e terraço privativo a partir da sala"
+    }
+  },
+  "148353811": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 3
+      },
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "recámara",
+        "photo": 14
+      },
+      {
+        "kind": "estudio",
+        "photo": 16
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Mucha luz y jardín junto a la sala; no hay fotos de los baños",
+      "pt": "Muita luz e jardim junto à sala; não há fotos dos banheiros"
+    }
+  },
+  "148363769": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 17
+      },
+      {
+        "kind": "recámara",
+        "photo": 14
+      },
+      {
+        "kind": "estudio",
+        "photo": 9
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y cocina con isla",
+      "pt": "Luz média e cozinha com ilha"
+    }
+  },
+  "148473080": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 5
+      },
+      {
+        "kind": "baño",
+        "photo": 7
+      },
+      {
+        "kind": "recámara",
+        "photo": 10
+      },
+      {
+        "kind": "estudio",
+        "photo": 21
+      },
+      {
+        "kind": "jardín",
+        "photo": 24
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz y jardín con pasto y árboles",
+      "pt": "Muita luz e jardim com grama e árvores"
+    }
+  },
+  "148507673": {
+    "light": "media",
+    "view": "interior",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 4
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      },
+      {
+        "kind": "terraza",
+        "photo": 10
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y terraza con deck",
+      "pt": "Luz média e terraço com deck"
+    }
+  },
+  "148639575": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 9
+      },
+      {
+        "kind": "recámara",
+        "photo": 12
+      },
+      {
+        "kind": "jardín",
+        "photo": 1
+      },
+      {
+        "kind": "terraza",
+        "photo": 5
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Mucha luz por los ventanales y jardín arbolado; no hay fotos de los baños",
+      "pt": "Muita luz pelas janelas e jardim arborizado; não há fotos dos banheiros"
+    }
+  },
+  "148806113": {
+    "light": "media",
+    "view": "verde",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 16
+      },
+      {
+        "kind": "baño",
+        "photo": 30
+      },
+      {
+        "kind": "recámara",
+        "photo": 26
+      },
+      {
+        "kind": "jardín",
+        "photo": 13
+      },
+      {
+        "kind": "terraza",
+        "photo": 10
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y jardín cerrado entre muros",
+      "pt": "Luz média e jardim fechado entre muros"
+    }
+  },
+  "148942568": {
+    "light": "media",
+    "view": "verde",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 15
+      },
+      {
+        "kind": "recámara",
+        "photo": 14
+      },
+      {
+        "kind": "jardín",
+        "photo": 11
+      },
+      {
+        "kind": "terraza",
+        "photo": 10
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media bajo techo de madera y terraza frente al jardín",
+      "pt": "Luz média sob teto de madeira e terraço de frente para o jardim"
+    }
+  },
+  "143530507": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "recámara",
+        "photo": 3
+      },
+      {
+        "kind": "roof",
+        "photo": 10
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 9
+      },
+      {
+        "kind": "jardín",
+        "photo": 2
+      }
+    ],
+    "missing": [
+      "baños",
+      "cocina"
+    ],
+    "notes": {
+      "es": "Luz media en recámaras vacías y roof en el último piso; no hay fotos de cocina ni baños",
+      "pt": "Luz média em quartos vazios e roof no último andar; não há fotos da cozinha nem dos banheiros"
+    }
+  },
+  "144186131": {
+    "light": "baja",
+    "view": "ciudad",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 15
+      },
+      {
+        "kind": "baño",
+        "photo": 11
+      },
+      {
+        "kind": "recámara",
+        "photo": 9
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz baja y cocina blanca recién hecha, con vista a la ciudad",
+      "pt": "Luz baixa e cozinha branca recém-feita, com vista para a cidade"
+    }
+  },
+  "144289319": {
+    "light": "media",
+    "view": "interior",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 1
+      },
+      {
+        "kind": "baño",
+        "photo": 12
+      },
+      {
+        "kind": "roof",
+        "photo": 21
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media, cocina equipada y roof",
+      "pt": "Luz média, cozinha equipada e roof"
+    }
+  },
+  "146304928": {
+    "light": "baja",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "terraza",
+        "photo": 8
+      }
+    ],
+    "missing": [
+      "baños",
+      "cocina"
+    ],
+    "notes": {
+      "es": "Luz baja en salas amuebladas; el único exterior claro es el patio",
+      "pt": "Luz baixa em salas mobiliadas; o único exterior claro é o pátio"
+    }
+  },
+  "146333961": {
+    "light": "media",
+    "view": "ciudad",
+    "condition": "para actualizar",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "recámara",
+        "photo": 10
+      },
+      {
+        "kind": "baño",
+        "photo": 18
+      },
+      {
+        "kind": "cocina",
+        "photo": 28
+      },
+      {
+        "kind": "balcón",
+        "photo": 6
+      },
+      {
+        "kind": "jardín",
+        "photo": 35
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 38
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media, balcón a la ciudad y jardín; la cocina pide actualizar",
+      "pt": "Luz média, varanda para a cidade e jardim; a cozinha pede atualização"
+    }
+  },
+  "146481212": {
+    "light": "baja",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 9
+      },
+      {
+        "kind": "baño",
+        "photo": 10
+      },
+      {
+        "kind": "recámara",
+        "photo": 12
+      },
+      {
+        "kind": "jardín",
+        "photo": 3
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz baja en el comedor y patio con verde",
+      "pt": "Luz baixa na sala de jantar e pátio com verde"
+    }
+  },
+  "146935319": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "estudio",
+        "photo": 15
+      }
+    ],
+    "missing": [
+      "baños",
+      "cocina"
+    ],
+    "notes": {
+      "es": "Luz media en cuartos vacíos; no hay fotos de cocina, baños ni recámara",
+      "pt": "Luz média em cômodos vazios; não há fotos da cozinha, dos banheiros nem do quarto"
+    }
+  },
+  "147062385": {
+    "light": "baja",
+    "view": "ciudad",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "recámara",
+        "photo": 10
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      }
+    ],
+    "missing": [
+      "cocina"
+    ],
+    "notes": {
+      "es": "Luz baja y vista a la ciudad; no hay fotos de la cocina",
+      "pt": "Luz baixa e vista para a cidade; não há fotos da cozinha"
+    }
+  },
+  "147098182": {
+    "light": "media",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 22
+      },
+      {
+        "kind": "baño",
+        "photo": 13
+      },
+      {
+        "kind": "jardín",
+        "photo": 8
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz media y jardín alrededor",
+      "pt": "Luz média e jardim em volta"
+    }
+  },
+  "147412705": {
+    "light": "baja",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 18
+      },
+      {
+        "kind": "recámara",
+        "photo": 14
+      },
+      {
+        "kind": "terraza",
+        "photo": 23
+      },
+      {
+        "kind": "jardín",
+        "photo": 26
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 30
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Luz baja, terraza y jardín con pasto",
+      "pt": "Luz baixa, terraço e jardim com grama"
+    }
+  },
+  "150138679": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 33
+      },
+      {
+        "kind": "terraza",
+        "photo": 25
+      },
+      {
+        "kind": "cocina",
+        "photo": 24
+      },
+      {
+        "kind": "baño",
+        "photo": 13
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, cocina de madera y jardín",
+      "pt": "Muita luz, cozinha de madeira e jardim"
+    }
+  },
+  "150144807": {
+    "light": "media",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "estudio",
+        "photo": 7
+      },
+      {
+        "kind": "jardín",
+        "photo": 14
+      },
+      {
+        "kind": "cocina",
+        "photo": 13
+      },
+      {
+        "kind": "baño",
+        "photo": 29
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Estudio con librero y jardín",
+      "pt": "Estúdio com estante e jardim"
+    }
+  },
+  "150180712": {
+    "light": "baja",
+    "view": "interior",
+    "condition": "para actualizar",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "estacionamiento",
+        "photo": 17
+      },
+      {
+        "kind": "cocina",
+        "photo": 22
+      },
+      {
+        "kind": "baño",
+        "photo": 21
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Vacío, con la cocina al final",
+      "pt": "Vazio, com a cozinha no fim"
+    }
+  },
+  "150204172": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "alberca",
+        "photo": 11
+      },
+      {
+        "kind": "jardín",
+        "photo": 10
+      },
+      {
+        "kind": "cocina",
+        "photo": 9
+      },
+      {
+        "kind": "baño",
+        "photo": 6
+      },
+      {
+        "kind": "recámara",
+        "photo": 12
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, alberca y jardín, con recámara amueblada",
+      "pt": "Muita luz, piscina e jardim, com quarto mobiliado"
+    }
+  },
+  "150205995": {
+    "light": "media",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 2
+      },
+      {
+        "kind": "cocina",
+        "photo": 6
+      },
+      {
+        "kind": "estudio",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 9
+      },
+      {
+        "kind": "baño",
+        "photo": 12
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Jardín al frente y estudio con librero",
+      "pt": "Jardim na frente e estúdio com estante"
+    }
+  },
+  "150280233": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 9
+      },
+      {
+        "kind": "cocina",
+        "photo": 6
+      },
+      {
+        "kind": "baño",
+        "photo": 11
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, cocina nueva y jardín; los cuartos están vacíos",
+      "pt": "Muita luz, cozinha nova e jardim; os cômodos estão vazios"
+    }
+  },
+  "150572926": {
+    "light": "media",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 7
+      },
+      {
+        "kind": "cocina",
+        "photo": 12
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      },
+      {
+        "kind": "recámara",
+        "photo": 16
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Jardín al fondo y recámara; no hay balcón en las fotos",
+      "pt": "Jardim ao fundo e quarto; não há varanda nas fotos"
+    }
+  },
+  "150833908": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "recámara",
+        "photo": 1
+      },
+      {
+        "kind": "cocina",
+        "photo": 11
+      },
+      {
+        "kind": "baño",
+        "photo": 21
+      },
+      {
+        "kind": "terraza",
+        "photo": 31
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, recámara y terraza con vegetación",
+      "pt": "Muita luz, quarto e terraço com vegetação"
+    }
+  },
+  "150855580": {
+    "light": "media",
+    "view": "interior",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "baño",
+        "photo": 13
+      },
+      {
+        "kind": "cocina",
+        "photo": 37
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Vacío, con cocina al final no hay balcón en las fotos",
+      "pt": "Vazio, com a cozinha no fim não há varanda nas fotos"
+    }
+  },
+  "150870960": {
+    "light": "media",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "jardín",
+        "photo": 3
+      },
+      {
+        "kind": "cocina",
+        "photo": 19
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Jardín amplio y cocina",
+      "pt": "Jardim amplo e cozinha"
+    }
+  },
+  "149127472": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 9
+      },
+      {
+        "kind": "recámara",
+        "photo": 13
+      },
+      {
+        "kind": "alberca",
+        "photo": 20
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Mucha luz, recámara y alberca",
+      "pt": "Muita luz, quarto e piscina"
+    }
+  },
+  "149169195": {
+    "light": "media",
+    "view": "interior",
+    "condition": "para actualizar",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 15
+      },
+      {
+        "kind": "baño",
+        "photo": 16
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Vacío, con cocina y baño al final",
+      "pt": "Vazio, com cozinha e banheiro no fim"
+    }
+  },
+  "149365031": {
+    "light": "media",
+    "view": "interior",
+    "condition": "bueno",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 5
+      },
+      {
+        "kind": "baño",
+        "photo": 20
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Cocina y baño; hay una sala con butacas",
+      "pt": "Cozinha e banheiro; há uma sala com poltronas"
+    }
+  },
+  "149416023": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "alberca",
+        "photo": 7
+      }
+    ],
+    "missing": [
+      "baños",
+      "cocina"
+    ],
+    "notes": {
+      "es": "Solo exteriores, con alberca y árboles; no hay fotos de cocina, baños ni recámara",
+      "pt": "Só exteriores, com piscina e árvores; não há fotos de cozinha, banheiros nem quarto"
+    }
+  },
+  "149671290": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 3
+      },
+      {
+        "kind": "terraza",
+        "photo": 10
+      },
+      {
+        "kind": "baño",
+        "photo": 14
+      },
+      {
+        "kind": "roof",
+        "photo": 24
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 34
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Cocina nueva, terraza y roof; los cuartos están vacíos",
+      "pt": "Cozinha nova, terraço e roof; os cômodos estão vazios"
+    }
+  },
+  "149719464": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 3
+      },
+      {
+        "kind": "jardín",
+        "photo": 7
+      },
+      {
+        "kind": "baño",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 13
+      },
+      {
+        "kind": "gimnasio",
+        "photo": 21
+      },
+      {
+        "kind": "estudio",
+        "photo": 23
+      },
+      {
+        "kind": "terraza",
+        "photo": 24
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Jardín, gimnasio y estudio, con recámara amueblada",
+      "pt": "Jardim, academia e estúdio, com quarto mobiliado"
+    }
+  },
+  "149919919": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "terraza",
+        "photo": 3
+      },
+      {
+        "kind": "recámara",
+        "photo": 6
+      },
+      {
+        "kind": "jardín",
+        "photo": 8
+      },
+      {
+        "kind": "baño",
+        "photo": 10
+      },
+      {
+        "kind": "cocina",
+        "photo": 12
+      }
+    ],
+    "missing": [],
+    "notes": {
+      "es": "Terraza techada frente al jardín y recámara",
+      "pt": "Terraço coberto de frente para o jardim e quarto"
+    }
+  },
+  "149922305": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "remodelado",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "terraza",
+        "photo": 1
+      },
+      {
+        "kind": "jardín",
+        "photo": 4
+      },
+      {
+        "kind": "estacionamiento",
+        "photo": 5
+      },
+      {
+        "kind": "cocina",
+        "photo": 7
+      },
+      {
+        "kind": "recámara",
+        "photo": 11
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Terraza con pérgola, jardín y cochera; no hay fotos de los baños",
+      "pt": "Terraço com pérgola, jardim e garagem; não há fotos dos banheiros"
+    }
+  },
+  "150073890": {
+    "light": "alta",
+    "view": "verde",
+    "condition": "bueno",
+    "furnished": true,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "cocina",
+        "photo": 5
+      },
+      {
+        "kind": "jardín",
+        "photo": 8
+      },
+      {
+        "kind": "recámara",
+        "photo": 11
+      },
+      {
+        "kind": "gimnasio",
+        "photo": 16
+      }
+    ],
+    "missing": [
+      "baños"
+    ],
+    "notes": {
+      "es": "Jardín, recámara y gimnasio; no hay fotos de los baños",
+      "pt": "Jardim, quarto e academia; não há fotos dos banheiros"
+    }
+  },
+  "150094202": {
+    "light": "media",
+    "view": "interior",
+    "condition": "para actualizar",
+    "furnished": false,
+    "render": false,
+    "spaces": [
+      {
+        "kind": "estacionamiento",
+        "photo": 2
+      },
+      {
+        "kind": "jardín",
+        "photo": 5
+      }
+    ],
+    "missing": [
+      "baños",
+      "cocina"
+    ],
+    "notes": {
+      "es": "Cochera y patio con flores; no hay cocina, baños ni recámara en las fotos",
+      "pt": "Garagem e pátio com flores; não há cozinha, banheiros nem quarto nas fotos"
+    }
+  }
+}

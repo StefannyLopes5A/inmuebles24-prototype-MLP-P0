@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "listingId": "buy-150189219",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150189219",
+      "address": "Vasco de Quiroga, Santa Fe Centro, Cuajimalpa de Morelos",
+      "street": "Vasco de Quiroga",
+      "colonia": "Santa Fe Centro",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Vasco de Quiroga, Santa Fe Centro, Alvaro Obregón",
+      "zone": "Santa Fe Centro",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 16400000,
+      "m2": 445,
+      "bedrooms": 4,
+      "bathrooms": 2,
+      "parking": 2,
+      "agency": {
+        "name": "Nido Propiedades",
+        "verified": false,
+        "rating": 4.9,
+        "reviews": 325,
+        "replyMinutes": false,
+        "replyHours": 3
+      }
+    },
+    "market": {
+      "pricePerM2": 36854,
+      "comparablesCount": 109,
+      "comparablesMedianPerM2": 34900,
+      "comparablesP10PerM2": 22300,
+      "comparablesP90PerM2": 51000,
+      "diffVsMedianPct": 6,
+      "classification": "negotiable",
+      "daysListed": 24,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.6,
+      "priceHistory": [
+        {
+          "daysAgo": 10,
+          "change": -1000000
+        }
+      ],
+      "rankInSearchByPricePerM2": 6,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 14,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 4
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 14
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 10
+        }
+      ],
+      "missing": [],
+      "note": "Luz media y terraza con deck"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 30,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque Prados de la Montaña",
+          "minutes": 2,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Prados de la Montaña",
+        "minutes": 2,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Santa Fe Centro"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 8900000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 242,
+        "m2DiffPct": 131,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 30,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 119,
+        "m2DiffPct": 248,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 30,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Terraza con deck y acabados nuevos; bajó $1M hace 10 días y su m² queda solo 6% arriba de parecidos.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Santa Fe Centro, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $36.9k/m² contra $34.9k/m² de mediana en 109 parecidos, dentro del rango de Santa Fe Centro.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la baja",
+          "payload": {
+            "question": "¿La baja de precio fue por algo en particular?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+6% vs. parecidos",
+      "p10": 22300,
+      "p90": 51000,
+      "median": 34900,
+      "value": 36854,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿La terraza recibe sol de tarde?",
+      "¿Cuántos lugares de estacionamiento tiene?"
+    ],
+    "extractedTags": [],
+    "address": "Vasco de Quiroga, Santa Fe Centro, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "30 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Prados de la Montaña",
+        "meta": "2 min a pie"
+      }
+    ]
+  }
+}

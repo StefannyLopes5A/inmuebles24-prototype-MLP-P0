@@ -2,6 +2,7 @@ import {listingPrice} from './data.js';
 import {homeCoordinates, NEIGHBORHOOD_CENTROIDS} from './mapLocations.js';
 import {ALCALDIA_BY_COLONIA, ALCALDIA_SAFETY, allColoniaNames, coloniaVision, textOf} from './mapWidgetContent.js';
 import {pickColonia, placeFeature, placeNivel} from './coloniaPolygons.js';
+import {NEARBY_RADIUS_M, poiLabel} from './poiCategories.js';
 
 export {pickColonia};
 
@@ -19,7 +20,6 @@ export const COLONIA_ZOOM = 12.45;
 export const SETTLE_MS = 600;
 export const WALK_HIGHLIGHT_M = 800;
 
-const FAMILY_NOTE = /escuel|escol|hij[oa]|filh[oa]|familia|família|niñ|crianc/i;
 const COMMUTE_NOTE = /trabajo|trabalho|oficina|destino|polanco|santa fe|reform/i;
 
 export function resolveLevel({zoom, selectedId, previous = 'colonia'}) {
@@ -56,9 +56,7 @@ export function adaptiveSlot({search, vision, session = {}, level}) {
   const note = search?.note || '';
   const ranked = [];
   if (COMMUTE_NOTE.test(note)) ranked.push('commute');
-  if ((search?.beds || 0) >= 3 || FAMILY_NOTE.test(note)) ranked.push('neighbors');
   if (vision.soilRisk) ranked.push('soil');
-  if (session.sawPoi) ranked.push('neighbors');
   ranked.push('nearby');
   const unique = [...new Set(ranked)];
   const primary = unique[0];
@@ -260,7 +258,7 @@ function priceWidget({vision, search, stats, language, highlightLogin, scope = '
           {label: vision.neighborName, value: vision.neighborMedianPerM2},
           {label: 'CDMX', value: CDMX_MEDIAN_M2},
         ].filter(row => row.value),
-    teaser: pt ? 'Preço justo e de fechamento' : 'Precio justo y de cierre',
+    teaser: pt ? 'Referência para negociar' : 'Referencia para negociar',
     highlightLogin,
   });
 }
@@ -274,7 +272,7 @@ function trendWidget({vision, language, scope = 'colonia'}) {
     id: 'trend',
     kind: 'trend',
     layer: 'trend',
-    title: pt ? 'Tendência de valorização' : 'Tendencia de plusvalía',
+    title: pt ? 'Tendência do preço' : 'Tendencia del precio',
     kicker: pt ? '12 meses' : '12 meses',
     headline: label,
     support: vision.trend.direction === 'up'
@@ -285,12 +283,53 @@ function trendWidget({vision, language, scope = 'colonia'}) {
     spark: vision.trend.spark,
     citySpark: scope === 'city' || scope === 'colonia' ? CITY_TREND_SPARK : null,
     direction: vision.trend.direction,
-    teaser: pt ? '% exato e prognóstico' : '% exacto y pronóstico',
+    teaser: pt ? '% exato em 12 meses' : '% exacto en 12 meses',
   });
 }
 
-function nearbyWidget({vision, language, id = 'nearby'}) {
+/** Four slots; one whose category has nothing in the base gives its place to the first stand-in that does. */
+const NEARBY_SLOTS = ['metro', 'parque', 'escola', 'cafe'];
+const NEARBY_STANDINS = ['supermercado', 'hospital', 'bar_restaurante', 'comercio'];
+const NEARBY_NOUN = {
+  parque: {es: ['parque', 'parques'], pt: ['parque', 'parques']},
+  escola: {es: ['escuela', 'escuelas'], pt: ['escola', 'escolas']},
+  cafe: {es: ['café', 'cafés'], pt: ['café', 'cafés']},
+  supermercado: {es: ['súper', 'súpers'], pt: ['mercado', 'mercados']},
+  hospital: {es: ['hospital', 'hospitales'], pt: ['hospital', 'hospitais']},
+  bar_restaurante: {es: ['restaurante', 'restaurantes'], pt: ['restaurante', 'restaurantes']},
+  comercio: {es: ['comercio', 'comercios'], pt: ['comércio', 'comércios']},
+};
+const TILE_LABEL = {bar_restaurante: {es: 'Restaurantes', pt: 'Restaurantes'}};
+
+export function nearbySlots(places) {
+  const has = categoria => places[categoria]?.count > 0;
+  const spare = NEARBY_STANDINS.filter(has);
+  return NEARBY_SLOTS.map(categoria => has(categoria) || !spare.length ? categoria : spare.shift());
+}
+
+function realNearbyTiles(places, pt) {
+  const lang = pt ? 'pt' : 'es';
+  return nearbySlots(places).map(categoria => {
+    const metro = categoria === 'metro';
+    const raw = places[categoria] || {count: 0, items: [], closest: null};
+    const named = place => place && metro && !/^metro/i.test(place.name) ? {...place, name: `${pt ? 'Metrô' : 'Metro'} ${place.name}`} : place;
+    const {count} = raw, items = raw.items.map(named), closest = named(raw.closest);
+    const label = TILE_LABEL[categoria]?.[lang] || poiLabel(categoria, pt ? 'pt-BR' : 'es-MX');
+    const [one, many] = NEARBY_NOUN[categoria]?.[lang] || [];
+    const where = places.base?.area ? `${pt ? 'em' : 'en'} ${places.base.area}` : `a ${places.base?.radius || NEARBY_RADIUS_M} m`;
+    const headline = metro
+      ? (items[0] ? (pt ? `Metrô a ${items[0].minutes} min` : `Metro a ${items[0].minutes} min`) : (pt ? `Sem metrô ${where}` : `Sin metro ${where}`))
+      : count ? `${count} ${count === 1 ? one : many}` : (pt ? `Sem ${many} ${where}` : `Sin ${many} ${where}`);
+    const list = items.length ? items : closest ? [closest] : [];
+    return {kind: categoria, label, metric: String(count), headline, items: list, poi: list[0]?.id};
+  });
+}
+
+function nearbyWidget({vision, language, places, id = 'nearby'}) {
   const pt = language === 'pt-BR';
+  if (places) {
+    return {id, kind: 'nearby', title: pt ? 'Perto de você' : 'Cerca de ti', kicker: pt ? 'a pé' : 'a pie', tiles: realNearbyTiles(places, pt)};
+  }
   const nearby = vision.nearby;
   const poiOf = kind => nearby.pois.find(poi => poi.kind === kind);
   const supportOf = kind => {
@@ -337,21 +376,6 @@ function nearbyWidget({vision, language, id = 'nearby'}) {
         support: supportOf('food'),
         poi: poiOf('food')?.id,
       },
-    ],
-  };
-}
-
-function neighborsWidget({vision, language}) {
-  const pt = language === 'pt-BR';
-  return {
-    id: 'neighbors',
-    kind: 'neighbors',
-    title: pt ? 'O que dizem os vizinhos' : 'Lo que dicen los vecinos',
-    support: pt ? `${vision.neighbors.reviews} avaliações` : `${vision.neighbors.reviews} reseñas`,
-    bars: [
-      {id: 'walkable', label: pt ? 'Caminhável' : 'Caminable', value: vision.neighbors.walkable, detail: `${vision.neighbors.walkable}%`},
-      {id: 'pet', label: 'Pet-friendly', value: vision.neighbors.pet, detail: `${vision.neighbors.pet}%`},
-      {id: 'quiet', label: pt ? 'Tranquilo à noite' : 'Tranquilo de noche', value: vision.neighbors.quiet, detail: `${vision.neighbors.quiet}%`},
     ],
   };
 }
@@ -428,14 +452,13 @@ function vsColoniaWidget({home, vision, language, highlightLogin}) {
     unit: 'MXN/m²',
     support: label,
     track: {position: homeAt, label: pt ? 'Este anúncio' : 'Este anuncio', median: 50, medianLabel: pt ? 'Mediana' : 'Mediana'},
-    teaser: pt ? 'Preço justo deste anúncio' : 'Precio justo de este anuncio',
+    teaser: pt ? 'Referência para negociar este anúncio' : 'Referencia para negociar este anuncio',
     highlightLogin,
   });
 }
 
 const DEEP_WIDGETS = {
   nearby: nearbyWidget,
-  neighbors: neighborsWidget,
   commute: commuteWidget,
   soil: soilWidget,
 };
@@ -567,7 +590,7 @@ export function panelContent({widgetId, vision, search, language, home}) {
   return panelContent({widgetId: 'summary', vision, search, language, home});
 }
 
-export function buildStack({level, colonia, search, home, language = 'es-MX', session = {}}) {
+export function buildStack({level, colonia, search, home, places, language = 'es-MX', session = {}}) {
   const lang = langOf(language);
   const highlightLogin = session.loginHighlight !== false;
   if (level === 'city' || placeNivel(colonia) === 'alcaldia') {
@@ -597,20 +620,21 @@ export function buildStack({level, colonia, search, home, language = 'es-MX', se
   const vision = coloniaVision(colonia) || coloniaVision('Narvarte Poniente');
   const stats = catalogStats(session.homes, colonia, search);
   if (level === 'home' && home) {
+    const where = home.street || home.area;
     const widgets = [
       summaryWidget({
         place: home.area,
         vision,
         copy: {
-          title: {es: `Este inmueble en ${home.area}`, pt: `Este imóvel em ${home.area}`},
-          closed: homeSegments(home, vision, lang),
+          title: {es: `Este inmueble en ${where}`, pt: `Este imóvel em ${where}`},
+          closed: homeSegments(home, vision, lang, places),
         },
         mentions: ['vs-colonia', 'nearby', 'commute'],
         language: lang,
         stats,
       }),
       vsColoniaWidget({home, vision, language: lang, highlightLogin}),
-      nearbyWidget({vision, language: lang}),
+      nearbyWidget({vision, language: lang, places}),
       commuteWidget({vision, language: lang}),
     ];
     return {level, place: home.area, colonia: home.area, vision: publicVision(vision), widgets, homeId: home.id, search, home};
@@ -619,9 +643,9 @@ export function buildStack({level, colonia, search, home, language = 'es-MX', se
   const deep = DEEP_WIDGETS[slot.primary] || nearbyWidget;
   const widgets = [
     summaryWidget({place: vision.name, vision, copy: vision.copy, mentions: slot.mentions, language: lang, stats}),
+    deep({vision, language: lang, places}),
     priceWidget({vision, search, stats, language: lang, highlightLogin, scope: 'colonia'}),
     trendWidget({vision, language: lang, scope: 'colonia'}),
-    deep({vision, language: lang}),
   ];
   return {level: 'colonia', place: vision.name, colonia: vision.name, vision: publicVision(vision), widgets, mentions: slot.mentions, adaptive: slot.primary, search};
 }
@@ -637,7 +661,9 @@ function citySegments(reading, beds, language) {
   ];
 }
 
-function homeSegments(home, vision, language) {
+function homeSegments(home, vision, language, places) {
+  const metro = places?.metro && (places.metro.items[0] || places.metro.closest);
+  const metroMin = metro ? metro.minutes : vision.nearby.metroMin;
   const position = homePosition(home, vision);
   const phrase = position === 'below'
     ? (language === 'pt-BR' ? 'está abaixo da mediana da colônia' : 'está debajo de la mediana de la colonia')
@@ -648,7 +674,7 @@ function homeSegments(home, vision, language) {
     {text: language === 'pt-BR' ? 'Neste recorte, o anúncio ' : 'En este recorte, el anuncio '},
     {text: phrase, widget: 'vs-colonia'},
     {text: language === 'pt-BR' ? '. Perto daqui, ' : '. Cerca de aquí, '},
-    {text: language === 'pt-BR' ? `o metrô fica a ${vision.nearby.metroMin} min a pé` : `el metro queda a ${vision.nearby.metroMin} min a pie`, widget: 'nearby', poi: vision.nearby.pois[0]?.id},
+    {text: language === 'pt-BR' ? `o metrô fica a ${metroMin} min a pé` : `el metro queda a ${metroMin} min a pie`, widget: 'nearby', poi: vision.nearby.pois[0]?.id},
     {text: '.'},
   ];
 }

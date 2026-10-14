@@ -21,6 +21,10 @@ import "./compare-favorites.css";
 import "./favorite-folders.css";
 import "./account.css";
 import "./mobile-polish.css";
+import "./listing-panel.css";
+import "./mora-voice.css";
+import "./glass.css";
+import "./recorrido.css";
 
 const finalUrl = migratePrototypeUrl(location.href);
 if (finalUrl) history.replaceState(history.state,"",finalUrl);

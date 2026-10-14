@@ -1,0 +1,278 @@
+{
+  "meta": {
+    "listingId": "buy-151157034",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-151157034",
+      "address": "Antiguo Camino A Tecamachalco, Lomas de Vista Hermosa, Cuajimalpa de Morelos",
+      "street": "Antiguo Camino A Tecamachalco",
+      "colonia": "Lomas de Vista Hermosa",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Antiguo Camino a Tecamachalco, Lomas de Vista Hermosa, Cuajimalpa de Morelos",
+      "zone": "Lomas de Vista Hermosa",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 10700000,
+      "m2": 200,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Barrio Alto Real Estate",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 188,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 53500,
+      "comparablesCount": 203,
+      "comparablesMedianPerM2": 52200,
+      "comparablesP10PerM2": 33400,
+      "comparablesP90PerM2": 76200,
+      "diffVsMedianPct": 2,
+      "classification": "negotiable",
+      "daysListed": 99,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 2.7,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 21,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 14,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 2
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 8
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 12
+        }
+      ],
+      "missing": [
+        "bathrooms"
+      ],
+      "note": "Mucha luz y jardín; no hay fotos de los baños"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "view"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 35,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Area verde cruce",
+          "minutes": 18,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Area verde cruce",
+        "minutes": 18,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Lomas de Vista Hermosa"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 3200000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 123,
+        "m2DiffPct": 4,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 35,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 43,
+        "m2DiffPct": 56,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 35,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Con 99 días publicado y m² apenas 2% arriba de parecidos, hay margen para negociar; por las fotos, tiene mucha luz y jardín.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Lomas de Vista Hermosa, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $53.5k/m² contra $52.2k/m² de mediana en 203 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Pedir fotos de los baños",
+          "payload": {
+            "question": "¿Pueden enviar fotos de los baños?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+2% vs. parecidos",
+      "p10": 33400,
+      "p90": 76200,
+      "median": 52200,
+      "value": 53500,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Qué vista tiene desde la sala?",
+      "¿El área verde es común?"
+    ],
+    "extractedTags": [],
+    "address": "Antiguo Camino A Tecamachalco, Lomas de Vista Hermosa, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "35 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Area verde cruce",
+        "meta": "18 min a pie"
+      }
+    ]
+  }
+}

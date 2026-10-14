@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "listingId": "buy-149024502",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-149024502",
+      "address": "Calle Guaymas, Roma Norte, Cuauhtémoc",
+      "street": "Calle Guaymas",
+      "colonia": "Roma Norte",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Calle Guaymas, Roma Norte, Cuauhtémoc",
+      "zone": "Roma Norte",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 7597000,
+      "m2": 135,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "parking": 2,
+      "agency": {
+        "name": "Barrio Alto Real Estate",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 188,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 56274,
+      "comparablesCount": 158,
+      "comparablesMedianPerM2": 55700,
+      "comparablesP10PerM2": 35600,
+      "comparablesP90PerM2": 81300,
+      "diffVsMedianPct": 1,
+      "classification": "fair",
+      "daysListed": 31,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.8,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 26,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 19,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 4
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 18
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 16
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 13
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz, jardín y terraza con vista al verde"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 19,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes",
+          "minutes": 8,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Jardín Juan Rulfo",
+          "minutes": 5,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Jardín Juan Rulfo",
+        "minutes": 5,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Roma Norte"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 97000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 8
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 58,
+        "m2DiffPct": -30,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 8,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 1,
+        "m2DiffPct": 5,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 8,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 35,
+        "similarity": "high"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Jardín y terraza con vista al verde en Roma Norte, a precio de zona y con Metro Insurgentes a 8 min; queda $97k arriba de tu presupuesto.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Roma Norte, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 8 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $56.3k/m² contra $55.7k/m² en 158 parecidos, si se confirman los 135 m²: el anuncio no los publica.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Confirmar la superficie",
+          "payload": {
+            "question": "¿Cuántos m² tiene el departamento?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "En la mediana de la zona",
+      "badge": "+1% vs. parecidos",
+      "p10": 35600,
+      "p90": 81300,
+      "median": 55700,
+      "value": 56274,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Cuántos niveles tiene la casa?",
+      "¿Se escucha ruido de la calle?"
+    ],
+    "extractedTags": [],
+    "address": "Calle Guaymas, Roma Norte, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "19 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes",
+        "meta": "8 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Jardín Juan Rulfo",
+        "meta": "5 min a pie"
+      }
+    ]
+  }
+}

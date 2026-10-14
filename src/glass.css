@@ -1,0 +1,13 @@
+/* Round icon buttons across the prototype: white frosted glass. `html` lifts these over each file's base rule regardless of load order. */
+:root{--glass-fill:#ffffffb3;--glass-fill-hover:#ffffffe6;--glass-edge:#0000000f;--glass-shadow:inset 0 1px 0 #ffffffcc,0 1px 2px #0000000d,0 6px 16px #00000012;--glass-blur:saturate(180%) blur(16px)}
+html :is(.compare-back,.compare-composer-close,.mora-close,.home-step,.rail-controls button,.lp-control,.lp-ask-back,.lp-photo-step,.contact-flow-close,.map-control,.map-mini-expand,.map-preview-expand,.property-gallery-controls button,.pp-index-back,.discovery-tag){background:var(--glass-fill);border:1px solid var(--glass-edge);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);color:#111;transition:transform 200ms cubic-bezier(.22,1,.36,1),background-color 150ms ease,opacity 160ms ease-out}
+@media(hover:hover) and (pointer:fine){
+  html :is(.compare-back,.compare-composer-close,.mora-close,.home-step:not(:disabled),.rail-controls button:not(:disabled),.lp-control:not(:disabled),.lp-ask-back,.lp-photo-step,.contact-flow-close,.map-control,.map-mini-expand,.map-preview-expand,.property-gallery-controls button,.pp-index-back):hover{background:var(--glass-fill-hover);border-color:var(--glass-edge);transform:scale(1.06)}
+}
+html :is(.compare-back,.compare-composer-close,.mora-close,.home-step:not(:disabled),.rail-controls button:not(:disabled),.lp-control:not(:disabled),.lp-ask-back,.lp-photo-step,.contact-flow-close,.map-control,.map-mini-expand,.map-preview-expand,.property-gallery-controls button,.pp-index-back):is(:hover,:not(:hover)):active{transform:scale(.96);transition-duration:100ms}
+@media(prefers-reduced-motion:reduce){
+  html :is(.compare-back,.compare-composer-close,.mora-close,.home-step,.rail-controls button,.lp-control,.lp-ask-back,.lp-photo-step,.contact-flow-close,.map-control,.map-mini-expand,.map-preview-expand,.property-gallery-controls button,.pp-index-back):is(:hover,:active){transform:none}
+}
+@media(prefers-reduced-transparency:reduce),(forced-colors:active){
+  html :is(.compare-back,.compare-composer-close,.mora-close,.home-step,.rail-controls button,.lp-control,.lp-ask-back,.lp-photo-step,.contact-flow-close,.map-control,.map-mini-expand,.map-preview-expand,.property-gallery-controls button,.pp-index-back,.discovery-tag){background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
+}

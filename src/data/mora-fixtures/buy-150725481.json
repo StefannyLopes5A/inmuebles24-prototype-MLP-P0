@@ -1,0 +1,285 @@
+{
+  "meta": {
+    "listingId": "buy-150725481",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150725481",
+      "address": "Calle Río Lerma 19, Cuauhtémoc",
+      "street": "Calle Río Lerma 19",
+      "colonia": "Cuauhtémoc",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Calle Río Lerma 19, Cuauhtémoc, Cuauhtémoc",
+      "zone": "Cuauhtémoc",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 6500000,
+      "m2": 104,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": 2,
+      "agency": {
+        "name": "Vértice Bienes Raíces",
+        "verified": true,
+        "rating": 4.4,
+        "reviews": 50,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 62500,
+      "comparablesCount": 58,
+      "comparablesMedianPerM2": 44500,
+      "comparablesP10PerM2": 28500,
+      "comparablesP90PerM2": 65000,
+      "diffVsMedianPct": 40,
+      "classification": "negotiable",
+      "daysListed": 79,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 2.1,
+      "priceHistory": [
+        {
+          "daysAgo": 25,
+          "change": -400000
+        }
+      ],
+      "rankInSearchByPricePerM2": 31,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 10,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "pool",
+          "confidence": "medium",
+          "photoIndex": 7
+        }
+      ],
+      "missing": [
+        "bathrooms",
+        "kitchen"
+      ],
+      "note": "Solo exteriores, con alberca y árboles; no hay fotos de cocina, baños ni recámara"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "penthouse",
+        "levels",
+        "remodeled"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 17,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes",
+          "minutes": 13,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Jardin del Arte",
+          "minutes": 9,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Jardin del Arte",
+        "minutes": 9,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Cuauhtémoc"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 2
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 13
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 35,
+        "m2DiffPct": -46,
+        "bedroomsDiff": -3,
+        "sameZone": false,
+        "metroMinutesThis": 13,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -13,
+        "m2DiffPct": -19,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 13,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Solo hay fotos de exteriores con alberca y árboles; bajó $400k hace 25 días y entra en tu presupuesto.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Cuauhtémoc, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 13 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $62.5k/m² contra $44.5k/m² en 58 parecidos, 40% arriba aun con la baja.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Pedir fotos del interior",
+          "payload": {
+            "question": "¿Pueden enviar fotos del interior y el número de recámaras?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+40% vs. parecidos",
+      "p10": 28500,
+      "p90": 65000,
+      "median": 44500,
+      "value": 62500,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Qué incluye la remodelación?",
+      "¿Cuántos niveles tiene la propiedad?"
+    ],
+    "extractedTags": [],
+    "address": "Calle Río Lerma 19, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "17 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes",
+        "meta": "13 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Jardin del Arte",
+        "meta": "9 min a pie"
+      }
+    ]
+  }
+}

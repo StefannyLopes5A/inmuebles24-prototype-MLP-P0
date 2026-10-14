@@ -1,0 +1,285 @@
+{
+  "meta": {
+    "listingId": "buy-148419165",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148419165",
+      "address": "Flamencos, San José Insurgentes, Benito Juárez",
+      "street": "Flamencos",
+      "colonia": "San José Insurgentes",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Flamencos, San José Insurgentes, Benito Juárez",
+      "zone": "San José Insurgentes",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 19985000,
+      "m2": 325,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 3,
+      "agency": {
+        "name": "Lumen Inmobiliaria",
+        "verified": false,
+        "rating": 4.4,
+        "reviews": 226,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 61492,
+      "comparablesCount": 117,
+      "comparablesMedianPerM2": 44700,
+      "comparablesP10PerM2": 28600,
+      "comparablesP90PerM2": 65300,
+      "diffVsMedianPct": 38,
+      "classification": "above_market",
+      "daysListed": 35,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.9,
+      "priceHistory": [],
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 37,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 9
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 6
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 11
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz, cocina nueva y jardín; los cuartos están vacíos"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "penthouse"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 23,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes Sur",
+          "minutes": 20,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque del Conde",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque del Conde",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "San José Insurgentes"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 12485000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 20
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 316,
+        "m2DiffPct": 68,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 20,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 23,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 166,
+        "m2DiffPct": 154,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 20,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 23,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Cocina nueva, jardín y mucha luz por las fotos; el m² va 38% arriba de parecidos y el Metro Insurgentes Sur está a 20 min.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "San José Insurgentes, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 20 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $61.5k/m² contra $44.7k/m² de mediana en 117 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la planta alta",
+          "payload": {
+            "question": "El anuncio dice penthouse: ¿en qué piso está?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+38% vs. parecidos",
+      "p10": 28600,
+      "p90": 65300,
+      "median": 44700,
+      "value": 61492,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Se venden amueblados?",
+      "¿El jardín es privado o común?"
+    ],
+    "extractedTags": [],
+    "address": "Flamencos, San José Insurgentes, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "23 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes Sur",
+        "meta": "20 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque del Conde",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

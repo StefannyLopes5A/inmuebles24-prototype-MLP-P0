@@ -1,4 +1,5 @@
 import {homes, listingPrice} from './data.js';
+import {available} from './development/torreOlmo.js';
 import {normalizeCriteria, matchesCriteria, criteriaFromText} from './searchCriteria.js';
 import {PROPERTY_TYPES, OPERATIONS} from './homeSearchModel.js';
 import {isFolderId} from './favoriteLists.js';
@@ -43,29 +44,42 @@ export function normalizeSearch(input = {}) {
     ...(PROPERTY_TYPES.some(([key]) => key === source.propertyType) ? {propertyType:source.propertyType} : {}),
     ...(Number(source.minBudget) > 0 && Number(source.minBudget) <= Number(source.budget) ? {minBudget:Math.round(Number(source.minBudget))} : {}),
     ...(plainText(source.ideaLabel, 160) ? {ideaLabel:plainText(source.ideaLabel, 160)} : {}),
+    ...(source.tour3d === true ? {tour3d:true} : {}),
   };
 }
 
 export const selectedAreas = search => normalizeSearch(search).areas;
 
+// A development fits when one of its available units fits; its record keeps the smallest unit.
+const developmentFits = (current) => available.some(unit => unit.beds >= current.beds
+  && unit.price <= current.budget && unit.price >= (current.minBudget || 0));
+
 export function matchingHomes(search) {
   const current = normalizeSearch(search);
   const address = fold(current.address);
   return homes.filter(home => home.mode === current.mode
+    && (!current.tour3d || home.development)
     && (!current.areas.length || current.areas.includes(home.area))
     && (!current.propertyType || current.propertyType === 'apartment' || current.propertyType === 'any')
-    && Number.isFinite(listingPrice(home)) && listingPrice(home) <= current.budget && listingPrice(home) >= (current.minBudget || 0)
-    && home.beds >= current.beds
+    && (home.development ? developmentFits(current) : Number.isFinite(listingPrice(home)) && listingPrice(home) <= current.budget && listingPrice(home) >= (current.minBudget || 0)
+    && home.beds >= current.beds)
     && matchesCriteria(home, current.criteria)
     && (!address || fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address)));
 }
 
+const developments = homes.filter(home => home.development);
+
 export const PROTOTYPE_MIN_RESULTS = 40;
+const SHOWCASE_SLOT = 2;
 
 /** Keep the concept browsable: exact matches first, then nearby catalog suggestions. */
 export function prototypeResults(search) {
   const current = normalizeSearch(search);
-  const exact = matchingHomes(current);
+  // "Solo con tour 3D" is a showcase filter: only the developments with a tour, whatever else is set.
+  if (current.tour3d) return developments;
+  const found = matchingHomes(current);
+  // Desarrollos has a single development in the catalog; it leads, and buy listings fill the grid.
+  const exact = current.mode === 'development' ? [...developments, ...found.filter(home => !home.development)] : found;
   if (exact.length >= PROTOTYPE_MIN_RESULTS) return exact;
   const selected = new Set(exact.map(home => home.id));
   const mode = current.mode === 'rent' ? 'rent' : 'buy';
@@ -79,16 +93,31 @@ export function prototypeResults(search) {
       + current.criteria.filter(id => !matchesCriteria(home, [id])).length * 12
       + Math.min(priceDistance, 10) * 20;
   };
-  const suggestions = homes.filter(home => home.mode === mode && !selected.has(home.id))
+  const suggestions = homes.filter(home => home.mode === mode && !home.development && !selected.has(home.id))
     .sort((a,b) => distance(a) - distance(b) || listingPrice(a) - listingPrice(b) || a.id.localeCompare(b.id))
     .slice(0, PROTOTYPE_MIN_RESULTS - exact.length);
   return [...exact, ...suggestions];
 }
 
+/** The 3D development is the third card in a mixed buy grid, even when the search is in another colonia. */
+export function pinShowcaseDevelopments(items, search) {
+  const current = search || {};
+  if (current.tour3d || current.mode === 'rent') return items;
+  const extra = developments.filter(home => !items.some(item => item.id === home.id));
+  const featured = [...items.filter(home => home.development), ...extra];
+  if (!featured.length) return items;
+  const rest = items.filter(home => !home.development);
+  if (!rest.length) return featured;
+  if (current.mode === 'development') return extra.length ? [...featured, ...rest] : items;
+  const pool = extra.length ? rest.slice(0, Math.max(0, rest.length - extra.length)) : rest;
+  const slot = Math.min(SHOWCASE_SLOT, pool.length);
+  return [...pool.slice(0, slot), ...featured, ...pool.slice(slot)];
+}
+
 /** Keep tour cards near the top of a results grid without placing them next to each other. */
 export function spreadTourListings(items, columns) {
   const width = Math.max(1, columns | 0);
-  const tours = items.filter(home => home.video);
+  const tours = items.filter(home => home.video && !home.development);
   if (!tours.length) return items;
   const slots = [];
   const claim = index => {
@@ -102,7 +131,7 @@ export function spreadTourListings(items, columns) {
     const column = width === 1 ? 0 : index % width;
     claim((index + 1) * width + column);
   }
-  const ordered = items.filter(home => !home.video);
+  const ordered = items.filter(home => !home.video || home.development);
   tours.forEach((home, index) => ordered.splice(Math.min(slots[index], ordered.length), 0, home));
   return ordered;
 }
@@ -153,6 +182,7 @@ export function readJourney(locationLike = {}) {
     propertyType:params.get('type'), minBudget:params.get('minBudget'),
     criteria:params.has('criterion') ? params.getAll('criterion') : undefined,
     note:params.get('note'), fromIdea:params.get('idea') === '1', ideaLabel:params.get('ideaLabel'),
+    tour3d:params.get('tour') === '3d',
   });
   const pref = canonicalPreference(params.get('pref'));
   const requestedId = params.get('property');
@@ -185,6 +215,7 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
   if (current.note && !current.criteria.length) params.set('criterion', '');
   if (current.fromIdea) params.set('idea', '1');
   if (current.ideaLabel) params.set('ideaLabel', current.ideaLabel);
+  if (current.tour3d) params.set('tour', '3d');
   const canonicalPref = canonicalPreference(pref);
   if (canonicalPref !== 'none') params.set('pref', canonicalPref);
   if (knownProperties.has(propertyId) && (page !== 'results' || prototypeResults(current).some(home => home.id === propertyId))) params.set('property', propertyId);

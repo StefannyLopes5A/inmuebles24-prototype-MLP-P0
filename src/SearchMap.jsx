@@ -1,4 +1,4 @@
-import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
+import React,{useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
 import * as maplibregl from 'maplibre-gl';
@@ -13,12 +13,16 @@ import {listingPrice} from './data';
 import {useLanguage} from './i18n';
 import {Icon} from './App';
 import {HouseCard} from './Home';
-import {MapWidgets} from './MapWidgetStack';
+import {MapWidgets,MoraPill,PoiGlyph} from './MapWidgetStack';
 import {
-  SETTLE_MS,WALK_HIGHLIGHT_M,buildStack,homePosition,legendFor,overlayCollections,
-  pickColonia,placeMatchesSearch,resolveLevel,walkDistance,
+  SETTLE_MS,buildStack,homePosition,legendFor,overlayCollections,
+  pickColonia,placeMatchesSearch,resolveLevel,
 } from './mapWidgets';
-import {coloniaVision,textOf} from './mapWidgetContent';
+import {coloniaVision} from './mapWidgetContent';
+import {KIND_CATEGORY,NEARBY_RADIUS_M,POI_CATEGORIES,POI_CATEGORY,catalogCounts,nearbyCounts,poiCollection,poiLabel,placesAround,poisFor,poisNear} from './pois';
+import {POI_LAYERS,ensurePoiLayers,hideNear,revealNear,setPoiData,setPoiOpacity,setPoiVisible} from './poiLayers';
+
+const ALL_CATEGORIES=POI_CATEGORIES.map(category => category.id);
 
 const SPLIT_MIN = 951, COMPACT_MAX = 700, MINI_ZOOM = 13;
 const EASE_OUT = [0.23, 1, 0.32, 1], EASE_DRAWER = [0.32, 0.72, 0, 1];
@@ -125,30 +129,41 @@ function setOverlayData(map, collections) {
   map.getSource('mora-commute').setData(collections.commute);
 }
 
-function PoiPin({poi, selected, language, onSelect}) {
-  return <button type="button" className="map-poi" data-kind={poi.kind} data-state={selected ? 'selected' : undefined}
-    aria-label={`${textOf(poi.name, language)}${poi.walk ? `, ${poi.walk} min` : ''}`} onClick={() => onSelect(poi.id)}>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      {poi.kind === 'transport' && <path d="M6 10h12v8H6zM8 6h8l2 4H6zM8 20v1m8-1v1"/>}
-      {poi.kind === 'green' && <path d="M12 22V10M7 12c3-6 7-6 10 0"/>}
-      {poi.kind === 'education' && <path d="M3 10 12 5l9 5-9 5-9-5zm3 3v5l6 3 6-3v-5"/>}
-      {poi.kind === 'food' && <path d="M8 3v8m0 0H5m3 0h3M16 3c0 4-2 5-2 8v5h6v-5c0-3-2-4-2-8"/>}
-      {poi.kind === 'health' && <path d="M12 6v12M6 12h12"/>}
-    </svg>
-    {selected && <span>{textOf(poi.name, language)} · {poi.walk} min a pie</span>}
+function PoiPin({poi, language, onSelect}) {
+  const category=POI_CATEGORY[poi.properties.categoria];
+  return <button type="button" className="map-poi" data-picked
+    style={{'--poi-color':category.color, '--poi-ink':category.ink}}
+    aria-pressed="true" aria-label={`${poi.properties.name} · ${poiLabel(category.id, language)}`} onClick={() => onSelect(poi)}>
+    <PoiGlyph category={category.id}/>
+    <span className="map-poi-label" aria-hidden="true">{poi.properties.name}</span>
   </button>;
 }
 
-function PricePin({home, order, state, interactive, onSelect, dim}) {
+function PoiFilters({categories, counts, active, caption, language, transition, onToggle}) {
+  return <motion.div layout="position" transition={transition} className="map-poi-filters" role="group"
+    aria-label={language === 'pt-BR' ? 'Pontos de interesse' : 'Puntos de interés'}>
+    {caption && <span className="map-poi-filters-caption">{caption}</span>}
+    {categories.filter(id => counts[id] > 0).map(id => <button key={id} type="button" className="map-poi-filter" aria-pressed={active.has(id)}
+      style={{'--poi-color':POI_CATEGORY[id].color, '--poi-ink':POI_CATEGORY[id].ink}} onClick={() => onToggle(id)}>
+      <span className="map-poi-filter-dot"><PoiGlyph category={id}/></span>
+      <span>{poiLabel(id, language)}</span>
+      <span className="map-poi-filter-count">{counts[id] ?? 0}</span>
+    </button>)}
+  </motion.div>;
+}
+
+const pickOf=feature => ({type:'Feature', properties:{...feature.properties}, geometry:{type:'Point', coordinates:feature.geometry.coordinates.slice()}});
+
+function PricePin({home, order, state, interactive, onSelect}) {
   const {language,money,currency,t}=useLanguage();
-  return <button type="button" className="map-pin" data-state={state} data-dim={dim || undefined} style={{'--pin-order':order}} tabIndex={interactive ? 0 : -1}
+  return <button type="button" className="map-pin" data-state={state} style={{'--pin-order':order}} tabIndex={interactive ? 0 : -1}
     aria-pressed={state === 'selected'} aria-label={`${money(listingPrice(home))} ${currency} · ${home.street} · ${home.area}. ${t('Ubicación aproximada')}`}
     onClick={() => onSelect(home.id)}>
     {compactPrice(listingPrice(home), currency, language)}
   </button>;
 }
 
-function MapCard({home, saved, compact, onSave, onClose, onOpen}) {
+function MapCard({home, saved, compact, onSave, onClose, onOpen, search, pref}) {
   const {t}=useLanguage();
   const reduce = useReducedMotion();
   const hiddenState = reduce ? {opacity:0} : {opacity:0, transform:compact ? 'translateY(100%)' : 'scale(0.96)'};
@@ -156,13 +171,13 @@ function MapCard({home, saved, compact, onSave, onClose, onOpen}) {
   return <motion.article className={'map-card'+(compact ? ' is-compact' : '')} initial={hiddenState} animate={shownState}
     exit={{...hiddenState, transition:{duration:.15, ease:EASE_OUT}}}
     transition={reduce ? {duration:.15} : {duration:compact ? .3 : .2, ease:compact ? EASE_DRAWER : EASE_OUT}}>
-    <HouseCard home={home} saved={saved} onLike={onSave} onOpen={target => onOpen(target)}/>
+    <HouseCard home={home} search={search} pref={pref} saved={saved} onLike={onSave} onOpen={target => onOpen(target)}/>
     <p className="map-card-note">{t('Ubicación aproximada')}</p>
     <button type="button" className="map-card-close" aria-label={t('Cerrar vista previa')} onClick={onClose}><Icon name="close" size={16}/></button>
   </motion.article>;
 }
 
-export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent, areaLabel:label, hidden, onOpenListing, onSave, search, signedIn=false, onLogin, onAskMora}) {
+export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent, areaLabel:label, hidden, onOpenListing, onSave, search, pref='none', signedIn=false, onLogin, onAskMora}) {
   const {t,language}=useLanguage();
   const shell=useRef(null), host=useRef(null), probe=useRef(null), mapRef=useRef(null);
   const miniButton=useRef(null), halfButton=useRef(null), fullButton=useRef(null);
@@ -179,11 +194,14 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
   const [level,setLevel]=useState('colonia');
   const [settling,setSettling]=useState(false);
   const [collapsed,setCollapsed]=useState(false);
+  const reduceMotion=useReducedMotion();
   const [expandedId,setExpandedId]=useState(null);
   const [activeLayer,setActiveLayer]=useState(null);
-  const [poiOn,setPoiOn]=useState(() => new Set());
   const [hoverWidget,setHoverWidget]=useState(null);
-  const [selectedPoi,setSelectedPoi]=useState(null);
+  const [styleTick,setStyleTick]=useState(0);
+  const [poiCats,setPoiCats]=useState(() => new Set(ALL_CATEGORIES));
+  const [poiPick,setPoiPick]=useState(null);
+  const [nearCats,setNearCats]=useState(() => new Set(ALL_CATEGORIES));
   const shown=visibleMapMode(mode, width);
   const compact=width <= COMPACT_MAX;
   const widgetsOn=shown === 'full' && width >= SPLIT_MIN && !hidden;
@@ -191,8 +209,31 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
   const selected=homes.find(home => home.id === selectedId) || null;
   const seen=new Set(recent);
   const vision=coloniaVision(colonia);
+  const catsKey=[...poiCats].sort().join('|');
+  const scopedPois=useMemo(() => poisFor(null, poiCats), [catsKey]);
+  const poiCounts=useMemo(() => catalogCounts(), []);
+  const poiVisible=ready && shown !== 'mini' && !hidden;
+  const nearOn=!!selected && poiVisible;
+  const nearCatsKey=[...nearCats].sort().join('|');
+  const nearPois=useMemo(() => selected ? poisNear(homeCoordinates(selected), nearCats) : [], [selectedId, nearCatsKey]);
+  const nearCounts=useMemo(() => selected ? nearbyCounts(homeCoordinates(selected)) : {}, [selectedId]);
+  const picked=poiPick && (nearOn ? nearCats : poiCats).has(poiPick.properties.categoria) ? poiPick : null;
+  const poiTarget=useRef(1), nearTarget=useRef(false);
+  poiTarget.current=nearOn ? 0 : 1;
+  nearTarget.current=nearOn;
+  const shownCats=nearOn ? nearCats : poiCats;
+  const focusCategory=shownCats.size === 1 ? [...shownCats][0] : null;
+  const poiOn=new Set(focusCategory ? [focusCategory, ...Object.keys(KIND_CATEGORY).filter(kind => KIND_CATEGORY[kind] === focusCategory)] : []);
+  const placesKey=widgetsOn ? (selected ? `home:${selectedId}` : `colonia:${colonia || ''}`) : '';
+  const places=useMemo(() => {
+    if (!widgetsOn) return null;
+    if (selected) return placesAround(homeCoordinates(selected), ALL_CATEGORIES);
+    const feature=colonia && placeNivel(colonia) !== 'alcaldia' ? placeFeature(colonia) : null;
+    const center=feature ? boundsCenter(featureBounds(feature)) : NEIGHBORHOOD_CENTROIDS[colonia];
+    return center ? placesAround(center, ALL_CATEGORIES, {area:colonia}) : null;
+  }, [placesKey]);
   const stack=widgetsOn ? buildStack({
-    level: selected ? 'home' : level, colonia: selected?.area || colonia, search, home: selected,
+    level: selected ? 'home' : level, colonia: selected?.area || colonia, search, home: selected, places,
     language, session:{homes, sawPoi:sawPoi.current, loginHighlight:true},
   }) : null;
   if (!cardHost.current && typeof document !== 'undefined') {cardHost.current=document.createElement('div');cardHost.current.className='map-card-host';}
@@ -263,14 +304,25 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
     });
     map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
     map.touchZoomRotate.disableRotation();
-    map.on('load', () => {ensureOverlays(map);setReady(true);});
+    map.on('load', () => {ensureOverlays(map);ensurePoiLayers(map);setReady(true);});
     map.on('dragstart', () => {userMoved.current=true;});
     map.on('zoomstart', event => {if (event.originalEvent) userMoved.current=true;});
     map.on('click', event => {
-      if (!event.originalEvent.target.closest?.('.map-pin,.map-card,.map-poi,.map-widget-stack,.map-widget-panel,.map-widget-pill')) {
-        setSelectedId(null);setSelectedPoi(null);
-      }
+      if (event.originalEvent.target.closest?.('.map-pin,.map-card,.map-poi,.map-topbar,.map-return,.map-widget-stack,.map-widget-panel')) return;
+      const layers=liveLayers().filter(id => map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== 'none');
+      if (!layers.length || !map.queryRenderedFeatures(event.point, {layers}).length) {setSelectedId(null);setPoiPick(null);}
     });
+    const liveLayers=() => nearTarget.current ? ['poi-near'] : poiTarget.current ? POI_LAYERS : [];
+    for (const id of [...POI_LAYERS, 'poi-near']) {
+      map.on('click', id, event => {
+        const feature=event.features?.[0];
+        if (!feature || !liveLayers().includes(id)) return;
+        sawPoi.current=true;
+        setPoiPick(current => current?.properties.id === feature.properties.id ? null : pickOf(feature));
+      });
+      map.on('mouseenter', id, () => {if (liveLayers().includes(id)) map.getCanvas().style.cursor='pointer';});
+      map.on('mouseleave', id, () => {map.getCanvas().style.cursor='';});
+    }
     mapRef.current=map;
     fittedKey.current=resume ? homesKey : '';
     cardMarker.current=new maplibregl.Marker({element:cardHost.current, anchor:'bottom', offset:[0,-22]});
@@ -286,7 +338,7 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
     if (!map || styleLanguage.current === language) return;
     styleLanguage.current=language;
     map.setStyle(buildMapStyle({lang:language}));
-    map.once('idle', () => ensureOverlays(map));
+    map.once('idle', () => {ensureOverlays(map);ensurePoiLayers(map);setStyleTick(tick => tick + 1);});
   }, [language]);
 
   useEffect(() => {
@@ -294,7 +346,7 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
     if (!map) return;
     for (const handler of HANDLERS) shown === 'mini' ? map[handler].disable() : map[handler].enable();
     map.touchZoomRotate.disableRotation();
-    if (shown === 'mini') {userMoved.current=false;setSelectedId(null);setExpandedId(null);setActiveLayer(null);setPoiOn(new Set());}
+    if (shown === 'mini') {userMoved.current=false;setSelectedId(null);setExpandedId(null);setActiveLayer(null);setPoiPick(null);}
   }, [shown]);
 
   useEffect(() => {
@@ -365,27 +417,45 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
     if (map.getLayer('mora-focus-fill')) {
       map.setPaintProperty('mora-focus-fill', 'fill-opacity', alcaldia ? 0.04 : 0.07);
     }
-  }, [widgetsOn, ready, shown, hidden, colonia, selectedId, activeLayer, hoverWidget, language]);
+  }, [widgetsOn, ready, shown, hidden, colonia, selectedId, activeLayer, hoverWidget, language, styleTick]);
 
   useEffect(() => {
     const map=mapRef.current;
-    if (!map) return;
-    const pois=(poiOn.size && vision?.nearby?.pois) ? vision.nearby.pois.filter(poi => poiOn.has(poi.kind)) : [];
-    const ids=new Set(pois.map(poi => poi.id));
-    for (const [id, marker] of poiMarkers.current) if (!ids.has(id)) {marker.remove();poiMarkers.current.delete(id);}
-    for (const poi of pois) if (!poiMarkers.current.has(poi.id)) {
-      poiMarkers.current.set(poi.id, new maplibregl.Marker({element:hostForPoi(poi.id), anchor:'center'}).setLngLat(poi.coordinates).addTo(map));
-    }
-  }, [poiOn, colonia, vision, ready]);
+    if (!map || !ready) return;
+    ensurePoiLayers(map);
+    return setPoiData(map, poiCollection(scopedPois), () => poiTarget.current);
+  }, [ready, catsKey, styleTick]);
 
-  const poiReady = widgetsOn && !!vision?.nearby?.pois?.length && placeNivel(colonia) !== 'alcaldia';
   useEffect(() => {
-    if (!poiReady) {
-      setPoiOn(new Set());
-      return;
+    if (ready) setPoiVisible(mapRef.current, poiVisible);
+  }, [ready, poiVisible, styleTick]);
+
+  useEffect(() => {
+    if (ready) setPoiOpacity(mapRef.current, poiTarget.current, prefersReduced() ? 0 : 160);
+  }, [ready, selectedId, poiVisible]);
+
+  const wavedFor=useRef(null);
+  useEffect(() => {
+    const map=mapRef.current;
+    if (!map || !ready) return;
+    ensurePoiLayers(map);
+    if (!nearOn) {wavedFor.current=null;return hideNear(map);}
+    const sameHome=wavedFor.current === selectedId;
+    wavedFor.current=selectedId;
+    return revealNear(map, poiCollection(nearPois), NEARBY_RADIUS_M, {reduce:prefersReduced() || sameHome});
+  }, [ready, nearOn, selectedId, nearCatsKey, styleTick]);
+
+  const poiPins=picked ? [{poi:picked}] : [];
+  const poiPinsKey=poiPins.map(pin => pin.poi.properties.id).join('|');
+  useEffect(() => {
+    const map=mapRef.current;
+    if (!map) return;
+    const ids=new Set(poiPins.map(pin => pin.poi.properties.id));
+    for (const [id, marker] of poiMarkers.current) if (!ids.has(id)) {marker.remove();poiMarkers.current.delete(id);}
+    for (const {poi} of poiPins) if (!poiMarkers.current.has(poi.properties.id)) {
+      poiMarkers.current.set(poi.properties.id, new maplibregl.Marker({element:hostForPoi(poi.properties.id), anchor:'center'}).setLngLat(poi.geometry.coordinates).addTo(map));
     }
-    setPoiOn(new Set(['transport']));
-  }, [poiReady, colonia]);
+  }, [poiPinsKey, ready]);
 
   useEffect(() => {
     if (signedIn && pendingLogin.current) {
@@ -479,16 +549,16 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
 
   useEffect(() => {
     const onKey=event => {
-      if (event.key !== 'Escape' || event.defaultPrevented || hidden || shown === 'mini') return;
+      if (event.key !== 'Escape' || event.defaultPrevented || hidden || shown === 'mini' || document.documentElement.dataset.listingPanel != null) return;
       if (document.querySelector('dialog[open],.home-popover[data-open="true"]') || !document.querySelector('.search-flow-page .mora-collapsed')) return;
       if (expandedId) {event.preventDefault();setExpandedId(null);return;}
-      if (selectedPoi) {event.preventDefault();setSelectedPoi(null);return;}
+      if (poiPick) {event.preventDefault();setPoiPick(null);return;}
       if (selectedId) {event.preventDefault();setSelectedId(null);return;}
       if (shown === 'full') {event.preventDefault();onMode(width < SPLIT_MIN ? 'mini' : 'half');}
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selectedId, selectedPoi, expandedId, shown, hidden, width, onMode]);
+  }, [selectedId, poiPick, expandedId, shown, hidden, width, onMode]);
 
   function select(id) {
     if (id === selectedId) {setSelectedId(null);return;}
@@ -512,18 +582,27 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
   }
 
   const interactive=shown !== 'mini' && !hidden;
-  const highlightPoi=selectedPoi && vision?.nearby?.pois.find(poi => poi.id === selectedPoi);
-  const dimHome=home => highlightPoi ? walkDistance(homeCoordinates(home), highlightPoi.coordinates) > WALK_HIGHLIGHT_M : false;
   const hoveredHome=hoveredId ? homes.find(home => home.id === hoveredId) : null;
   const hoveredPosition=hoveredHome && vision ? homePosition(hoveredHome, vision) : null;
   const outOfSearch=!!search?.areas?.length && colonia && !placeMatchesSearch(colonia, search);
-  const visiblePois=(poiOn.size && vision?.nearby?.pois) ? vision.nearby.pois.filter(poi => poiOn.has(poi.kind)) : [];
-  const card=selected && interactive ? <MapCard key="map-card" home={selected} saved={saved.includes(selected.id)} compact={compact}
+  const showFilters=interactive && shown === 'full' && !(compact && selected);
+  const moraPill=widgetsOn && collapsed && !!stack;
+  const topbarShift=widgetsOn && stack && !collapsed ? (expandedId ? 'panel' : 'stack') : undefined;
+  const topbarMotion=reduceMotion ? {duration:0} : {duration:.26, ease:EASE_OUT};
+  const showReturn=interactive && outOfSearch && !expandedId && !(compact && selected);
+  const soloIn=(setter, all) => id => setter(current => current.size === 1 && current.has(id) ? new Set(all) : new Set([id]));
+  const filters=nearOn
+    ? {categories:ALL_CATEGORIES, counts:nearCounts, active:nearCats, onToggle:soloIn(setNearCats, ALL_CATEGORIES),
+      caption:`A ${NEARBY_RADIUS_M} m`}
+    : {categories:ALL_CATEGORIES, counts:poiCounts, active:poiCats, onToggle:soloIn(setPoiCats, ALL_CATEGORIES)};
+  const card=selected && interactive ? <MapCard key="map-card" home={selected} search={search} pref={pref} saved={saved.includes(selected.id)} compact={compact}
     onSave={onSave} onClose={() => setSelectedId(null)} onOpen={onOpenListing}/> : null;
 
   return createPortal(<>
     <div className="map-backdrop" data-active={shown === 'full' && !hidden} aria-hidden="true"/>
-    <section ref={shell} className="map-shell" data-mode={shown} data-entered={entered} data-hidden={hidden} aria-label={t('Mapa de resultados')} inert={hidden || undefined}>
+    <section ref={shell} className="map-shell" data-mode={shown} data-entered={entered} data-hidden={hidden}
+      data-focus={selected && interactive ? 'home' : undefined} data-widgets={widgetsOn || undefined}
+      aria-label={t('Mapa de resultados')} inert={hidden || undefined}>
     <span ref={probe} className="map-safe-probe" aria-hidden="true"/>
     <div ref={host} className="map-canvas" data-ready={ready}/>
     <button ref={miniButton} type="button" className="map-mini-trigger" tabIndex={shown === 'mini' ? 0 : -1} aria-hidden={shown !== 'mini'}
@@ -543,16 +622,27 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
         </div>
       </div>
     </div>
+    {(showFilters || moraPill) && <motion.div layout="position" transition={topbarMotion} className="map-topbar" data-shift={topbarShift}>
+      <AnimatePresence initial={false} mode="popLayout">
+        {moraPill && <MoraPill key="mora" language={language} onOpen={() => setCollapsed(false)} transition={reduceMotion ? {duration:.15} : topbarMotion}
+          initial={reduceMotion ? {opacity:0} : {opacity:0, scale:.96}} animate={{opacity:1, scale:1}} exit={reduceMotion ? {opacity:0} : {opacity:0, scale:.96}}/>}
+      </AnimatePresence>
+      {showFilters && <PoiFilters {...filters} language={language} transition={topbarMotion}/>}
+    </motion.div>}
+    {showReturn && <button type="button" className="map-return" onClick={() => {
+      userMoved.current=false;
+      applySearchCamera(mapRef.current, {animate:true});
+    }}>{language === 'pt-BR' ? 'Voltar à sua busca' : 'Volver a tu búsqueda'}</button>}
     {homes.map((home, index) => createPortal(<PricePin home={home} order={Math.min(index, 8)} interactive={interactive} onSelect={select}
-      dim={dimHome(home)}
       state={home.id === selectedId ? 'selected' : home.id === hoveredId ? 'hovered' : seen.has(home.id) ? 'seen' : undefined}/>, hostFor(home.id), home.id))}
-    {visiblePois.map(poi => createPortal(<PoiPin poi={poi} selected={poi.id === selectedPoi} language={language}
-      onSelect={id => {sawPoi.current=true;setSelectedPoi(current => current === id ? null : id);}}/>, hostForPoi(poi.id), poi.id))}
+    {poiPins.map(({poi}) => createPortal(<PoiPin poi={poi} language={language}
+      onSelect={target => {sawPoi.current=true;setPoiPick(current => current?.properties.id === target.properties.id ? null : pickOf(target));}}/>,
+      hostForPoi(poi.properties.id), poi.properties.id))}
     {createPortal(<AnimatePresence>{!compact && card}</AnimatePresence>, cardHost.current)}
     <AnimatePresence>{compact && card}</AnimatePresence>
     {widgetsOn && <MapWidgets stack={stack} settling={settling} collapsed={collapsed} expandedId={expandedId}
       activeLayer={activeLayer} poiOn={poiOn} hoverWidget={hoverWidget} signedIn={signedIn} language={language}
-      outOfSearch={outOfSearch} hoveredHome={hoveredPosition} legend={legendFor(activeLayer, language)}
+      hoveredHome={hoveredPosition} legend={legendFor(activeLayer, language)}
       onToggleCollapse={() => setCollapsed(current => !current)}
       onExpand={id => setExpandedId(id)}
       onBack={() => setExpandedId(null)}
@@ -561,17 +651,19 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
         if (widget?.layer) setActiveLayer(current => current === widget.layer ? null : widget.layer);
         else setExpandedId(id);
       }}
-      onHover={(id, poiId) => {setHoverWidget(id);if (poiId) setSelectedPoi(poiId);}}
-      onTogglePoi={(kind, poiId) => {setPoiOn(new Set([kind]));setSelectedPoi(poiId || vision?.nearby?.pois.find(poi => poi.kind === kind)?.id || null);}}
+      onHover={id => setHoverWidget(id)}
+      onTogglePoi={kind => {
+        const category=KIND_CATEGORY[kind] || (POI_CATEGORY[kind] ? kind : null);
+        if (!category) return;
+        sawPoi.current=true;
+        if (nearOn) soloIn(setNearCats, ALL_CATEGORIES)(category);
+        else soloIn(setPoiCats, ALL_CATEGORIES)(category);
+      }}
       onLogin={id => {pendingLogin.current=id;onLogin?.();}}
       onAsk={text => onAskMora?.(text)}
       onPickColonia={name => {
         userMoved.current=false;
         applyPlaceCamera(mapRef.current, name, {animate:true});
-      }}
-      onReturnSearch={() => {
-        userMoved.current=false;
-        applySearchCamera(mapRef.current, {animate:true});
       }}
       onPointerInside={inside => {pointerOnStack.current=inside;}}/>}
   </section>

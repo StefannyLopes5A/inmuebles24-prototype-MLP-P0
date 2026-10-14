@@ -48,7 +48,7 @@
 .idea-property-preview{position:fixed;z-index:70;background:white;box-shadow:0 12px 48px #0003;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111;max-height:calc(100dvh - 32px);overflow-y:auto}
 .preview-photo{width:100%;height:160px;object-fit:cover;display:block}.preview-close{position:absolute;top:8px;right:8px;background:white;width:36px;height:36px;box-shadow:0 2px 8px #0002}
 .preview-copy{display:flex;flex-direction:column;gap:5px;padding:14px 18px 0}.preview-copy>span{font-size:12px;color:#555;line-height:1.5}.preview-copy strong{font-size:22px;letter-spacing:-.02em}.preview-copy strong small{font-size:12px;font-weight:400}.preview-copy>b{font-size:13px;line-height:1.4}.preview-actions{padding:5px 12px 8px 18px;display:flex;align-items:center;justify-content:space-between}.preview-actions .text-button{font-size:14px;min-height:44px}.preview-actions [aria-pressed=true]{color:#c53b00;background:#fff0e8}
-.discovery-tag{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.listing-provenance{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-bottom:1px solid var(--line)}.listing-provenance a{display:flex;align-items:center;gap:8px;color:var(--action);font-size:14px}.listing-provenance small,.real-contact-note{font-size:12px;color:var(--muted);line-height:1.6}.real-contact-note{margin-top:24px}
+.discovery-tag{overflow:hidden;text-overflow:ellipsis}.listing-provenance{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-bottom:1px solid var(--line)}.listing-provenance a{display:flex;align-items:center;gap:8px;color:var(--action);font-size:14px}.listing-provenance small,.real-contact-note{font-size:12px;color:var(--muted);line-height:1.6}.real-contact-note{margin-top:24px}
 @media(max-width:1000px){.home-header-bar{gap:16px}.home-header nav.figma-header-links{gap:16px}.figma-header-nav{gap:12px}.header-mega-grid{gap:12px;padding-top:28px}}
 @media(max-width:700px){.home-header nav.figma-header-links{width:100%;margin:0;gap:12px;justify-content:space-between;flex-wrap:wrap}.figma-header-nav,.figma-header-actions{flex-wrap:wrap;gap:8px}.figma-header-links>a,.figma-header-nav>a,.header-menu-trigger{font-size:12px;min-height:40px}.figma-header-links a.figma-login{padding:10px 15px;border-radius:999px}.home-header .header-currency>button{font-size:12px;padding:10px;border-radius:999px}.header-mega{position:static;border-bottom:0;box-shadow:none}.header-mega-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;padding:20px var(--home-page-gutter) 24px}.header-mega-title{font-size:16px}.header-mega-column a{font-size:14px}.currency-info{right:-65px}.idea-property-preview{left:16px!important;right:16px;top:auto!important;bottom:16px;width:auto!important}.preview-photo{height:160px}.sentence-hero{padding-top:30px}.idea-card .idea-title{font-size:15px}}
 
@@ -156,8 +156,13 @@
 .discovery-meta-copy>b{font-weight:590}
 .discovery-kind,.discovery-meta-copy>.discovery-facts{display:flex;align-items:center;gap:6px}
 .discovery-separator{font-size:8px;line-height:16px;flex:none}
-.discovery-agency-logo{display:block;flex:none;width:40px;height:40px;border:1px solid #00000014;border-radius:50%;background:#fff;object-fit:contain}
-.discovery-tags{position:absolute;top:20px;left:20px;z-index:2;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 76px);pointer-events:none}.discovery-tags .discovery-tag{position:static;top:auto;left:auto;max-width:none}.discovery-tag{top:20px;left:20px;z-index:2;max-width:208px;height:24px;display:flex;align-items:center;padding:0 12px;background:#0000008f;border:1px solid #ffffff7a;color:#fff;backdrop-filter:blur(4px);font-size:11px;line-height:1.4}
+.discovery-agency-wrap{position:relative;flex:none;width:40px;height:40px}
+.discovery-agency-logo{display:block;width:100%;height:100%;border:1px solid #00000014;border-radius:50%;background:#fff;object-fit:contain}
+.discovery-agency-seal{position:absolute;left:-10px;bottom:0;z-index:1;display:grid;place-items:center;width:24px;height:24px;border:2px solid #fff;border-radius:50%;background:#ff5000;color:#fff;box-shadow:0 1px 3px #00000033;pointer-events:auto;cursor:default}
+.discovery-agency-seal svg{display:block}
+.discovery-agency-seal[data-tooltip]::after{content:attr(data-tooltip);position:absolute;right:-22px;bottom:calc(100% + 8px);width:max-content;max-width:220px;padding:8px 10px;border-radius:8px;background:#222;color:#fff;font-size:11px;line-height:1.35;font-weight:500;white-space:normal;text-align:left;opacity:0;transform:translateY(4px);transition:opacity 150ms ease,transform 150ms ease;pointer-events:none;z-index:3}
+.discovery-agency-seal:hover::after,.discovery-agency-seal:focus-visible::after{opacity:1;transform:translateY(0)}
+.discovery-tags{position:absolute;top:20px;left:20px;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px;max-width:calc(100% - 76px);pointer-events:none}.discovery-tags .discovery-tag{position:static;top:auto;left:auto;flex:none;max-width:min(100%,200px)}.discovery-tag{top:20px;left:20px;z-index:2;flex:none;max-width:200px;min-height:24px;display:inline-flex;align-items:center;padding:4px 12px;border-radius:99px;font-size:11px;line-height:1.3;font-weight:600;white-space:nowrap}
 .discovery-like{top:11px;right:12px;z-index:2;background:transparent;color:#fff}
 .discovery-like.is-liked{background:transparent;color:#e32636}
 .discovery-like:active{transform:none}
@@ -227,8 +232,8 @@
 @media(prefers-reduced-motion:reduce){.discovery-slide{animation:none!important;opacity:0;transform:none}.discovery-slide:first-child{opacity:1}}
 .discovery-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
 @media(hover:hover) and (pointer:fine){
-  .discovery-card:hover .discovery-video,.discovery-card:focus-within .discovery-video{opacity:1}
-  .discovery-card:hover .has-video .discovery-slide,.discovery-card:focus-within .has-video .discovery-slide{animation:none!important;opacity:0}
+  .has-video.is-playing .discovery-video{opacity:1}
+  .has-video.is-playing .discovery-slide{animation:none!important;opacity:0}
 }
 @media(prefers-reduced-motion:reduce){.discovery-video{display:none}}
 

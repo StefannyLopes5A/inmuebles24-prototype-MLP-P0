@@ -1,0 +1,590 @@
+{
+  "buy-148816386": {
+    "synthesis": "Tu favorito en Torres Adalid entra en tu zona y presupuesto, con Metro Etiopía a 5 min; su m² queda 41% abajo de parecidos, algo que conviene confirmar.",
+    "market": "Pagas $24.9k/m² contra una mediana de $42.3k/m² en 75 parecidos, por debajo incluso del rango habitual. Confirma la superficie de 193 m² antes de visitar.",
+    "action": {
+      "label": "Confirmar la superficie",
+      "question": "¿Los 193 m² son de construcción o incluyen terreno y áreas comunes?"
+    },
+    "prompts": [
+      "¿Por qué el m² está tan abajo?",
+      "¿Cuánto mide la terraza del fondo?"
+    ]
+  },
+  "buy-147346296": {
+    "synthesis": "Con 408 m² a 22% menos por m² que parecidos, lleva 108 días sin venderse; las fotos no muestran cocina ni baños.",
+    "market": "Su m² sale en $30.6k frente a $39.1k de mediana entre 128 parecidos. Queda $5M arriba de tu presupuesto.",
+    "action": {
+      "label": "Pedir fotos de cocina",
+      "question": "¿Pueden compartir fotos de la cocina y los baños?"
+    },
+    "prompts": [
+      "¿Qué tan cerca está el Parque Hundido?",
+      "¿Hay espacio para estacionar varios autos?"
+    ]
+  },
+  "buy-150851727": {
+    "synthesis": "Remodelado, con vista a la ciudad y Metro Chilpancingo a 8 min; lleva 98 días publicado con un m² 47% arriba de parecidos.",
+    "market": "Pagas $47.6k/m² contra $32.3k/m² de mediana en 107 parecidos, apenas arriba del rango habitual.",
+    "action": {
+      "label": "Preguntar por margen",
+      "question": "Con 98 días publicado, ¿hay margen en el precio?"
+    },
+    "prompts": [
+      "¿Cuánta luz entra en la sala?",
+      "¿La cocina nueva incluye electrodomésticos?"
+    ]
+  },
+  "buy-150849643": {
+    "synthesis": "Bajó $650k hace 4 días y sigue 55% arriba de la mediana por m²; está en Narvarte, a 5 min del Metro Etiopía.",
+    "market": "Aun con la baja, pagas $59.5k/m² contra $38.3k/m² de mediana en 172 parecidos, arriba del rango habitual.",
+    "action": {
+      "label": "Preguntar si hay más margen",
+      "question": "Después de la baja reciente, ¿aceptan una oferta menor?"
+    },
+    "prompts": [
+      "¿Qué tiene el roof?",
+      "¿Cuántos niveles tiene?"
+    ]
+  },
+  "buy-150135691": {
+    "synthesis": "En Narvarte y dentro de tu presupuesto, con Metro Etiopía a 5 min, pero el m² casi duplica la mediana: 94% arriba.",
+    "market": "Pagas $73.2k/m² contra $37.8k/m² en 142 parecidos, aun después de bajar $350k hace 7 días.",
+    "action": {
+      "label": "Preguntar qué justifica el precio",
+      "question": "¿Qué tiene este departamento que explique un m² tan arriba de la zona?"
+    },
+    "prompts": [
+      "¿Las salas tienen luz natural?",
+      "¿Cuánto mide el patio?"
+    ]
+  },
+  "buy-150915472": {
+    "synthesis": "Tiene balcón a la ciudad, que pediste, y bajó $950k hace 16 días; por las fotos, la cocina pide actualizarse.",
+    "market": "Pagas $39k/m² contra $34.2k/m² de mediana en 104 parecidos, 14% arriba aun con la baja.",
+    "action": {
+      "label": "Preguntar por la cocina",
+      "question": "¿El precio considera que la cocina necesita actualizarse?"
+    },
+    "prompts": [
+      "¿El balcón es de uso privado?",
+      "¿Es penthouse o hay piso arriba?"
+    ]
+  },
+  "buy-150467705": {
+    "synthesis": "El anuncio menciona balcón y alberca, con Metro Coyoacán a 5 min; su m² está 137% arriba de parecidos en Xoco.",
+    "market": "Pagas $78.8k/m² contra una mediana de $33.2k/m² en 129 parecidos; bajó $450k hace 25 días.",
+    "action": {
+      "label": "Preguntar por la alberca",
+      "question": "¿La alberca es del condominio y cuánto cuesta el mantenimiento?"
+    },
+    "prompts": [
+      "¿La alberca es privada o del condominio?",
+      "¿El patio recibe sol?"
+    ]
+  },
+  "buy-150949347": {
+    "synthesis": "Las fotos solo muestran cuartos vacíos, sin cocina, baños ni recámara, y el m² queda 49% arriba de parecidos en Roma Sur.",
+    "market": "Pagas $98.3k/m², por encima del rango habitual; la mediana es $65.8k/m² en 254 parecidos.",
+    "action": {
+      "label": "Pedir fotos completas",
+      "question": "¿Pueden enviar fotos de la cocina, los baños y las recámaras?"
+    },
+    "prompts": [
+      "¿Por qué no hay fotos de la cocina?",
+      "¿Qué tan lejos queda Centro Médico?"
+    ]
+  },
+  "buy-150911591": {
+    "synthesis": "En Candelaria Ticomán, el m² está 52% arriba de parecidos y lleva 112 días publicado, el triple que la zona.",
+    "market": "Pagas $38k/m² contra $24.9k/m² de mediana en 232 parecidos, arriba del rango habitual.",
+    "action": {
+      "label": "Preguntar si aceptan ofertas",
+      "question": "Con 112 días publicado, ¿están abiertos a una oferta?"
+    },
+    "prompts": [
+      "¿Hay transporte público cerca?",
+      "¿Cómo es la vista desde la sala?"
+    ]
+  },
+  "buy-150951578": {
+    "synthesis": "Terraza y jardín con pasto en 196 m², pero el m² casi duplica la mediana de Crédito Constructor: 98% arriba.",
+    "market": "Pagas $86.4k/m² contra $43.7k/m² de mediana en 201 parecidos, por encima del rango habitual.",
+    "action": {
+      "label": "Preguntar por el jardín",
+      "question": "¿El jardín es privado o compartido?"
+    },
+    "prompts": [
+      "¿Cuántos autos caben en la cochera?",
+      "¿La terraza tiene techo?"
+    ]
+  },
+  "buy-151101154": {
+    "synthesis": "Pide actualizarse por las fotos y aun así su m² está 31% arriba de parecidos; tu oficina queda a 19 min en auto.",
+    "market": "Pagas $59.9k/m² contra $45.8k/m² de mediana, aunque la muestra es chica: 51 parecidos.",
+    "action": {
+      "label": "Preguntar por la actualización",
+      "question": "¿Qué tanto habría que renovar y está considerado en el precio?"
+    },
+    "prompts": [
+      "¿La terraza techada da a la calle?",
+      "¿Hay Metro o transporte cerca?"
+    ]
+  },
+  "buy-150754333": {
+    "synthesis": "Polanco a 32% menos por m² que parecidos, con Metro a 10 min; lleva 113 días publicado y pide actualizarse por las fotos.",
+    "market": "Pagas $34.8k/m² contra una mediana de $51k/m² en 246 parecidos. Pregunta si el precio ya descuenta la obra.",
+    "action": {
+      "label": "Preguntar por la obra",
+      "question": "¿El precio ya considera la renovación que necesita?"
+    },
+    "prompts": [
+      "¿Se puede usar la azotea?",
+      "¿Cuántos estacionamientos incluye?"
+    ]
+  },
+  "buy-149807401": {
+    "synthesis": "Mucha luz y jardín junto a la sala, por las fotos, aunque el m² queda 76% arriba de la mediana en Bosques de las Lomas.",
+    "market": "Pagas $102.1k/m² contra $58.1k/m² en 230 parecidos, por encima del rango habitual de la zona.",
+    "action": {
+      "label": "Pedir fotos de los baños",
+      "question": "¿Pueden compartir fotos de los baños?"
+    },
+    "prompts": [
+      "¿El jardín es solo de este departamento?",
+      "¿Hay vigilancia en la privada?"
+    ]
+  },
+  "buy-148024230": {
+    "synthesis": "Después de 92 días publicado bajó $550k hace 4 días, pero su m² sigue 41% arriba de parecidos.",
+    "market": "Pagas $70.5k/m² contra $49.9k/m² de mediana en 203 parecidos.",
+    "action": {
+      "label": "Preguntar por otra baja",
+      "question": "¿Están dispuestos a bajar más el precio?"
+    },
+    "prompts": [
+      "¿La cocina con isla es nueva?",
+      "¿Hay Metro cerca de Campestre Churubusco?"
+    ]
+  },
+  "buy-151043557": {
+    "synthesis": "Su m² queda 20% abajo de Bosques de las Lomas; por las fotos, tiene mucha luz y un jardín con árboles, pero pide actualizarse.",
+    "market": "Pagas $46.5k/m² contra $58.1k/m² de mediana, con solo 70 parecidos de referencia.",
+    "action": {
+      "label": "Preguntar qué hay que actualizar",
+      "question": "¿Qué habría que actualizar y está en el precio?"
+    },
+    "prompts": [
+      "¿Qué tan grande es el jardín?",
+      "¿La casa tiene estudio independiente?"
+    ]
+  },
+  "buy-150189219": {
+    "synthesis": "Terraza con deck y acabados nuevos; bajó $1M hace 10 días y su m² queda solo 6% arriba de parecidos.",
+    "market": "Pagas $36.9k/m² contra $34.9k/m² de mediana en 109 parecidos, dentro del rango de Santa Fe Centro.",
+    "action": {
+      "label": "Preguntar por la baja",
+      "question": "¿La baja de precio fue por algo en particular?"
+    },
+    "prompts": [
+      "¿La terraza recibe sol de tarde?",
+      "¿Cuántos lugares de estacionamiento tiene?"
+    ]
+  },
+  "buy-150963369": {
+    "synthesis": "Una sola recámara en 57 m², para remodelar según el anuncio, a precio de zona en Roma Norte y con Metro Insurgentes a 9 min.",
+    "market": "Pagas $54.4k/m² contra $51k/m² en 185 parecidos, 7% arriba de la mediana.",
+    "action": {
+      "label": "Preguntar qué falta remodelar",
+      "question": "¿Qué partes hay que remodelar?"
+    },
+    "prompts": [
+      "¿Cuánto costaría la remodelación?",
+      "¿Los ventanales dan al jardín?"
+    ]
+  },
+  "buy-150907005": {
+    "synthesis": "Con 3 recámaras y jardín cerrado, entra en tu presupuesto; por las fotos pide actualizarse y el m² va 15% arriba.",
+    "market": "Pagas $44.5k/m² contra $38.8k/m² de mediana en 151 parecidos.",
+    "action": {
+      "label": "Preguntar por el estado",
+      "question": "¿Qué partes de la casa necesitan renovación?"
+    },
+    "prompts": [
+      "¿Hay transporte hacia Reforma?",
+      "¿El jardín tiene salida a la calle?"
+    ]
+  },
+  "buy-150754546": {
+    "synthesis": "Precio en línea con la zona, apenas 5% arriba por m²; por las fotos, la terraza mira al jardín y la casa pide actualizarse.",
+    "market": "Pagas $52.8k/m² contra una mediana de $50.4k/m² en 208 parecidos.",
+    "action": {
+      "label": "Preguntar qué hay que renovar",
+      "question": "¿Qué habría que renovar primero?"
+    },
+    "prompts": [
+      "¿El techo de madera es original?",
+      "¿La terraza está cubierta?"
+    ]
+  },
+  "buy-143024880": {
+    "synthesis": "Tiene alberca y mucha luz por las fotos; bajó $450k hace 4 días y quedó a 1% de la mediana por m².",
+    "market": "Pagas $60.5k/m² contra $60.1k/m² en 120 parecidos: tras la baja, está en la mediana.",
+    "action": {
+      "label": "Preguntar por el mantenimiento",
+      "question": "¿Cuánto es el mantenimiento con la alberca?"
+    },
+    "prompts": [
+      "¿La alberca es del edificio?",
+      "¿Cuánto tarda el Metro Polanco a pie?"
+    ]
+  },
+  "buy-148018986": {
+    "synthesis": "Vacío y por actualizar en las fotos, a 24% menos por m² que parecidos en Jardines del Pedregal; queda $1.45M arriba de tu presupuesto.",
+    "market": "Pagas $42.6k/m² contra $55.8k/m² de mediana en 193 parecidos.",
+    "action": {
+      "label": "Preguntar por la renovación",
+      "question": "¿Qué tanto hay que renovar en cocina y baño?"
+    },
+    "prompts": [
+      "¿El jardín del anuncio es privado?",
+      "¿Por qué está vacío?"
+    ]
+  },
+  "buy-148031421": {
+    "synthesis": "Recién publicado y dentro de tu presupuesto, pero en 60 m² el m² sale 50% arriba de parecidos en Del Valle Centro.",
+    "market": "Pagas $73.3k/m² contra $49k/m² de mediana en 88 parecidos, arriba del rango habitual.",
+    "action": {
+      "label": "Preguntar por el estacionamiento",
+      "question": "¿El estacionamiento está incluido en el precio?"
+    },
+    "prompts": [
+      "¿La cocina es cerrada o abierta?",
+      "¿Cuánto es el mantenimiento?"
+    ]
+  },
+  "buy-150725481": {
+    "synthesis": "Solo hay fotos de exteriores con alberca y árboles; bajó $400k hace 25 días y entra en tu presupuesto.",
+    "market": "Pagas $62.5k/m² contra $44.5k/m² en 58 parecidos, 40% arriba aun con la baja.",
+    "action": {
+      "label": "Pedir fotos del interior",
+      "question": "¿Pueden enviar fotos del interior y el número de recámaras?"
+    },
+    "prompts": [
+      "¿Qué incluye la remodelación?",
+      "¿Cuántos niveles tiene la propiedad?"
+    ]
+  },
+  "buy-150159787": {
+    "synthesis": "Queda $200k arriba de tu presupuesto, con cocina nueva, terraza y roof; el m² está 16% abajo de parecidos.",
+    "market": "Pagas $48.1k/m² contra $57k/m² de mediana en 100 parecidos; lleva 87 días publicado.",
+    "action": {
+      "label": "Preguntar si bajan $200k",
+      "question": "¿Aceptarían una oferta de $7.5M?"
+    },
+    "prompts": [
+      "¿El roof es de uso privado?",
+      "¿Hay estacionamiento techado?"
+    ]
+  },
+  "buy-150922505": {
+    "synthesis": "Cuauhtémoc 661 entra justo en tu presupuesto, con Metro Etiopía a 5 min; su m² va 45% arriba de parecidos en Narvarte.",
+    "market": "Pagas $58.6k/m² contra $40.5k/m² de mediana en 185 parecidos. Frente a Torres Adalid, cuesta 56% más.",
+    "action": {
+      "label": "Preguntar por el penthouse",
+      "question": "¿El penthouse incluye el jardín o es área común?"
+    },
+    "prompts": [
+      "¿El jardín es solo para este depa?",
+      "¿Por qué la superficie dice 128 m²?"
+    ]
+  },
+  "buy-151139590": {
+    "synthesis": "Un loft de 49 m² con una recámara, menos de las 2 que pides, y un m² que duplica la mediana de Escandón.",
+    "market": "Pagas $85.7k/m² contra $38.7k/m² en 227 parecidos, 121% arriba.",
+    "action": {
+      "label": "Preguntar por el gimnasio",
+      "question": "¿El gimnasio es privado o del edificio?"
+    },
+    "prompts": [
+      "¿El estudio tiene ventana?",
+      "¿Se escucha el tráfico de Patriotismo?"
+    ]
+  },
+  "buy-150713138": {
+    "synthesis": "Recién publicado, hace 9 días, con balcón según el anuncio y terraza frente al jardín; el m² va 18% abajo de parecidos.",
+    "market": "Pagas $42.8k/m² contra $52.4k/m² de mediana en 157 parecidos; queda $2M arriba de tu presupuesto.",
+    "action": {
+      "label": "Preguntar por el balcón",
+      "question": "¿Dónde está el balcón que menciona el anuncio?"
+    },
+    "prompts": [
+      "¿La terraza techada es privada?",
+      "¿Qué tan lejos queda el Metro Etiopía?"
+    ]
+  },
+  "buy-149385762": {
+    "synthesis": "Hay otro anuncio en Minerva 73; este lleva 111 días, con terraza de pérgola y un m² 65% arriba de parecidos.",
+    "market": "Pagas $65.7k/m² contra $39.8k/m² en 245 parecidos, arriba del rango de la zona.",
+    "action": {
+      "label": "Preguntar por el otro anuncio",
+      "question": "¿Este anuncio y el otro de Minerva 73 son la misma propiedad?"
+    },
+    "prompts": [
+      "¿Por qué no hay fotos de los baños?",
+      "¿La pérgola cubre toda la terraza?"
+    ]
+  },
+  "buy-148035154": {
+    "synthesis": "En Lomas de Chapultepec, 32% abajo por m² de parecidos, con jardín y gimnasio; faltan fotos de los baños.",
+    "market": "Pagas $48.3k/m² contra $71.4k/m² de mediana en 96 parecidos.",
+    "action": {
+      "label": "Pedir fotos de baños",
+      "question": "¿Pueden mostrar fotos de los baños?"
+    },
+    "prompts": [
+      "¿El gimnasio tiene equipo incluido?",
+      "¿Cuántas recámaras tienen baño propio?"
+    ]
+  },
+  "buy-149136228": {
+    "synthesis": "Pocas fotos: solo cochera y patio con flores. Con un m² 70% arriba de parecidos, conviene ver el interior antes de ir.",
+    "market": "Pagas $80.2k/m², arriba del rango habitual; la mediana es $47.3k/m² en 112 parecidos.",
+    "action": {
+      "label": "Pedir fotos del interior",
+      "question": "¿Pueden compartir fotos de cocina, baños y recámaras?"
+    },
+    "prompts": [
+      "¿El patio es privado?",
+      "¿Qué tanto hay que actualizar?"
+    ]
+  },
+  "buy-145266556": {
+    "synthesis": "Por $6.6M, dentro de tu presupuesto, con mucha luz y jardín por las fotos; el m² va 27% abajo y lleva 112 días publicado.",
+    "market": "Pagas $44.6k/m² contra $60.8k/m² en 101 parecidos. La zona vende en 37 días; este lleva tres veces más.",
+    "action": {
+      "label": "Preguntar por la negociación",
+      "question": "¿Hay margen en el precio después de 112 días?"
+    },
+    "prompts": [
+      "¿La cocina de madera es nueva?",
+      "¿Cuánto terreno es jardín?"
+    ]
+  },
+  "buy-148485545": {
+    "synthesis": "Dentro de tu presupuesto y con balcón según el anuncio, 10% arriba de la mediana por m² de Del Valle Norte.",
+    "market": "Pagas $56.8k/m² contra $51.8k/m² de mediana en 97 parecidos.",
+    "action": {
+      "label": "Preguntar por el estudio",
+      "question": "¿El librero del estudio se queda?"
+    },
+    "prompts": [
+      "¿El balcón da a la calle?",
+      "¿Cuánto tarda caminar al Metro Chilpancingo?"
+    ]
+  },
+  "buy-148741903": {
+    "synthesis": "Bajó $350k hace 19 días y quedó $990k arriba de tu presupuesto; tiene balcón según el anuncio.",
+    "market": "Pagas $42.5k/m² contra $42k/m² de mediana en 221 parecidos: está en precio de zona.",
+    "action": {
+      "label": "Preguntar por otra rebaja",
+      "question": "¿Aceptarían una oferta cerca de $7.5M?"
+    },
+    "prompts": [
+      "¿Por qué tiene tan poca luz?",
+      "¿El balcón es de la sala?"
+    ]
+  },
+  "buy-150590132": {
+    "synthesis": "Alberca, jardín y mucha luz por las fotos, con Metro División del Norte a 6 min; el m² queda 57% arriba de parecidos.",
+    "market": "Pagas $56k/m² contra $35.7k/m² de mediana en 233 parecidos, arriba del rango habitual.",
+    "action": {
+      "label": "Preguntar por las amenidades",
+      "question": "¿La alberca y el jardín son áreas comunes?"
+    },
+    "prompts": [
+      "¿La alberca está techada?",
+      "¿Hay cuarto de servicio?"
+    ]
+  },
+  "buy-148011657": {
+    "synthesis": "Metro Cuauhtémoc a 4 min y dentro de tu presupuesto; son 39 m² con una recámara y el m² va 40% arriba.",
+    "market": "Pagas $71.6k/m² contra $51.2k/m² en 100 parecidos; lleva 93 días publicado.",
+    "action": {
+      "label": "Preguntar si negocian",
+      "question": "Con 93 días publicado, ¿negociarían el precio?"
+    },
+    "prompts": [
+      "¿El jardín del frente da a la avenida?",
+      "¿Por qué sigue sin venderse?"
+    ]
+  },
+  "buy-148419165": {
+    "synthesis": "Cocina nueva, jardín y mucha luz por las fotos; el m² va 38% arriba de parecidos y el Metro Insurgentes Sur está a 20 min.",
+    "market": "Pagas $61.5k/m² contra $44.7k/m² de mediana en 117 parecidos.",
+    "action": {
+      "label": "Preguntar por la planta alta",
+      "question": "El anuncio dice penthouse: ¿en qué piso está?"
+    },
+    "prompts": [
+      "¿Se venden amueblados?",
+      "¿El jardín es privado o común?"
+    ]
+  },
+  "buy-150341189": {
+    "synthesis": "Entra en tu presupuesto con 250 m² y jardín, pero su m² queda 51% abajo de parecidos y el anuncio habla de remodelar.",
+    "market": "Pagas $23.6k/m² contra $48.4k/m² de mediana en 84 parecidos, abajo del rango. Pregunta cuánto falta remodelar.",
+    "action": {
+      "label": "Preguntar por la remodelación",
+      "question": "¿Qué partes necesitan remodelación?"
+    },
+    "prompts": [
+      "¿El Metro División del Norte queda lejos?",
+      "¿Cuánto mide el jardín del fondo?"
+    ]
+  },
+  "buy-151005500": {
+    "synthesis": "Terraza con vegetación y Parque America a 3 min; bajó $1.2M hace 7 días y sigue 19% arriba por m².",
+    "market": "Pagas $84.4k/m² contra $71.2k/m² de mediana en 178 parecidos.",
+    "action": {
+      "label": "Preguntar si bajan más",
+      "question": "¿Hay margen para otra baja?"
+    },
+    "prompts": [
+      "¿La terraza es del penthouse?",
+      "¿Cuántos estacionamientos tiene?"
+    ]
+  },
+  "buy-150761947": {
+    "synthesis": "Torre en Santa Fe con 2 recámaras, vacía en las fotos; tras 112 días publicado, el m² sigue 10% arriba de parecidos.",
+    "market": "Pagas $65.7k/m² contra $59.8k/m² en 163 parecidos; queda $1.3M arriba de tu presupuesto.",
+    "action": {
+      "label": "Preguntar por la vista",
+      "question": "¿La vista frontal es hacia la avenida?"
+    },
+    "prompts": [
+      "¿Se entrega vacío?",
+      "¿Tiene vista desde la sala?"
+    ]
+  },
+  "buy-150855987": {
+    "synthesis": "En Polanco, 37% abajo de la mediana por m² y bajo el rango habitual; un número así merece revisión antes de ir.",
+    "market": "Pagas $48.3k/m² contra $76.8k/m² de mediana en 184 parecidos; bajó $900k hace 22 días.",
+    "action": {
+      "label": "Confirmar los 265 m²",
+      "question": "¿Los 265 m² son de construcción?"
+    },
+    "prompts": [
+      "¿Qué tan grande es el jardín de Homero?",
+      "¿Por qué bajó el precio?"
+    ]
+  },
+  "buy-151157034": {
+    "synthesis": "Con 99 días publicado y m² apenas 2% arriba de parecidos, hay margen para negociar; por las fotos, tiene mucha luz y jardín.",
+    "market": "Pagas $53.5k/m² contra $52.2k/m² de mediana en 203 parecidos.",
+    "action": {
+      "label": "Pedir fotos de los baños",
+      "question": "¿Pueden enviar fotos de los baños?"
+    },
+    "prompts": [
+      "¿Qué vista tiene desde la sala?",
+      "¿El área verde es común?"
+    ]
+  },
+  "buy-149024502": {
+    "synthesis": "Jardín y terraza con vista al verde en Roma Norte, a precio de zona y con Metro Insurgentes a 8 min; queda $97k arriba de tu presupuesto.",
+    "market": "Pagas $56.3k/m² contra $55.7k/m² en 158 parecidos, si se confirman los 135 m²: el anuncio no los publica.",
+    "action": {
+      "label": "Confirmar la superficie",
+      "question": "¿Cuántos m² tiene el departamento?"
+    },
+    "prompts": [
+      "¿Cuántos niveles tiene la casa?",
+      "¿Se escucha ruido de la calle?"
+    ]
+  },
+  "buy-150108941": {
+    "synthesis": "Cumple todo lo que pediste: Narvarte, bajo tu presupuesto, Metro Etiopía a 1 min y balcón por las fotos; además bajó $150k.",
+    "market": "Pagas $33.1k/m² contra $43.2k/m² de mediana en 104 parecidos; frente a Cuauhtémoc 661, cuesta 27% menos.",
+    "action": {
+      "label": "Preguntar por visitas",
+      "question": "¿Se puede visitar esta semana?"
+    },
+    "prompts": [
+      "¿El balcón da a una calle ruidosa?",
+      "¿Por qué bajó $150k?"
+    ]
+  },
+  "buy-148951246": {
+    "synthesis": "Está en Narvarte, a 7 min del Metro Etiopía, aunque su m² queda 58% arriba de parecidos y supera tu presupuesto.",
+    "market": "Pagas $68.4k/m² contra $43.2k/m² en 124 parecidos, arriba del rango habitual. Queda $3.45M arriba de tu presupuesto.",
+    "action": {
+      "label": "Preguntar por el penthouse",
+      "question": "¿El penthouse tiene terraza o solo patio interior?"
+    },
+    "prompts": [
+      "¿El patio interior recibe sol?",
+      "¿Cuánto es el mantenimiento mensual?"
+    ]
+  },
+  "buy-150591738": {
+    "synthesis": "Cuartos vacíos, jardín y una terraza cubierta por las fotos; el m² está 29% arriba de parecidos en San Mateo Tlaltenango.",
+    "market": "Pagas $61.7k/m² contra $48k/m² de mediana en 213 parecidos.",
+    "action": {
+      "label": "Preguntar por la terraza",
+      "question": "¿La terraza cubierta tiene vista?"
+    },
+    "prompts": [
+      "¿Hay transporte hacia Reforma desde ahí?",
+      "¿Se entrega con cocina equipada?"
+    ]
+  },
+  "buy-144229147": {
+    "synthesis": "Vacío, con cocina nueva y terraza en las fotos, a 7% arriba de la mediana por m² del Pedregal.",
+    "market": "Pagas $55.9k/m² contra $52.1k/m² en 235 parecidos, dentro del rango de la zona.",
+    "action": {
+      "label": "Preguntar por el jardín",
+      "question": "El anuncio menciona jardín: ¿dónde está?"
+    },
+    "prompts": [
+      "¿La terraza da al jardín?",
+      "¿Cuánto tarda llegar a Reforma?"
+    ]
+  },
+  "buy-147581307": {
+    "synthesis": "Lleva 78 días publicado con un m² 20% arriba de parecidos, lo que abre margen; faltan fotos de los baños.",
+    "market": "Pagas $53.7k/m² contra $44.8k/m² de mediana en 216 parecidos.",
+    "action": {
+      "label": "Pedir fotos de baños",
+      "question": "¿Pueden mandar fotos de los baños?"
+    },
+    "prompts": [
+      "¿La cocina nueva tiene garantía?",
+      "¿Las recámaras tienen clóset?"
+    ]
+  },
+  "buy-146236735": {
+    "synthesis": "Seis recámaras y un estudio, con mucha luz por las fotos; el m² va 34% arriba, aunque con solo 48 parecidos de referencia.",
+    "market": "Pagas $66.6k/m² contra $49.5k/m² de mediana en 48 parecidos, una muestra chica.",
+    "action": {
+      "label": "Preguntar por el estudio",
+      "question": "¿El estudio puede ser una recámara más?"
+    },
+    "prompts": [
+      "¿El patio con plantas es privado?",
+      "¿Hay transporte cerca de Santa Fe 562?"
+    ]
+  },
+  "buy-150876848": {
+    "synthesis": "Terraza en la azotea y jardín por las fotos, con Metro Insurgentes a 10 min y un m² 6% abajo de parecidos.",
+    "market": "Pagas $49.8k/m² contra $52.8k/m² en 125 parecidos, dentro del rango.",
+    "action": {
+      "label": "Preguntar por la azotea",
+      "question": "¿La terraza de la azotea es privada?"
+    },
+    "prompts": [
+      "¿El número exterior es S/N?",
+      "¿Se escucha Insurgentes desde adentro?"
+    ]
+  }
+}

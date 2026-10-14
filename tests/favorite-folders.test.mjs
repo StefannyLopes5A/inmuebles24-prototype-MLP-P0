@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   FOLDER_NAME_MAX, RECENT_LIMIT, suggestedFolderName, cleanFolderName, normalizeFolders, normalizeRecent,
-  createFolder, saveToFolder, uniqueFolderName, savedIds, folderOf, recordView, isFolderId, viewedLabel, savedCountLabel,
+  createFolder, saveToFolder, uniqueFolderName, savedIds, folderOf, recordView, isFolderId, viewedLabel, savedCountLabel, pickId, pickIds,
 } from '../src/favoriteLists.js';
 import {DEFAULT_SEARCH, journeyUrl, normalizeSearch, readJourney} from '../src/journey.js';
 
@@ -79,4 +79,13 @@ test('favorites routes carry only a folder id, never listing ids', () => {
   assert.equal(readJourney('/?view=compare&list=buy-148816386').listId, undefined);
   assert.equal(isFolderId('buy-148816386'), false);
   assert.equal(journeyUrl({page:'favorites', search, listId:'list-abc'}).includes('list='), false);
+});
+
+test('a listing compared with some favorites travels in the URL as a one-off list', () => {
+  const search = normalizeSearch(DEFAULT_SEARCH);
+  const id = pickId(['buy-1', 'fav-torres-adalid', 'buy-1']);
+  assert.equal(id, 'pick:buy-1,fav-torres-adalid');
+  assert.deepEqual(pickIds(readJourney(journeyUrl({page:'compare', search, listId:id})).listId), ['buy-1', 'fav-torres-adalid']);
+  assert.equal(pickIds('pick:buy-1'), null);
+  assert.equal(isFolderId('pick:<script>,x'), false);
 });

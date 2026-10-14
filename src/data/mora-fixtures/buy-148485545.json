@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "listingId": "buy-148485545",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148485545",
+      "address": "Adolfo Prieto, Del Valle Norte, Benito Juárez",
+      "street": "Adolfo Prieto",
+      "colonia": "Del Valle Norte",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Adolfo Prieto, Del Valle Norte, Benito Juárez",
+      "zone": "Del Valle Norte",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 4543000,
+      "m2": 80,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": null,
+      "agency": {
+        "name": "Casa Nativa Inmobiliaria",
+        "verified": false,
+        "rating": 4.4,
+        "reviews": 216,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 56788,
+      "comparablesCount": 97,
+      "comparablesMedianPerM2": 51800,
+      "comparablesP10PerM2": 33200,
+      "comparablesP90PerM2": 75600,
+      "diffVsMedianPct": 10,
+      "classification": "fair",
+      "daysListed": 48,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.3,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 27,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 39,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "studio",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 14
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 13
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 29
+        }
+      ],
+      "missing": [],
+      "note": "Estudio con librero y jardín"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "balcony"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 22,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Chilpancingo",
+          "minutes": 24,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Glorieta Mariscal Sucre",
+          "minutes": 9,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Glorieta Mariscal Sucre",
+        "minutes": 9,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Del Valle Norte"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 2
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 24
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "met",
+        "basis": "listing"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": -5,
+        "m2DiffPct": -59,
+        "bedroomsDiff": -3,
+        "sameZone": false,
+        "metroMinutesThis": 24,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -39,
+        "m2DiffPct": -37,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 24,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Dentro de tu presupuesto y con balcón según el anuncio, 10% arriba de la mediana por m² de Del Valle Norte.",
+    "fit": {
+      "metCount": 4,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Del Valle Norte, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 24 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Con balcón",
+          "status": "met",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $56.8k/m² contra $51.8k/m² de mediana en 97 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el estudio",
+          "payload": {
+            "question": "¿El librero del estudio se queda?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "En la mediana de la zona",
+      "badge": "+10% vs. parecidos",
+      "p10": 33200,
+      "p90": 75600,
+      "median": 51800,
+      "value": 56788,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿El balcón da a la calle?",
+      "¿Cuánto tarda caminar al Metro Chilpancingo?"
+    ],
+    "extractedTags": [],
+    "address": "Adolfo Prieto, Del Valle Norte, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "22 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Chilpancingo",
+        "meta": "24 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Glorieta Mariscal Sucre",
+        "meta": "9 min a pie"
+      }
+    ]
+  }
+}

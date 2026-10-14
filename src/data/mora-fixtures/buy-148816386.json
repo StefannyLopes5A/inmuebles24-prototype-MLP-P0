@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "listingId": "buy-148816386",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148816386",
+      "address": "Torres Adalid, Narvarte Poniente, Benito Juárez",
+      "street": "Torres Adalid",
+      "colonia": "Narvarte Poniente",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Torres Adalid, Narvarte Poniente, Benito Juárez",
+      "zone": "Narvarte Poniente",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 4800000,
+      "m2": 193,
+      "bedrooms": 5,
+      "bathrooms": 3,
+      "parking": 1,
+      "agency": {
+        "name": "Remax Interr",
+        "verified": true,
+        "rating": 4.4,
+        "reviews": 142,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 24870,
+      "comparablesCount": 75,
+      "comparablesMedianPerM2": 42300,
+      "comparablesP10PerM2": 27100,
+      "comparablesP90PerM2": 61800,
+      "diffVsMedianPct": -41,
+      "belowRange": true,
+      "classification": "review_before_visit",
+      "daysListed": 17,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.5,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 2,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 26,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 23
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 15
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 26
+        }
+      ],
+      "missing": [],
+      "note": "Luz media en la sala y una terraza al fondo"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 25,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Etiopía",
+          "minutes": 5,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Lineal Ecoducto Río de la Piedad",
+          "minutes": 11,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Lineal Ecoducto Río de la Piedad",
+        "minutes": 11,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "met",
+        "value": "Narvarte Poniente"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 5
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 5
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -36,
+        "m2DiffPct": 51,
+        "bedroomsDiff": 2,
+        "sameZone": true,
+        "metroMinutesThis": 5,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 25,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Tu favorito en Torres Adalid entra en tu zona y presupuesto, con Metro Etiopía a 5 min; su m² queda 41% abajo de parecidos, algo que conviene confirmar.",
+    "fit": {
+      "metCount": 5,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "En Narvarte Poniente",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 5 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $24.9k/m² contra una mediana de $42.3k/m² en 75 parecidos, por debajo incluso del rango habitual. Confirma la superficie de 193 m² antes de visitar.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Confirmar la superficie",
+          "payload": {
+            "question": "¿Los 193 m² son de construcción o incluyen terreno y áreas comunes?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Revisar antes de visitar",
+      "badge": "−41% vs. parecidos",
+      "p10": 27100,
+      "p90": 61800,
+      "median": 42300,
+      "value": 24870,
+      "unit": "m2",
+      "belowRange": true
+    },
+    "conversationPrompts": [
+      "¿Por qué el m² está tan abajo?",
+      "¿Cuánto mide la terraza del fondo?"
+    ],
+    "extractedTags": [],
+    "address": "Torres Adalid, Narvarte Poniente, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "25 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Etiopía",
+        "meta": "5 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Lineal Ecoducto Río de la Piedad",
+        "meta": "11 min a pie"
+      }
+    ]
+  }
+}

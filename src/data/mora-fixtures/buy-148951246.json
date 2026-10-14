@@ -1,0 +1,298 @@
+{
+  "meta": {
+    "listingId": "buy-148951246",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148951246",
+      "address": "Narvarte, Narvarte Poniente, Benito Juárez",
+      "street": "Narvarte",
+      "colonia": "Narvarte Poniente",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Narvarte, Narvarte Poniente, Benito Juárez",
+      "zone": "Narvarte Poniente",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 10950000,
+      "m2": 160,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 1,
+      "agency": {
+        "name": "Patio Central Inmuebles",
+        "verified": true,
+        "rating": 4.5,
+        "reviews": 121,
+        "replyMinutes": false,
+        "replyHours": 1
+      }
+    },
+    "market": {
+      "pricePerM2": 68438,
+      "comparablesCount": 124,
+      "comparablesMedianPerM2": 43200,
+      "comparablesP10PerM2": 27600,
+      "comparablesP90PerM2": 63100,
+      "diffVsMedianPct": 58,
+      "aboveRange": true,
+      "classification": "above_market",
+      "daysListed": 34,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.9,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 33,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 16,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 9
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 16
+        }
+      ],
+      "missing": [],
+      "note": "Patio interior y sala con luz media"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "penthouse"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 16,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Etiopía",
+          "minutes": 7,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Glorieta Mariscal Sucre",
+          "minutes": 12,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Glorieta Mariscal Sucre",
+        "minutes": 12,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "met",
+        "value": "Narvarte Poniente"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 3450000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 7
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 128,
+        "m2DiffPct": -17,
+        "bedroomsDiff": -2,
+        "sameZone": true,
+        "metroMinutesThis": 7,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 16,
+        "officeMinutesFavorite": 25,
+        "similarity": "medium"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 46,
+        "m2DiffPct": 25,
+        "bedroomsDiff": 0,
+        "sameZone": true,
+        "metroMinutesThis": 7,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 16,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Está en Narvarte, a 7 min del Metro Etiopía, aunque su m² queda 58% arriba de parecidos y supera tu presupuesto.",
+    "fit": {
+      "metCount": 4,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "En Narvarte Poniente",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 7 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $68.4k/m² contra $43.2k/m² en 124 parecidos, arriba del rango habitual. Queda $3.45M arriba de tu presupuesto.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el penthouse",
+          "payload": {
+            "question": "¿El penthouse tiene terraza o solo patio interior?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+58% vs. parecidos",
+      "p10": 27600,
+      "p90": 63100,
+      "median": 43200,
+      "value": 68438,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿El patio interior recibe sol?",
+      "¿Cuánto es el mantenimiento mensual?"
+    ],
+    "extractedTags": [],
+    "address": "Narvarte, Narvarte Poniente, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "16 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Etiopía",
+        "meta": "7 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Glorieta Mariscal Sucre",
+        "meta": "12 min a pie"
+      }
+    ]
+  }
+}

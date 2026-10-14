@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "listingId": "buy-148741903",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148741903",
+      "address": "Rio Panuco, Cuauhtémoc",
+      "street": "Rio Panuco",
+      "colonia": "Cuauhtémoc",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "RIO Panuco, Cuauhtémoc, Cuauhtémoc",
+      "zone": "Cuauhtémoc",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 8490000,
+      "m2": 200,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Barrio Alto Real Estate",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 188,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 42450,
+      "comparablesCount": 221,
+      "comparablesMedianPerM2": 42000,
+      "comparablesP10PerM2": 26900,
+      "comparablesP90PerM2": 61300,
+      "diffVsMedianPct": 1,
+      "classification": "negotiable",
+      "daysListed": 57,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.5,
+      "priceHistory": [
+        {
+          "daysAgo": 19,
+          "change": -350000
+        }
+      ],
+      "rankInSearchByPricePerM2": 10,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 22,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "baja",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "parking",
+          "confidence": "medium",
+          "photoIndex": 17
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 22
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 21
+        }
+      ],
+      "missing": [],
+      "note": "Vacío, con la cocina al final"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "balcony"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 27,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes",
+          "minutes": 12,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Jesús Reyes Heroles",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Jesús Reyes Heroles",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Cuauhtémoc"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 990000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 12
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "met",
+        "basis": "listing"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 77,
+        "m2DiffPct": 4,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 12,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 27,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 13,
+        "m2DiffPct": 56,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": 12,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 27,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Bajó $350k hace 19 días y quedó $990k arriba de tu presupuesto; tiene balcón según el anuncio.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Cuauhtémoc, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 12 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Con balcón",
+          "status": "met",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $42.5k/m² contra $42k/m² de mediana en 221 parecidos: está en precio de zona.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por otra rebaja",
+          "payload": {
+            "question": "¿Aceptarían una oferta cerca de $7.5M?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+1% vs. parecidos",
+      "p10": 26900,
+      "p90": 61300,
+      "median": 42000,
+      "value": 42450,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Por qué tiene tan poca luz?",
+      "¿El balcón es de la sala?"
+    ],
+    "extractedTags": [],
+    "address": "Rio Panuco, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "27 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes",
+        "meta": "12 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Jesús Reyes Heroles",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "meta": {
+    "listingId": "buy-150591738",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150591738",
+      "address": "Av. de los Poetas, San Mateo Tlaltenango, Cuajimalpa de Morelos",
+      "street": "Av. de los Poetas",
+      "colonia": "San Mateo Tlaltenango",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Av. de los Poetas, San Mateo Tlaltenango, Cuajimalpa de Morelos",
+      "zone": "San Mateo Tlaltenango",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 20800000,
+      "m2": 337,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 4,
+      "agency": {
+        "name": "Lumen Inmobiliaria",
+        "verified": false,
+        "rating": 4.4,
+        "reviews": 226,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 61721,
+      "comparablesCount": 213,
+      "comparablesMedianPerM2": 48000,
+      "comparablesP10PerM2": 30700,
+      "comparablesP90PerM2": 70100,
+      "diffVsMedianPct": 29,
+      "classification": "above_market",
+      "daysListed": 31,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.8,
+      "priceHistory": [],
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 27,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 3
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 5
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 14
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 13
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 4
+        }
+      ],
+      "missing": [],
+      "note": "Cuartos vacíos, jardín y una terraza cubierta"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 19,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque La Mexicana",
+          "minutes": 19,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque La Mexicana",
+        "minutes": 19,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "San Mateo Tlaltenango"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 13300000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 333,
+        "m2DiffPct": 75,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 177,
+        "m2DiffPct": 163,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Cuartos vacíos, jardín y una terraza cubierta por las fotos; el m² está 29% arriba de parecidos en San Mateo Tlaltenango.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "San Mateo Tlaltenango, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $61.7k/m² contra $48k/m² de mediana en 213 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la terraza",
+          "payload": {
+            "question": "¿La terraza cubierta tiene vista?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+29% vs. parecidos",
+      "p10": 30700,
+      "p90": 70100,
+      "median": 48000,
+      "value": 61721,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Hay transporte hacia Reforma desde ahí?",
+      "¿Se entrega con cocina equipada?"
+    ],
+    "extractedTags": [],
+    "address": "Av. de los Poetas, San Mateo Tlaltenango, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "19 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque La Mexicana",
+        "meta": "19 min a pie"
+      }
+    ]
+  }
+}

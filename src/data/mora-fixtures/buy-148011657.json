@@ -1,0 +1,295 @@
+{
+  "meta": {
+    "listingId": "buy-148011657",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148011657",
+      "address": "Av. Chapultepec 49, Juárez, Cuauhtémoc",
+      "street": "Av. Chapultepec 49",
+      "colonia": "Juárez",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Av. Chapultepec 49, Juárez, Cuauhtémoc",
+      "zone": "Juárez",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 2792000,
+      "m2": 39,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "parking": null,
+      "agency": {
+        "name": "Casas En Venta",
+        "verified": true,
+        "rating": 4.5,
+        "reviews": 163,
+        "replyMinutes": false,
+        "replyHours": 3
+      }
+    },
+    "market": {
+      "pricePerM2": 71590,
+      "comparablesCount": 100,
+      "comparablesMedianPerM2": 51200,
+      "comparablesP10PerM2": 32800,
+      "comparablesP90PerM2": 74800,
+      "diffVsMedianPct": 40,
+      "classification": "negotiable",
+      "daysListed": 93,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 2.5,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 35,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 14,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 2
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 6
+        },
+        {
+          "feature": "studio",
+          "confidence": "medium",
+          "photoIndex": 8
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 9
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 12
+        }
+      ],
+      "missing": [],
+      "note": "Jardín al frente y estudio con librero"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 35,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Cuauhtémoc",
+          "minutes": 4,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Plaza Giordano Bruno",
+          "minutes": 4,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Plaza Giordano Bruno",
+        "minutes": 4,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Juárez"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "unmet",
+        "min": 2,
+        "value": 1
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 4
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": -42,
+        "m2DiffPct": -80,
+        "bedroomsDiff": -4,
+        "sameZone": false,
+        "metroMinutesThis": 4,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 35,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -63,
+        "m2DiffPct": -70,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 4,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 35,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Metro Cuauhtémoc a 4 min y dentro de tu presupuesto; son 39 m² con una recámara y el m² va 40% arriba.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Juárez, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 4 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $71.6k/m² contra $51.2k/m² en 100 parecidos; lleva 93 días publicado.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar si negocian",
+          "payload": {
+            "question": "Con 93 días publicado, ¿negociarían el precio?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+40% vs. parecidos",
+      "p10": 32800,
+      "p90": 74800,
+      "median": 51200,
+      "value": 71590,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿El jardín del frente da a la avenida?",
+      "¿Por qué sigue sin venderse?"
+    ],
+    "extractedTags": [],
+    "address": "Av. Chapultepec 49, Juárez, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "35 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Cuauhtémoc",
+        "meta": "4 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Plaza Giordano Bruno",
+        "meta": "4 min a pie"
+      }
+    ]
+  }
+}

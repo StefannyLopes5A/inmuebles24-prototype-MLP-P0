@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "listingId": "buy-144229147",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-144229147",
+      "address": "Jardines del Pedregal, Álvaro Obregón",
+      "street": "Jardines del Pedregal",
+      "colonia": "Jardines del Pedregal",
+      "alcaldia": "Álvaro Obregón",
+      "addressRaw": "Jardines del Pedregal, Jardines del Pedregal, Alvaro Obregón",
+      "zone": "Jardines del Pedregal",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 10500000,
+      "m2": 188,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "parking": 4,
+      "agency": {
+        "name": "Terra Urbana",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 160,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 55851,
+      "comparablesCount": 235,
+      "comparablesMedianPerM2": 52100,
+      "comparablesP10PerM2": 33300,
+      "comparablesP90PerM2": 76100,
+      "diffVsMedianPct": 7,
+      "classification": "fair",
+      "daysListed": 58,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.6,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 24,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 29,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 5
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 15
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 26
+        }
+      ],
+      "missing": [],
+      "note": "Vacío, con cocina nueva y terraza"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "garden"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 20,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque Luis Barragán",
+          "minutes": 11,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Luis Barragán",
+        "minutes": 11,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Jardines del Pedregal"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 3000000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 119,
+        "m2DiffPct": -3,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 20,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 40,
+        "m2DiffPct": 47,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 20,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Vacío, con cocina nueva y terraza en las fotos, a 7% arriba de la mediana por m² del Pedregal.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Jardines del Pedregal, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $55.9k/m² contra $52.1k/m² en 235 parecidos, dentro del rango de la zona.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el jardín",
+          "payload": {
+            "question": "El anuncio menciona jardín: ¿dónde está?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "En la mediana de la zona",
+      "badge": "+7% vs. parecidos",
+      "p10": 33300,
+      "p90": 76100,
+      "median": 52100,
+      "value": 55851,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿La terraza da al jardín?",
+      "¿Cuánto tarda llegar a Reforma?"
+    ],
+    "extractedTags": [],
+    "address": "Jardines del Pedregal, Álvaro Obregón",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "20 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Luis Barragán",
+        "meta": "11 min a pie"
+      }
+    ]
+  }
+}

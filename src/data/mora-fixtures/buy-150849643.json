@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "listingId": "buy-150849643",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150849643",
+      "address": "Pitagoras, Narvarte Poniente, Benito Juárez",
+      "street": "Pitagoras",
+      "colonia": "Narvarte Poniente",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Pitagoras, Narvarte Poniente, Benito Juárez",
+      "zone": "Narvarte Poniente",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 12500000,
+      "m2": 210,
+      "bedrooms": 3,
+      "bathrooms": 4,
+      "parking": 3,
+      "agency": {
+        "name": "Punto Norte Inmuebles",
+        "verified": true,
+        "rating": 4.5,
+        "reviews": 255,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 59524,
+      "comparablesCount": 172,
+      "comparablesMedianPerM2": 38300,
+      "comparablesP10PerM2": 24500,
+      "comparablesP90PerM2": 55900,
+      "diffVsMedianPct": 55,
+      "aboveRange": true,
+      "classification": "negotiable",
+      "daysListed": 28,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.8,
+      "priceHistory": [
+        {
+          "daysAgo": 4,
+          "change": -650000
+        }
+      ],
+      "rankInSearchByPricePerM2": 29,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 21,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 12
+        },
+        {
+          "feature": "roof_garden",
+          "confidence": "medium",
+          "photoIndex": 21
+        }
+      ],
+      "missing": [],
+      "note": "Luz media, cocina equipada y roof"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "levels"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 20,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Etiopía",
+          "minutes": 5,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Lineal Ecoducto Río de la Piedad",
+          "minutes": 12,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Lineal Ecoducto Río de la Piedad",
+        "minutes": 12,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "met",
+        "value": "Narvarte Poniente"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 5000000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 5
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 160,
+        "m2DiffPct": 9,
+        "bedroomsDiff": -2,
+        "sameZone": true,
+        "metroMinutesThis": 5,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 20,
+        "officeMinutesFavorite": 25,
+        "similarity": "medium"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 67,
+        "m2DiffPct": 64,
+        "bedroomsDiff": 0,
+        "sameZone": true,
+        "metroMinutesThis": 5,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 20,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Bajó $650k hace 4 días y sigue 55% arriba de la mediana por m²; está en Narvarte, a 5 min del Metro Etiopía.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "En Narvarte Poniente",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 5 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Aun con la baja, pagas $59.5k/m² contra $38.3k/m² de mediana en 172 parecidos, arriba del rango habitual.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar si hay más margen",
+          "payload": {
+            "question": "Después de la baja reciente, ¿aceptan una oferta menor?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+55% vs. parecidos",
+      "p10": 24500,
+      "p90": 55900,
+      "median": 38300,
+      "value": 59524,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿Qué tiene el roof?",
+      "¿Cuántos niveles tiene?"
+    ],
+    "extractedTags": [],
+    "address": "Pitagoras, Narvarte Poniente, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "20 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Etiopía",
+        "meta": "5 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Lineal Ecoducto Río de la Piedad",
+        "meta": "12 min a pie"
+      }
+    ]
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "meta": {
+    "listingId": "buy-150754546",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150754546",
+      "address": "Secretaria de Marina Al 700, Lomas del Chamizal, Cuajimalpa de Morelos",
+      "street": "Secretaria de Marina Al 700",
+      "colonia": "Lomas del Chamizal",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Secretaria de Marina al 700, Lomas del Chamizal, Cuajimalpa de Morelos",
+      "zone": "Lomas del Chamizal",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 16100000,
+      "m2": 305,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 3,
+      "agency": {
+        "name": "Altura Bienes Raíces",
+        "verified": true,
+        "rating": 4.9,
+        "reviews": 185,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 52787,
+      "comparablesCount": 208,
+      "comparablesMedianPerM2": 50400,
+      "comparablesP10PerM2": 32300,
+      "comparablesP90PerM2": 73600,
+      "diffVsMedianPct": 5,
+      "classification": "fair",
+      "daysListed": 61,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.6,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 20,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 18,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 15
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 14
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 11
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 10
+        }
+      ],
+      "missing": [],
+      "note": "Luz media bajo techo de madera y terraza frente al jardín"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 19,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque de VIstahermosa",
+          "minutes": 25,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque de VIstahermosa",
+        "minutes": 25,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Lomas del Chamizal"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 8600000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 235,
+        "m2DiffPct": 58,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 115,
+        "m2DiffPct": 138,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 19,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Precio en línea con la zona, apenas 5% arriba por m²; por las fotos, la terraza mira al jardín y la casa pide actualizarse.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Lomas del Chamizal, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $52.8k/m² contra una mediana de $50.4k/m² en 208 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar qué hay que renovar",
+          "payload": {
+            "question": "¿Qué habría que renovar primero?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "En la mediana de la zona",
+      "badge": "+5% vs. parecidos",
+      "p10": 32300,
+      "p90": 73600,
+      "median": 50400,
+      "value": 52787,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿El techo de madera es original?",
+      "¿La terraza está cubierta?"
+    ],
+    "extractedTags": [],
+    "address": "Secretaria de Marina Al 700, Lomas del Chamizal, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "19 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque de VIstahermosa",
+        "meta": "25 min a pie"
+      }
+    ]
+  }
+}

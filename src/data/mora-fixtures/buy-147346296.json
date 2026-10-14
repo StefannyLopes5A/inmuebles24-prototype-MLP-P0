@@ -1,0 +1,294 @@
+{
+  "meta": {
+    "listingId": "buy-147346296",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-147346296",
+      "address": "Maximino Ávila Camacho, Ciudad de los Deportes, Benito Juárez",
+      "street": "Maximino Ávila Camacho",
+      "colonia": "Ciudad de los Deportes",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Maximino Ávila Camacho, Ciudad de los Deportes, Benito Juárez",
+      "zone": "Ciudad de los Deportes",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 12500000,
+      "m2": 408,
+      "bedrooms": 6,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "TERRABROKERS.",
+        "verified": true,
+        "rating": 4.9,
+        "reviews": 133,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 30637,
+      "comparablesCount": 128,
+      "comparablesMedianPerM2": 39100,
+      "comparablesP10PerM2": 25000,
+      "comparablesP90PerM2": 57100,
+      "diffVsMedianPct": -22,
+      "classification": "opportunity",
+      "daysListed": 108,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 2.9,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 3,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 12,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 3
+        },
+        {
+          "feature": "roof_garden",
+          "confidence": "medium",
+          "photoIndex": 10
+        },
+        {
+          "feature": "parking",
+          "confidence": "medium",
+          "photoIndex": 9
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 2
+        }
+      ],
+      "missing": [
+        "bathrooms",
+        "kitchen"
+      ],
+      "note": "Luz media en recámaras vacías y roof en el último piso; no hay fotos de cocina ni baños"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "roof"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 22,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes Sur",
+          "minutes": 14,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Hundido",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Hundido",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Ciudad de los Deportes"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 5000000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 6
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 14
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 160,
+        "m2DiffPct": 111,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": 14,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 67,
+        "m2DiffPct": 219,
+        "bedroomsDiff": 3,
+        "sameZone": false,
+        "metroMinutesThis": 14,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Con 408 m² a 22% menos por m² que parecidos, lleva 108 días sin venderse; las fotos no muestran cocina ni baños.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Ciudad de los Deportes, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 14 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Su m² sale en $30.6k frente a $39.1k de mediana entre 128 parecidos. Queda $5M arriba de tu presupuesto.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Pedir fotos de cocina",
+          "payload": {
+            "question": "¿Pueden compartir fotos de la cocina y los baños?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Abajo del mercado",
+      "badge": "−22% vs. parecidos",
+      "p10": 25000,
+      "p90": 57100,
+      "median": 39100,
+      "value": 30637,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Qué tan cerca está el Parque Hundido?",
+      "¿Hay espacio para estacionar varios autos?"
+    ],
+    "extractedTags": [],
+    "address": "Maximino Ávila Camacho, Ciudad de los Deportes, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "22 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes Sur",
+        "meta": "14 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Hundido",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

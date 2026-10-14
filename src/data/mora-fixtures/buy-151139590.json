@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "listingId": "buy-151139590",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-151139590",
+      "address": "General Salvador Alvarado, Escandón II Sección, Miguel Hidalgo",
+      "street": "General Salvador Alvarado",
+      "colonia": "Escandón II Sección",
+      "alcaldia": "Miguel Hidalgo",
+      "addressRaw": "General Salvador Alvarado, Escandón II Sección, Miguel Hidalgo",
+      "zone": "Escandón II Sección",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 4200000,
+      "m2": 49,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "parking": null,
+      "agency": {
+        "name": "Nido Propiedades",
+        "verified": false,
+        "rating": 4.9,
+        "reviews": 325,
+        "replyMinutes": false,
+        "replyHours": 3
+      }
+    },
+    "market": {
+      "pricePerM2": 85714,
+      "comparablesCount": 227,
+      "comparablesMedianPerM2": 38700,
+      "comparablesP10PerM2": 24800,
+      "comparablesP90PerM2": 56500,
+      "diffVsMedianPct": 121,
+      "aboveRange": true,
+      "classification": "above_market",
+      "daysListed": 34,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.9,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 39,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 24,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 3
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 8
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 13
+        },
+        {
+          "feature": "gym",
+          "confidence": "medium",
+          "photoIndex": 21
+        },
+        {
+          "feature": "studio",
+          "confidence": "medium",
+          "photoIndex": 23
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 24
+        }
+      ],
+      "missing": [],
+      "note": "Jardín, gimnasio y estudio, con recámara amueblada"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "loft"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 14,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Patriotismo",
+          "minutes": 9,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Escandón",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Escandón",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Escandón II Sección"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "unmet",
+        "min": 2,
+        "value": 1
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 9
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": -12,
+        "m2DiffPct": -75,
+        "bedroomsDiff": -4,
+        "sameZone": false,
+        "metroMinutesThis": 9,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 14,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -44,
+        "m2DiffPct": -62,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 9,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 14,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Un loft de 49 m² con una recámara, menos de las 2 que pides, y un m² que duplica la mediana de Escandón.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Escandón II Sección, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 9 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $85.7k/m² contra $38.7k/m² en 227 parecidos, 121% arriba.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el gimnasio",
+          "payload": {
+            "question": "¿El gimnasio es privado o del edificio?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+121% vs. parecidos",
+      "p10": 24800,
+      "p90": 56500,
+      "median": 38700,
+      "value": 85714,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿El estudio tiene ventana?",
+      "¿Se escucha el tráfico de Patriotismo?"
+    ],
+    "extractedTags": [],
+    "address": "General Salvador Alvarado, Escandón II Sección, Miguel Hidalgo",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "14 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Patriotismo",
+        "meta": "9 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Escandón",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

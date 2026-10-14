@@ -7,7 +7,12 @@ const FOLDER_ID = /^list-[a-z0-9-]{1,40}$/;
 const ALL_AREAS = 'Ambas zonas';
 const DAY = 86_400_000;
 
-export const isFolderId = id => typeof id === 'string' && (id === RECENT_ID || FOLDER_ID.test(id));
+/** A one-off comparison of a listing against some favorites; lives only in the URL, never in the saved folders. */
+const PICK_ID = /^pick:[a-z0-9-]{1,40}(,[a-z0-9-]{1,40}){1,3}$/;
+export const pickId = ids => `pick:${[...new Set(ids)].slice(0, 4).join(',')}`;
+export const pickIds = id => typeof id === 'string' && PICK_ID.test(id) ? id.slice(5).split(',') : null;
+
+export const isFolderId = id => typeof id === 'string' && (id === RECENT_ID || FOLDER_ID.test(id) || PICK_ID.test(id));
 
 export function cleanFolderName(value) {
   return String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, FOLDER_NAME_MAX).trim();

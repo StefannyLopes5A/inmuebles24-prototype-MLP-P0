@@ -41,16 +41,58 @@
 /* Price pins */
 .map-pin-host{z-index:1}
 .map-poi-host{z-index:2}
-.map-pin{display:flex;align-items:center;height:28px;padding:0 10px;border:0;border-radius:999px;background:#fff;color:#222;font:600 14px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 4px #0000002e,0 0 0 1px #00000014;cursor:pointer;transition:background-color 150ms ease,color 150ms ease,transform 150ms ease}
+.map-pin{display:flex;align-items:center;height:28px;padding:0 10px;border:0;border-radius:999px;background:#fff;color:#222;font:600 14px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 4px #0000002e,0 0 0 1px #00000014;cursor:pointer;transition:background-color 150ms ease,color 150ms ease,transform 160ms var(--map-ease-out),opacity 160ms var(--map-ease-out)}
 .map-pin:active{transform:scale(.96)}
 .map-pin[data-state=seen]{background:#ebebeb}
 .map-pin[data-state=hovered],.map-pin[data-state=selected]{background:#222;color:#fff}
 .map-pin[data-state=hovered]{transform:scale(1.06)}
-@media(hover:hover) and (pointer:fine){.map-pin:hover{transform:scale(1.04)}}
+@media(hover:hover) and (pointer:fine){.map-shell:not([data-focus]) .map-pin:hover{transform:scale(1.04)}}
 .map-pin:focus-visible{outline:3px solid #242b29;outline-offset:2px}
 .map-shell[data-mode=mini] .map-pin-host{visibility:hidden}
-.map-shell:not([data-mode=mini]) .map-pin{animation:map-pin-in 180ms var(--map-ease-out) backwards;animation-delay:calc(var(--pin-order,0) * 20ms + 160ms)}
-@keyframes map-pin-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.map-shell:not([data-mode=mini]) .map-pin{animation:map-pin-in 220ms var(--map-ease-out) backwards;animation-delay:calc(var(--pin-order,0) * 40ms + 200ms)}
+@keyframes map-pin-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+/* A selected home pulls focus: the other badges step back. */
+.map-shell[data-focus=home] .map-pin:not([data-state=selected]){opacity:.45;transform:scale(.88)}
+.map-shell[data-focus=home] .map-pin[data-state=hovered]{opacity:1;transform:none}
+
+/* POIs: Maki glyph tinted through a mask; the canvas layer draws the same pin in poiLayers.js. */
+.poi-glyph{display:inline-block;flex:none;width:14px;height:14px;background:currentColor;-webkit-mask:var(--poi-icon) center/contain no-repeat;mask:var(--poi-icon) center/contain no-repeat}
+.poi-dot{display:grid;place-items:center;flex:none;width:24px;height:24px;border:2px solid #fff;border-radius:50%;background:var(--poi-color);color:var(--poi-ink);box-shadow:0 1px 3px #00000029;box-sizing:border-box}
+.poi-dot .poi-glyph{width:12px;height:12px}
+.map-poi-host:has(.map-poi[data-picked]){z-index:4}
+.map-poi{position:relative;display:grid;place-items:center;width:28px;height:28px;padding:0;border:2px solid #fff;border-radius:50%;background:var(--poi-color);color:var(--poi-ink);box-shadow:0 1px 4px #0000003d;box-sizing:border-box;cursor:pointer;transition:opacity 150ms var(--map-ease-out),transform 150ms var(--map-ease-out)}
+.map-poi:active{transform:scale(.94)}
+.map-poi:focus-visible{outline:3px solid #242b29;outline-offset:2px}
+.map-shell:not([data-mode=mini]) .map-poi{animation:map-poi-in 200ms var(--map-ease-out) backwards}
+@keyframes map-poi-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.map-poi[data-picked] .map-poi-label{animation:map-poi-label-in 180ms var(--map-ease-out) backwards}
+@keyframes map-poi-label-in{from{opacity:0;transform:translate(-4px,-50%)}}
+.map-poi-label{position:absolute;top:50%;left:calc(100% + 6px);max-width:220px;overflow:hidden;padding:4px 10px;border-radius:999px;background:#fff;color:#111;font:600 12px/16px 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;text-overflow:ellipsis;box-shadow:0 2px 6px #00000029;pointer-events:none;opacity:0;transform:translate(-4px,-50%);transition:opacity 150ms var(--map-ease-out),transform 150ms var(--map-ease-out)}
+.map-poi[data-picked] .map-poi-label{opacity:1;transform:translate(0,-50%)}
+
+/* Top bar: Mora pill while the reading is closed, then the POI filters; beside the reading once it opens. */
+.map-topbar{--topbar-left:16px;position:absolute;top:12px;left:calc(var(--topbar-left) - 4px);z-index:4;display:flex;align-items:center;gap:8px;width:max-content;max-width:calc(100% - var(--topbar-left) - 64px);padding:4px;overflow-x:auto;scrollbar-width:none;box-sizing:border-box}
+.map-topbar::-webkit-scrollbar{display:none}
+.map-shell[data-widgets] .map-topbar{--topbar-left:24px;top:20px}
+.map-shell[data-widgets] .map-topbar[data-shift=stack]{--topbar-left:396px}
+.map-shell[data-widgets] .map-topbar[data-shift=panel]{--topbar-left:396px}
+.map-poi-filters{display:flex;flex:none;gap:8px}
+.map-return{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:4;height:40px;padding:0 18px;border:0;border-radius:999px;background:#242b29;color:#fff;font:600 14px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 6px 16px #0000002e;cursor:pointer;transform:translateX(-50%);animation:map-return-in 200ms var(--map-ease-out) backwards;transition:transform 160ms var(--map-ease-out)}
+.map-return:active{transform:translateX(-50%) scale(.97)}
+.map-return:focus-visible{outline:3px solid #242b29;outline-offset:2px}
+@keyframes map-return-in{from{opacity:0;transform:translate(-50%,8px)}}
+@media(pointer:coarse){.map-return{height:44px}}
+.map-poi-filter{display:inline-flex;flex:none;align-items:center;gap:6px;height:36px;padding:0 12px 0 4px;border:0;border-radius:999px;background:#fff;color:#222;font:500 13px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 6px #00000026,0 0 0 1px #0000000d;cursor:pointer;transition:transform 160ms var(--map-ease-out),background-color 150ms ease,color 150ms ease}
+.map-poi-filter:active{transform:scale(.97)}
+.map-poi-filter:focus-visible{outline:3px solid #242b29;outline-offset:2px}
+.map-poi-filter-dot{display:grid;place-items:center;width:28px;height:28px;border:2px solid #fff;border-radius:50%;background:var(--poi-color);color:var(--poi-ink);box-sizing:border-box;transition:background-color 150ms ease,color 150ms ease}
+.map-poi-filter-count{color:#6f6f6f;font-variant-numeric:tabular-nums}
+.map-poi-filters-caption{display:inline-flex;flex:none;align-items:center;height:36px;padding:0 12px;border-radius:999px;background:#242b29;color:#fff;font:600 13px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 6px #00000026}
+@media(pointer:coarse){.map-poi-filters-caption{height:44px}}
+.map-poi-filter[aria-pressed=false]{background:#f7f7f7;color:#6f6f6f}
+.map-poi-filter[aria-pressed=false] .map-poi-filter-dot{background:#e3e3e3;color:#8c8c8c}
+@media(hover:hover) and (pointer:fine){.map-poi-filter:hover{background:#f7f7f7}.map-poi-filter[aria-pressed=false]:hover{background:#efefef}}
+@media(pointer:coarse){.map-poi-filter{height:44px}}
 
 /* Listing card */
 .map-card-host{z-index:10;pointer-events:none}
@@ -78,8 +120,13 @@ html[data-map-mode=full]{overflow:hidden}
 
 @media(prefers-reduced-motion:reduce){
   .map-shell[data-entered=true]{animation:map-fade-in 150ms ease both}
-  .map-pin,.map-shell:not([data-mode=mini]) .map-pin{animation:none;transition:background-color 150ms ease,color 150ms ease}
-  .map-pin[data-state=hovered]{transform:none}
+  .map-pin,.map-shell:not([data-mode=mini]) .map-pin{animation:map-fade-in 150ms ease backwards;animation-delay:0ms;transition:background-color 150ms ease,color 150ms ease,opacity 150ms ease}
+  .map-pin[data-state=hovered],.map-shell[data-focus=home] .map-pin:not([data-state=selected]){transform:none}
+  .map-poi,.map-shell:not([data-mode=mini]) .map-poi{animation:map-fade-in 150ms ease backwards;animation-delay:0ms;transition:opacity 150ms ease}
+  .map-poi:active{transform:none}
+  .map-return,.map-return:active{animation:map-fade-in 150ms ease backwards;transform:translateX(-50%);transition:none}
+  .map-poi-label,.map-poi[data-picked] .map-poi-label{transform:translateY(-50%);transition:opacity 150ms ease;animation:map-fade-in 150ms ease backwards}
+  .map-poi-filter,.map-poi-filter:active{transition:background-color 150ms ease,color 150ms ease;transform:none}
   .map-mini-trigger,.map-controls,.map-shell:not([data-mode=mini]) .map-mini-trigger,.map-shell:not([data-mode=mini]) .map-controls{transition:opacity 150ms ease,visibility 0s}
   .map-canvas .maplibregl-canvas,.map-mini-expand,.flow-results-workspace{transition:none}
 }

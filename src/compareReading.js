@@ -1,5 +1,5 @@
-import summaries from './compare-summaries.json' with {type:'json'};
 import {homes as catalog, listingPrice} from './data.js';
+import {listingDetails} from './listingPresentation.js';
 import {homeCoordinates} from './mapLocations.js';
 import {coloniaVision, nearestColonia, walkDistance} from './mapWidgets.js';
 
@@ -31,7 +31,8 @@ export const PRICE_BANDS = [
   {id:'p90-100', start:0.8942, end:1, min:0.3, max:0.8},
 ];
 
-const sizeKnown = home => home.size >= 20;
+// A development's "desde" price and smallest unit are not one apartment, so it never enters a m² comparison.
+const sizeKnown = home => home.size >= 20 && !home.development;
 export const pricePerM2 = home => sizeKnown(home) ? Math.round(listingPrice(home) / home.size) : null;
 
 /** Cheapest m² first; homes without a usable size go last, in their saved order. */
@@ -91,13 +92,91 @@ export function nearbyPlaces(home) {
   }).filter(Boolean);
 }
 
-/** Demo copy written for the prototype; it is not taken from the listing. */
-export function listingSummary(home, language = 'es-MX') {
-  const entry = summaries[home.id]?.[language === 'pt-BR' ? 'br' : 'es'];
-  return entry || {lead:'', text:home.title, priceNote:''};
+const pct = (a, b) => Math.round(Math.abs(a / b - 1) * 100);
+
+/** Each dimension reads one known fact per home; `low` means the smallest value wins. Unknown values never compete. */
+const DIMENSIONS = [
+  {id:'price', low:true, value:entry => listingPrice(entry.home) || null,
+    say:(win, next, {t, other}) => ({lead:t('O mais acessível', 'El más accesible'), text:t(`Custa ${pct(win, next)}% menos que ${other.pt}.`, `Cuesta ${pct(win, next)}% menos que ${other.es}.`)})},
+  {id:'size', value:entry => sizeKnown(entry.home) ? entry.home.size : null,
+    say:(win, next, {t, other}) => ({lead:t('O mais amplo', 'El más amplio'), text:t(`${win} m², ${pct(win, next)}% a mais que ${other.pt}.`, `${win} m², ${pct(win, next)}% más que ${other.es}.`)})},
+  {id:'beds', value:entry => entry.home.beds || null,
+    say:(win, next, {t, other}) => ({lead:t('Mais quartos', 'Más recámaras'), text:t(`${win} quartos, ${win - next} a mais que ${other.pt}.`, `${win} recámaras, ${win - next} más que ${other.es}.`)})},
+  {id:'parking', value:entry => listingDetails(entry.home).parking ?? null,
+    say:(win, next, {t, pair}) => ({lead:t('Mais vagas', 'Más estacionamientos'), text:pair
+      ? next ? t(`${win} vagas; o outro tem ${next}.`, `${win} estacionamientos; el otro tiene ${next}.`) : t(`${win} vagas; o outro não tem.`, `${win} estacionamientos; el otro no tiene.`)
+      : next ? t(`${win} vagas; os outros têm até ${next}.`, `${win} estacionamientos; los otros tienen hasta ${next}.`) : t(`${win} vagas; os outros não têm.`, `${win} estacionamientos; los otros no tienen.`)})},
+  {id:'metro', low:true, value:entry => entry.nearby.find(place => place.kind === 'transport')?.minutes.walk ?? null,
+    say:(win, next, {t, pair}, entry) => {
+      const name = entry.nearby.find(place => place.kind === 'transport').name;
+      return {lead:t('Metrô mais perto', 'El metro más cerca'), text:pair
+        ? t(`${name.pt} a ${win} min a pé; o outro fica a ${next}.`, `${name.es} a ${win} min a pie; el otro queda a ${next}.`)
+        : t(`${name.pt} a ${win} min a pé; os outros ficam a ${next} ou mais.`, `${name.es} a ${win} min a pie; los otros quedan a ${next} o más.`)};
+    }},
+];
+/** A lead below this relative margin is a tie, not a highlight. */
+const MIN_MARGIN = 0.1;
+
+/** What each column has that the others don't: the dimension it wins by the widest margin. */
+function highlights(entries, t) {
+  const taken = new Set();
+  const pair = entries.length === 2;
+  const other = pair ? {pt:'o outro', es:'el otro'} : {pt:'o próximo da sua lista', es:'el siguiente de tu lista'};
+  // Rent and sale prices don't compare.
+  const mixed = new Set(entries.map(entry => entry.home.mode)).size > 1;
+  const wins = entries.map(() => []), losses = entries.map(() => []);
+  for (const dimension of DIMENSIONS) {
+    if (mixed && dimension.id === 'price') continue;
+    const known = entries.map((entry, index) => ({index, value:dimension.value(entry)})).filter(item => item.value != null)
+      .sort((a, b) => dimension.low ? a.value - b.value : b.value - a.value);
+    if (known.length < 2) continue;
+    const [win, next] = known;
+    const margin = Math.abs(win.value - next.value) / Math.max(win.value, next.value);
+    if (margin >= MIN_MARGIN) wins[win.index].push({dimension, margin, win:win.value, next:next.value});
+    const [last, before] = known.slice(-2).reverse();
+    const gap = Math.abs(last.value - before.value) / Math.max(last.value, before.value);
+    if (gap >= MIN_MARGIN) losses[last.index].push({dimension, margin:gap});
+  }
+  return entries.map((entry, index) => {
+    const best = wins[index].sort((a, b) => b.margin - a.margin).find(item => !taken.has(item.dimension.id));
+    if (best) {
+      taken.add(best.dimension.id);
+      return best.dimension.say(best.win, best.next, {t, other, pair}, entry);
+    }
+    const worst = losses[index].sort((a, b) => b.margin - a.margin)[0];
+    const lead = zoneLead(entry, t);
+    return worst
+      ? {lead, text:t(`Não lidera em nada da sua lista e é ${WORST[worst.dimension.id].pt}.`, `No lidera en nada de tu lista y es ${WORST[worst.dimension.id].es}.`)}
+      : {lead, text:t('Fica no meio da sua lista em preço, espaço e metrô.', 'Queda en medio de tu lista en precio, espacio y metro.')};
+  });
+}
+
+const WORST = {
+  price:{pt:'o mais caro', es:'el más caro'}, size:{pt:'o menor', es:'el más chico'}, beds:{pt:'o de menos quartos', es:'el de menos recámaras'},
+  parking:{pt:'o de menos vagas', es:'el de menos estacionamientos'}, metro:{pt:'o mais longe do metrô', es:'el más lejos del metro'},
+};
+
+/** Zone position, as the lead of a column that wins nothing or stands alone. */
+function zoneLead({delta}, t) {
+  if (delta == null) return t('Sem destaque claro', 'Sin algo que destaque');
+  if (delta <= -0.1) return t('Abaixo da região', 'Abajo de su zona');
+  if (delta >= 0.1) return t('Acima da região', 'Arriba de su zona');
+  return t('Na mediana da região', 'En la mediana de su zona');
+}
+
+/** The zone delta already sits on the bar, so the note says where the m² falls inside the list. */
+function priceNoteFor(entry, entries, t) {
+  const known = entries.filter(item => item.ppm2 != null && item.home.mode === entry.home.mode).sort((a, b) => a.ppm2 - b.ppm2);
+  const rank = known.indexOf(entry);
+  if (known.length < 2 || rank < 0) return '';
+  if (rank === 0) return t('Divide o m² mais baixo da sua lista.', 'Comparte el m² más bajo de tu lista.');
+  if (rank === known.length - 1) return t('O m² mais alto da sua lista.', 'El m² más alto de tu lista.');
+  if (rank === 1) return t('O segundo m² mais baixo da sua lista.', 'El segundo m² más bajo de tu lista.');
+  return t('O m² fica no meio da sua lista.', 'Su m² queda en medio de tu lista.');
 }
 
 function cheapestId(entries) {
+  if (new Set(entries.map(entry => entry.home.mode)).size > 1) return null;
   const known = entries.filter(entry => entry.ppm2 != null).sort((a, b) => a.ppm2 - b.ppm2);
   if (known.length < 2 || known[0].ppm2 === known[1].ppm2) return null;
   return known[0].home.id;
@@ -112,12 +191,15 @@ export function compareReading(homes, language = 'es-MX', inventory = catalog) {
   });
   const best = cheapestId(entries);
   const pt = language === 'pt-BR';
-  const cards = entries.map(entry => {
-    const summary = listingSummary(entry.home, language);
+  const t = (br, es) => pt ? br : es;
+  const located = entries.map(entry => ({...entry, nearby:nearbyPlaces(entry.home)}));
+  const leads = highlights(located, t);
+  const cards = located.map((entry, index) => {
     const priceNote = entry.home.id === best
-      ? (pt ? `O m² mais barato do que você salvou em ${entry.home.area}.` : `El m² más barato de lo que guardaste en ${entry.home.area}.`)
-      : summary.priceNote;
-    return {...entry, summary:{lead:summary.lead, text:summary.text}, priceNote, nearby:nearbyPlaces(entry.home)};
+      ? t(`O m² mais barato do que você salvou em ${entry.home.area}.`, `El m² más barato de lo que guardaste en ${entry.home.area}.`)
+      : priceNoteFor(entry, located, t);
+    const summary = located.length > 1 ? leads[index] : {lead:zoneLead(entry, t), text:t('Salve outro favorito para ver no que este se destaca.', 'Guarda otro favorito para ver en qué destaca este.')};
+    return {...entry, summary, priceNote};
   });
   return {cards, best:{price:best}};
 }

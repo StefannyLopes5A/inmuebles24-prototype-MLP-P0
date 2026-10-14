@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "listingId": "buy-145266556",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-145266556",
+      "address": "Cerrada de Av. Toluca, Olivar de los Padres, Álvaro Obregón",
+      "street": "Cerrada de Av. Toluca",
+      "colonia": "Olivar de los Padres",
+      "alcaldia": "Álvaro Obregón",
+      "addressRaw": "Cerrada de Av. Toluca, Olivar de los Padres, Alvaro Obregón",
+      "zone": "Olivar de los Padres",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 6647000,
+      "m2": 149,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Cattori Inmobiliaria",
+        "verified": true,
+        "rating": 4.9,
+        "reviews": 285,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 44611,
+      "comparablesCount": 101,
+      "comparablesMedianPerM2": 60800,
+      "comparablesP10PerM2": 38900,
+      "comparablesP90PerM2": 88800,
+      "diffVsMedianPct": -27,
+      "classification": "opportunity",
+      "daysListed": 112,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 3,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 14,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 34,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 33
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 25
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 24
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 13
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz, cocina de madera y jardín"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 30,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Areá verde común",
+          "minutes": 17,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Areá verde común",
+        "minutes": 17,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Olivar de los Padres"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 38,
+        "m2DiffPct": -23,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 30,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -11,
+        "m2DiffPct": 16,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 30,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Por $6.6M, dentro de tu presupuesto, con mucha luz y jardín por las fotos; el m² va 27% abajo y lleva 112 días publicado.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Olivar de los Padres, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $44.6k/m² contra $60.8k/m² en 101 parecidos. La zona vende en 37 días; este lleva tres veces más.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la negociación",
+          "payload": {
+            "question": "¿Hay margen en el precio después de 112 días?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Abajo del mercado",
+      "badge": "−27% vs. parecidos",
+      "p10": 38900,
+      "p90": 88800,
+      "median": 60800,
+      "value": 44611,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿La cocina de madera es nueva?",
+      "¿Cuánto terreno es jardín?"
+    ],
+    "extractedTags": [],
+    "address": "Cerrada de Av. Toluca, Olivar de los Padres, Álvaro Obregón",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "30 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Areá verde común",
+        "meta": "17 min a pie"
+      }
+    ]
+  }
+}

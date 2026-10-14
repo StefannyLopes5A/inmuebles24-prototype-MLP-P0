@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "listingId": "buy-150949347",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150949347",
+      "address": "Aguascalientes, Roma Sur, Cuauhtémoc",
+      "street": "Aguascalientes",
+      "colonia": "Roma Sur",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Aguascalientes, Roma Sur, Cuauhtémoc",
+      "zone": "Roma Sur",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 11700000,
+      "m2": 119,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Nido Propiedades",
+        "verified": false,
+        "rating": 4.9,
+        "reviews": 325,
+        "replyMinutes": false,
+        "replyHours": 3
+      }
+    },
+    "market": {
+      "pricePerM2": 98319,
+      "comparablesCount": 254,
+      "comparablesMedianPerM2": 65800,
+      "comparablesP10PerM2": 42100,
+      "comparablesP90PerM2": 96100,
+      "diffVsMedianPct": 49,
+      "aboveRange": true,
+      "classification": "above_market",
+      "daysListed": 30,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.8,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 40,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 19,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "studio",
+          "confidence": "medium",
+          "photoIndex": 15
+        }
+      ],
+      "missing": [
+        "bathrooms",
+        "kitchen"
+      ],
+      "note": "Luz media en cuartos vacíos; no hay fotos de cocina, baños ni recámara"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 22,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Centro Médico",
+          "minutes": 7,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Lineal Ecoducto Río de la Piedad",
+          "minutes": 7,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Lineal Ecoducto Río de la Piedad",
+        "minutes": 7,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Roma Sur"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 4200000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 7
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 144,
+        "m2DiffPct": -38,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 7,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 56,
+        "m2DiffPct": -7,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 7,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 22,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Las fotos solo muestran cuartos vacíos, sin cocina, baños ni recámara, y el m² queda 49% arriba de parecidos en Roma Sur.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Roma Sur, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 7 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $98.3k/m², por encima del rango habitual; la mediana es $65.8k/m² en 254 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Pedir fotos completas",
+          "payload": {
+            "question": "¿Pueden enviar fotos de la cocina, los baños y las recámaras?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+49% vs. parecidos",
+      "p10": 42100,
+      "p90": 96100,
+      "median": 65800,
+      "value": 98319,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿Por qué no hay fotos de la cocina?",
+      "¿Qué tan lejos queda Centro Médico?"
+    ],
+    "extractedTags": [],
+    "address": "Aguascalientes, Roma Sur, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "22 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Centro Médico",
+        "meta": "7 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Lineal Ecoducto Río de la Piedad",
+        "meta": "7 min a pie"
+      }
+    ]
+  }
+}

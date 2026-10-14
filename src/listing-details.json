@@ -79,7 +79,7 @@
       "/assets/listings/sets/144186131/24.jpg",
       "/assets/listings/sets/144186131/25.jpg"
     ],
-    "parking": 6,
+    "parking": null,
     "floor": null,
     "pets": null
   },
@@ -124,7 +124,7 @@
       "/assets/listings/sets/146304928/09.jpg",
       "/assets/listings/sets/146304928/10.jpg"
     ],
-    "parking": 6,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -198,7 +198,7 @@
       "/assets/listings/sets/146481212/16.jpg",
       "/assets/listings/sets/146481212/17.jpg"
     ],
-    "parking": 4,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -287,7 +287,7 @@
       "/assets/listings/sets/147412705/29.jpg",
       "/assets/listings/sets/147412705/30.jpg"
     ],
-    "parking": 6,
+    "parking": 4,
     "floor": null,
     "pets": null
   },
@@ -491,7 +491,7 @@
       "/assets/listings/sets/148473080/24.jpg",
       "/assets/listings/sets/148473080/25.jpg"
     ],
-    "parking": 4,
+    "parking": 3,
     "floor": null,
     "pets": null
   },
@@ -538,7 +538,7 @@
       "/assets/listings/sets/148639575/18.jpg",
       "/assets/listings/sets/148639575/19.jpg"
     ],
-    "parking": 8,
+    "parking": 1,
     "floor": null,
     "pets": null
   },
@@ -576,7 +576,7 @@
       "/assets/listings/sets/148806113/30.jpg",
       "/assets/listings/sets/148806113/31.jpg"
     ],
-    "parking": 3,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -601,7 +601,7 @@
       "/assets/listings/sets/148942568/17.jpg",
       "/assets/listings/sets/148942568/18.jpg"
     ],
-    "parking": 4,
+    "parking": 3,
     "floor": null,
     "pets": null
   },
@@ -654,7 +654,7 @@
       "/assets/listings/sets/149169195/15.jpg",
       "/assets/listings/sets/149169195/16.jpg"
     ],
-    "parking": 4,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -690,7 +690,7 @@
       "/assets/listings/sets/149365031/28.jpg",
       "/assets/listings/sets/149365031/29.jpg"
     ],
-    "parking": 3,
+    "parking": 1,
     "floor": null,
     "pets": null
   },
@@ -707,7 +707,7 @@
       "/assets/listings/sets/149416023/09.jpg",
       "/assets/listings/sets/149416023/10.jpg"
     ],
-    "parking": 10,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -812,7 +812,7 @@
       "/assets/listings/sets/149719464/23.jpg",
       "/assets/listings/sets/149719464/24.jpg"
     ],
-    "parking": 4,
+    "parking": null,
     "floor": null,
     "pets": null
   },
@@ -836,7 +836,7 @@
       "/assets/listings/sets/149919919/16.jpg",
       "/assets/listings/sets/149919919/17.jpg"
     ],
-    "parking": 4,
+    "parking": 1,
     "floor": null,
     "pets": null
   },
@@ -856,7 +856,7 @@
       "/assets/listings/sets/149922305/12.jpg",
       "/assets/listings/sets/149922305/13.jpg"
     ],
-    "parking": 4,
+    "parking": 3,
     "floor": null,
     "pets": null
   },
@@ -949,7 +949,7 @@
       "/assets/listings/sets/150138679/33.jpg",
       "/assets/listings/sets/150138679/34.jpg"
     ],
-    "parking": 15,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -995,7 +995,7 @@
       "/assets/listings/sets/150144807/38.jpg",
       "/assets/listings/sets/150144807/39.jpg"
     ],
-    "parking": 3,
+    "parking": null,
     "floor": null,
     "pets": null
   },
@@ -1047,7 +1047,7 @@
       "/assets/listings/sets/150204172/15.jpg",
       "/assets/listings/sets/150204172/16.jpg"
     ],
-    "parking": 5,
+    "parking": null,
     "floor": null,
     "pets": null
   },
@@ -1068,7 +1068,7 @@
       "/assets/listings/sets/150205995/13.jpg",
       "/assets/listings/sets/150205995/14.jpg"
     ],
-    "parking": 4,
+    "parking": null,
     "floor": null,
     "pets": null
   },
@@ -1112,7 +1112,7 @@
       "/assets/listings/sets/150280233/36.jpg",
       "/assets/listings/sets/150280233/37.jpg"
     ],
-    "parking": 6,
+    "parking": 3,
     "floor": null,
     "pets": null
   },
@@ -1266,7 +1266,7 @@
       "/assets/listings/sets/150870960/27.jpg",
       "/assets/listings/sets/150870960/28.jpg"
     ],
-    "parking": 4,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -1287,7 +1287,7 @@
       "/assets/listings/sets/150928012/13.jpg",
       "/assets/listings/sets/150928012/14.jpg"
     ],
-    "parking": 6,
+    "parking": 2,
     "floor": null,
     "pets": null
   },
@@ -1313,7 +1313,7 @@
       "/assets/listings/sets/150928014/18.jpg",
       "/assets/listings/sets/150928014/19.jpg"
     ],
-    "parking": 6,
+    "parking": 2,
     "floor": null,
     "pets": null
   },

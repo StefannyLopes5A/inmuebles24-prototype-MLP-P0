@@ -5,6 +5,8 @@ dist/
 !.env.example
 
 .npm-cache/
+.pydeps/
+.venv*/
 .DS_Store
 *.log
 coverage/

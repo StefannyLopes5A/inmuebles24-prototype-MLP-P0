@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "listingId": "buy-150761947",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150761947",
+      "address": "Av. Santa Fe 482, Santa Fe, Cuajimalpa de Morelos",
+      "street": "Av. Santa Fe 482",
+      "colonia": "Santa Fe",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Av. Santa Fe 482, Santa Fe, Alvaro Obregón",
+      "zone": "Santa Fe",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 8800000,
+      "m2": 134,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": 2,
+      "agency": {
+        "name": "Punto Norte Inmuebles",
+        "verified": true,
+        "rating": 4.5,
+        "reviews": 255,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 65672,
+      "comparablesCount": 163,
+      "comparablesMedianPerM2": 59800,
+      "comparablesP10PerM2": 38300,
+      "comparablesP90PerM2": 87300,
+      "diffVsMedianPct": 10,
+      "classification": "negotiable",
+      "daysListed": 112,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 3,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 32,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 37,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 13
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 37
+        }
+      ],
+      "missing": [],
+      "note": "Vacío, con cocina al final no hay balcón en las fotos"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "view"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 24,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Alameda Poniente",
+          "minutes": 13,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Alameda Poniente",
+        "minutes": 13,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Santa Fe"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 1300000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 2
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 83,
+        "m2DiffPct": -31,
+        "bedroomsDiff": -3,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 24,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 17,
+        "m2DiffPct": 5,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 24,
+        "officeMinutesFavorite": 35,
+        "similarity": "medium"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Torre en Santa Fe con 2 recámaras, vacía en las fotos; tras 112 días publicado, el m² sigue 10% arriba de parecidos.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Santa Fe, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $65.7k/m² contra $59.8k/m² en 163 parecidos; queda $1.3M arriba de tu presupuesto.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la vista",
+          "payload": {
+            "question": "¿La vista frontal es hacia la avenida?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+10% vs. parecidos",
+      "p10": 38300,
+      "p90": 87300,
+      "median": 59800,
+      "value": 65672,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Se entrega vacío?",
+      "¿Tiene vista desde la sala?"
+    ],
+    "extractedTags": [],
+    "address": "Av. Santa Fe 482, Santa Fe, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "24 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Alameda Poniente",
+        "meta": "13 min a pie"
+      }
+    ]
+  }
+}

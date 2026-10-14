@@ -1,0 +1,257 @@
+{
+  "meta": {
+    "listingId": "buy-150911591",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150911591",
+      "address": "Av. Acueducto 833, Candelaria Ticomán, Gustavo A. Madero",
+      "street": "Av. Acueducto 833",
+      "colonia": "Candelaria Ticomán",
+      "alcaldia": "Gustavo A. Madero",
+      "addressRaw": "Av Acueducto 833, Candelaria Ticoman, Gustavo A, Barrio Candelaria TicomAn, Gustavo A. Madero",
+      "zone": "Barrio Candelaria TicomAn",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 11385000,
+      "m2": 300,
+      "bedrooms": 3,
+      "bathrooms": 4,
+      "parking": 2,
+      "agency": {
+        "name": "CDMX DESARROLADORES",
+        "verified": true,
+        "rating": 4.9,
+        "reviews": 197,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 37950,
+      "comparablesCount": 232,
+      "comparablesMedianPerM2": 24900,
+      "comparablesP10PerM2": 15900,
+      "comparablesP90PerM2": 36400,
+      "diffVsMedianPct": 52,
+      "aboveRange": true,
+      "classification": "negotiable",
+      "daysListed": 112,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 3,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 7,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 19,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "baja",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "ciudad",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 10
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 14
+        }
+      ],
+      "missing": [
+        "kitchen"
+      ],
+      "note": "Luz baja y vista a la ciudad; no hay fotos de la cocina"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 24,
+          "mode": "en auto",
+          "reason": "declared:office"
+        }
+      ],
+      "nearestPark": null
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Barrio Candelaria TicomAn"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 3885000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 137,
+        "m2DiffPct": 55,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 24,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 52,
+        "m2DiffPct": 134,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 24,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "En Candelaria Ticomán, el m² está 52% arriba de parecidos y lleva 112 días publicado, el triple que la zona.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Candelaria Ticomán, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $38k/m² contra $24.9k/m² de mediana en 232 parecidos, arriba del rango habitual.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar si aceptan ofertas",
+          "payload": {
+            "question": "Con 112 días publicado, ¿están abiertos a una oferta?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+52% vs. parecidos",
+      "p10": 15900,
+      "p90": 36400,
+      "median": 24900,
+      "value": 37950,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿Hay transporte público cerca?",
+      "¿Cómo es la vista desde la sala?"
+    ],
+    "extractedTags": [],
+    "address": "Av. Acueducto 833, Candelaria Ticomán, Gustavo A. Madero",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "24 min en auto"
+      }
+    ]
+  }
+}

@@ -4,7 +4,7 @@ import {HouseCard} from './Home';
 import {NeighborhoodRail} from './NeighborhoodRail.jsx';
 import {Icon} from './App';
 import {useLanguage} from './i18n';
-import {selectedAreas,spreadTourListings} from './journey';
+import {pinShowcaseDevelopments,selectedAreas,spreadTourListings} from './journey';
 import {installHomeMotion} from './homeMotion';
 import {playHomeTransition} from './searchFlowMotion';
 
@@ -29,7 +29,7 @@ function mapAreaLabel(search, say) {
   return areas.length===1 ? `${areas[0]}, CDMX` : `${areas[0]} +${areas.length-1}`;
 }
 
-export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onFavorites,receipts,assistantProps,blocked,miniProps,mapProps}) {
+export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onFavorites,receipts,assistantProps,blocked,mapProps}) {
   const {language,t}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const root=useRef(null),[updating,setUpdating]=useState(false);
   const [width,setWidth]=useState(viewportWidth);
@@ -39,7 +39,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
   const [hoveredId,setHoveredId]=useState(null);
   const columns=gridColumns(width,layout);
   const signature=JSON.stringify(search),prior=useRef(signature),refresh=useRef(null);
-  const ordered=spreadTourListings(visible, columns);
+  const ordered=pinShowcaseDevelopments(spreadTourListings(visible, columns), search);
   const splitAt=Math.min(ordered.length, FIRST_ROWS * columns);
   const leading=ordered.slice(0, splitAt);
   const trailing=ordered.slice(splitAt);
@@ -77,12 +77,12 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
   function renderGrid(items, orderOffset=0){
     if(!items.length)return null;
     return <div key={`${gridKey}-${orderOffset}`} className={`results-grid flow-grid ${updating?'is-updating':''}`} aria-busy={updating}>
-      {items.map((home,index)=><div className="flow-result-item" key={home.id} style={{'--result-order':Math.min(orderOffset+index,7)}} {...hoverProps(home.id)}><HouseCard home={home} saved={saved.includes(home.id)} onLike={onSave} onOpen={onOpen}/>{receipts.some(receipt=>receipt.propertyId===home.id)&&<span className="v2-contacted"><Icon name="check" size={14}/>{say('Contato simulado registrado','Contacto simulado registrado')}</span>}</div>)}
+      {items.map((home,index)=><div className="flow-result-item" key={home.id} style={{'--result-order':Math.min(orderOffset+index,7)}} {...hoverProps(home.id)}><HouseCard home={home} search={search} pref={assistantProps.pref} contacted={receipts.some(receipt=>receipt.propertyId===home.id)} saved={saved.includes(home.id)} onLike={onSave} onOpen={onOpen}/></div>)}
     </div>;
   }
   return <div ref={root} className="search-flow-page home-evolution">
-    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} {...miniProps}/>
-    <div className="flow-results-content" data-map-layout={layout} inert={!!miniProps?.activeHome||mapFull} aria-hidden={mapFull||undefined}>
+    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull}/>
+    <div className="flow-results-content" data-map-layout={layout} inert={mapFull} aria-hidden={mapFull||undefined}>
       <div className="flow-results-heading">
         <h1>{say('Todos os resultados','Todos los resultados')}<span aria-label={say('imóveis encontrados','inmuebles encontrados')} className="results-count">{visible.length}</span></h1>
         {onFavorites&&<button className="compare-favorites-link" type="button" onClick={onFavorites}>{say('Ver favoritos','Ver favoritos')}</button>}
@@ -103,7 +103,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
     <Suspense fallback={null}>
       <SearchMap mode={mapProps.mode} onMode={mapProps.onMode} homes={visible} hoveredId={hoveredId} saved={saved} recent={mapProps.recent}
         areaLabel={mapAreaLabel(search,say)} hidden={mapProps.hidden} onOpenListing={mapProps.onOpenListing} onSave={onSave}
-        search={search} signedIn={mapProps.signedIn} onLogin={mapProps.onLogin} onAskMora={mapProps.onAskMora}/>
+        search={search} pref={assistantProps.pref} signedIn={mapProps.signedIn} onLogin={mapProps.onLogin} onAskMora={mapProps.onAskMora}/>
     </Suspense>
   </div>;
 }

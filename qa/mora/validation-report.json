@@ -1,0 +1,601 @@
+{
+  "fixtures": [
+    {
+      "id": "buy-143024880",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-144229147",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-145266556",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-146236735",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-147346296",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-147581307",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148011657",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148018986",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148024230",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148031421",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148035154",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148419165",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148485545",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148741903",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148816386",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-148951246",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-149024502",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-149136228",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-149385762",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-149807401",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150108941",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150135691",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150159787",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150189219",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150341189",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150467705",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150590132",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150591738",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150713138",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150725481",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150754333",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150754546",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150761947",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150849643",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150851727",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150855987",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150876848",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150907005",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150911591",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150915472",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150922505",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150949347",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150951578",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-150963369",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151005500",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151031662",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151043557",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151101154",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151139590",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    },
+    {
+      "id": "buy-151157034",
+      "generatedBy": "curated",
+      "ok": true,
+      "errors": [],
+      "judge": {
+        "status": "skipped",
+        "reason": "MORA_API_KEY, MORA_API_BASE or MORA_MODEL not set"
+      }
+    }
+  ],
+  "set": {
+    "ok": true,
+    "errors": []
+  },
+  "gold": [
+    {
+      "id": "gold-narvarte-balcon",
+      "ok": true,
+      "errors": []
+    },
+    {
+      "id": "gold-polanco-cocina",
+      "ok": true,
+      "errors": []
+    },
+    {
+      "id": "gold-ticoman-caro",
+      "ok": true,
+      "errors": []
+    }
+  ],
+  "anti": [
+    {
+      "id": "anti:gold-narvarte-balcon",
+      "ok": false,
+      "errors": [
+        {
+          "rule": "photo-joined",
+          "detail": "Cuesta 23% menos por m² que parecidos y por las fotos, parece tener balcón."
+        },
+        {
+          "rule": "repeats-synthesis",
+          "detail": "insights[2]: \"por las fotos parece tener\""
+        },
+        {
+          "rule": "number-not-in-sheet",
+          "detail": "insights[0]: 4"
+        },
+        {
+          "rule": "place-time",
+          "detail": "insights[0]: nearest park: text says 8 min, list says 12"
+        },
+        {
+          "rule": "se-parece",
+          "detail": "insights[1]: Se parece a tu favorito en Torres Adalid: misma zona, 15% más caro, con 2 recámaras menos."
+        },
+        {
+          "rule": "fit-missing",
+          "detail": "no fit block"
+        }
+      ]
+    },
+    {
+      "id": "anti:gold-polanco-cocina",
+      "ok": false,
+      "errors": [
+        {
+          "rule": "photo-joined",
+          "detail": "Cuesta 22% menos por m² que parecidos, pero por las fotos, la cocina parece pedir obra."
+        },
+        {
+          "rule": "repeats-synthesis",
+          "detail": "insights[2]: \"por las fotos la cocina\""
+        },
+        {
+          "rule": "place-time",
+          "detail": "insights[0]: nearest park: text says 5 min, list says 2"
+        },
+        {
+          "rule": "fit-missing",
+          "detail": "no fit block"
+        }
+      ]
+    },
+    {
+      "id": "anti:gold-ticoman-caro",
+      "ok": false,
+      "errors": [
+        {
+          "rule": "photo-joined",
+          "detail": "De los pocos resultados con vista abierta, pero por las fotos, no aparece la cocina."
+        },
+        {
+          "rule": "repeats-synthesis",
+          "detail": "insights[3]: \"por las fotos no aparece\""
+        },
+        {
+          "rule": "address",
+          "detail": "Av Acueducto 833, Candelaria Ticoman, Gustavo A, Barrio Candelaria TicomAn"
+        },
+        {
+          "rule": "fit-missing",
+          "detail": "no fit block"
+        }
+      ]
+    }
+  ]
+}

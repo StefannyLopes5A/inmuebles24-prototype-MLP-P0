@@ -19,7 +19,7 @@ test('pin positions are deterministic, near their colonia and never identical', 
     const first = homeCoordinates(home);
     assert.deepEqual(homeCoordinates({...home}), first);
     const [lng, lat] = neighborhoodCentroid(home);
-    assert.ok(Math.abs(first[0] - lng) < 0.004 && Math.abs(first[1] - lat) < 0.004, `${home.id} drifted from its colonia`);
+    if (!home.development) assert.ok(Math.abs(first[0] - lng) < 0.004 && Math.abs(first[1] - lat) < 0.004, `${home.id} drifted from its colonia`);
     const key = first.join(',');
     assert.equal(seen.has(key), false, `${home.id} stacks on another pin`);
     seen.add(key);

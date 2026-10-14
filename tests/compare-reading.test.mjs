@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes} from '../src/data.js';
-import summaries from '../src/compare-summaries.json' with {type:'json'};
 import {PRICE_BANDS, TRAVEL_MODES, byPricePerM2, compareReading, nearbyPlaces, priceBand, pricePerM2, travelMinutes} from '../src/compareReading.js';
 
 const trio = ['buy-150922505', 'buy-150108941', 'buy-148816386'].map(id => homes.find(home => home.id === id));
@@ -14,8 +13,9 @@ test('the Narvarte trio reads price per m², zone delta and band from the catalo
   assert.deepEqual(reading.cards.map(card => card.band), ['p90-100', 'p30-70', 'p0-30']);
   assert.equal(reading.best.price, 'buy-148816386');
   assert.equal(reading.cards[2].priceNote, 'El m² más barato de lo que guardaste en Narvarte Poniente.');
-  assert.equal(reading.cards[0].summary.lead, 'El único penthouse');
-  assert.equal(compareReading(trio, 'pt-BR').cards[0].summary.lead, 'A única cobertura');
+  assert.deepEqual(reading.cards.map(card => card.summary.lead), ['Más estacionamientos', 'El metro más cerca', 'Más recámaras']);
+  assert.deepEqual(compareReading(trio, 'pt-BR').cards.map(card => card.summary.lead), ['Mais vagas', 'Metrô mais perto', 'Mais quartos']);
+  assert.deepEqual(reading.cards.map(card => card.priceNote), ['El m² más alto de tu lista.', 'El segundo m² más bajo de tu lista.', 'El m² más barato de lo que guardaste en Narvarte Poniente.']);
 });
 
 test('the price band maps the zone delta onto the Figma segments', () => {
@@ -42,7 +42,7 @@ test('a single home or unknown size has no best price, and size stays unknown', 
 });
 
 test('every catalog home reads against a zone reference', () => {
-  const missing = homes.filter(home => compareReading([home]).cards[0].delta == null).map(home => `${home.mode} ${home.area}`);
+  const missing = homes.filter(home => !home.development && compareReading([home]).cards[0].delta == null).map(home => `${home.mode} ${home.area}`);
   assert.deepEqual(missing, []);
 });
 
@@ -74,11 +74,28 @@ test('the fastest home for a place can change with the travel mode', () => {
   assert.notEqual(winners('walk'), winners('car'));
 });
 
-test('every catalog home has a demo summary in both languages', () => {
-  for (const home of homes) {
-    for (const language of ['es', 'br']) {
-      const entry = summaries[home.id]?.[language];
-      assert.ok(entry?.lead && entry.text && entry.priceNote, `${home.id} ${language}`);
+test('"Lo que destaca" reads each column against the others, never a fixed blurb', () => {
+  const words = text => text.trim().split(/\s+/).length;
+  for (let start = 0; start + 3 <= homes.length; start += 3) {
+    const group = homes.slice(start, start + 3);
+    const cards = compareReading(group).cards;
+    const leads = cards.map(card => card.summary.lead);
+    const won = leads.filter(lead => !/zona|destaque/.test(lead));
+    assert.equal(new Set(won).size, won.length, `${leads}`);
+    for (const card of cards) {
+      assert.ok(card.summary.lead && card.summary.text, card.home.id);
+      assert.ok(words(card.summary.text) <= 20, card.summary.text);
+      assert.doesNotMatch(`${card.summary.text} ${card.priceNote}`, /undefined|NaN|null/, card.home.id);
     }
   }
+  const pair = compareReading(trio.slice(0, 2)).cards;
+  assert.match(pair[0].summary.text, /el otro/);
+  assert.match(compareReading([trio[0]]).cards[0].summary.text, /^Guarda otro favorito/);
+});
+
+test('rent and sale never compete on price', () => {
+  const rent = homes.find(home => home.mode === 'rent');
+  const reading = compareReading([trio[2], rent]);
+  assert.equal(reading.best.price, null);
+  assert.ok(reading.cards.every(card => card.summary.lead !== 'El más accesible'));
 });

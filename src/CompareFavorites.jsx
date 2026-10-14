@@ -11,7 +11,7 @@ import {contactRecipient, contactValidation, createContactReceipt, normalizeCont
 import {EASE, EASE_IN_OUT, EASE_OUT, riseIn, useMediaQuery} from './favoriteMotion';
 import {SOFT_MOTION} from './homeIntro.js';
 
-const MAX_COLUMNS = 5;
+const MAX_COLUMNS = 6;
 const COMPARING_MS = 600, SEND_MS = 2500, MORPH_MS = 280, SWEEP_MS = 600;
 const summaryWords = summary => `${summary.lead} ${summary.text}`.trim().split(/\s+/).length;
 const LOGO_STAGGER = 0.04, LOGO_FADE = 0.15;
@@ -280,7 +280,7 @@ function Composer({recipients, profile, mobile, reduce, morph, pending, onCancel
     </form>;
 }
 
-export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen}) {
+export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, backLabel}) {
   const {language, compactMoney, say} = useSay();
   const reduce = useReducedMotion();
   const mobile = useMediaQuery('(max-width: 700px)');
@@ -411,7 +411,7 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
   return <article className="compare-page" ref={page}>
     <header className="compare-page-header">
       <div className="compare-page-heading">
-        <button className="compare-back" type="button" onClick={onClose} aria-label={say('Voltar para favoritos', 'Volver a favoritos')}>
+        <button className="compare-back" type="button" onClick={onClose} aria-label={backLabel || say('Voltar para favoritos', 'Volver a favoritos')}>
           <Icon name="back" size={20}/>
         </button>
         <motion.div {...riseIn(reduce, 0, 6)}>

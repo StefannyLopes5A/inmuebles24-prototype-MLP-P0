@@ -1,0 +1,472 @@
+/* Mini-listing panel: grows out of the clicked card over the results; the header and search bar step aside while it is open. */
+.lp-shell{position:absolute;z-index:75;background:#fff;color:#000;border-radius:20px;--lp-body:min(52%,624px);--lp-inset:12px;--lp-pad:32px;--lp-stack-media:280px;--lp-sheet-media:min(200px,24dvh);--lp-ease:cubic-bezier(.2,.8,.2,1);--lp-line:#ebebeb}
+.lp-shell::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;box-shadow:0 6px 16px rgba(0,0,0,.12);opacity:0;transition:opacity 200ms ease-out;pointer-events:none}
+.lp-shell.is-settled::after{opacity:1}
+
+/* Side by side: photos take what the 560 px reading column leaves. Five or more photos make a mosaic. */
+.lp-media{position:absolute;left:var(--lp-inset);top:var(--lp-inset);bottom:var(--lp-inset);width:calc(100% - var(--lp-body) - var(--lp-inset));overflow:hidden;border-radius:12px;background:#ececec;isolation:isolate}
+.lp-shell[data-mosaic=tall] .lp-media{bottom:auto;height:calc((100% - 32px) * .62)}
+.lp-shell[data-mosaic=wide] .lp-media{width:calc((100% - var(--lp-body) - 20px) / 2)}
+.lp-thumbs{position:absolute;transition:opacity 200ms ease-out}
+.lp-shell[data-mosaic=tall] .lp-thumbs{left:var(--lp-inset);top:calc(20px + (100% - 32px) * .62);bottom:var(--lp-inset);width:calc(100% - var(--lp-body) - var(--lp-inset))}
+.lp-shell[data-mosaic=wide] .lp-thumbs{top:var(--lp-inset);bottom:var(--lp-inset);left:calc(20px + (100% - var(--lp-body) - 20px) / 2);right:var(--lp-body)}
+.lp-thumbs-layer{position:absolute;inset:0}
+.lp-thumbs-grid{display:grid;grid-template:1fr 1fr/1fr 1fr;gap:8px;height:100%}
+.lp-thumb{position:relative;min-width:0;min-height:0;padding:0;border-radius:12px;overflow:hidden;background:#ececec}
+.lp-thumb:active{transform:none}
+.lp-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:filter 200ms ease-out}
+.lp-thumbs .pp-show-all{z-index:2}
+/* Outer corners stay 12 px, inner ones 4 px, so the mosaic reads as one block. */
+.lp-shell[data-mosaic=wide] .lp-media{border-radius:12px 4px 4px 12px}
+.lp-shell[data-mosaic=tall] .lp-media{border-radius:12px 12px 4px 4px}
+.lp-shell:is([data-mosaic=wide],[data-mosaic=tall]) .lp-thumb{border-radius:4px}
+.lp-shell[data-mosaic=wide] .lp-thumb:nth-child(2){border-top-right-radius:12px}
+.lp-shell[data-mosaic=tall] .lp-thumb:nth-child(3){border-bottom-left-radius:12px}
+.lp-shell:is([data-mosaic=wide],[data-mosaic=tall]) .lp-thumb:nth-child(4){border-bottom-right-radius:12px}
+.lp-thumb:focus-visible{outline-offset:-4px;outline-color:#fff;box-shadow:inset 0 0 0 7px #0000004d}
+.lp-media-layer,.lp-carousel{position:absolute;inset:0}
+.lp-carousel{overflow:hidden;touch-action:pan-y}
+.lp-track{display:flex;height:100%;transition:transform 300ms var(--lp-ease)}
+.lp-track img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;transition:filter 200ms ease-out}
+.lp-photo-open{position:absolute;inset:0;padding:0;border-radius:0;cursor:pointer}
+.lp-photo-open:active{transform:none}
+.lp-photo-open:focus-visible{outline-offset:-6px;outline-color:#fff;box-shadow:inset 0 0 0 9px #0000004d}
+.lp-photo-chrome{position:absolute;left:16px;right:16px;top:50%;display:flex;justify-content:space-between;pointer-events:none;transform:translateY(-50%);transition:opacity 200ms ease-out}
+.lp-photo-step{pointer-events:auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#ffffffeb;color:#000;box-shadow:0 1px 4px #0000002e;opacity:0;transition:opacity 160ms ease-out,transform 160ms ease-out}
+.lp-photo-step:focus-visible{opacity:1}
+.lp-photo-step:disabled{visibility:hidden}
+.lp-photo-step.is-prev svg,.lp-control.is-prev svg,.lp-gallery-step.is-prev svg{transform:rotate(180deg)}
+.lp-photo-count{position:absolute;left:16px;bottom:16px;padding:4px 10px;border-radius:99px;background:#000000b8;color:#fff;font-size:12px;line-height:16px;font-weight:500;font-variant-numeric:tabular-nums;pointer-events:none;transition:opacity 200ms ease-out}
+.lp-photo-tags{top:16px;left:16px;max-width:calc(100% - 32px)}
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-photo-tags{max-width:calc(100% - 168px)}
+.lp-host-logo-wrap{position:relative;flex:none;width:44px;height:44px}
+.lp-host-logo-wrap .discovery-agency-seal.is-host{left:-10px;bottom:0}
+.lp-host-logo-wrap .discovery-agency-seal.is-host::after{left:0;right:auto}
+.lp-shell:not([data-ready]) :is(.lp-photo-tags,.lp-thumbs){opacity:0}
+
+.lp-body{position:absolute;top:0;right:0;bottom:0;left:calc(100% - var(--lp-body));min-width:0}
+.lp-body-inner,.lp-content{height:100%}
+.lp-content{display:flex;flex-direction:column;min-width:0}
+.lp-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:28px var(--lp-pad) 24px;-webkit-mask-image:linear-gradient(#000 calc(100% - 24px),transparent);mask-image:linear-gradient(#000 calc(100% - 24px),transparent)}
+.lp-flow{display:flex;flex-direction:column;gap:16px}
+.lp-footer{flex:none;padding:12px var(--lp-pad) 24px;background:#fff;border-radius:0 0 20px 0}
+
+.lp-controls{position:absolute;top:24px;right:24px;z-index:4;display:flex;gap:8px;transition:opacity 200ms ease-out}
+.lp-control{position:relative;width:40px;height:40px;padding:0;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid #dddddd;color:#000}
+.lp-control::before{content:'';position:absolute;inset:-2px;border-radius:inherit}
+.lp-control img{width:16px;height:16px}
+.lp-control:disabled{background:#fff!important;color:#000!important;opacity:.35;cursor:default}
+.lp-shell:not([data-ready]) :is(.lp-controls,.lp-photo-chrome,.lp-photo-count,.pp-tour-controls){opacity:0}
+.lp-carousel .pp-tile-video{z-index:1}
+.lp-carousel .pp-tour-controls{z-index:2}
+
+/* Who, then what, then how much. */
+.lp-shell[data-layout=side] .lp-host-row{padding-right:136px}
+.lp-host{display:flex;align-items:center;gap:12px;max-width:100%;padding:0;background:none;border-radius:12px;text-align:left;color:#222}
+.lp-host:active{transform:none}
+.lp-host:focus-visible{outline-offset:4px}
+.lp-host-logo{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--lp-line);object-fit:contain;background:#fff}
+.lp-host-logo.is-monogram{display:grid;place-items:center;background:#222;border-color:#222;color:#fff;font-size:14px;font-weight:600;letter-spacing:.02em}
+.lp-host-copy{display:flex;flex-direction:column;min-width:0}
+.lp-host-name{display:flex;align-items:center;gap:4px;font-size:16px;line-height:22px;font-weight:600}
+.lp-host-name>span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lp-verified{flex:none;color:#222}
+.lp-host-trust{font-size:14px;line-height:18px;font-weight:500;color:#6a6a6a}
+.lp-keep{white-space:nowrap}
+.lp-star{color:#222}
+.lp-operation{font-size:14px;line-height:20px;font-weight:500;color:#6a6a6a;margin-bottom:2px}
+.lp-header h2{font-size:18px;line-height:22px;font-weight:600;color:#222;outline:none;overflow-wrap:anywhere}
+.lp-price{font-size:28px;line-height:32px;font-weight:600;margin-top:8px;letter-spacing:-.44px;color:#222;font-variant-numeric:tabular-nums}
+.lp-specs{list-style:none;margin:-12px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;line-height:20px;font-weight:500;color:#222}
+.lp-specs li{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.lp-specs img{width:18px;height:18px}
+/* The one divider: between the listing and Mora. Everything else is spacing. */
+.lp-phase{padding-top:8px}
+
+.lp-mora{display:flex;flex-direction:column}
+.lp-mora-status{display:flex;align-items:center;gap:6px;min-height:18px;font-size:12px;line-height:16px;color:#6a6a6a}
+.lp-mora-status strong{color:#e45244;font-weight:700}
+.lp-mora-mark{width:20px;height:20px;flex:none}
+.lp-mora-mark.is-working{animation:lp-breathe 1.2s ease-in-out infinite}
+@keyframes lp-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.lp-mora-voice{min-height:22px}
+.lp-mora-working{font-size:16px;line-height:22px;color:#000000b8}
+.lp-mora-synthesis{font-size:16px;line-height:22px;font-weight:500;letter-spacing:-.01em;color:#222;text-wrap:pretty}
+/* Mora's own tile: thinking sweeps the comparison's orange→blue gradient, then the sentence inks in word by word. */
+/* Outer boxes spring to the measured inner height (MoraInsight), so they clip while resizing. */
+.lp-mora-card{overflow:hidden;border-radius:16px;background:#f7f7f7}
+.lp-mora-body{display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px}
+.lp-mora-working>span{--sweep-base:#0000008f;background-image:linear-gradient(90deg,var(--sweep-base) 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,var(--sweep-base) 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-shimmer 1.8s linear infinite}
+@keyframes lp-shimmer{0%{background-position:100% 50%}60%,100%{background-position:0% 50%}}
+.lp-mora-synthesis[data-streaming] .lp-word{display:inline-block;animation-name:lp-ink;animation-timing-function:cubic-bezier(.25,.1,.25,1);animation-fill-mode:both}
+@keyframes lp-ink{from{opacity:0;transform:translateY(2px);filter:blur(2px)}to{opacity:1;transform:none;filter:blur(0)}}
+@media(forced-colors:active){.lp-mora-working>span{background:none;-webkit-text-fill-color:currentColor;animation:none}.lp-skel{background:GrayText;opacity:.4;animation:none}}
+/* Mini-listing verdict: a booking-panel surface that holds what Mora read in the listing; the actions live in the panel footer. The hairline is a shadow ring so it never adds to the sprung height. */
+.lp-mora.is-verdict .lp-mora-card{border-radius:20px;background:#fff;box-shadow:0 0 0 1px #dddddd,0 2px 6px rgba(0,0,0,.04),0 4px 8px rgba(0,0,0,.1)}
+.lp-mora.is-verdict .lp-mora-body{padding:20px 24px 16px}
+.lp-mora.is-verdict.is-folded .lp-mora-body{padding-bottom:20px}
+.lp-mora.is-verdict .lp-mora-voice{position:relative;min-height:20px}
+.lp-mora.is-verdict :is(.lp-mora-synthesis,.lp-mora-working){line-height:20px;letter-spacing:0}
+.lp-mora.is-verdict .lp-mora-synthesis{color:#222}
+.lp-verdict-facts{list-style:none;margin:4px 0 0;padding:0}
+.lp-verdict-facts li{display:flex;align-items:center;gap:16px;padding:8px 0;border-bottom:1px solid #dddddd}
+.lp-verdict-facts li:last-child{border-bottom:0}
+.lp-verdict-facts .lp-glyph{flex:none;color:#222}
+.lp-verdict-facts li>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lp-verdict-facts strong{font-size:16px;line-height:20px;font-weight:600;color:#222;font-variant-numeric:tabular-nums}
+.lp-verdict-facts li>span>span{font-size:14px;line-height:18px;font-weight:500;color:#6a6a6a}
+/* The summary is meant to read whole, so it drops the fade that cues a scroll. */
+.lp-phase-summary .lp-scroll{padding-top:20px;padding-bottom:8px;-webkit-mask-image:none;mask-image:none}
+.lp-phase-summary .lp-footer{padding-block:8px 20px}
+.lp-actions.is-verdict{flex-direction:column;align-items:stretch;gap:8px}
+.lp-actions.is-verdict button{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border-radius:999px;font-size:16px;line-height:20px;font-weight:500;text-align:center;transition:transform 120ms cubic-bezier(.23,1,.32,1),background-color 150ms ease}
+.lp-verdict-talk{background:#fe6439;color:#fff}
+.lp-verdict-talk img{width:20px;height:20px;flex:none}
+.lp-verdict-more{background:#fff;border:1px solid #222;color:#222}
+.lp-actions.is-verdict button:active{transform:scale(.96)}
+.lp-actions.is-verdict button:focus-visible{outline:2px solid #222;outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.lp-verdict-talk:hover{background:#f05427}.lp-verdict-more:hover{background:#f7f7f7}}
+@media(prefers-reduced-motion:reduce){.lp-actions.is-verdict button{transition:background-color 150ms ease}.lp-actions.is-verdict button:active{transform:none}}
+@media(forced-colors:active){.lp-mora.is-verdict .lp-mora-card{outline:1px solid CanvasText;outline-offset:-1px}.lp-verdict-talk{border:1px solid ButtonText}}
+/* Each module is a flat tinted tile, like the evidence in the map's Mora stack: the panel already carries the elevation. */
+.lp-modules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.lp-module-slot{overflow:hidden}
+.lp-module-gap{padding-top:8px}
+.lp-module{padding:14px 16px;border-radius:16px;background:#f7f7f7;font-size:13px;line-height:18px;color:#6a6a6a}
+.lp-photos{display:flex;align-items:flex-start;gap:12px}
+button.lp-photos{width:100%;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+button.lp-photos img{width:48px;height:48px;border-radius:8px;object-fit:cover;flex:none;background:#ebebeb}
+button.lp-photos .lp-tile-title{flex:1;min-width:0;font-weight:500}
+button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
+.lp-photo-proof{width:48px;height:48px;padding:0;border:0;border-radius:8px;overflow:hidden;flex:none;cursor:pointer;background:#ebebeb}
+.lp-photo-proof img,.lp-skel.lp-photo-proof{width:48px;height:48px;object-fit:cover;display:block}
+.lp-photo-proof:focus-visible{outline:2px solid #222;outline-offset:2px}
+.lp-hood-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.lp-tile-title + .lp-places,.lp-hood-chips + .lp-places{margin-top:12px}
+.lp-hood-chip{padding:4px 8px;border-radius:999px;background:#fff;font-size:12px;line-height:16px;font-weight:600;color:#222}
+.lp-hood-chip.is-minus{font-weight:500;color:#6a6a6a}
+.lp-tile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.lp-tile-copy{min-width:0}
+.lp-tile-title{font-size:14px;line-height:20px;font-weight:600;color:#222;text-wrap:pretty}
+.lp-tile-copy>p+p{margin-top:2px}
+.lp-tile-metric{display:flex;flex-direction:column;align-items:flex-end;flex:none;font-size:22px;line-height:26px;font-weight:600;letter-spacing:-.02em;color:#222;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lp-tile-metric span{font-size:12px;line-height:16px;font-weight:400;letter-spacing:0;color:#6a6a6a}
+.lp-module[data-kind=opportunity] .lp-tile-metric{color:#2e7d32}
+.lp-module[data-kind=above] .lp-tile-metric{color:#b12b1e}
+.lp-ruler{margin-top:30px;overflow-x:clip;overflow-clip-margin:12px}
+.lp-ruler-track{position:relative;height:6px;border-radius:99px;background:#e6e6e6}
+.lp-ruler-median{position:absolute;top:-3px;width:2px;height:12px;margin-left:-1px;border-radius:1px;background:#00000052}
+.lp-ruler-rail{position:absolute;inset:0;display:block}
+.lp-ruler-marker{position:absolute;left:-7px;top:-4px;width:14px;height:14px;border-radius:50%;background:#fe6439;box-shadow:0 0 0 3px #f7f7f7}
+.lp-ruler-value{position:absolute;left:0;bottom:16px;white-space:nowrap;font-size:12px;line-height:16px;font-weight:600;color:#000;font-variant-numeric:tabular-nums}
+.lp-ruler-scale{display:flex;justify-content:space-between;gap:12px;margin-top:10px;font-size:12px;line-height:16px;color:#6a6a6a;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lp-ruler-note{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.lp-ruler-tick{flex:none;width:2px;height:10px;border-radius:1px;background:#00000052}
+.lp-favorites{display:flex;align-items:center;gap:12px}
+.lp-favorites>.lp-tile-title{flex:1;min-width:0}
+.lp-favorites-compare{position:relative;flex:none;min-height:36px;padding:0 14px;border:1px solid #dddddd;border-radius:999px;background:#fff;font-size:13px;line-height:18px;font-weight:600;color:#222;transition:border-color 150ms ease,transform 120ms var(--ease-out,cubic-bezier(.23,1,.32,1))}
+.lp-favorites-compare::before{content:'';position:absolute;inset:-4px}
+.lp-favorites-compare:active{transform:scale(.96)}
+.lp-favorites-compare:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
+.lp-avatars{display:flex;flex:none}
+.lp-avatar{width:36px;height:36px;padding:0;margin-left:-8px;border-radius:8px;overflow:hidden;box-shadow:0 0 0 2px #f7f7f7}
+.lp-avatar:first-child{margin-left:0}
+.lp-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.lp-places{list-style:none;margin:0;padding:0}
+.lp-places li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #0000000f}
+.lp-places li:first-child{padding-top:0}
+.lp-places li:last-child{padding-bottom:0;border-bottom:0}
+.lp-places .lp-glyph{flex:none;color:#222}
+/* Skeletons keep each tile's final layout while Mora works; bars sit on the real line boxes so heights match. */
+.lp-skel{display:inline-block;vertical-align:middle;height:10px;max-width:100%;border-radius:6px;background:linear-gradient(90deg,#ebebeb 30%,#f6f6f6 50%,#ebebeb 70%) 0 0/300% 100%;animation:lp-skel 1.6s ease-in-out infinite}
+@keyframes lp-skel{from{background-position:100% 0}to{background-position:0 0}}
+.lp-skel-copy{flex:1}
+.lp-skel-track{display:block;width:100%;height:6px;border-radius:99px}
+.lp-tile-metric .lp-skel{margin-block:3px}
+.lp-avatar.lp-skel{display:block;height:36px;border-radius:8px;animation-delay:.1s}
+.lp-skel-row{min-height:20px}
+.lp-skel-row>b{flex:1;min-width:0;font-weight:inherit;line-height:20px}
+.lp-places li>span:first-of-type{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:14px;line-height:20px;color:#222}
+.lp-places li>span:last-child{flex:none;color:#6a6a6a;font-variant-numeric:tabular-nums}
+/* One filled action per phase; every other action is the same outlined button, sized to its label. */
+.lp-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.lp-primary,.lp-secondary{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:999px;font-size:16px;line-height:20px;font-weight:600;text-align:center}
+.lp-primary{flex:1 1 auto;min-width:0;background:#fe6439;color:#fff}
+.lp-secondary{flex:none;gap:8px;padding-inline:20px;background:#fff;border:1px solid #0000004d;color:#000}
+.lp-secondary img{width:20px;height:20px;flex:none}
+/* Summary: the filled action on its own line, the two secondaries share the line below. */
+.lp-actions.is-summary .lp-primary{flex-basis:100%}
+.lp-actions.is-summary .lp-secondary{flex:1 1 0;min-width:0;padding-inline:12px;white-space:nowrap}
+.lp-primary:disabled{background:#fe6439!important;color:#fff!important;opacity:.6}
+.lp-primary.has-note{flex-direction:column;gap:1px;min-height:56px;padding-block:8px}
+/* A pass of light every 3 s says "fast" without moving anything. */
+.lp-primary-note{font-size:13px;line-height:18px;font-weight:500;background-image:linear-gradient(100deg,#ffffffc2 35%,#fff 45%,#ffe9c7 50%,#fff 55%,#ffffffc2 65%);background-size:300% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-note-shine 3s ease-in-out 600ms infinite}
+@keyframes lp-note-shine{0%{background-position:100% 50%}45%,100%{background-position:0% 50%}}
+.lp-secondary:disabled{background:#fff!important;opacity:.5}
+.lp-simulation-note{margin-top:10px;font-size:12px;line-height:16px;color:#000000b8}
+
+.lp-state-title{font-size:18px;line-height:1.3;font-weight:600;outline:none;margin-bottom:6px}
+.lp-state-context{font-size:13px;line-height:18px;color:#000000b8;margin:0 0 14px}
+.lp-swap{display:inline-grid}
+.lp-swap>*{grid-area:1/1}
+
+/* Conversation with Mora: the verdict travels to the top, the thread grows under it and the field stays at the foot. */
+.lp-reading-flow{position:relative}
+/* The chat glides to its end itself; the browser's scroll anchoring would snap it whenever a card above folds. */
+.lp-phase-question .lp-scroll{overflow-anchor:none}
+.lp-phase .lp-thread{margin-top:24px}
+.lp-turn-mora .mora-words,.lp-turn-mora .mora-thinking{margin:0;font-size:16px;line-height:22.4px;font-weight:400;color:#111}
+.lp-turn-mora .mora-thinking{color:#000000b8}
+.lp-thread{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:24px}
+.lp-thread:empty{display:none}
+.lp-turn{display:flex;flex-direction:column;gap:16px}
+.lp-turn-mora{display:flex;flex-direction:column;gap:6px}
+.lp-bubble{align-self:flex-end;max-width:85%;margin:0;padding:10px 14px;border-radius:18px 18px 4px 18px;background:#fff1e9;color:#111;font-size:16px;line-height:22px;white-space:pre-wrap;overflow-wrap:anywhere;box-sizing:border-box}
+.lp-bubble.is-flying{position:fixed;z-index:96;max-width:none;pointer-events:none;will-change:transform}
+
+.lp-ask-slot{overflow:hidden;margin:-3px;padding:3px}
+/* Verdict-card family: questions, visit intention, confirmations. */
+.lp-proof-card{margin-top:6px;padding:16px 20px;border-radius:20px;background:#fff;box-shadow:0 0 0 1px #dddddd,0 2px 6px rgba(0,0,0,.04),0 4px 8px rgba(0,0,0,.1)}
+.lp-proof-head{display:flex;align-items:flex-start;gap:12px}
+.lp-proof-head>img{width:64px;height:64px;flex:none;border-radius:12px;object-fit:cover;background:#ececec}
+.lp-proof-head>div{flex:1;min-width:0}
+.lp-proof-eyebrow{display:flex;align-items:center;gap:6px;margin:0 0 2px;font-size:13px;line-height:18px;font-weight:500;color:#000000b8}
+.lp-proof-eyebrow .lp-proof-check{width:18px;height:18px}
+.lp-proof-title{margin:0;font-size:16px;line-height:22px;font-weight:600;color:#111;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.lp-proof-meta{margin:2px 0 0;font-size:13px;line-height:18px;color:#000000b8}
+.lp-proof-check{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;background:#e8f5ee;color:#0b8a44}
+.lp-proof-actions{display:flex;flex-direction:column;gap:8px;padding-top:14px}
+.lp-proof-primary,.lp-proof-ghost{width:100%;min-height:48px;border-radius:999px;font-size:16px;line-height:20px;font-weight:600}
+.lp-proof-primary{background:#fe6439;color:#fff}
+.lp-proof-primary[aria-disabled=true]{background:#f2f2f2;color:#0000005c;cursor:default}
+.lp-proof-ghost{border:1px solid #0000004d;background:#fff;color:#000}
+/* Visit flow in the chat: the app's sheet and cards, unfolded inline. */
+.lp-collapse{overflow:hidden;margin:-3px;padding:3px}
+.lp-chat-action{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-top:6px;padding:8px 16px;border-radius:99px;background:#f2f2f2;font-size:14px;line-height:20px;font-weight:600;color:#111}
+.lp-chat-action.is-done{background:#f7f7f7;color:#0000005c;font-weight:500}
+.lp-pick-card{display:flex;flex-direction:column;gap:12px}
+.lp-pick-label{margin:0;font-size:14px;line-height:20px;font-weight:600;color:#111}
+.lp-pick-days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lp-pick-day{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60px;padding:8px 4px;border:1px solid #ebebeb;border-radius:16px;background:#fff;color:#111;transition:background-color 150ms,border-color 150ms,color 150ms}
+.lp-pick-day span{font-size:11px;line-height:14px;color:#6a6a6a}
+.lp-pick-day strong{font-size:15px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.lp-pick-day[aria-pressed=true]{border-color:#ff925c;background:#fff1e9;color:#a13600}
+.lp-pick-day[aria-pressed=true] span{color:#a13600}
+.lp-period-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:2px;border:1px solid #ebebeb;border-radius:16px;background:#f7f7f7}
+.lp-period-seg{min-height:44px;padding:8px 6px;border:0;border-radius:14px;background:transparent;font-size:14px;line-height:18px;font-weight:600;color:#111;transition:background-color 150ms,color 150ms}
+.lp-period-seg[aria-pressed=true]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);color:#a13600}
+.lp-pick-note{margin:0;font-size:13px;line-height:18px;color:#6a6a6a}
+.lp-pick-submit{margin-top:4px}
+
+/* The open field from the search: no box, large type, orange caret. The caret is the focus cue, so the field drops the outline. */
+.lp-phase-question .lp-footer{padding-top:4px}
+.lp-ask{display:flex;flex-direction:column;gap:12px}
+.lp-ask-suggest{overflow:hidden;margin:0 calc(-1 * var(--lp-pad))}
+.lp-ask-suggest-row{display:flex;flex-wrap:nowrap;gap:8px;padding:2px var(--lp-pad);overflow-x:auto;overscroll-behavior-x:contain;scroll-padding-inline:var(--lp-pad);-webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--lp-pad),#000 calc(100% - var(--lp-pad)),transparent);mask-image:linear-gradient(90deg,transparent,#000 var(--lp-pad),#000 calc(100% - var(--lp-pad)),transparent)}
+.lp-ask-suggest-row button{flex:none;min-height:36px;padding:6px 14px;border:1px solid #0000001f;border-radius:99px;background:#fff;font-size:14px;line-height:20px;font-weight:500;color:#111;white-space:nowrap}
+.lp-ask-bar{display:flex;align-items:flex-end;gap:12px}
+.lp-ask-back{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
+.lp-ask-back svg{transform:rotate(180deg)}
+.lp-ask-field{position:relative;flex:1;min-width:0;display:grid;--ask-line:28px}
+.lp-ask-field>*{grid-area:1/1}
+.lp-ask-hint,.lp-ask-mirror,.lp-ask-field textarea{padding:8px 0;font-size:20px;line-height:var(--ask-line);font-weight:600;letter-spacing:-.2px}
+/* Same heavier orange caret as the search sentence, drawn over the field. */
+.lp-ask-mirror{position:absolute;left:0;top:0;width:100%;white-space:pre-wrap;overflow-wrap:break-word;visibility:hidden;pointer-events:none}
+.lp-ask-anchor{display:inline-block;width:0;height:var(--ask-line);vertical-align:top}
+.lp-ask-caret{position:absolute;left:0;top:0;width:3px;border-radius:2px;background:#f50;pointer-events:none;animation:lp-caret-blink 1s step-end infinite}
+@keyframes lp-caret-blink{50%{opacity:0}}
+.lp-ask-hint{display:grid;align-self:start;min-width:0;color:#c8c8c8;pointer-events:none}
+.lp-ask-hint>span{grid-area:1/1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lp-ask-field textarea{display:block;width:100%;min-height:44px;max-height:128px;margin:0;border:0;border-radius:0;background:transparent;color:#111;caret-color:transparent;resize:none;overflow-y:auto}
+.lp-ask-field textarea:focus-visible{outline:none}
+.lp-ask-field textarea::selection{background:#ffe0cf}
+.lp-ask-send{flex:none;display:grid;place-items:center;width:40px;height:40px;margin-bottom:2px;border-radius:50%;background:#fe6439;color:#fff;transition:background-color 150ms ease}
+.lp-ask-send svg{margin:1px 1px 0 0}
+/* Contact and sent share one stage, centered like the login nudge; the form below borrows Airbnb's fields. */
+.lp-stage{display:flex;flex-direction:column;align-items:center;padding-top:4px;text-align:center}
+.lp-stage.is-sent{padding:4px 0 8px}
+.lp-stage-art{position:relative;display:grid;place-items:center;flex:none;margin-bottom:16px}
+.lp-stage.is-sent .lp-stage-art{margin-bottom:20px}
+.lp-stage-photo{grid-area:1/1;object-fit:cover;border:3px solid #fff;border-radius:14px;background:#ebe8e1;box-shadow:0 8px 24px #0000002e}
+.lp-stage-host{grid-area:1/1;position:relative;display:block;border-radius:50%;box-shadow:0 8px 24px #0000002e}
+.lp-stage-host .lp-host-logo{display:grid;width:100%;height:100%;border:3px solid #fff;box-sizing:border-box}
+.lp-stage-host .lp-host-logo.is-monogram{border-color:#fff;font-size:inherit}
+.lp-stage-check{position:absolute;right:-2px;bottom:-2px;display:grid;place-items:center;width:26px;height:26px;border:3px solid #fff;border-radius:50%;background:#0b8a44;color:#fff;box-sizing:border-box}
+.lp-stage-title{max-width:400px;margin:0;font-size:20px;line-height:26px;font-weight:600;color:#111;text-wrap:balance}
+.lp-stage-title.is-sent{font-size:24px;line-height:30px}
+.lp-stage-text{max-width:380px;margin:0;padding-top:10px;overflow:hidden;font-size:16px;line-height:24px;color:#555;text-wrap:pretty}
+.lp-stage-stats{list-style:none;display:flex;margin-bottom:0;padding:0;border:1px solid #ebebeb;border-radius:16px}
+.lp-stage-stats li{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:112px}
+.lp-stage-stats li+li{border-left:1px solid #ebebeb}
+.lp-stage-stats strong{font-weight:600;color:#111;font-variant-numeric:tabular-nums}
+.lp-stage-stats strong .lp-star{font-size:.8em}
+.lp-stage-stats li>span{line-height:1.4;color:#000000b8}
+.lp-reviews{align-self:stretch;margin-top:16px;overflow:hidden;text-align:left}
+.lp-reviews ul{list-style:none;display:grid;gap:12px;margin:0;padding:0}
+.lp-reviews li{padding:14px 16px 16px;border:1px solid #ebebeb;border-radius:16px}
+.lp-review-head{display:flex;align-items:center;gap:10px}
+.lp-review-head>span:last-child{display:flex;flex-direction:column}
+.lp-review-head strong{font-size:14px;line-height:18px;font-weight:600;color:#111}
+.lp-review-meta{display:flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:#000000b8}
+.lp-review-avatar{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:50%;background:#f2f2f2;font-size:13px;font-weight:600;color:#222}
+.lp-review-stars{display:flex;gap:1px;font-size:11px;line-height:14px;color:#dddddd}
+.lp-review-stars .is-on{color:#222}
+.lp-reviews p{margin:8px 0 0;font-size:14px;line-height:21px;color:#222;text-wrap:pretty}
+.lp-stage-form{align-self:stretch;display:flex;flex-direction:column;gap:12px;margin:0 -3px;padding:36px 3px 3px;overflow:hidden;text-align:left}
+.lp-compose-share{margin:0;font-size:12px;line-height:16px;color:#6a6a6a;text-align:center}
+.lp-compose-send[aria-disabled=true]{opacity:.6;cursor:wait}
+/* Message and contact read as one group: the contact hangs under the message, split by a hairline like name and WhatsApp. */
+.lp-entry{display:flex;flex-direction:column}
+.lp-entry>.lp-message:not(:last-child){position:relative;z-index:1;border-radius:12px 12px 0 0}
+.lp-entry .lp-fieldset,.lp-entry .lp-who{border-top:0;border-radius:0 0 12px 12px}
+.lp-entry .lp-float:first-child{border-radius:0}.lp-entry .lp-float:last-child{border-radius:0 0 11px 11px}
+/* Who will be contacted: one quiet row, edited from the pencil. */
+.lp-who{display:flex;align-items:center;gap:12px;padding:10px 8px 10px 14px;border:1px solid #b0b0b0;border-radius:12px}
+.lp-who-copy{display:flex;flex-direction:column;min-width:0;flex:1}
+.lp-who-label{font-size:12px;line-height:16px;color:#6a6a6a}
+.lp-who-value{font-size:14px;line-height:20px;color:#222;overflow-wrap:anywhere}
+.lp-who-value strong{font-weight:600}
+.lp-who-change{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;color:#222;transition:background-color 150ms}
+/* Grouped fields with floating labels; the group shares one border and splits with a hairline. */
+.lp-fieldset{border:1px solid #b0b0b0;border-radius:12px}
+.lp-float{position:relative;display:block}
+.lp-float+.lp-float{border-top:1px solid #b0b0b0}
+.lp-float:first-child{border-radius:11px 11px 0 0}.lp-float:last-child{border-radius:0 0 11px 11px}.lp-float:only-child{border-radius:11px}
+.lp-float input{display:block;width:100%;height:56px;padding:24px 14px 8px;border:0;border-radius:inherit;background:transparent;font:inherit;font-size:16px;line-height:22px;color:#222;outline:none;caret-color:#f50;box-sizing:border-box}
+.lp-float>span{position:absolute;left:14px;top:17px;font-size:16px;line-height:22px;color:#6a6a6a;pointer-events:none;transform-origin:0 0;transition:transform 150ms var(--ease-out,ease-out),color 150ms}
+.lp-float input:focus+span,.lp-float input:not(:placeholder-shown)+span{transform:translateY(-10px) scale(.75)}
+.lp-float:focus-within{z-index:1;box-shadow:0 0 0 2px #222}
+.lp-float.is-invalid{background:#fff8f6;box-shadow:inset 0 0 0 1px #b12b1e}
+.lp-float.is-invalid>span{color:#b12b1e}
+.lp-field-error{display:block;margin-top:6px;font-size:12px;line-height:16px;color:#b12b1e}
+.lp-field-error+.lp-field-error{margin-top:2px}
+/* The message box holds its toggles, like a composer with attachments. */
+.lp-message{display:flex;flex-direction:column;padding:10px 14px 12px;border:1px solid #b0b0b0;border-radius:12px;transition:box-shadow 150ms}
+.lp-message:focus-within{border-color:#222;box-shadow:0 0 0 1px #222}
+.lp-message.is-invalid{border-color:#b12b1e;background:#fff8f6}
+.lp-message-label{font-size:12px;line-height:16px;font-weight:600;color:#222}
+.lp-message-text{display:block;width:100%;min-height:72px;max-height:180px;margin-top:4px;padding:0;border:0;resize:none;field-sizing:content;background:transparent;font:inherit;font-size:16px;line-height:24px;color:#222;outline:none;caret-color:#f50}
+.lp-toggles{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.lp-toggle{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 14px 6px 10px;border:1px solid #dddddd;border-radius:99px;background:#fff;font-size:14px;line-height:20px;color:#222;transition:border-color 150ms,background-color 150ms}
+.lp-toggle-mark{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#f2f2f2;transition:background-color 150ms,color 150ms}
+.lp-toggle-mark svg{grid-area:1/1}
+.lp-toggle[aria-pressed=true]{border-color:#222;background:#f7f7f7;box-shadow:inset 0 0 0 1px #222}
+.lp-toggle[aria-pressed=true] .lp-toggle-mark{background:#222;color:#fff}
+/* One orange→blue pass of light through the sent sentence, 600 ms, like the comparison's confirmation. */
+.lp-stage-title.is-sent>span{background-image:linear-gradient(90deg,#111 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,#111 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-done-sweep 600ms linear 200ms both}
+@keyframes lp-done-sweep{from{background-position:100% 50%}to{background-position:0% 50%}}
+.lp-toggle:focus-visible,.lp-who-change:focus-visible,.lp-chat-action:focus-visible,.lp-pick-day:focus-visible,.lp-period-seg:focus-visible,.lp-proof-primary:focus-visible,.lp-proof-ghost:focus-visible,.lp-ask-suggest-row button:focus-visible,.lp-ask-send:focus-visible,.lp-ask-back:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
+.lp-content.is-compact .lp-scroll{padding-top:24px}
+.lp-content.is-compact .lp-flow{gap:14px}
+.lp-content.is-compact .lp-specs{margin-top:-10px}
+.lp-content.is-compact .lp-phase{padding-top:4px}
+.lp-content.is-compact .lp-header h2{font-size:16px;line-height:20px}
+.lp-content.is-compact .lp-price{font-size:22px;line-height:28px;margin-top:6px}
+.lp-content.is-compact .lp-module{padding:12px 14px}
+.lp-content.is-compact .lp-ruler{margin-top:26px}
+
+.lp-profile-facts{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:6px;font-size:14px;line-height:20px}
+.lp-profile-count{font-size:14px;line-height:20px;font-weight:600;margin-bottom:10px}
+.lp-profile-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.lp-profile-list button{display:flex;align-items:center;gap:12px;width:calc(100% + 16px);margin:0 -8px;padding:8px;border-radius:12px;text-align:left;color:#000}
+.lp-profile-list img{width:64px;height:48px;flex:none;border-radius:8px;object-fit:cover}
+.lp-profile-list strong{display:block;font-size:14px;line-height:20px;font-weight:500}
+.lp-profile-list span span{display:block;font-size:13px;line-height:18px;color:#000000b8;font-variant-numeric:tabular-nums}
+
+@media(hover:hover) and (pointer:fine){
+  .lp-carousel:hover .lp-photo-step:not(:disabled){opacity:1}
+  .lp-photo-step:hover{transform:scale(1.06)}
+  .lp-control:not(:disabled):hover{background:#f7f7f7;border-color:#222}
+  .lp-thumb:hover img,.lp-carousel:has(.lp-photo-open:hover) .lp-track img{filter:brightness(.88)}
+  .lp-host:hover .lp-host-name>span:first-child{text-decoration:underline;text-underline-offset:3px}
+  .lp-profile-list button:hover{background:#f7f7f7}
+  .lp-primary:not(:disabled):hover{background:#f05427}
+  .lp-secondary:not(:disabled):hover,.lp-ask-back:hover,.lp-ask-suggest-row button:hover,.lp-toggle[aria-pressed=false]:hover{background:#f7f7f7}
+  .lp-toggle[aria-pressed=false]:hover{border-color:#222}
+  .lp-who-change:hover{background:#f2f2f2}
+  .lp-chat-action:not(.is-done):hover{background:#e8e8e8}
+  .lp-pick-day[aria-pressed=false]:hover,.lp-period-seg[aria-pressed=false]:hover,.lp-proof-ghost:hover{background:#f7f7f7}
+  .lp-proof-primary:not([aria-disabled]):hover,.lp-ask-send:hover{background:#f05427}
+  .lp-avatar:hover{box-shadow:0 0 0 2px #000}
+  .lp-favorites-compare:hover{border-color:#222}
+}
+@media(hover:none){.lp-photo-chrome{display:none}}
+
+/* Below 880 px of results width the photo sits on top. */
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-media{left:0;top:0;right:0;bottom:auto;width:auto;height:var(--lp-stack-media);border-radius:20px 20px 0 0}
+.lp-shell[data-layout=stacked] .lp-body{left:0;top:var(--lp-stack-media)}
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-footer{border-radius:0 0 20px 20px}
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-control{background:#ffffffeb;border-color:transparent;box-shadow:0 1px 4px #0000002e}
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-controls{top:16px;right:16px}
+.lp-shell:is([data-layout=stacked],[data-layout=sheet]) .lp-control:disabled{background:#ffffffeb!important}
+
+/* Bottom sheet below 768 px. */
+.lp-shell[data-layout=sheet]{position:fixed;left:0;right:0;bottom:0;z-index:80;height:60dvh;border-radius:20px 20px 0 0;--lp-pad:20px;--lp-stack-media:var(--lp-sheet-media)}
+.lp-shell[data-layout=sheet] .lp-body{left:0;top:var(--lp-sheet-media)}
+.lp-shell[data-layout=sheet] .lp-footer{border-radius:0;padding-top:12px;border-top:1px solid var(--lp-line);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.lp-shell[data-layout=sheet] .lp-controls{top:20px;right:12px}
+.lp-shell[data-layout=sheet] .lp-header h2{font-size:16px;line-height:20px}
+.lp-shell[data-layout=sheet] .lp-price{font-size:24px;line-height:30px}
+.lp-shell[data-layout=sheet] .lp-scroll{padding-top:16px}
+.lp-shell[data-layout=sheet] .lp-flow{gap:16px}
+.lp-shell[data-layout=sheet] .lp-primary{flex-basis:100%}
+.lp-shell[data-layout=sheet] .lp-actions.is-summary .lp-secondary{gap:6px;padding-inline:8px;font-size:14px}
+/* Under the photo the verdict has to read whole: tighter frame and one-line facts that wrap only when long. */
+.lp-shell[data-layout=sheet] .lp-mora.is-verdict .lp-mora-body{padding:14px 16px 6px}
+.lp-shell[data-layout=sheet] .lp-phase-summary .lp-scroll{padding-bottom:6px}
+.lp-shell[data-layout=sheet] .lp-verdict-facts{margin-top:0}
+.lp-shell[data-layout=sheet] .lp-mora.is-verdict.is-folded .lp-mora-body{padding-bottom:14px}
+.lp-shell[data-layout=sheet] .lp-verdict-facts li{gap:14px;padding:4px 0}
+.lp-shell[data-layout=sheet] .lp-verdict-facts li>span{flex-flow:row wrap;align-items:baseline;column-gap:6px;row-gap:0}
+.lp-shell[data-layout=sheet] .lp-actions.is-verdict button{padding-inline:16px}
+.lp-shell[data-layout=sheet] .lp-phase-summary .lp-flow{gap:12px}
+.lp-shell[data-layout=sheet] .lp-phase-summary .lp-specs{margin-top:-8px}
+.lp-shell[data-layout=sheet] .lp-phase-summary .lp-footer{padding-top:8px}
+@media(max-width:359px){.lp-shell[data-layout=sheet] .lp-actions.is-verdict button{padding-inline:12px;font-size:15px}.lp-verdict-talk img{display:none}}
+.lp-grab{position:absolute;top:0;left:0;right:0;height:32px;z-index:3;display:flex;justify-content:center;padding-top:8px;touch-action:none;cursor:grab}
+.lp-grab span{width:36px;height:5px;border-radius:99px;background:#ffffffd9;box-shadow:0 0 0 1px #0000001f}
+@media(max-width:359px){.lp-secondary{flex:1 1 auto}.lp-actions.is-summary .lp-secondary{flex-basis:100%}.lp-specs{gap:6px 14px;font-size:13px}.lp-proof-head>img{width:56px;height:56px}.lp-ask-field{--ask-line:26px}.lp-ask-hint,.lp-ask-mirror,.lp-ask-field textarea{font-size:18px}.lp-ask-bar{gap:8px}}
+@media(pointer:coarse){.lp-chat-action,.lp-period-seg,.lp-toggle,.lp-ask-suggest-row button{min-height:44px}.lp-ask-send{width:44px;height:44px;margin-bottom:0}}
+.lp-gallery{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:#0b0b0bf2}
+.lp-gallery>img{max-width:min(1200px,calc(100vw - 32px));max-height:calc(100dvh - 128px);object-fit:contain;border-radius:12px}
+.lp-gallery-close,.lp-gallery-step{position:absolute;display:grid;place-items:center;border-radius:50%;background:#ffffff1f;color:#fff}
+.lp-gallery-close{top:16px;right:16px;width:44px;height:44px}
+.lp-gallery-close img{width:20px;height:20px;filter:invert(1)}
+.lp-gallery-step{top:50%;width:48px;height:48px;margin-top:-24px}
+.lp-gallery-step.is-prev{left:16px}
+.lp-gallery-step.is-next{right:16px}
+.lp-gallery-step:disabled{visibility:hidden}
+.lp-gallery-count{position:absolute;left:0;right:0;bottom:20px;text-align:center;color:#fff;font-size:13px;font-variant-numeric:tabular-nums}
+@media(hover:hover) and (pointer:fine){.lp-gallery-close:hover,.lp-gallery-step:hover{background:#ffffff33}}
+
+/* The grid recedes behind the panel; the source card hides while its copy is open. The transition stays after the shell leaves, so the grid eases back instead of snapping. */
+.discovery-item{transition:opacity 500ms cubic-bezier(.32,.72,0,1),transform 500ms cubic-bezier(.32,.72,0,1)}
+html[data-listing-panel] .discovery-item:not([data-panel-source]){opacity:.25;transform:scale(.97)}
+/* After the close morph, the photo is already the card. Price, address and the rest ease in. */
+.discovery-item.is-returning :is(.discovery-copy,.discovery-meta,.discovery-tags,.discovery-like){animation:lp-card-return 380ms cubic-bezier(.32,.72,0,1) both}
+@keyframes lp-card-return{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* The open map stays in view behind the panel, veiled like the grid; a click on it closes the panel. */
+.map-shell::after{content:'';position:absolute;inset:0;z-index:20;background:#fff;opacity:0;pointer-events:none;transition:opacity 240ms ease-out}
+html[data-listing-panel] .map-shell{pointer-events:none}
+html[data-listing-panel] .map-shell::after{opacity:.6}
+.discovery-item[data-panel-source]{visibility:hidden}
+
+/* The panel sits above everything, header and search bar included, which stay as they are; this invisible layer keeps them out of reach and a click on it closes the panel. */
+html[data-listing-panel] body::before{content:'';position:fixed;inset:0;z-index:74}
+/* They recede with the grid under the same white veil. */
+.home-header::after,.mora-bar::after{content:'';position:absolute;inset:0;z-index:30;background:#fff;opacity:0;pointer-events:none;transition:opacity 500ms cubic-bezier(.32,.72,0,1)}
+html[data-listing-panel] :is(.home-header,.mora-bar)::after{opacity:.75}
+html[data-listing-panel] .toast{z-index:76}
+
+@media(prefers-reduced-motion:reduce){
+  .discovery-item,.home-header::after,.mora-bar::after{transition:opacity 150ms linear}
+  .discovery-item.is-returning :is(.discovery-copy,.discovery-meta,.discovery-tags,.discovery-like){animation:none}
+  html[data-listing-panel] .discovery-item:not([data-panel-source]){transform:none}
+  .lp-track,.lp-photo-step,.lp-shell::after{transition:none}
+  .lp-mora-mark.is-working{animation:none}
+  .lp-skel{animation:none}
+  .lp-mora-working>span{animation:none;background:none;-webkit-text-fill-color:currentColor}
+}
+@media(prefers-reduced-motion:reduce){.lp-stage-title.is-sent>span,.lp-primary-note{animation:none;background:none;-webkit-text-fill-color:currentColor}.lp-float>span{transition:none}}
+@media(forced-colors:active){.lp-bubble{background:Canvas;border:1px solid CanvasText;color:CanvasText}.lp-stage-title.is-sent>span,.lp-primary-note{animation:none;background:none;-webkit-text-fill-color:currentColor}.lp-review-stars .is-on{color:CanvasText}.lp-toggle[aria-pressed=true],.lp-pick-day[aria-pressed=true],.lp-period-seg[aria-pressed=true]{border:2px solid Highlight}.lp-float:focus-within,.lp-message:focus-within,.lp-ask-field:focus-within{outline:2px solid Highlight}.lp-ask-hint{color:GrayText}.lp-ask-caret{background:Highlight}}
+@media(prefers-reduced-motion:reduce){.lp-ask-caret{animation:none}}

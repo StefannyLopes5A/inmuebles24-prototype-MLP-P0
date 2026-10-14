@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "listingId": "buy-150907005",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150907005",
+      "address": "Carretera Mexico-toluca Al 5400, El Yaqui, Cuajimalpa de Morelos",
+      "street": "Carretera Mexico-toluca Al 5400",
+      "colonia": "El Yaqui",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Carretera Mexico-toluca al 5400, El Yaqui, Cuajimalpa de Morelos",
+      "zone": "El Yaqui",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 7300000,
+      "m2": 164,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Barrio Alto Real Estate",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 188,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 44512,
+      "comparablesCount": 151,
+      "comparablesMedianPerM2": 38800,
+      "comparablesP10PerM2": 24800,
+      "comparablesP90PerM2": 56600,
+      "diffVsMedianPct": 15,
+      "classification": "above_market",
+      "daysListed": 29,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.8,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 13,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 31,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 16
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 30
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 26
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 13
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 10
+        }
+      ],
+      "missing": [],
+      "note": "Luz media y jardín cerrado entre muros"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 31,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "parque san francisco",
+          "minutes": 26,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "parque san francisco",
+        "minutes": 26,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "El Yaqui"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 52,
+        "m2DiffPct": -15,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 31,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -3,
+        "m2DiffPct": 28,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 31,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Con 3 recámaras y jardín cerrado, entra en tu presupuesto; por las fotos pide actualizarse y el m² va 15% arriba.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "El Yaqui, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $44.5k/m² contra $38.8k/m² de mediana en 151 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el estado",
+          "payload": {
+            "question": "¿Qué partes de la casa necesitan renovación?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+15% vs. parecidos",
+      "p10": 24800,
+      "p90": 56600,
+      "median": 38800,
+      "value": 44512,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Hay transporte hacia Reforma?",
+      "¿El jardín tiene salida a la calle?"
+    ],
+    "extractedTags": [],
+    "address": "Carretera Mexico-toluca Al 5400, El Yaqui, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "31 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "parque san francisco",
+        "meta": "26 min a pie"
+      }
+    ]
+  }
+}

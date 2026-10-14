@@ -7,7 +7,8 @@
 .v2-results-title{font-size:24px;font-weight:590;line-height:1.4;display:flex;align-items:center;gap:12px;margin:0;letter-spacing:0}
 .v2-result-item{min-width:0}.v2-result-item .discovery-item{width:100%;max-width:none}
 .v2-fit-reason{font-size:12px;line-height:1.5;color:#606060;margin:10px 0 0}
-.v2-contacted{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 8px;background:#eff4ed;border-radius:8px;color:#344b34;font-size:12px;line-height:1.4}
+.discovery-tag.is-contacted{gap:4px;padding-left:8px}
+.discovery-tag.is-contacted svg{flex:none}
 .v2-region-guide h2{font-size:24px;font-weight:590;letter-spacing:0;line-height:1.35;margin:20px 0 12px}
 .v2-region-guide>p{color:#745549;max-width:70ch;line-height:1.5;font-size:16px}
 .v2-area-suggestions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}

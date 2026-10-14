@@ -1,0 +1,301 @@
+{
+  "meta": {
+    "listingId": "buy-151005500",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-151005500",
+      "address": "Campos Elíseos, Polanco, Miguel Hidalgo",
+      "street": "Campos Elíseos",
+      "colonia": "Polanco",
+      "alcaldia": "Miguel Hidalgo",
+      "addressRaw": "Campos Elíseos, Polanco, Miguel Hidalgo",
+      "zone": "Polanco",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 16800000,
+      "m2": 199,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "TU CASA HOY",
+        "verified": true,
+        "rating": 4.4,
+        "reviews": 118,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 84422,
+      "comparablesCount": 178,
+      "comparablesMedianPerM2": 71200,
+      "comparablesP10PerM2": 45600,
+      "comparablesP90PerM2": 104000,
+      "diffVsMedianPct": 19,
+      "classification": "negotiable",
+      "daysListed": 25,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.7,
+      "priceHistory": [
+        {
+          "daysAgo": 7,
+          "change": -1200000
+        }
+      ],
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 37,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 11
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 21
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 31
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz, recámara y terraza con vegetación"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "penthouse",
+        "terrace"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 23,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Polanco",
+          "minutes": 10,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque America",
+          "minutes": 3,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque America",
+        "minutes": 3,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Polanco"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 9300000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 10
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 250,
+        "m2DiffPct": 3,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 23,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 124,
+        "m2DiffPct": 55,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": 10,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 23,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Terraza con vegetación y Parque America a 3 min; bajó $1.2M hace 7 días y sigue 19% arriba por m².",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Polanco, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 10 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $84.4k/m² contra $71.2k/m² de mediana en 178 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar si bajan más",
+          "payload": {
+            "question": "¿Hay margen para otra baja?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+19% vs. parecidos",
+      "p10": 45600,
+      "p90": 104000,
+      "median": 71200,
+      "value": 84422,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿La terraza es del penthouse?",
+      "¿Cuántos estacionamientos tiene?"
+    ],
+    "extractedTags": [],
+    "address": "Campos Elíseos, Polanco, Miguel Hidalgo",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "23 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Polanco",
+        "meta": "10 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque America",
+        "meta": "3 min a pie"
+      }
+    ]
+  }
+}

@@ -1,12 +1,15 @@
 import listings from './real-listings.json' with {type:'json'};
+import {advertiserFor} from './listingAdvertiser.js';
+import {TORRE_OLMO_HOME} from './development/torreOlmo.js';
 
-export const homes = listings.map(h=>({...h, imageAlt:`${h.title} · ${h.area}`, reason:h.size>=20?h.reason:`${h.beds} recámaras · Superficie por confirmar`}));
+export const homes = [...listings, TORRE_OLMO_HOME].map(h=>({...h, imageAlt:`${h.title} · ${h.area}`, reason:h.size>=20?h.reason:`${h.beds} recámaras · Superficie por confirmar`}));
+export const isDevelopment = h => h?.development === true;
 export const areaLabel = h => h.size >= 20 ? `${h.size} m²` : 'Superficie por confirmar';
 export const money = n => new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN', maximumFractionDigits:0}).format(n);
 export const listingPrice = h => h.mode === 'rent' ? h.rent : h.price;
 export const propertyPhoto = h => h.image;
 const agencyLogoPool = [...new Set(listings.map(h => h.brokerLogo).filter(Boolean))];
-export const cardAgencyLogo = h => h.brokerLogo || agencyLogoPool[Number(h.listingId) % agencyLogoPool.length];
+export const cardAgencyLogo = h => h.brokerLogo || advertiserFor(h).logo || agencyLogoPool[Number(h.listingId) % agencyLogoPool.length];
 export const isSeparate = h => h.beds >= 3;
 export const isExtra = h => h.beds >= 3;
 export const defaults = {mode:'buy', area:'Ambas zonas', address:'', budget:4500000, beds:2, note:'', fromIdea:false};

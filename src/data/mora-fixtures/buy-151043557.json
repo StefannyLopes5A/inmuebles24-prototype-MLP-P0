@@ -1,0 +1,284 @@
+{
+  "meta": {
+    "listingId": "buy-151043557",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-151043557",
+      "address": "Bosque de Tabachines 32, Bosques de las Lomas, Cuajimalpa de Morelos",
+      "street": "Bosque de Tabachines 32",
+      "colonia": "Bosques de las Lomas",
+      "alcaldia": "Cuajimalpa de Morelos",
+      "addressRaw": "Bosque de Tabachines 32, Bosques de las Lomas, Cuajimalpa de Morelos",
+      "zone": "Bosques de las Lomas",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 10500000,
+      "m2": 226,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": 3,
+      "agency": {
+        "name": "Habitat Roma",
+        "verified": false,
+        "rating": 4.5,
+        "reviews": 89,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 46460,
+      "comparablesCount": 70,
+      "comparablesMedianPerM2": 58100,
+      "comparablesP10PerM2": 37200,
+      "comparablesP90PerM2": 84800,
+      "diffVsMedianPct": -20,
+      "classification": "opportunity",
+      "daysListed": 51,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.4,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 15,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 25,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 5
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 10
+        },
+        {
+          "feature": "studio",
+          "confidence": "medium",
+          "photoIndex": 21
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 24
+        }
+      ],
+      "missing": [],
+      "note": "Mucha luz y jardín con pasto y árboles"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 17,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque Bosque de Manzanos",
+          "minutes": 3,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Bosque de Manzanos",
+        "minutes": 3,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Bosques de las Lomas"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 3000000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 2
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 119,
+        "m2DiffPct": 17,
+        "bedroomsDiff": -3,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 40,
+        "m2DiffPct": 77,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Su m² queda 20% abajo de Bosques de las Lomas; por las fotos, tiene mucha luz y un jardín con árboles, pero pide actualizarse.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Bosques de las Lomas, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $46.5k/m² contra $58.1k/m² de mediana, con solo 70 parecidos de referencia.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar qué hay que actualizar",
+          "payload": {
+            "question": "¿Qué habría que actualizar y está en el precio?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Abajo del mercado",
+      "badge": "−20% vs. parecidos",
+      "p10": 37200,
+      "p90": 84800,
+      "median": 58100,
+      "value": 46460,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿Qué tan grande es el jardín?",
+      "¿La casa tiene estudio independiente?"
+    ],
+    "extractedTags": [],
+    "address": "Bosque de Tabachines 32, Bosques de las Lomas, Cuajimalpa de Morelos",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "17 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Bosque de Manzanos",
+        "meta": "3 min a pie"
+      }
+    ]
+  }
+}

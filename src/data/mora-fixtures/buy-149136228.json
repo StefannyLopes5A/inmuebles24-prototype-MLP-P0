@@ -1,0 +1,283 @@
+{
+  "meta": {
+    "listingId": "buy-149136228",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-149136228",
+      "address": "Abraham González 117, Juárez, Cuauhtémoc",
+      "street": "Abraham González 117",
+      "colonia": "Juárez",
+      "alcaldia": "Cuauhtémoc",
+      "addressRaw": "Abraham González 117, Juárez, Cuauhtémoc",
+      "zone": "Juárez",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 16599000,
+      "m2": 207,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "parking": 3,
+      "agency": {
+        "name": "Ciudad Viva Propiedades",
+        "verified": true,
+        "rating": 4.5,
+        "reviews": 131,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 80188,
+      "comparablesCount": 112,
+      "comparablesMedianPerM2": 47300,
+      "comparablesP10PerM2": 30300,
+      "comparablesP90PerM2": 69100,
+      "diffVsMedianPct": 70,
+      "aboveRange": true,
+      "classification": "above_market",
+      "daysListed": 72,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 1.9,
+      "priceHistory": [],
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 13,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "parking",
+          "confidence": "medium",
+          "photoIndex": 2
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 5
+        }
+      ],
+      "missing": [
+        "bathrooms",
+        "kitchen"
+      ],
+      "note": "Cochera y patio con flores; no hay cocina, baños ni recámara en las fotos"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 18,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Insurgentes",
+          "minutes": 9,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Plaza Washington",
+          "minutes": 5,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Plaza Washington",
+        "minutes": 5,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Juárez"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 9099000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 9
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 246,
+        "m2DiffPct": 7,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 9,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 18,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 121,
+        "m2DiffPct": 62,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 9,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 18,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Pocas fotos: solo cochera y patio con flores. Con un m² 70% arriba de parecidos, conviene ver el interior antes de ir.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Juárez, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 9 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $80.2k/m², arriba del rango habitual; la mediana es $47.3k/m² en 112 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Pedir fotos del interior",
+          "payload": {
+            "question": "¿Pueden compartir fotos de cocina, baños y recámaras?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+70% vs. parecidos",
+      "p10": 30300,
+      "p90": 69100,
+      "median": 47300,
+      "value": 80188,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿El patio es privado?",
+      "¿Qué tanto hay que actualizar?"
+    ],
+    "extractedTags": [],
+    "address": "Abraham González 117, Juárez, Cuauhtémoc",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "18 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Insurgentes",
+        "meta": "9 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Plaza Washington",
+        "meta": "5 min a pie"
+      }
+    ]
+  }
+}

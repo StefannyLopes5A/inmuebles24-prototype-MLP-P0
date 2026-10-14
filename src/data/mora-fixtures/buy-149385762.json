@@ -1,0 +1,302 @@
+{
+  "meta": {
+    "listingId": "buy-149385762",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-149385762",
+      "address": "Minerva 73, Crédito Constructor, Benito Juárez",
+      "street": "Minerva 73",
+      "colonia": "Crédito Constructor",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Minerva 73, Crédito Constructor, Benito Juárez",
+      "zone": "Crédito Constructor",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 18190000,
+      "m2": 277,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "parking": 3,
+      "agency": {
+        "name": "Lumen Inmobiliaria",
+        "verified": false,
+        "rating": 4.4,
+        "reviews": 226,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 65668,
+      "comparablesCount": 245,
+      "comparablesMedianPerM2": 39800,
+      "comparablesP10PerM2": 25500,
+      "comparablesP90PerM2": 58100,
+      "diffVsMedianPct": 65,
+      "aboveRange": true,
+      "classification": "negotiable",
+      "daysListed": 111,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 3,
+      "priceHistory": [],
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 13,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "remodelado",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "alta",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "terrace",
+          "confidence": "medium",
+          "photoIndex": 1
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 4
+        },
+        {
+          "feature": "parking",
+          "confidence": "medium",
+          "photoIndex": 5
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 7
+        },
+        {
+          "feature": "bedroom",
+          "confidence": "medium",
+          "photoIndex": 11
+        }
+      ],
+      "missing": [
+        "bathrooms"
+      ],
+      "note": "Terraza con pérgola, jardín y cochera; no hay fotos de los baños"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 27,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Coyoacán",
+          "minutes": 11,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque Acacias",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Acacias",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Crédito Constructor"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 10690000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 11
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "seen",
+        "basis": "photo_inference",
+        "feature": "terrace"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 279,
+        "m2DiffPct": 44,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": 11,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 27,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 143,
+        "m2DiffPct": 116,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": 11,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 27,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Hay otro anuncio en Minerva 73; este lleva 111 días, con terraza de pérgola y un m² 65% arriba de parecidos.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Crédito Constructor, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 11 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato; tiene terraza",
+          "status": "unknown",
+          "source": "conversation",
+          "basis": "photo_inference"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $65.7k/m² contra $39.8k/m² en 245 parecidos, arriba del rango de la zona.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el otro anuncio",
+          "payload": {
+            "question": "¿Este anuncio y el otro de Minerva 73 son la misma propiedad?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Con margen para negociar",
+      "badge": "+65% vs. parecidos",
+      "p10": 25500,
+      "p90": 58100,
+      "median": 39800,
+      "value": 65668,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿Por qué no hay fotos de los baños?",
+      "¿La pérgola cubre toda la terraza?"
+    ],
+    "extractedTags": [],
+    "address": "Minerva 73, Crédito Constructor, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "27 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Coyoacán",
+        "meta": "11 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Acacias",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

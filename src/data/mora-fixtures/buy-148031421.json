@@ -1,0 +1,280 @@
+{
+  "meta": {
+    "listingId": "buy-148031421",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148031421",
+      "address": "Xola 621, Del Valle Centro, Benito Juárez",
+      "street": "Xola 621",
+      "colonia": "Del Valle Centro",
+      "alcaldia": "Benito Juárez",
+      "addressRaw": "Xola 621, Del Valle Centro, Benito Juárez",
+      "zone": "Del Valle Centro",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 4400000,
+      "m2": 60,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": 1,
+      "agency": {
+        "name": "Casa Nativa Inmobiliaria",
+        "verified": false,
+        "rating": 4.4,
+        "reviews": 216,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 73333,
+      "comparablesCount": 88,
+      "comparablesMedianPerM2": 49000,
+      "comparablesP10PerM2": 31400,
+      "comparablesP90PerM2": 71500,
+      "diffVsMedianPct": 50,
+      "aboveRange": true,
+      "classification": "above_market",
+      "daysListed": 6,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.2,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 37,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 29,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 5
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 20
+        }
+      ],
+      "missing": [],
+      "note": "Cocina y baño; hay una sala con butacas"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 14,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro División del Norte",
+          "minutes": 16,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Plaza Cruz Roja",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Plaza Cruz Roja",
+        "minutes": 6,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Del Valle Centro"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "met",
+        "limit": 7500000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 2
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unmet",
+        "max": 10,
+        "value": 16
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": -8,
+        "m2DiffPct": -69,
+        "bedroomsDiff": -3,
+        "sameZone": false,
+        "metroMinutesThis": 16,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 14,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": -41,
+        "m2DiffPct": -53,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 16,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 14,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Recién publicado y dentro de tu presupuesto, pero en 60 m² el m² sale 50% arriba de parecidos en Del Valle Centro.",
+    "fit": {
+      "metCount": 2,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Del Valle Centro, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Bajo $7.5M",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 16 min",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $73.3k/m² contra $49k/m² de mediana en 88 parecidos, arriba del rango habitual.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por el estacionamiento",
+          "payload": {
+            "question": "¿El estacionamiento está incluido en el precio?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Arriba del mercado",
+      "badge": "+50% vs. parecidos",
+      "p10": 31400,
+      "p90": 71500,
+      "median": 49000,
+      "value": 73333,
+      "unit": "m2",
+      "aboveRange": true
+    },
+    "conversationPrompts": [
+      "¿La cocina es cerrada o abierta?",
+      "¿Cuánto es el mantenimiento?"
+    ],
+    "extractedTags": [],
+    "address": "Xola 621, Del Valle Centro, Benito Juárez",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "14 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro División del Norte",
+        "meta": "16 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Plaza Cruz Roja",
+        "meta": "6 min a pie"
+      }
+    ]
+  }
+}

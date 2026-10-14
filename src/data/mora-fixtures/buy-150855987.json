@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "listingId": "buy-150855987",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-150855987",
+      "address": "Homero, Polanco, Miguel Hidalgo",
+      "street": "Homero",
+      "colonia": "Polanco",
+      "alcaldia": "Miguel Hidalgo",
+      "addressRaw": "Homero, Polanco, Miguel Hidalgo",
+      "zone": "Polanco",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 12800000,
+      "m2": 265,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 2,
+      "agency": {
+        "name": "Nido Propiedades",
+        "verified": false,
+        "rating": 4.9,
+        "reviews": 325,
+        "replyMinutes": false,
+        "replyHours": 3
+      }
+    },
+    "market": {
+      "pricePerM2": 48302,
+      "comparablesCount": 184,
+      "comparablesMedianPerM2": 76800,
+      "comparablesP10PerM2": 49200,
+      "comparablesP90PerM2": 112100,
+      "diffVsMedianPct": -37,
+      "belowRange": true,
+      "classification": "review_before_visit",
+      "daysListed": 10,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.3,
+      "priceHistory": [
+        {
+          "daysAgo": 22,
+          "change": -900000
+        }
+      ],
+      "rankInSearchByPricePerM2": 18,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 28,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "bueno",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "verde",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": true,
+          "confidence": "medium"
+        },
+        {
+          "feature": "garden",
+          "confidence": "medium",
+          "photoIndex": 3
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 19
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 14
+        }
+      ],
+      "missing": [],
+      "note": "Jardín amplio y cocina"
+    },
+    "listingText": {
+      "extractedAttributes": [],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 18,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Metro Polanco",
+          "minutes": 6,
+          "mode": "a pie",
+          "category": "metro",
+          "reason": "search:nearMetro"
+        },
+        {
+          "name": "Parque America",
+          "minutes": 7,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque America",
+        "minutes": 7,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Polanco"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 5300000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 4
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "met",
+        "max": 10,
+        "value": 6
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "seen",
+        "basis": "photo_inference"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 167,
+        "m2DiffPct": 37,
+        "bedroomsDiff": -1,
+        "sameZone": false,
+        "metroMinutesThis": 6,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 18,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 71,
+        "m2DiffPct": 107,
+        "bedroomsDiff": 1,
+        "sameZone": false,
+        "metroMinutesThis": 6,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 18,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "En Polanco, 37% abajo de la mediana por m² y bajo el rango habitual; un número así merece revisión antes de ir.",
+    "fit": {
+      "metCount": 3,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Polanco, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro a 6 min",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, por las fotos",
+          "status": "met",
+          "source": "search",
+          "basis": "photo_inference"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $48.3k/m² contra $76.8k/m² de mediana en 184 parecidos; bajó $900k hace 22 días.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Confirmar los 265 m²",
+          "payload": {
+            "question": "¿Los 265 m² son de construcción?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Revisar antes de visitar",
+      "badge": "−37% vs. parecidos",
+      "p10": 49200,
+      "p90": 112100,
+      "median": 76800,
+      "value": 48302,
+      "unit": "m2",
+      "belowRange": true
+    },
+    "conversationPrompts": [
+      "¿Qué tan grande es el jardín de Homero?",
+      "¿Por qué bajó el precio?"
+    ],
+    "extractedTags": [],
+    "address": "Homero, Polanco, Miguel Hidalgo",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "18 min en auto"
+      },
+      {
+        "icon": "train",
+        "text": "Metro Polanco",
+        "meta": "6 min a pie"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque America",
+        "meta": "7 min a pie"
+      }
+    ]
+  }
+}

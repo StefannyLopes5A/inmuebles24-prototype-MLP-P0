@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "listingId": "buy-148018986",
+    "generatedBy": "curated",
+    "generatedAt": "2026-10-13",
+    "persona": "gold.userContext",
+    "language": "es-MX"
+  },
+  "factSheet": {
+    "listing": {
+      "id": "buy-148018986",
+      "address": "Terremoto 58, Jardines del Pedregal, Álvaro Obregón",
+      "street": "Terremoto 58",
+      "colonia": "Jardines del Pedregal",
+      "alcaldia": "Álvaro Obregón",
+      "addressRaw": "Terremoto 58, Jardines del Pedregal, Alvaro Obregón",
+      "zone": "Jardines del Pedregal",
+      "type": "departamento",
+      "operation": "venta",
+      "price": 8950000,
+      "m2": 210,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "parking": 2,
+      "agency": {
+        "name": "Umbral Desarrollos",
+        "verified": true,
+        "rating": 4.8,
+        "reviews": 248,
+        "replyMinutes": true,
+        "replyHours": null
+      }
+    },
+    "market": {
+      "pricePerM2": 42619,
+      "comparablesCount": 193,
+      "comparablesMedianPerM2": 55800,
+      "comparablesP10PerM2": 35700,
+      "comparablesP90PerM2": 81500,
+      "diffVsMedianPct": -24,
+      "classification": "opportunity",
+      "daysListed": 35,
+      "zoneMedianDaysToSell": 37,
+      "daysListedRatio": 0.9,
+      "priceHistory": [],
+      "rankInSearchByPricePerM2": 11,
+      "searchResultsCount": 40
+    },
+    "photos": {
+      "count": 16,
+      "detected": [
+        {
+          "feature": "condition",
+          "value": "para actualizar",
+          "confidence": "medium"
+        },
+        {
+          "feature": "light",
+          "value": "media",
+          "confidence": "medium"
+        },
+        {
+          "feature": "view",
+          "value": "interior",
+          "confidence": "medium"
+        },
+        {
+          "feature": "furnished",
+          "value": false,
+          "confidence": "medium"
+        },
+        {
+          "feature": "kitchen",
+          "confidence": "medium",
+          "photoIndex": 15
+        },
+        {
+          "feature": "bathroom",
+          "confidence": "medium",
+          "photoIndex": 16
+        }
+      ],
+      "missing": [],
+      "note": "Vacío, con cocina y baño al final"
+    },
+    "listingText": {
+      "extractedAttributes": [
+        "garden"
+      ],
+      "inconsistencies": []
+    },
+    "neighborhood": {
+      "poisRanked": [
+        {
+          "name": "Tu oficina en Reforma",
+          "category": "office",
+          "minutes": 17,
+          "mode": "en auto",
+          "reason": "declared:office"
+        },
+        {
+          "name": "Parque Luis Barragán",
+          "minutes": 11,
+          "mode": "a pie",
+          "category": "park",
+          "reason": "nearest:park"
+        }
+      ],
+      "nearestPark": {
+        "name": "Parque Luis Barragán",
+        "minutes": 11,
+        "mode": "a pie"
+      }
+    },
+    "fit": [
+      {
+        "key": "zone",
+        "source": "search",
+        "status": "unmet",
+        "value": "Jardines del Pedregal"
+      },
+      {
+        "key": "budget",
+        "source": "search",
+        "status": "unmet",
+        "limit": 7500000,
+        "overBy": 1450000
+      },
+      {
+        "key": "bedrooms",
+        "source": "search",
+        "status": "met",
+        "min": 2,
+        "value": 3
+      },
+      {
+        "key": "nearMetro",
+        "source": "search",
+        "status": "unknown",
+        "max": 10,
+        "value": null
+      },
+      {
+        "key": "furnished",
+        "source": "search",
+        "status": "unknown"
+      },
+      {
+        "key": "balcony",
+        "source": "conversation",
+        "status": "unknown"
+      }
+    ],
+    "comparisonWithFavorites": [
+      {
+        "favoriteId": "fav-torres-adalid",
+        "favoriteLabel": "Torres Adalid",
+        "favoriteListingId": "buy-148816386",
+        "priceDiffPct": 86,
+        "m2DiffPct": 9,
+        "bedroomsDiff": -2,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 25,
+        "similarity": "low"
+      },
+      {
+        "favoriteId": "fav-cuauhtemoc-661",
+        "favoriteLabel": "Cuauhtémoc 661",
+        "favoriteListingId": "buy-150922505",
+        "priceDiffPct": 19,
+        "m2DiffPct": 64,
+        "bedroomsDiff": 0,
+        "sameZone": false,
+        "metroMinutesThis": null,
+        "metroMinutesFavorite": 5,
+        "officeMinutesThis": 17,
+        "officeMinutesFavorite": 35,
+        "similarity": "low"
+      }
+    ],
+    "favoritesUnresolved": [
+      "fav-luz-savinon"
+    ]
+  },
+  "output": {
+    "synthesis": "Vacío y por actualizar en las fotos, a 24% menos por m² que parecidos en Jardines del Pedregal; queda $1.45M arriba de tu presupuesto.",
+    "fit": {
+      "metCount": 1,
+      "total": 6,
+      "criteria": [
+        {
+          "label": "Jardines del Pedregal, fuera de tus zonas",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "Arriba de $7.5M",
+          "status": "unmet",
+          "source": "search"
+        },
+        {
+          "label": "2+ rec.",
+          "status": "met",
+          "source": "search"
+        },
+        {
+          "label": "Metro, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Amueblado, sin dato",
+          "status": "unknown",
+          "source": "search"
+        },
+        {
+          "label": "Balcón, sin dato",
+          "status": "unknown",
+          "source": "conversation"
+        }
+      ]
+    },
+    "insights": [
+      {
+        "dimension": "market",
+        "text": "Pagas $42.6k/m² contra $55.8k/m² de mediana en 193 parecidos.",
+        "source": "market_data",
+        "confidence": "high",
+        "action": {
+          "type": "ask_agency",
+          "label": "Preguntar por la renovación",
+          "payload": {
+            "question": "¿Qué tanto hay que renovar en cocina y baño?"
+          }
+        }
+      }
+    ],
+    "marketRuler": {
+      "label": "Abajo del mercado",
+      "badge": "−24% vs. parecidos",
+      "p10": 35700,
+      "p90": 81500,
+      "median": 55800,
+      "value": 42619,
+      "unit": "m2"
+    },
+    "conversationPrompts": [
+      "¿El jardín del anuncio es privado?",
+      "¿Por qué está vacío?"
+    ],
+    "extractedTags": [],
+    "address": "Terremoto 58, Jardines del Pedregal, Álvaro Obregón",
+    "pois": [
+      {
+        "icon": "briefcase",
+        "text": "Tu oficina en Reforma",
+        "meta": "17 min en auto"
+      },
+      {
+        "icon": "tree",
+        "text": "Parque Luis Barragán",
+        "meta": "11 min a pie"
+      }
+    ]
+  }
+}

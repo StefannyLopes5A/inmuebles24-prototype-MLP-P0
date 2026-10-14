@@ -1,0 +1,415 @@
+{
+  "_meta": {
+    "descricao": "Exemplos de ouro da análise da Mora no mini listing do protótipo Inmuebles24. Cada exemplo tem a ficha de fatos (entrada, calculada por código) e a saída esperada (escrita pelo LLM e curada). Os antiexemplos mostram a saída atual e as regras que ela viola.",
+    "uso": "Usar como few-shot no prompt de geração, como referência de formato dos fixtures e como base dos testes do validador.",
+    "idiomaSaida": "es-MX",
+    "dadosIlustrativos": "Tempos até o escritório, posições no ranking da busca, nomes de parques marcados com [colchetes] e o endereço do exemplo de Narvarte são ilustrativos. Substituir pelos valores reais do protótipo.",
+    "versao": "1.0"
+  },
+
+  "userContext": {
+    "search": {
+      "zones": ["Narvarte Poniente"],
+      "maxPrice": 7500000,
+      "minBedrooms": 2,
+      "furnished": true,
+      "nearMetroMaxWalkMin": 10
+    },
+    "declaredInConversation": [
+      { "key": "balcony", "label": "Balcón", "quote": "quiero balcón" },
+      { "key": "office", "label": "Oficina en Reforma", "place": "Paseo de la Reforma" }
+    ],
+    "favorites": [
+      { "id": "fav-torres-adalid", "label": "Torres Adalid", "zone": "Narvarte Poniente", "price": 4800000, "bedrooms": 5, "m2": 193 },
+      { "id": "fav-cuauhtemoc-661", "label": "Cuauhtémoc 661", "zone": "Narvarte Poniente", "price": 5500000, "bedrooms": 3, "m2": 150 },
+      { "id": "fav-luz-savinon", "label": "Luz Saviñón", "zone": "Narvarte Poniente", "price": 6900000, "bedrooms": 2, "m2": 120 }
+    ],
+    "journeyStage": "comparing"
+  },
+
+  "examples": [
+    {
+      "id": "gold-narvarte-balcon",
+      "factSheet": {
+        "listing": {
+          "address": "[Endereço do protótipo], Narvarte Poniente",
+          "zone": "Narvarte Poniente",
+          "type": "departamento",
+          "operation": "venta",
+          "price": 5520000,
+          "m2": 167,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "parking": 1,
+          "agency": { "name": "[Imobiliária do protótipo]", "rating": 4.6, "reviews": 180, "responseLabel": "Responde en minutos por WhatsApp" }
+        },
+        "market": {
+          "pricePerM2": 33100,
+          "comparablesCount": 104,
+          "comparablesMedianPerM2": 43200,
+          "comparablesP10PerM2": 27600,
+          "comparablesP90PerM2": 63100,
+          "diffVsMedianPct": -23,
+          "classification": "opportunity",
+          "daysListed": 18,
+          "zoneMedianDaysToSell": 37,
+          "priceHistory": [{ "daysAgo": 7, "change": -150000 }],
+          "rankInSearchByPricePerM2": 3,
+          "searchResultsCount": 40
+        },
+        "photos": {
+          "count": 14,
+          "detected": [
+            { "feature": "balcony", "confidence": "medium", "photoIndex": 6, "note": "balcón con vista a la calle, luz de tarde" }
+          ],
+          "missing": []
+        },
+        "listingText": {
+          "extractedAttributes": [],
+          "inconsistencies": []
+        },
+        "neighborhood": {
+          "poisRanked": [
+            { "name": "Metro Etiopía", "category": "metro", "minutes": 1, "mode": "a pie", "reason": "search:nearMetro" },
+            { "name": "Tu oficina en Reforma", "category": "office", "minutes": 20, "mode": "en Metro", "reason": "declared:office" },
+            { "name": "Glorieta de Vértiz", "category": "park", "minutes": 12, "mode": "a pie", "reason": "nearest:park" }
+          ],
+          "nearestPark": { "name": "Glorieta de Vértiz", "minutes": 12, "mode": "a pie" }
+        },
+        "comparisonWithFavorites": [
+          { "favoriteId": "fav-torres-adalid", "similarity": "medium", "priceDiffPct": 15, "bedroomsDiff": -2, "sameZone": true, "metroMinutesFavorite": 8, "metroMinutesThis": 1 }
+        ]
+      },
+      "expectedOutput": {
+        "synthesis": "Bajó $150,000 hace una semana y ya cuesta 23% menos por m² que parecidos. Además, está a 1 min del Metro Etiopía y parece tener balcón, algo que pediste.",
+        "fit": {
+          "metCount": 5,
+          "total": 6,
+          "criteria": [
+            { "label": "Narvarte Poniente", "status": "met", "source": "search" },
+            { "label": "Bajo $7.5M", "status": "met", "source": "search" },
+            { "label": "2+ rec.", "status": "met", "source": "search" },
+            { "label": "Cerca del Metro", "status": "met", "source": "search" },
+            { "label": "Balcón", "status": "met", "source": "conversation", "basis": "photo_inference" },
+            { "label": "Amueblado, sin dato", "status": "unknown", "source": "search" }
+          ]
+        },
+        "insights": [
+          {
+            "dimension": "market",
+            "text": "Es de los 3 más baratos por m² en tu búsqueda: $33.1k/m² contra una mediana de $43.2k/m² en 104 parecidos.",
+            "source": "market_data",
+            "confidence": "high",
+            "ruler": { "p10": 27600, "p90": 63100, "median": 43200, "value": 33100, "unit": "m2" },
+            "action": { "type": "apply_sort", "label": "Ver los más baratos por m²", "payload": { "sort": "pricePerM2_asc" } }
+          },
+          {
+            "dimension": "comparison",
+            "text": "Frente a tu favorito en Torres Adalid: 15% más caro y con 2 recámaras menos, pero con el Metro a 1 min, no a 8.",
+            "source": "user_context",
+            "confidence": "high",
+            "favoriteIds": ["fav-torres-adalid"],
+            "action": { "type": "compare", "label": "Comparar los dos", "payload": { "ids": ["this", "fav-torres-adalid"] } }
+          },
+          {
+            "dimension": "photos",
+            "text": "Por las fotos, el balcón da a la calle y recibe luz de la tarde.",
+            "source": "photo_inference",
+            "confidence": "medium",
+            "action": { "type": "open_photo", "label": "Ver foto del balcón", "payload": { "photoIndex": 6 } }
+          }
+        ],
+        "pois": [
+          { "icon": "train", "text": "Metro Etiopía", "meta": "1 min a pie" },
+          { "icon": "briefcase", "text": "Tu oficina en Reforma", "meta": "20 min en Metro" },
+          { "icon": "tree", "text": "Glorieta de Vértiz", "meta": "12 min a pie" }
+        ],
+        "conversationPrompts": [
+          "¿Cómo es el ruido de la calle?",
+          "¿Qué mercados hay cerca?"
+        ],
+        "extractedTags": [
+          { "tag": "balcón", "type": "semantic", "source": "photo_inference", "action": { "type": "semantic_search", "label": "Ver más con balcón" } }
+        ]
+      }
+    },
+
+    {
+      "id": "gold-polanco-cocina",
+      "factSheet": {
+        "listing": {
+          "address": "Calle Monte Elbruz 105, Polanco II Sección",
+          "zone": "Polanco II Sección",
+          "type": "departamento",
+          "operation": "venta",
+          "price": 5700000,
+          "m2": 150,
+          "bedrooms": 4,
+          "bathrooms": 3,
+          "parking": 3,
+          "agency": { "name": "OMA Real Estate", "rating": 4.6, "reviews": 228, "responseLabel": "Responde en minutos por WhatsApp" }
+        },
+        "market": {
+          "pricePerM2": 38000,
+          "comparablesCount": 197,
+          "comparablesMedianPerM2": 48600,
+          "comparablesP10PerM2": 31100,
+          "comparablesP90PerM2": 71000,
+          "diffVsMedianPct": -22,
+          "classification": "opportunity",
+          "daysListed": 25,
+          "zoneMedianDaysToSell": 41,
+          "priceHistory": []
+        },
+        "photos": {
+          "count": 16,
+          "detected": [
+            { "feature": "kitchen_needs_renovation", "confidence": "medium", "photoIndex": 4, "note": "acabados antiguos en la cocina" },
+            { "feature": "good_condition_rest", "confidence": "medium", "note": "sala, recámaras y baños en buen estado" }
+          ],
+          "missing": []
+        },
+        "listingText": {
+          "extractedAttributes": [],
+          "inconsistencies": []
+        },
+        "neighborhood": {
+          "streetNoiseVsZone": "below_average",
+          "poisRanked": [
+            { "name": "Tu oficina en Reforma", "category": "office", "minutes": 15, "mode": "en auto", "reason": "declared:office" },
+            { "name": "Parque Lincoln", "category": "park", "minutes": 2, "mode": "a pie", "reason": "nearest:park" },
+            { "name": "Metro Polanco", "category": "metro", "minutes": 14, "mode": "a pie", "reason": "search:nearMetro" }
+          ],
+          "nearestPark": { "name": "Parque Lincoln", "minutes": 2, "mode": "a pie" }
+        },
+        "comparisonWithFavorites": [
+          { "favoriteId": "fav-cuauhtemoc-661", "similarity": "high", "priceDiffPct": 4, "bedroomsDiff": 1, "sameZone": false }
+        ]
+      },
+      "expectedOutput": {
+        "synthesis": "Cuesta 22% menos que parecidos en Polanco, probablemente porque la cocina parece pedir obra. Si no te molesta remodelar, es de los más accesibles de la zona.",
+        "fit": {
+          "metCount": 2,
+          "total": 6,
+          "criteria": [
+            { "label": "Bajo $7.5M", "status": "met", "source": "search" },
+            { "label": "2+ rec.", "status": "met", "source": "search" },
+            { "label": "Polanco, fuera de tus zonas", "status": "unmet", "source": "search" },
+            { "label": "Metro a 14 min", "status": "unmet", "source": "search" },
+            { "label": "Amueblado, sin dato", "status": "unknown", "source": "search" },
+            { "label": "Balcón, sin dato", "status": "unknown", "source": "conversation" }
+          ]
+        },
+        "insights": [
+          {
+            "dimension": "photos",
+            "text": "Por las fotos, la cocina tiene acabados antiguos; la sala, las recámaras y los baños parecen en buen estado.",
+            "source": "photo_inference",
+            "confidence": "medium",
+            "action": { "type": "open_photo", "label": "Ver fotos de la cocina", "payload": { "photoIndex": 4 } }
+          },
+          {
+            "dimension": "comparison",
+            "text": "Se parece a tu favorito en Cuauhtémoc 661: tamaño y precio casi iguales, con 1 recámara más, pero en Polanco.",
+            "source": "user_context",
+            "confidence": "high",
+            "favoriteIds": ["fav-cuauhtemoc-661"],
+            "action": { "type": "compare", "label": "Comparar los dos", "payload": { "ids": ["this", "fav-cuauhtemoc-661"] } }
+          },
+          {
+            "dimension": "neighborhood",
+            "text": "La calle es más tranquila que el promedio de Polanco II Sección, con el Parque Lincoln a 2 min a pie.",
+            "source": "market_data",
+            "confidence": "high",
+            "action": { "type": "apply_filter", "label": "Agregar Polanco a tu búsqueda", "payload": { "zones_add": ["Polanco II Sección"] } }
+          }
+        ],
+        "marketRuler": { "p10": 31100, "p90": 71000, "median": 48600, "value": 38000, "unit": "m2", "label": "Abajo del mercado", "badge": "−22% vs. parecidos" },
+        "pois": [
+          { "icon": "briefcase", "text": "Tu oficina en Reforma", "meta": "15 min en auto" },
+          { "icon": "tree", "text": "Parque Lincoln", "meta": "2 min a pie" },
+          { "icon": "train", "text": "Metro Polanco", "meta": "14 min a pie" }
+        ],
+        "conversationPrompts": [
+          "¿Cuánto costaría remodelar la cocina?",
+          "¿Cómo es Polanco comparado con Narvarte?"
+        ],
+        "extractedTags": [
+          { "tag": "para remodelar", "type": "semantic", "source": "photo_inference", "action": { "type": "semantic_search", "label": "Ver más para remodelar" } }
+        ]
+      }
+    },
+
+    {
+      "id": "gold-ticoman-caro",
+      "factSheet": {
+        "listing": {
+          "address": "Av. Acueducto 833, Candelaria Ticomán, Gustavo A. Madero",
+          "addressRaw": "Av Acueducto 833, Candelaria Ticoman, Gustavo A, Barrio Candelaria TicomAn",
+          "zone": "Candelaria Ticomán",
+          "type": "departamento",
+          "operation": "venta",
+          "price": 11385000,
+          "m2": 300,
+          "bedrooms": 3,
+          "bathrooms": 4,
+          "parking": 2,
+          "agency": { "name": "CDMX Desarrolladores", "verified": true, "rating": 4.7, "reviews": 197, "responseLabel": "Suele responder en 3 h" }
+        },
+        "market": {
+          "pricePerM2": 38000,
+          "comparablesCount": 92,
+          "comparablesMedianPerM2": 24900,
+          "comparablesP10PerM2": 15900,
+          "comparablesP90PerM2": 36400,
+          "diffVsMedianPct": 53,
+          "aboveRange": true,
+          "classification": "negotiable",
+          "daysListed": 112,
+          "zoneMedianDaysToSell": 37,
+          "daysListedRatio": 3.0,
+          "priceHistory": []
+        },
+        "photos": {
+          "count": 15,
+          "detected": [
+            { "feature": "open_city_view", "confidence": "medium", "photoIndex": 2, "note": "vista abierta desde la sala" },
+            { "feature": "dark_photos", "confidence": "medium", "note": "fotos oscuras; la luz real es difícil de juzgar" }
+          ],
+          "missing": ["kitchen"],
+          "openViewRankInSearch": "uno de 3 con vista abierta en 40 resultados"
+        },
+        "listingText": {
+          "extractedAttributes": [],
+          "inconsistencies": []
+        },
+        "neighborhood": {
+          "poisRanked": [
+            { "name": "Tu oficina en Reforma", "category": "office", "minutes": 45, "mode": "en auto", "reason": "declared:office" },
+            { "name": "[Parque más cercano]", "category": "park", "minutes": 9, "mode": "a pie", "reason": "nearest:park" }
+          ],
+          "nearestPark": { "name": "[Parque más cercano]", "minutes": 9, "mode": "a pie" }
+        },
+        "comparisonWithFavorites": [
+          { "favoriteId": "all", "similarity": "low", "sameZone": false, "favoritesOfficeMinutes": 20, "thisOfficeMinutes": 45 }
+        ]
+      },
+      "expectedOutput": {
+        "synthesis": "Cuesta 53% más por m² que parecidos y lleva 112 días sin venderse, tres veces lo normal. Tiene vista abierta, pero queda lejos de lo que sueles buscar.",
+        "fit": {
+          "metCount": 1,
+          "total": 6,
+          "criteria": [
+            { "label": "2+ rec.", "status": "met", "source": "search" },
+            { "label": "Fuera de tus zonas", "status": "unmet", "source": "search" },
+            { "label": "$3.9M arriba de tu presupuesto", "status": "unmet", "source": "search" },
+            { "label": "Lejos del Metro", "status": "unmet", "source": "search" },
+            { "label": "Amueblado, sin dato", "status": "unknown", "source": "search" },
+            { "label": "Balcón, sin dato", "status": "unknown", "source": "conversation" }
+          ]
+        },
+        "insights": [
+          {
+            "dimension": "market",
+            "text": "El precio probablemente explica el tiempo publicado: $38k/m² contra una mediana de $24.9k/m², por encima de todo el rango de la zona.",
+            "source": "market_data",
+            "confidence": "high",
+            "ruler": { "p10": 15900, "p90": 36400, "median": 24900, "value": 38000, "unit": "m2", "aboveRange": true },
+            "action": { "type": "semantic_search", "label": "Ver parecidos más baratos", "payload": { "similarTo": "this", "override": { "maxPricePerM2": 24900 } } }
+          },
+          {
+            "dimension": "photos",
+            "text": "Por las fotos, tiene vista abierta desde la sala. Son oscuras, así que la luz real es difícil de juzgar, y no hay ninguna de la cocina.",
+            "source": "photo_inference",
+            "confidence": "medium",
+            "action": { "type": "ask_agency", "label": "Pedir fotos de la cocina", "payload": { "question": "¿Me pueden compartir fotos de la cocina?" } }
+          },
+          {
+            "dimension": "comparison",
+            "text": "Es distinto a lo que sueles guardar: tus favoritos están a unos 20 min de tu oficina; este queda a 45 min.",
+            "source": "user_context",
+            "confidence": "high",
+            "action": { "type": "compare", "label": "Comparar con tus favoritos", "payload": { "ids": ["this", "favorites"] } }
+          }
+        ],
+        "pois": [
+          { "icon": "briefcase", "text": "Tu oficina en Reforma", "meta": "45 min en auto" },
+          { "icon": "tree", "text": "[Parque más cercano]", "meta": "9 min a pie" }
+        ],
+        "conversationPrompts": [
+          "¿Por qué crees que no se ha vendido?",
+          "¿Qué tan seguido baja el precio en la zona?"
+        ],
+        "extractedTags": [
+          { "tag": "vista abierta", "type": "semantic", "source": "photo_inference", "action": { "type": "semantic_search", "label": "Ver más con vista abierta" } }
+        ]
+      }
+    }
+  ],
+
+  "antiExamples": [
+    {
+      "relatedGoldId": "gold-narvarte-balcon",
+      "currentOutput": {
+        "synthesis": "Cuesta 23% menos por m² que parecidos y por las fotos, parece tener balcón.",
+        "neighborhoodHeadline": "4 parques en la zona; el más cercano queda a 8 min.",
+        "pois": ["Metro Etiopía, 1 min", "Glorieta de Vértiz, 12 min", "Woolworths, 1 min", "Starbucks, 2 min", "Consultorio Similares, 7 min"],
+        "favorites": "Se parece a tu favorito en Torres Adalid: misma zona, 15% más caro, con 2 recámaras menos.",
+        "photos": "Por las fotos, parece tener balcón."
+      },
+      "violations": [
+        "Síntese une dois fatos com 'y por las fotos' sem relação entre eles.",
+        "A síntese ignora a redução de $150,000 e o Metro a 1 min, os sinais mais fortes.",
+        "Não diz que o balcão é algo que a pessoa pediu.",
+        "O card de fotos repete a síntese.",
+        "Inconsistência: parque mais próximo 'a 8 min', mas a lista mostra 12 min.",
+        "Cinco pontos de interesse, com marcas genéricas e nenhum lugar declarado pela pessoa.",
+        "'Se parece' usado para uma comparação desfavorável (15% mais caro, 2 recámaras menos).",
+        "Encaixe com a busca ausente."
+      ]
+    },
+    {
+      "relatedGoldId": "gold-polanco-cocina",
+      "currentOutput": {
+        "synthesis": "Cuesta 22% menos por m² que parecidos, pero por las fotos, la cocina parece pedir obra.",
+        "neighborhoodHeadline": "Calle más tranquila que el promedio de Polanco II Sección, con parque a 5 min.",
+        "chips": ["los cafés de la zona", "el ruido nocturno"],
+        "favorites": "Se parece a tu favorito en Cuauhtemoc: tamaño y precio parecidos, precio parecido, con 1 recámara más.",
+        "photos": "Por las fotos, la cocina parece pedir obra."
+      },
+      "violations": [
+        "A síntese justapõe desconto e cozinha com 'pero'; o insight é a causa: o desconto provavelmente vem da cozinha.",
+        "Não diz que Polanco está fora das zonas buscadas.",
+        "O card de fotos repete a síntese.",
+        "Inconsistência: 'parque a 5 min', mas a lista mostra Parque Lincoln a 2 min.",
+        "'precio parecido' repetido na mesma frase: concatenação de template.",
+        "'Cuauhtemoc' sem acento: texto não normalizado.",
+        "Chips idênticos aos de outro imóvel e sem verbo: template, não análise.",
+        "Encaixe com a busca ausente."
+      ]
+    },
+    {
+      "relatedGoldId": "gold-ticoman-caro",
+      "currentOutput": {
+        "address": "Av Acueducto 833, Candelaria Ticoman, Gustavo A, Barrio Candelaria TicomAn",
+        "synthesis": "De los pocos resultados con vista abierta, pero por las fotos, no aparece la cocina.",
+        "marketSubtitle": "la zona vende en 37 días en promedio",
+        "neighborhoodHeadline": "5 parques en la zona; el más cercano queda a 9 min.",
+        "chips": ["los cafés de la zona", "el ruido nocturno"],
+        "favorites": "Es distinto a lo que sueles guardar: en otra zona.",
+        "photos": "Por las fotos, no aparece la cocina."
+      },
+      "violations": [
+        "Endereço cru: nome truncado, maiúscula errada e bairro duplicado.",
+        "A síntese ignora o sinal mais forte: 53% acima do mercado e 112 dias publicado.",
+        "'pero' liga dois fatos sem relação de contraste.",
+        "O mercado mostra os dois números, mas não conecta o tempo publicado ao preço.",
+        "'la zona vende en 37 días' é ambíguo: o certo é o tempo que um imóvel parecido leva para vender.",
+        "'en otra zona' para no meio: falta dizer o que isso significa para a pessoa (distância do escritório).",
+        "Avatares de favoritos num insight de diferença.",
+        "O card de fotos repete a síntese.",
+        "Encaixe com a busca ausente, embora o imóvel esteja fora da zona e do orçamento."
+      ]
+    }
+  ]
+}

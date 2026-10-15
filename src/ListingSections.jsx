@@ -37,10 +37,11 @@ export function MoreButton({open, onClick, more, less, controls}) {
 }
 
 export function Host({advertiser, onReviews, say}) {
+  const developer = advertiser.service === 'developer';
   return <div className="pp-host">
     {advertiser.logo ? <img className="pp-host-logo" src={advertiser.logo} alt=""/> : <span className="pp-host-logo is-initials" aria-hidden="true">{advertiser.initials}</span>}
     <div className="pp-host-copy">
-      <p className="pp-host-name">{say('Anunciado por', 'Publicado por')} <strong>{advertiser.name}</strong>{advertiser.verified && <span className="pp-host-verified" aria-label={say('Imobiliária verificada', 'Inmobiliaria verificada')}><Icon name="check" size={12}/></span>}</p>
+      <p className="pp-host-name">{developer ? say('Empreendimento de', 'Desarrollo de') : say('Anunciado por', 'Publicado por')} <strong>{advertiser.name}</strong>{advertiser.verified && <span className="pp-host-verified" aria-label={developer ? say('Incorporadora verificada', 'Desarrolladora verificada') : say('Imobiliária verificada', 'Inmobiliaria verificada')}><Icon name="check" size={12}/></span>}</p>
       <p className="pp-host-meta">
         <button type="button" className="pp-host-rating" onClick={onReviews}>★ {advertiser.rating.toFixed(1).replace('.', ',')} · {advertiser.reviews} {say('avaliações no Google', 'reseñas en Google')}</button>
         <span aria-hidden="true"> · </span>

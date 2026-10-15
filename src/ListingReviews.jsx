@@ -117,21 +117,23 @@ function Review({review, language, say}) {
 }
 
 /** The advertiser's reputation, told like a stay's: Google reviews mixed with visits booked through Mora. */
-export function ListingReviews({home, advertiser, language, say}) {
+export function ListingReviews({home, advertiser, language, say, compact = false}) {
   const [all, setAll] = useState(false);
+  const [details, setDetails] = useState(false);
   const reduce = useReducedMotion();
   const hero = useRef(null);
-  const inView = useInView(hero, {once:true, amount:0.6});
+  const inView = useInView(hero, {once:true, amount:compact ? 0 : 0.6}) || compact;
   const n = seed(`${advertiser.name.toLowerCase()}:aspects`);
   const visits = 12 + n % 48;
   const reviews = useMemo(() => advertiserReviews(advertiser, home.mode, TOTAL).map((review, i) => ({...review, source:(i + n) % 3 === 1 ? 'mora' : 'google'})), [advertiser, home.mode, n]);
   const tags = useMemo(() => {
     const total = advertiser.reviews + visits;
-    return TAGS.map(tag => ({...tag, rank:seed(`${advertiser.name.toLowerCase()}:${tag.id}`)}))
-      .sort((a, b) => a.rank - b.rank).slice(0, TAGS_SHOWN)
+    const pool = compact ? TAGS : TAGS.slice();
+    return pool.map(tag => ({...tag, rank:seed(`${advertiser.name.toLowerCase()}:${tag.id}`)}))
+      .sort((a, b) => a.rank - b.rank).slice(0, compact ? TAGS.length : TAGS_SHOWN)
       .map((tag, i) => ({...tag, mentions:Math.max(3, Math.round(total * (0.58 - i * 0.09 - (tag.rank % 5) / 100)))}))
       .sort((a, b) => b.mentions - a.mentions);
-  }, [advertiser.name, advertiser.reviews, visits]);
+  }, [advertiser.name, advertiser.reviews, visits, compact]);
   const spread = useMemo(() => {
     const five = Math.round(100 * Math.min(0.94, 0.62 + (advertiser.rating - 4.6) * 0.9));
     const four = Math.round((100 - five) * 0.72), three = Math.round((100 - five - four) * 0.6);
@@ -139,6 +141,7 @@ export function ListingReviews({home, advertiser, language, say}) {
     return [five, four, three, two, Math.max(0, 100 - five - four - three - two)];
   }, [advertiser.rating]);
   const top = advertiser.rating >= 4.8;
+  const developer = advertiser.service === 'developer';
   const total = advertiser.reviews + visits;
   const [a, b] = tags;
   const pick = tag => say(...tag.phrase);
@@ -146,45 +149,64 @@ export function ListingReviews({home, advertiser, language, say}) {
     `De ${total} avaliações, ${share(a.mentions, total, say)} diz que ${pick(a)}, e ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre as mais bem avaliadas de ${home.area}; ${visits} dessas avaliações são de visitas feitas com a Mora.`,
     `De ${total} reseñas, ${share(a.mentions, total, say)} dice que ${pick(a)}, y ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre las mejor calificadas de ${home.area}; ${visits} de esas reseñas son de visitas hechas con Mora.`,
   );
-  const shown = all ? reviews : reviews.slice(0, PREVIEW);
-  return <>
+  const shown = compact || all ? reviews : reviews.slice(0, PREVIEW);
+  const cloud = <div className="pp-rating-cloud">
+    <h3>{say('O que mais destacam', 'Lo que más destacan')}</h3>
+    <ul>{tags.map(tag => <li key={tag.id}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={tag.d}/></svg>
+      <span>{language === 'pt-BR' ? tag.label[0] : tag.label[1]}</span>
+    </li>)}</ul>
+  </div>;
+  const reviewList = <Expandable>
+    <div className="pp-reviews" id="pp-review-list">
+      <AnimatePresence initial={false}>
+        {shown.map((review, i) => <motion.div key={review.name + i} className="pp-review-cell"
+          initial={reduce ? {opacity:0} : {opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, transition:{duration:0.12}}}
+          transition={reduce ? {duration:0.15} : {duration:0.2, ease:EASE_FADE, delay:(i - PREVIEW) * 0.05}}>
+          <Review review={review} language={language} say={say}/>
+        </motion.div>)}
+      </AnimatePresence>
+    </div>
+  </Expandable>;
+  return <div className={compact ? 'pp-reviews-compact' : undefined}>
     <div className="pp-rating-hero" ref={hero}>
       <p className="pp-rating-score"><Laurel shown={inView} reduce={reduce}/><Score value={advertiser.rating} shown={inView} reduce={reduce}/><Laurel flip shown={inView} reduce={reduce}/></p>
       <motion.div initial={reduce ? {opacity:0} : {opacity:0, y:8}} animate={inView ? {opacity:1, y:0} : undefined}
         transition={reduce ? {duration:0.2} : {duration:0.3, ease:RISE_EASE, delay:0.35}}>
-      <h2 className="pp-rating-title">{top ? say('Imobiliária destaque', 'Inmobiliaria destacada') : say('Imobiliária recomendada', 'Inmobiliaria recomendada')}</h2>
+      <h2 className="pp-rating-title">{developer
+        ? (top ? say('Incorporadora destaque', 'Desarrolladora destacada') : say('Incorporadora recomendada', 'Desarrolladora recomendada'))
+        : (top ? say('Imobiliária destaque', 'Inmobiliaria destacada') : say('Imobiliária recomendada', 'Inmobiliaria recomendada'))}</h2>
       <MoraDigest key={`${advertiser.name}|${language}`} id={`${advertiser.name}|${language}`} total={total} summary={summary} shown={inView} say={say}/>
       </motion.div>
     </div>
-    <div className="pp-rating-row">
-      <div className="pp-rating-overall">
-        <h3>{say('Avaliação geral', 'Calificación general')}</h3>
-        <ol aria-label={say('Distribuição das notas', 'Distribución de calificaciones')}>{spread.map((share, i) => <li key={i}>
-          <small>{5 - i}</small><i aria-hidden="true"><b style={{width:`${share}%`}}/></i><span className="sr-only">{share}%</span>
-        </li>)}</ol>
-      </div>
-      <div className="pp-rating-tags">
-        <h3>{say('O que mais destacam', 'Lo que más destacan')}</h3>
-        <ul>{tags.map(tag => <li key={tag.id}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={tag.d}/></svg>
-          <span>{language === 'pt-BR' ? tag.label[0] : tag.label[1]}</span>
-          <small>{say(`${tag.mentions} menções`, `${tag.mentions} menciones`)}</small>
-        </li>)}</ul>
-      </div>
-    </div>
-    <Expandable>
-      <div className="pp-reviews" id="pp-review-list">
-        <AnimatePresence initial={false}>
-          {shown.map((review, i) => <motion.div key={review.name + i} className="pp-review-cell"
-            initial={reduce ? {opacity:0} : {opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, transition:{duration:0.12}}}
-            transition={reduce ? {duration:0.15} : {duration:0.2, ease:EASE_FADE, delay:(i - PREVIEW) * 0.05}}>
-            <Review review={review} language={language} say={say}/>
-          </motion.div>)}
-        </AnimatePresence>
-      </div>
-    </Expandable>
-    <button type="button" className="pp-pill pp-reviews-more" aria-expanded={all} aria-controls="pp-review-list" onClick={() => setAll(!all)}>
-      {all ? say('Mostrar menos avaliações', 'Mostrar menos reseñas') : say(`Mostrar as ${reviews.length} avaliações`, `Mostrar las ${reviews.length} reseñas`)}
-    </button>
-  </>;
+    {compact
+      ? <>
+          <button type="button" className="pp-reviews-reveal" aria-expanded={details} aria-controls="rp-review-more" onClick={() => setDetails(value => !value)}>
+            {details ? say('Ocultar avaliações', 'Ocultar reseñas') : say('Ver avaliações', 'Ver reseñas')}
+          </button>
+          {details && <div id="rp-review-more">{cloud}{reviewList}</div>}
+        </>
+      : <>
+          <div className="pp-rating-row">
+            <div className="pp-rating-overall">
+              <h3>{say('Avaliação geral', 'Calificación general')}</h3>
+              <ol aria-label={say('Distribuição das notas', 'Distribución de calificaciones')}>{spread.map((share, i) => <li key={i}>
+                <small>{5 - i}</small><i aria-hidden="true"><b style={{width:`${share}%`}}/></i><span className="sr-only">{share}%</span>
+              </li>)}</ol>
+            </div>
+            <div className="pp-rating-tags">
+              <h3>{say('O que mais destacam', 'Lo que más destacan')}</h3>
+              <ul>{tags.map(tag => <li key={tag.id}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={tag.d}/></svg>
+                <span>{language === 'pt-BR' ? tag.label[0] : tag.label[1]}</span>
+                <small>{say(`${tag.mentions} menções`, `${tag.mentions} menciones`)}</small>
+              </li>)}</ul>
+            </div>
+          </div>
+          {reviewList}
+          <button type="button" className="pp-pill pp-reviews-more" aria-expanded={all} aria-controls="pp-review-list" onClick={() => setAll(!all)}>
+            {all ? say('Mostrar menos avaliações', 'Mostrar menos reseñas') : say(`Mostrar as ${reviews.length} avaliações`, `Mostrar las ${reviews.length} reseñas`)}
+          </button>
+        </>}
+  </div>;
 }

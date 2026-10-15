@@ -26,3 +26,4 @@ export function cubicBezier(x1, y1, x2, y2) {
 
 export const easeInOut = cubicBezier(0.77, 0, 0.175, 1);
 export const easeOut = cubicBezier(0.23, 1, 0.32, 1);
+export const easeDrawer = cubicBezier(0.32, 0.72, 0, 1);

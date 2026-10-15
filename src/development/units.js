@@ -1,24 +1,47 @@
 import {SIDES} from './buildingConfig.js';
 import {MORA_ANSWERS, TYPOLOGIES, UNITS, unitById} from './torreOlmo.js';
 
-export const DEFAULT_FILTERS = Object.freeze({beds:null, maxPrice:null, view:null, onlyAvailable:true});
-export const PRICE_CAPS = [10000000, 13000000];
+export const DEFAULT_FILTERS = Object.freeze({beds:null, minPrice:null, maxPrice:null, views:[], floor:null, onlyAvailable:true});
+export const PRICE_BOUNDS = Object.freeze([Math.min(...UNITS.map(unit => unit.price)), Math.max(...UNITS.map(unit => unit.price))]);
+export const SORTS = ['floor', 'price', 'price-desc', 'size'];
 
 const fold = text => String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const viewsOf = filters => (filters.views?.length ? filters.views : filters.view ? [filters.view] : []);
+const ORDERS = {
+  floor:(a, b) => b.floor - a.floor || a.index - b.index,
+  price:(a, b) => a.price - b.price,
+  'price-desc':(a, b) => b.price - a.price,
+  size:(a, b) => b.size - a.size || b.floor - a.floor,
+};
+
+/** Price is a filter only when it actually cuts the inventory. */
+export function priceActive(filters, [lo, hi] = PRICE_BOUNDS) {
+  return (filters.minPrice != null && filters.minPrice > lo) || (filters.maxPrice != null && filters.maxPrice < hi);
+}
 
 /** Units that pass the 3D filters (bedrooms, price, view). "Solo disponibles" only trims the list. */
 export function unitMatches(filters = DEFAULT_FILTERS, units = UNITS) {
+  const views = viewsOf(filters);
   return new Set(units.filter(unit => (!filters.beds || unit.beds === filters.beds)
+    && (!filters.floor || unit.floor === filters.floor)
+    && (!filters.minPrice || unit.price >= filters.minPrice)
     && (!filters.maxPrice || unit.price <= filters.maxPrice)
-    && (!filters.view || unit.orientation === filters.view)).map(unit => unit.id));
+    && (!views.length || views.includes(unit.orientation))).map(unit => unit.id));
 }
 
-export const filtersActive = filters => !!(filters.beds || filters.maxPrice || filters.view);
+export const filtersActive = filters => !!(filters.beds || filters.floor || priceActive(filters) || viewsOf(filters).length);
 
 export function listedUnits(filters = DEFAULT_FILTERS, sort = 'floor', units = UNITS) {
   const matches = unitMatches(filters, units);
-  const order = {floor:(a, b) => b.floor - a.floor || a.side - b.side, price:(a, b) => a.price - b.price, size:(a, b) => b.size - a.size || b.floor - a.floor}[sort];
-  return units.filter(unit => matches.has(unit.id) && (!filters.onlyAvailable || unit.status === 'available')).sort(order);
+  return units.filter(unit => matches.has(unit.id) && (!filters.onlyAvailable || unit.status === 'available')).sort(ORDERS[sort] || ORDERS.floor);
+}
+
+/** 24 bins from the real unit prices, for the Unidades price panel. */
+export function priceHistogram(units = UNITS, bins = 24) {
+  const lo = PRICE_BOUNDS[0], hi = PRICE_BOUNDS[1], span = hi - lo || 1;
+  const counts = Array.from({length:bins}, () => 0);
+  for (const unit of units) counts[Math.min(bins - 1, Math.floor((unit.price - lo) / span * bins))] += 1;
+  return {lo, hi, counts};
 }
 
 export function groupByTypology(units) {
@@ -34,7 +57,7 @@ export function unitLine(unit, say, money) {
   if (sameView.length > 1 && sameView.every(item => item.perMeter >= unit.perMeter)) {
     lines.push(say(`É a unidade mais barata por m² entre as de vista ${view}.`, `Es la unidad más barata por m² entre las de vista ${view}.`));
   }
-  const twin = peers.filter(item => item.id !== unit.id && item.typology === unit.typology).sort((a, b) => Math.abs(a.floor - unit.floor) - Math.abs(b.floor - unit.floor))[0];
+  const twin = peers.filter(item => item.floor !== unit.floor && item.typology === unit.typology).sort((a, b) => Math.abs(a.floor - unit.floor) - Math.abs(b.floor - unit.floor))[0];
   if (twin) {
     const floors = Math.abs(twin.floor - unit.floor), diff = Math.abs(twin.price - unit.price);
     const up = twin.floor > unit.floor;

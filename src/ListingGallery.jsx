@@ -107,7 +107,7 @@ function TourPlayer({src, poster, say}) {
   </div>;
 }
 
-function GalleryIndex({home, gallery, focus, morph, closing, onClose, onClosed, say, language}) {
+export function GalleryIndex({home, gallery, focus, morph, closing, onClose, onClosed, say, language}) {
   const reduce = useReducedMotion();
   const pt = language === 'pt-BR';
   const shell = useRef(null), back = useRef(null);

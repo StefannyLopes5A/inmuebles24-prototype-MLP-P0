@@ -15,6 +15,7 @@ import {cardPhoto,morphFromListing,morphPending,morphToListing,settlePop} from '
 import {flushSync} from 'react-dom';
 
 import {homes,listingPrice} from './data';
+import {UNIT_HOMES, unitHomeById} from './development/torreOlmo.js';
 import {RecorridoShell} from './development/RecorridoShell.jsx';
 import {languages,useLanguage,translateKnownNote} from './i18n';
 import {normalizeSearch,matchingHomes,prototypeResults,readJourney,journeyUrl} from './journey';
@@ -25,8 +26,10 @@ export function Icon({name,size=20,...rest}){return <svg width={size} height={si
 const SESSION='inmuebles24-v2-session';
 function stored(){try{return JSON.parse(sessionStorage.getItem(SESSION))||{}}catch{return {}}}
 const initialRoute=()=>readJourney(window.location);
-const KNOWN_HOMES=new Set(homes.map(home=>home.id));
-const homesFor=ids=>ids.map(id=>homes.find(home=>home.id===id)).filter(Boolean);
+const KNOWN_HOMES=new Set([...homes.map(home=>home.id), ...UNIT_HOMES.map(home=>home.id)]);
+const lookupHome=id=>homes.find(home=>home.id===id)||unitHomeById(id);
+const homesFor=ids=>ids.map(lookupHome).filter(Boolean);
+const listingOf=home=>home?.unitOf?homes.find(item=>item.id===home.unitOf):home;
 export function App(){
  const {language,setLanguage,t}=useLanguage();const pt=language==='pt-BR';const say=(es,br)=>pt?br:es;
  const [route,setRoute]=useState(initialRoute);const {page,search,pref,propertyId,listId,map:mapMode='mini'}=route;
@@ -38,6 +41,7 @@ export function App(){
  const [compareView,setCompareView]=useState(()=>{const value=stored().compare;return {hidden:value?.hidden&&typeof value.hidden==='object'?value.hidden:{},seen:Array.isArray(value?.seen)?value.seen:[]}});
  const [account,setAccount]=useState(()=>({signedIn:stored().account?.signedIn===true})),[loginOpen,setLoginOpen]=useState(false);
  const [askPrompt,setAskPrompt]=useState(null);
+ const [recorridoUnitId,setRecorridoUnitId]=useState(null);
  const saved=savedIds(folders);
  const [toast,setToast]=useState(null),[folderToast,setFolderToast]=useState(null),[picker,setPicker]=useState(null);
  const lastSearchChange=useRef({time:0,keys:''});
@@ -66,8 +70,14 @@ export function App(){
  function updateSearch(next,label){const normalized=normalizeSearch(next);if(JSON.stringify(normalized)===JSON.stringify(search))return;const keys=Object.keys(normalized).filter(key=>JSON.stringify(normalized[key])!==JSON.stringify(search[key])).sort().join('|');const time=performance.now();const continuous=keys===lastSearchChange.current.keys&&time-lastSearchChange.current.time<600;const nextPage=page==='listing'||page==='compare'||page==='favorites'?'results':page;navigate({...route,page:nextPage,propertyId:null,search:normalized},{replace:continuous});lastSearchChange.current={time,keys};if(label)announce(label)}
  function changePref(next){navigate({...route,pref:next});announce(say('Preferencia actualizada. Los límites no cambiaron.','Preferência atualizada. Os limites não mudaram.'))}
  function begin(next){captureHomeTransition();navigate({page:'results',search:normalizeSearch(next),pref:'none',propertyId:null},{scroll:0})}
- function open(home,event){if(routeRef.current.propertyId&&routeRef.current.page!=='listing'){navigateListing(home.id);return;}panelOrigin.current=event?.currentTarget?.closest?.('.discovery-item')||null;navigate({...routeRef.current,propertyId:home.id},{layer:'detail'})}
- function navigateListing(id){navigate({...routeRef.current,propertyId:id},{replace:true,layer:'detail'})}
+ function open(home,event){
+  const listing=listingOf(home)||home;
+  setRecorridoUnitId(home.unitId||null);
+  if(home.unitOf){morphToListing(event?.currentTarget?.querySelector?.('.discovery-media')||cardPhoto(listing.id),()=>navigate({...routeRef.current,page:'listing',propertyId:listing.id},{layer:'listing',scroll:0}));return;}
+  if(routeRef.current.propertyId&&routeRef.current.page!=='listing'){navigateListing(listing.id);return;}
+  panelOrigin.current=event?.currentTarget?.closest?.('.discovery-item')||null;navigate({...routeRef.current,propertyId:listing.id},{layer:'detail'})
+ }
+ function navigateListing(id){const home=lookupHome(id);const listing=listingOf(home)||home;if(home?.unitId)setRecorridoUnitId(home.unitId);navigate({...routeRef.current,propertyId:listing.id},{replace:true,layer:'detail'})}
  function closeDetail(){if(history.state?.layer==='detail'){history.back()}else{navigate({...route,propertyId:null},{replace:true})}}
  function openDetails(){if(page==='listing'){window.scrollTo({top:0,behavior:'instant'});return;}
  // The full listing takes the panel's history entry, so going back lands on the results without reopening the panel.
@@ -86,7 +96,11 @@ export function App(){
    navigate({...routeRef.current,map:next},next==='full'?{layer:'map'}:{replace:true});
  }
  function openListingFromMap(home){morphToListing(cardPhoto(home.id),()=>navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0}))}
- function openListingFromCompare(home,event){morphToListing(event?.currentTarget?.querySelector?.('.discovery-media')||cardPhoto(home.id),()=>navigate({...routeRef.current,page:'listing',propertyId:home.id},{layer:'listing',scroll:0}))}
+ function openListingFromCompare(home,event){
+  const listing=listingOf(home)||home;
+  if(home.unitId)setRecorridoUnitId(home.unitId);
+  morphToListing(event?.currentTarget?.querySelector?.('.discovery-media')||cardPhoto(listing.id),()=>navigate({...routeRef.current,page:'listing',propertyId:listing.id},{layer:'listing',scroll:0}))
+ }
  function hideFromCompare(folderId,homeId){setCompareView(current=>({...current,hidden:{...current.hidden,[folderId]:[...new Set([...(current.hidden[folderId]||[]),homeId])]}}))}
  function showAllInCompare(folderId){setCompareView(current=>{const hidden={...current.hidden};delete hidden[folderId];return {...current,hidden}})}
  function markCompareSeen(folderId){setCompareView(current=>current.seen.includes(folderId)?current:{...current,seen:[...current.seen,folderId]})}
@@ -126,7 +140,7 @@ export function App(){
    showAccountToast(say('Disponible fuera de este prototipo','Disponível fora deste protótipo'));
  }
  const toastFolder=folderToast&&(folders.find(folder=>folder.id===folderToast.folderId)||(folderToast.removed?folderToast.folder:null));
- const toastHome=folderToast&&homes.find(home=>home.id===folderToast.homeId);
+ const toastHome=folderToast&&lookupHome(folderToast.homeId);
  function changeLanguage(next){const updated={...route,search:{...search,note:translateKnownNote(search.note,next)}};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated);setLanguage(next)}
  const exactIds=new Set(matchingHomes(search).map(home=>home.id));
  const visible=prototypeResults(search).sort((a,b)=>Number(exactIds.has(b.id))-Number(exactIds.has(a.id))||((pref==='extra'||pref==='separate')?Number(b.beds>=3)-Number(a.beds>=3):0)||(exactIds.has(a.id)?listingPrice(a)-listingPrice(b):0));
@@ -137,7 +151,7 @@ export function App(){
  const favoritesPage=page==='favorites'||(page==='compare'&&!activeFolder);
  const folderMeta=activeFolder?.pick?say(`${folderHomes.length} inmuebles lado a lado`,`${folderHomes.length} imóveis lado a lado`):activeFolder?.id===RECENT_ID?say(`${folderHomes.length} vistos en esta sesión`,`${folderHomes.length} vistos nesta sessão`):savedCountLabel(folderHomes.length,language);
  return <><HomeHeader results={page!=='home'} signedIn={account.signedIn} onAction={headerAction} onLogin={openLogin} onAccount={accountAction} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/>
- <main>{page==='home'?<div><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?selected.development?<Suspense fallback={<RecorridoShell home={selected}/>}><RecorridoPage key={selected.id} home={selected} saved={saved.includes(selected.id)} onLike={requestSave} onClose={returnFromListing} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})} profile={profile} onProfile={setProfile} onReceipt={addReceipt}/></Suspense>:<div className="search-flow-page home-evolution listing-route"><div><PropertyDetail key={selected.id} home={selected} search={search} pref={pref} favorites={homesFor(saved)} saved={saved} receipts={receipts} onLike={requestSave} onOpenListing={openListingFromCompare} onMore={()=>navigate({...routeRef.current,page:'results',propertyId:null},{scroll:0})} onFavorite={navigateListing} onCompare={compareWith} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} profile={profile} onProfile={setProfile} onReceipt={addReceipt}/></div></div>:favoritesPage?<FavoritesIndex folders={folders} recent={recent} onOpenFolder={id=>openFolder(id,true)} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} folderName={activeFolder.name} meta={folderMeta} homes={folderHomes} hiddenIds={(compareView.hidden[activeFolder.id]||[]).filter(id=>folderHomes.some(home=>home.id===id))} onHide={id=>hideFromCompare(activeFolder.id,id)} onShowAll={()=>showAllInCompare(activeFolder.id)} receipts={receipts} profile={profile} onProfile={setProfile} onReceipts={list=>setReceipts(current=>[...list,...current])} intro={!compareView.seen.includes(activeFolder.id)&&!folderHomes.some(home=>receipts.some(receipt=>receipt.propertyId===home.id))} onIntroSeen={()=>markCompareSeen(activeFolder.id)} onClose={returnFromCompare} onOpen={openListingFromCompare} backLabel={activeFolder.pick?say('Volver al inmueble','Voltar ao imóvel'):undefined}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} onFavorites={saved.length||recent.length?openFavorites:null} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:false,signedIn:account.signedIn,onLogin:openLogin,onAskMora:text=>setAskPrompt({text,id:Date.now()})}}/></div></div>:null}</main>
+ <main>{page==='home'?<div><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?selected.development?<Suspense fallback={<RecorridoShell home={selected}/>}><RecorridoPage key={selected.id} home={selected} savedIds={saved} initialUnitId={recorridoUnitId} onLike={requestSave} onClose={returnFromListing} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/></Suspense>:<div className="search-flow-page home-evolution listing-route"><div><PropertyDetail key={selected.id} home={selected} search={search} pref={pref} favorites={homesFor(saved)} saved={saved} receipts={receipts} onLike={requestSave} onOpenListing={openListingFromCompare} onMore={()=>navigate({...routeRef.current,page:'results',propertyId:null},{scroll:0})} onFavorite={navigateListing} onCompare={compareWith} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} profile={profile} onProfile={setProfile} onReceipt={addReceipt}/></div></div>:favoritesPage?<FavoritesIndex folders={folders} recent={recent} onOpenFolder={id=>openFolder(id,true)} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} folderName={activeFolder.name} meta={folderMeta} homes={folderHomes} hiddenIds={(compareView.hidden[activeFolder.id]||[]).filter(id=>folderHomes.some(home=>home.id===id))} onHide={id=>hideFromCompare(activeFolder.id,id)} onShowAll={()=>showAllInCompare(activeFolder.id)} receipts={receipts} profile={profile} onProfile={setProfile} onReceipts={list=>setReceipts(current=>[...list,...current])} intro={!compareView.seen.includes(activeFolder.id)&&!folderHomes.some(home=>receipts.some(receipt=>receipt.propertyId===home.id))} onIntroSeen={()=>markCompareSeen(activeFolder.id)} onClose={returnFromCompare} onOpen={openListingFromCompare} backLabel={activeFolder.pick?say('Volver al inmueble','Voltar ao imóvel'):undefined}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} onFavorites={saved.length||recent.length?openFavorites:null} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:false,signedIn:account.signedIn,onLogin:openLogin,onAskMora:text=>setAskPrompt({text,id:Date.now()})}}/></div></div>:null}</main>
  <AnimatePresence>{panelHome&&<ListingPanel key="listing-panel" home={panelHome} origin={panelOrigin.current} search={search} pref={pref} hasSearch={page!=='home'} favorites={homesFor(saved)} profile={profile} onProfile={setProfile} onReceipt={addReceipt} onClose={closeDetail} onNavigate={navigateListing} onDetails={openDetails}/>}</AnimatePresence>
  {page!=='compare'&&page!=='favorites'&&!isRecorrido&&<footer className="site-footer"><span>inmuebles24</span><p>{say('Prototipo V2 · Contacto simulado','Protótipo V2 · Contato simulado')}</p><div className="footer-controls"><select className="footer-language" aria-label={t('Idioma')} value={language} onChange={e=>changeLanguage(e.target.value)}>{languages.map(o=><option key={o.code} value={o.code}>{o.label}</option>)}</select></div></footer>}
 

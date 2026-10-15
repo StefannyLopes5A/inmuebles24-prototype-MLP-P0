@@ -5,11 +5,12 @@ import {LoginNudge} from './Account';
 import {FavoriteHeart} from './FavoriteHeart';
 import {ModalShell} from './ModalShell';
 import {homes, propertyPhoto} from './data';
+import {UNIT_HOMES} from './development/torreOlmo.js';
 import {useLanguage} from './i18n';
 import {FOLDER_NAME_MAX, RECENT_ID, savedCountLabel, viewedLabel} from './favoriteLists';
 import {EASE, EASE_OUT, riseIn} from './favoriteMotion';
 
-const homesById = new Map(homes.map(home => [home.id, home]));
+const homesById = new Map([...homes, ...UNIT_HOMES].map(home => [home.id, home]));
 const homesFor = ids => ids.map(id => homesById.get(id)).filter(Boolean);
 
 function useSay() {

@@ -162,7 +162,7 @@ for (const [roadIndex, road] of city.roads.entries()) {
     for (let t = 8; t < length - 8; t += 19) {
       for (const sideSign of [-1, 1]) {
         const seed = hash(`${roadIndex}:${i}:${t}:${sideSign}`);
-        const width = 14 + seed % 6, depth = 14 + (seed >> 4) % 10;
+        const width = 14 + seed % 6, depth = 14 + (seed >>> 4) % 10;
         const offset = road.w / 2 + 3 + depth / 2;
         const cx = ax + ux * t + nx * offset * sideSign, cz = az + uz * t + nz * offset * sideSign;
         if (Math.hypot(cx, cz) > RADIUS - 60) continue;
@@ -174,7 +174,7 @@ for (const [roadIndex, road] of city.roads.entries()) {
         if (!cells.length || cells.some(cell => occupied.has(cell))) continue;
         cells.forEach(cell => occupied.add(cell));
         const tall = seed % 23 === 0;
-        city.buildings.push({h:tall ? 36 + seed % 40 : 7 + (seed >> 8) % 20, p:corners, g:1});
+        city.buildings.push({h:tall ? 36 + seed % 40 : 7 + (seed >>> 8) % 20, p:corners, g:1});
         generated += 1;
       }
     }

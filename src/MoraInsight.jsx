@@ -3,7 +3,7 @@ import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
 import {homes, propertyPhoto} from './data';
 import {moraAnalysis} from './moraAnalysis';
 import {withFixture} from './moraFixture.js';
-import {developmentAnalysis} from './development/moraDevelopment.js';
+import {developmentAnalysis, unitAnalysis} from './development/moraDevelopment.js';
 import {EASE_FADE, MORA_LINE_SWAP, MORA_WORK, SPRING_SETTLE, SPRING_SIZE} from './listingPanelMotion';
 import {SOFT_MOTION} from './homeIntro.js';
 
@@ -47,7 +47,11 @@ function useMoraCycle(home, options, signature) {
     let alive = true;
     const timers = [];
     let analysis = null;
-    try { analysis = home.development ? developmentAnalysis(options) : withFixture(moraAnalysis(home, options), FIXTURES[home.id], options); } catch { analysis = null; }
+    try {
+      analysis = options?.unit
+        ? unitAnalysis(options.unit, options)
+        : home.development ? developmentAnalysis(options) : withFixture(moraAnalysis(home, options), FIXTURES[home.id], options);
+    } catch { analysis = null; }
     const lines = analysis?.workingLines || [];
     // The tiles take their final shape right away, as skeletons, so the panel never sits half empty while Mora works.
     const shape = (analysis?.modules || []).map(module => ({kind:module.kind, rows:module.items?.length || 0, avatars:module.favoriteIds?.length || 0}));
@@ -278,6 +282,17 @@ function PageReading({reading, delay, reduce, short, say, onAsk, onPhoto}) {
         aria-label={say(`Ver foto: ${row.title}`, `Ver foto: ${row.title}`)}><img src={row.photo.src} alt=""/></button>}
     </motion.li>)}</ul>
   </section>)}</div>;
+}
+
+/**
+ * Mora's card at the top of a full reading (listing page, development, unit): the mini-listing's sentence, so the
+ * reading is recognizable, then everything she found, with the evidence the panel had no room for.
+ */
+export function MoraOpening({reading, note, ...props}) {
+  return <div className="pp-mora">
+    <MoraInsight {...props} options={reading.options} signature={reading.signature} variant="page"/>
+    <p className="pp-mora-note">{note}</p>
+  </div>;
 }
 
 export function MoraInsight({home, options, signature, short, say, onFavorite, onCompare, onAsk, onPhoto, exclude, label, variant, onVerdict, detail, folded = false}) {

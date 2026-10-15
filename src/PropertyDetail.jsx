@@ -7,7 +7,7 @@ import agencies from '../AGENCY-SOURCES.json';
 import {advertiserFor} from './listingAdvertiser';
 import {listingStory, similarListings} from './listingStory';
 import {shortMoney} from './moraAnalysis';
-import {MoraInsight} from './MoraInsight';
+import {MoraOpening} from './MoraInsight';
 import {detailReading} from './moraDetail';
 import {ListingGallery} from './ListingGallery';
 import {Amenities, Description, Host, Location, Specs} from './ListingSections';
@@ -18,18 +18,6 @@ import './property-page.css';
 
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
 const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>;
-/**
- * Mora's card at the top of the reading column: the mini-listing's sentence, so the reading is recognizable, then
- * everything she found, with the evidence the panel had no room for.
- */
-function MoraOpening({home, reading, detail, short, say, onAsk, onPhoto}) {
-  return <div className="pp-mora">
-    <MoraInsight home={home} options={reading.options} signature={reading.signature} short={short} say={say} variant="page"
-      detail={detail} onAsk={onAsk} onPhoto={onPhoto}/>
-    <p className="pp-mora-note">{say('A Mora lê o anúncio, a zona e a sua busca. Confirme os detalhes com a imobiliária.', 'Mora lee el anuncio, la zona y tu búsqueda. Confirma los detalles con la inmobiliaria.')}</p>
-  </div>;
-}
-
 const NAV_SECTIONS = [
   {id:'pp-photos', pt:'Fotos', es:'Fotos'},
   {id:'pp-amenities', pt:'Comodidades', es:'Comodidades'},
@@ -187,6 +175,7 @@ export function PropertyDetail({home, search, pref = 'none', favorites = [], sav
       <section className="pp-section pp-mora-section" aria-labelledby="pp-mora-title">
         <h2 id="pp-mora-title" className="sr-only">{say('Análise da Mora', 'Análisis de Mora')}</h2>
         <MoraOpening home={home} reading={reading} detail={detail} short={short} say={say} onAsk={question => openContact('message', question)}
+          note={say('A Mora lê o anúncio, a zona e a sua busca. Confirme os detalhes com a imobiliária.', 'Mora lee el anuncio, la zona y tu búsqueda. Confirma los detalles con la inmobiliaria.')}
           onPhoto={(index, element) => openGallery.current?.(index, element)}/>
       </section>
 

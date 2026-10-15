@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { withNudgeUi } from "nudge-ui/vite";
 
-export default defineConfig({
+export default withNudgeUi(defineConfig({
   build: {
     outDir: "dist/client",
   },
@@ -17,4 +18,4 @@ export default defineConfig({
     },
   },
   plugins: [react()],
-});
+}));

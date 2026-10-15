@@ -95,8 +95,8 @@
 
 /* Mora's card opens the reading column with the mini-listing's surface: the same sentence, then what helps and what to weigh. */
 .pp-layout>.pp-intro{margin-bottom:32px}
-.pp .lp-mora.is-page .lp-mora-body{gap:12px;padding:20px 24px 24px}
-.pp .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:18px;line-height:26px;font-weight:500;letter-spacing:-.01em;text-wrap:pretty}
+.lp-mora.is-verdict.is-page .lp-mora-body{gap:12px;padding:20px 24px 24px}
+.lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:18px;line-height:26px;font-weight:500;letter-spacing:-.01em;text-wrap:pretty}
 .lp-read{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,256px),1fr));gap:24px 40px;margin-top:12px;padding-top:20px;border-top:1px solid #dddddd}
 .lp-read-group h3{margin:0 0 12px;font-size:14px;line-height:18px;font-weight:600;color:#6a6a6a}
 .lp-read-group ul{display:grid;gap:16px;margin:0;padding:0;list-style:none}
@@ -120,8 +120,8 @@
 .lp-bar.is-self>strong{color:#222}
 .lp-bar.is-self>i>b{background:#222}
 @media(max-width:520px){
-  .pp .lp-mora.is-page .lp-mora-body{padding:16px 20px 20px}
-  .pp .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:16px;line-height:24px}
+  .lp-mora.is-verdict.is-page .lp-mora-body{padding:16px 20px 20px}
+  .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:16px;line-height:24px}
   .lp-read-group li{gap:12px}
 }
 @media(forced-colors:active){.lp-bar>i>b{background:CanvasText}}

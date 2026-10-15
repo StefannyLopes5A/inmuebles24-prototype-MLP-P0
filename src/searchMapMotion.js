@@ -9,6 +9,9 @@ export function applyRect(el, rect) {
 }
 
 export function readRect(el) {
+  const top = parseFloat(el.style.top), left = parseFloat(el.style.left);
+  const width = parseFloat(el.style.width), height = parseFloat(el.style.height);
+  if ([top, left, width, height].every(Number.isFinite)) return {top, left, width, height};
   const box = el.getBoundingClientRect();
   return {top:box.top, left:box.left, width:box.width, height:box.height};
 }

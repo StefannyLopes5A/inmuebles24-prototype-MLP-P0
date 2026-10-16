@@ -8,7 +8,7 @@ import {BUILDING, floorAt, unitAt, unitId, unitIndex} from '../src/development/b
 import {UNITS, available, RANGES, TORRE_OLMO_HOME, GALLERY, TYPOLOGIES, UNIT_HOMES, developmentGallery, unitHomeId} from '../src/development/torreOlmo.js';
 import {DEFAULT_FILTERS, listedUnits, moraAnswer, moraIntent, priceHistogram, unitMatches} from '../src/development/units.js';
 import {easeDrawer, easeInOut, easeOut} from '../src/development/easing.js';
-import {nightFactor} from '../src/development/scene.js';
+import {CITY_PINS_DIST, cityPinsVisible, focusActive, nightFactor} from '../src/development/scene.js';
 import {developmentAnalysis, unitAnalysis} from '../src/development/moraDevelopment.js';
 
 const torre = homes.find(home => home.id === 'torre-olmo');
@@ -162,4 +162,24 @@ test('camera easing and night factor stay on the documented curves', () => {
   assert.equal(nightFactor(12), 0);
   assert.equal(nightFactor(21), 1);
   assert.ok(nightFactor(19) > 0 && nightFactor(19) < 1);
+});
+
+test('the tower dims around a hovered or selected home, never in the city or the window view', () => {
+  const home = UNITS[0];
+  assert.equal(focusActive({mode:'tower', hovered:home}), true);
+  assert.equal(focusActive({mode:'plan', selected:home}), true);
+  assert.equal(focusActive({mode:'tower', floor:4}), true);
+  assert.equal(focusActive({mode:'tower'}), false);
+  assert.equal(focusActive({mode:'city', hovered:home, selected:home}), false);
+  assert.equal(focusActive({mode:'tower', selected:home, windowView:{unit:home}}), false);
+});
+
+test('zooming out of the tower reveals neighbourhood pins before the city mode is chosen', () => {
+  assert.equal(cityPinsVisible({mode:'tower', dist:CITY_PINS_DIST}), true);
+  assert.equal(cityPinsVisible({mode:'tower', dist:CITY_PINS_DIST - 1}), false);
+  assert.equal(cityPinsVisible({mode:'tower', dist:160, wasVisible:true}), true);
+  assert.equal(cityPinsVisible({mode:'tower', dist:140, wasVisible:true}), false);
+  assert.equal(cityPinsVisible({mode:'city', dist:80}), true);
+  assert.equal(cityPinsVisible({mode:'plan', dist:400}), false);
+  assert.equal(cityPinsVisible({mode:'tower', dist:400, windowView:{}}), false);
 });

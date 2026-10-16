@@ -93,18 +93,21 @@
 .lp-mora-working{font-size:16px;line-height:22px;color:#000000b8}
 .lp-mora-synthesis{font-size:16px;line-height:22px;font-weight:500;letter-spacing:-.01em;color:#222;text-wrap:pretty}
 /* Mora's own tile: thinking sweeps the comparison's orange→blue gradient, then the sentence inks in word by word. */
-/* Outer boxes spring to the measured inner height (MoraInsight), so they clip while resizing. */
-.lp-mora-card{overflow:hidden;border-radius:16px;background:#f7f7f7}
-.lp-mora-body{display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px}
+/* Mora sits in the column, not in a box. The wrapper only springs to the measured inner height, so it clips while resizing; the 4px inset keeps focus rings out of the clip. */
+.lp-mora-card{overflow:hidden;margin:-4px}
+.lp-mora-body{display:flex;flex-direction:column;gap:16px;padding:4px}
+.lp-mora-lead{display:flex;flex-direction:column;gap:8px}
+.lp-mora-note{margin:0;font-size:13px;line-height:18px;color:#6a6a6a}
 .lp-mora-working>span{--sweep-base:#0000008f;background-image:linear-gradient(90deg,var(--sweep-base) 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,var(--sweep-base) 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-shimmer 1.8s linear infinite}
 @keyframes lp-shimmer{0%{background-position:100% 50%}60%,100%{background-position:0% 50%}}
 .lp-mora-synthesis[data-streaming] .lp-word{display:inline-block;animation-name:lp-ink;animation-timing-function:cubic-bezier(.25,.1,.25,1);animation-fill-mode:both}
 @keyframes lp-ink{from{opacity:0;transform:translateY(2px);filter:blur(2px)}to{opacity:1;transform:none;filter:blur(0)}}
+/* Only Mora's sentence carries the brand: one orange→blue pass, then rest. The facts under it stay ink. */
+.lp-mora-synthesis[data-shine]{background-image:linear-gradient(90deg,#222 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,#222 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-mora-shine 6s linear 400ms infinite}
+@keyframes lp-mora-shine{0%{background-position:100% 50%}14%,100%{background-position:0% 50%}}
+@media(prefers-reduced-motion:reduce),(forced-colors:active){.lp-mora-synthesis[data-shine]{animation:none;background:none;-webkit-text-fill-color:currentColor}}
 @media(forced-colors:active){.lp-mora-working>span{background:none;-webkit-text-fill-color:currentColor;animation:none}.lp-skel{background:GrayText;opacity:.4;animation:none}}
-/* Mini-listing verdict: a booking-panel surface that holds what Mora read in the listing; the actions live in the panel footer. The hairline is a shadow ring so it never adds to the sprung height. */
-.lp-mora.is-verdict .lp-mora-card{border-radius:20px;background:#fff;box-shadow:0 0 0 1px #dddddd,0 2px 6px rgba(0,0,0,.04),0 4px 8px rgba(0,0,0,.1)}
-.lp-mora.is-verdict .lp-mora-body{padding:20px 24px 16px}
-.lp-mora.is-verdict.is-folded .lp-mora-body{padding-bottom:20px}
+/* Mini-listing verdict: what Mora read in the listing, then the facts; the actions live in the panel footer. */
 .lp-mora.is-verdict .lp-mora-voice{position:relative;min-height:20px}
 .lp-mora.is-verdict :is(.lp-mora-synthesis,.lp-mora-working){line-height:20px;letter-spacing:0}
 .lp-mora.is-verdict .lp-mora-synthesis{color:#222}
@@ -113,8 +116,8 @@
 .lp-verdict-facts li:last-child{border-bottom:0}
 .lp-verdict-facts .lp-glyph{flex:none;color:#222}
 .lp-verdict-facts li>span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.lp-verdict-facts strong{font-size:16px;line-height:20px;font-weight:600;color:#222;font-variant-numeric:tabular-nums}
-.lp-verdict-facts li>span>span{font-size:14px;line-height:18px;font-weight:500;color:#6a6a6a}
+.lp-verdict-facts strong{font-size:14px;line-height:16px;font-weight:600;color:#222;font-variant-numeric:tabular-nums}
+.lp-verdict-facts li>span>span{font-size:14px;line-height:20px;font-weight:400;color:#6a6a6a}
 /* The summary is meant to read whole, so it drops the fade that cues a scroll. */
 .lp-phase-summary .lp-scroll{padding-top:20px;padding-bottom:8px;-webkit-mask-image:none;mask-image:none}
 .lp-phase-summary .lp-footer{padding-block:8px 20px}
@@ -127,7 +130,7 @@
 .lp-actions.is-verdict button:focus-visible{outline:2px solid #222;outline-offset:3px}
 @media(hover:hover) and (pointer:fine){.lp-verdict-talk:hover{background:#f05427}.lp-verdict-more:hover{background:#f7f7f7}}
 @media(prefers-reduced-motion:reduce){.lp-actions.is-verdict button{transition:background-color 150ms ease}.lp-actions.is-verdict button:active{transform:none}}
-@media(forced-colors:active){.lp-mora.is-verdict .lp-mora-card{outline:1px solid CanvasText;outline-offset:-1px}.lp-verdict-talk{border:1px solid ButtonText}}
+@media(forced-colors:active){.lp-verdict-talk{border:1px solid ButtonText}}
 /* Each module is a flat tinted tile, like the evidence in the map's Mora stack: the panel already carries the elevation. */
 .lp-modules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .lp-module-slot{overflow:hidden}
@@ -411,11 +414,10 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-shell[data-layout=sheet] .lp-flow{gap:16px}
 .lp-shell[data-layout=sheet] .lp-primary{flex-basis:100%}
 .lp-shell[data-layout=sheet] .lp-actions.is-summary .lp-secondary{gap:6px;padding-inline:8px;font-size:14px}
-/* Under the photo the verdict has to read whole: tighter frame and one-line facts that wrap only when long. */
-.lp-shell[data-layout=sheet] .lp-mora.is-verdict .lp-mora-body{padding:14px 16px 6px}
+/* Under the photo the verdict has to read whole: tighter rhythm and one-line facts that wrap only when long. */
+.lp-shell[data-layout=sheet] .lp-mora.is-verdict .lp-mora-body{gap:12px}
 .lp-shell[data-layout=sheet] .lp-phase-summary .lp-scroll{padding-bottom:6px}
 .lp-shell[data-layout=sheet] .lp-verdict-facts{margin-top:0}
-.lp-shell[data-layout=sheet] .lp-mora.is-verdict.is-folded .lp-mora-body{padding-bottom:14px}
 .lp-shell[data-layout=sheet] .lp-verdict-facts li{gap:14px;padding:4px 0}
 .lp-shell[data-layout=sheet] .lp-verdict-facts li>span{flex-flow:row wrap;align-items:baseline;column-gap:6px;row-gap:0}
 .lp-shell[data-layout=sheet] .lp-actions.is-verdict button{padding-inline:16px}

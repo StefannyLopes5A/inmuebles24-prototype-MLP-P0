@@ -247,16 +247,16 @@ function priceWidget({vision, search, stats, language, highlightLogin, scope = '
     layer: 'price',
     title,
     headline: moneyM2(value, language),
-    unit: 'MXN/m² mediana',
+    unit: 'MXN/m² · mediana',
     support: scope === 'city' ? null : (pt
-      ? `Com ${budgetLabel(search, language)} há ${count} apts. de ${beds} quartos aqui`
-      : `Con ${budgetLabel(search, language)} hay ${count} deptos de ${beds} rec. aquí`),
+      ? `Com ${budgetLabel(search, language)} há ${count} apts. de ${beds} quartos aqui.`
+      : `Con ${budgetLabel(search, language)} hay ${count} deptos de ${beds} rec. aquí.`),
     compare: scope === 'city'
       ? matchingColonias(search, undefined, 3).map(item => ({label: item.name, value: item.vision.medianPerM2}))
       : [
-          {label: vision.name, value: vision.medianPerM2},
-          {label: vision.neighborName, value: vision.neighborMedianPerM2},
-          {label: 'CDMX', value: CDMX_MEDIAN_M2},
+          {label: vision.name, value: vision.medianPerM2, current: true},
+          {label: vision.neighborName, value: vision.neighborMedianPerM2, current: false},
+          {label: 'CDMX', value: CDMX_MEDIAN_M2, current: false},
         ].filter(row => row.value),
     teaser: pt ? 'Referência para negociar' : 'Referencia para negociar',
     highlightLogin,
@@ -265,24 +265,23 @@ function priceWidget({vision, search, stats, language, highlightLogin, scope = '
 
 function trendWidget({vision, language, scope = 'colonia'}) {
   const pt = language === 'pt-BR';
-  const label = vision.trend.direction === 'up' ? (pt ? 'Sobe' : 'Sube')
-    : vision.trend.direction === 'down' ? (pt ? 'Desce' : 'Baja')
-    : (pt ? 'Estável' : 'Estable');
+  const direction = vision.trend.direction;
+  const statement = direction === 'up' ? (pt ? 'Sobe mais que a CDMX' : 'Sube más que CDMX')
+    : direction === 'down' ? (pt ? 'Cai frente à CDMX' : 'Baja frente a CDMX')
+    : (pt ? 'No ritmo da CDMX' : 'Al ritmo de CDMX');
+  const citySpark = scope === 'city' || scope === 'colonia' ? CITY_TREND_SPARK : null;
   return publicWidget({
     id: 'trend',
     kind: 'trend',
     layer: 'trend',
     title: pt ? 'Tendência do preço' : 'Tendencia del precio',
     kicker: pt ? '12 meses' : '12 meses',
-    headline: label,
-    support: vision.trend.direction === 'up'
-      ? (pt ? 'mais que a média da CDMX' : 'más que el promedio de CDMX')
-      : vision.trend.direction === 'down'
-        ? (pt ? 'abaixo da média da CDMX' : 'por debajo del promedio de CDMX')
-        : (pt ? 'no ritmo da CDMX' : 'al ritmo de CDMX'),
+    headline: statement,
+    statement: true,
     spark: vision.trend.spark,
-    citySpark: scope === 'city' || scope === 'colonia' ? CITY_TREND_SPARK : null,
-    direction: vision.trend.direction,
+    citySpark,
+    legend: citySpark ? {subject: scope === 'city' ? (pt ? 'Estas colônias' : 'Estas colonias') : vision.name, compare: 'CDMX'} : null,
+    direction,
     teaser: pt ? '% exato em 12 meses' : '% exacto en 12 meses',
   });
 }
@@ -404,12 +403,13 @@ function soilWidget({vision, language}) {
     layer: 'soil',
     title: pt ? 'Risco do solo' : 'Riesgo del suelo',
     headline: pt ? 'Zona lacustre' : 'Zona lacustre',
+    statement: true,
     bars: [
       {id: 'firm', label: pt ? 'Firme' : 'Firme', value: 28},
       {id: 'transition', label: pt ? 'Transição' : 'Transición', value: 46},
       {id: 'lake', label: pt ? 'Lacustre' : 'Lacustre', value: 78},
     ],
-    support: pt
+    note: pt
       ? `Leitura de ${vision.alcaldia}. Confirme com um especialista.`
       : `Lectura de ${vision.alcaldia}. Confirma con un especialista.`,
   };

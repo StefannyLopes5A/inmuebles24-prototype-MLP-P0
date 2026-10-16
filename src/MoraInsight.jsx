@@ -234,9 +234,17 @@ function Places({items}) {
 }
 
 function Words({text, instant, ref}) {
-  return <p ref={ref} key="synthesis" className="lp-mora-synthesis" data-streaming={instant ? undefined : true}>{text.split(/\s+/).map((word, i) => <React.Fragment key={i}>
+  const words = text.split(/\s+/);
+  const [streaming, setStreaming] = useState(!instant);
+  useEffect(() => {
+    if (!streaming) return undefined;
+    const timer = setTimeout(() => setStreaming(false), (words.length - 1) * SOFT_MOTION.wordStep + SOFT_MOTION.fade);
+    return () => clearTimeout(timer);
+  }, [streaming, words.length]);
+  // The brand shine clips to the sentence's text, which the inked words (their own layers while animating) would escape, so it starts once they land.
+  return <p ref={ref} key="synthesis" className="lp-mora-synthesis" data-streaming={streaming || undefined} data-shine={streaming ? undefined : true}>{words.map((word, i) => <React.Fragment key={i}>
     {i > 0 && ' '}
-    <span className="lp-word" style={instant ? undefined : {animationDelay:`${i * SOFT_MOTION.wordStep}ms`, animationDuration:`${SOFT_MOTION.fade}ms`}}>{word}</span>
+    <span className="lp-word" style={streaming ? {animationDelay:`${i * SOFT_MOTION.wordStep}ms`, animationDuration:`${SOFT_MOTION.fade}ms`} : undefined}>{word}</span>
   </React.Fragment>)}</p>;
 }
 
@@ -275,8 +283,10 @@ function PageReading({reading, delay, reduce, short, say, onAsk, onPhoto}) {
       <div className="lp-read-copy">
         <strong>{row.title}</strong>
         {row.bars && <PriceBars bars={row.bars} delay={delay + 0.2} reduce={reduce} short={short}/>}
-        {row.note && <span>{row.note}</span>}
-        {row.ask && onAsk && <button type="button" className="lp-tile-action" onClick={() => onAsk(row.ask.question)}>{row.ask.label}</button>}
+        {(row.note || (row.ask && onAsk)) && <span>
+          {row.note}
+          {row.ask && onAsk && <>{row.note && '. '}<button type="button" className="lp-tile-action" onClick={() => onAsk(row.ask.question)}>{row.ask.label}</button></>}
+        </span>}
       </div>
       {row.photo && onPhoto && <button type="button" className="lp-read-photo" onClick={event => onPhoto(row.photo.index, event.currentTarget)}
         aria-label={say(`Ver foto: ${row.title}`, `Ver foto: ${row.title}`)}><img src={row.photo.src} alt=""/></button>}
@@ -288,14 +298,11 @@ function PageReading({reading, delay, reduce, short, say, onAsk, onPhoto}) {
  * Mora's card at the top of a full reading (listing page, development, unit): the mini-listing's sentence, so the
  * reading is recognizable, then everything she found, with the evidence the panel had no room for.
  */
-export function MoraOpening({reading, note, ...props}) {
-  return <div className="pp-mora">
-    <MoraInsight {...props} options={reading.options} signature={reading.signature} variant="page"/>
-    <p className="pp-mora-note">{note}</p>
-  </div>;
+export function MoraOpening({reading, ...props}) {
+  return <MoraInsight {...props} options={reading.options} signature={reading.signature} variant="page"/>;
 }
 
-export function MoraInsight({home, options, signature, short, say, onFavorite, onCompare, onAsk, onPhoto, exclude, label, variant, onVerdict, detail, folded = false}) {
+export function MoraInsight({home, options, signature, short, say, onFavorite, onCompare, onAsk, onPhoto, exclude, label, note, variant, onVerdict, detail, folded = false}) {
   const reduce = useReducedMotion();
   const state = useMoraCycle(home, options, signature);
   const ready = state.status === 'ready';
@@ -319,15 +326,18 @@ export function MoraInsight({home, options, signature, short, say, onFavorite, o
             <strong>Mora</strong>
             {label && <span className="lp-mora-label">{label}</span>}
           </p>
-          <div className="lp-mora-voice" aria-live="polite" aria-atomic="true">
-            <AnimatePresence mode={verdict ? 'popLayout' : 'wait'} initial={false}>
-              {!ready
-                ? <motion.p key={`line-${state.line}`} className="lp-mora-working" aria-hidden="true"
-                  initial={reduce ? {opacity:0} : {opacity:0, y:6}} animate={{opacity:1, y:0}} exit={reduce ? {opacity:0} : {opacity:0, y:-6}} transition={swap}>
-                  <span>{state.lines[state.line] || state.lines[0] || say('Analisando…', 'Analizando…')}</span>
-                </motion.p>
-                : <Words key="synthesis" text={verdict ? analysis.verdict.sentence : analysis.synthesis} instant={instant}/>}
-            </AnimatePresence>
+          <div className="lp-mora-lead">
+            <div className="lp-mora-voice" aria-live="polite" aria-atomic="true">
+              <AnimatePresence mode={verdict ? 'popLayout' : 'wait'} initial={false}>
+                {!ready
+                  ? <motion.p key={`line-${state.line}`} className="lp-mora-working" aria-hidden="true"
+                    initial={reduce ? {opacity:0} : {opacity:0, y:6}} animate={{opacity:1, y:0}} exit={reduce ? {opacity:0} : {opacity:0, y:-6}} transition={swap}>
+                    <span>{state.lines[state.line] || state.lines[0] || say('Analisando…', 'Analizando…')}</span>
+                  </motion.p>
+                  : <Words key="synthesis" text={verdict ? analysis.verdict.sentence : analysis.synthesis} instant={instant}/>}
+              </AnimatePresence>
+            </div>
+            {note && <p className="lp-mora-note">{note}</p>}
           </div>
           {/* Folded, the verdict keeps only its sentence; the card's height spring closes and reopens the space. */}
           <AnimatePresence initial={false}>{facts && ready && !folded && <motion.div key="facts" initial={{opacity:0}} animate={{opacity:1}}

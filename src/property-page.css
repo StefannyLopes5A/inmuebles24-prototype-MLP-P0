@@ -93,11 +93,10 @@
 .pp-host-meta{margin-top:2px!important;font-size:14px;line-height:20px;color:var(--pp-muted)}
 .pp-host-rating{padding:0;font:inherit;font-weight:600;color:var(--pp-ink);text-decoration:underline;text-decoration-color:transparent;text-underline-offset:2px;font-variant-numeric:tabular-nums;transition:text-decoration-color 150ms ease}
 
-/* Mora's card opens the reading column with the mini-listing's surface: the same sentence, then what helps and what to weigh. */
+/* Mora opens the reading column in the open, with the mini-listing's sentence, then what helps and what to weigh. */
 .pp-layout>.pp-intro{margin-bottom:32px}
-.lp-mora.is-verdict.is-page .lp-mora-body{gap:12px;padding:20px 24px 24px}
-.lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:18px;line-height:26px;font-weight:500;letter-spacing:-.01em;text-wrap:pretty}
-.lp-read{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,256px),1fr));gap:24px 40px;margin-top:12px;padding-top:20px;border-top:1px solid #dddddd}
+.lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:18px;line-height:20px;font-weight:500;letter-spacing:-.02em;text-wrap:pretty}
+.lp-read{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,256px),1fr));gap:24px}
 .lp-read-group h3{margin:0 0 12px;font-size:14px;line-height:18px;font-weight:600;color:#6a6a6a}
 .lp-read-group ul{display:grid;gap:16px;margin:0;padding:0;list-style:none}
 .lp-read-group li{display:flex;align-items:flex-start;gap:16px}
@@ -105,7 +104,7 @@
 .lp-read-copy{display:flex;flex:1;flex-direction:column;gap:2px;min-width:0}
 .lp-read-copy>strong{font-size:16px;line-height:24px;font-weight:600;color:#222;font-variant-numeric:tabular-nums}
 .lp-read-copy>span{font-size:14px;line-height:20px;color:#6a6a6a}
-.lp-read-copy .lp-tile-action{align-self:flex-start;margin-top:6px}
+.lp-read-copy .lp-tile-action{margin:0;font-weight:400;color:inherit;text-underline-offset:2px}
 .lp-read-photo{flex:none;width:56px;height:56px;padding:0;border-radius:8px;overflow:hidden;background:#f7f7f7;cursor:pointer}
 .lp-read-photo img{display:block;width:100%;height:100%;object-fit:cover;transition:filter 150ms ease}
 @media(hover:hover) and (pointer:fine){.lp-read-photo:hover img{filter:brightness(.88)}}
@@ -120,13 +119,10 @@
 .lp-bar.is-self>strong{color:#222}
 .lp-bar.is-self>i>b{background:#222}
 @media(max-width:520px){
-  .lp-mora.is-verdict.is-page .lp-mora-body{padding:16px 20px 20px}
-  .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:16px;line-height:24px}
+  .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:16px;line-height:20px;letter-spacing:-.01em}
   .lp-read-group li{gap:12px}
 }
 @media(forced-colors:active){.lp-bar>i>b{background:CanvasText}}
-.pp-mora-note{margin:12px 0 0;font-size:13px;line-height:18px;color:var(--pp-muted)}
-
 .pp-specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px var(--pp-gutter);margin:0;padding:0;list-style:none}
 .pp-specs li{display:flex;align-items:center;gap:12px;min-width:0}
 .pp-specs img,.pp-specs svg{flex:none;width:24px;height:24px}

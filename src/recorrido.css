@@ -29,11 +29,13 @@
   .discovery-media.is-development .discovery-video{transition:opacity 200ms var(--ease-in-out)}
 }
 
+/* Hero entry only: keep the cover opaque and hide the page root so the listing photo can land.
+   Do not apply while gallery-photo is morphing — the white index needs the root crossfade. */
 html:has(.recorrido-cover)::view-transition-group(listing-hero){overflow:visible;animation-duration:500ms;animation-timing-function:var(--ease-in-out)}
 html:has(.recorrido-cover)::view-transition-old(listing-hero){height:100%;object-fit:cover;overflow:visible;animation:none;opacity:0}
 html:has(.recorrido-cover)::view-transition-new(listing-hero){height:100%;object-fit:cover;overflow:visible;animation:none;opacity:1}
-html:has(.recorrido-cover)::view-transition-old(root){animation:none;opacity:1}
-html:has(.recorrido-cover)::view-transition-new(root){animation:none;opacity:0}
+html[data-hero-morph]:has(.recorrido-cover)::view-transition-old(root){animation:none;opacity:1}
+html[data-hero-morph]:has(.recorrido-cover)::view-transition-new(root){animation:none;opacity:0}
 html.is-recorrido-route .home-header{display:none!important}
 html.is-recorrido{height:100%}
 html.is-recorrido body,html.is-recorrido #root{height:100%;overflow:hidden}
@@ -132,7 +134,7 @@ html .recorrido-modes button[aria-checked=true] span{color:#fff}
 .rp-chrome .compare-back[aria-pressed=true]{color:#e32636}
 .rp-chrome .compare-back[aria-pressed=true] svg{fill:currentColor}
 .rp-stage{position:relative;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.rp-scroll{flex:1;min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;padding:68px var(--rp-side) 40px;overscroll-behavior:contain}
+.rp-scroll{flex:1;min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;padding:84px var(--rp-side) 40px;overscroll-behavior:contain}
 .rp-unit-layer{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;background:#fff;min-width:0}
 /* The mini-listing chat, whole: its lp-* pieces read the panel's gutter as --lp-pad. Only the frame is the tour's. */
 .rp-panel{--lp-pad:var(--rp-side);--lp-line:var(--rp-line)}

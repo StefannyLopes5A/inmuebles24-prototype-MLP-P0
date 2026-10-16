@@ -62,6 +62,7 @@ export default function RecorridoPage({home, savedIds = [], initialUnitId, onLik
   const [unitOrigin, setUnitOrigin] = useState(null);
   const [morphId, setMorphId] = useState(null);
   const [mode, setMode] = useState('tower');
+  const [cityPins, setCityPins] = useState(false);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sort, setSort] = useState('floor');
   const [hoverId, setHoverId] = useState(null);
@@ -108,7 +109,10 @@ export default function RecorridoPage({home, savedIds = [], initialUnitId, onLik
       onCityError:() => { town = true; settle(); },
       onHover:(hit, pointer) => handlers.current.hover?.(hit, pointer),
       onPick:hit => handlers.current.pick?.(hit),
-      onCamera:({azimuth}) => { if (compassRef.current) compassRef.current.style.transform = `rotate(${azimuth}rad)`; },
+      onCamera:({azimuth, cityPins:pins}) => {
+        if (compassRef.current) compassRef.current.style.transform = `rotate(${azimuth}rad)`;
+        if (pins != null) handlers.current.cityPins?.(pins);
+      },
     });
     sceneRef.current = scene;
     scene.setUnitStates(UNITS, null);
@@ -148,14 +152,15 @@ export default function RecorridoPage({home, savedIds = [], initialUnitId, onLik
   const labels = useMemo(() => {
     if (!city || windowId) return [];
     const items = [];
-    if (mode === 'city') for (const poi of city.pois) {
+    if (mode === 'city' || (mode === 'tower' && cityPins)) for (const poi of city.pois) {
       if (!LABEL_KINDS.has(poi.kind) || meters(poi) > 900) continue;
       items.push({id:`poi-${poi.name}-${poi.x}`, ...poiTag(poi, say), position:[poi.x, 14, poi.z], kind:poi.kind, highlighted:spotlight?.poi === poi.name});
     }
     if (pin) items.push(pin);
     return items;
-  }, [city, mode, windowId, pin, spotlight, pt]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [city, mode, cityPins, windowId, pin, spotlight, pt]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (!windowId) sceneRef.current?.setLabels(labels); }, [labels, windowId]);
+  handlers.current.cityPins = pins => { if (pins !== cityPins) setCityPins(pins); };
 
   const windowLabels = target => (city?.pois || []).filter(poi => LABEL_KINDS.has(poi.kind) && meters(poi) < 1300 && (target.side === 0 ? poi.z < -40 : poi.z > 40))
     .map(poi => ({id:`win-${poi.name}-${poi.x}`, ...poiTag(poi, say), position:[poi.x, 10, poi.z], kind:poi.kind}));

@@ -87,16 +87,17 @@
 .map-return:focus-visible{outline:3px solid #242b29;outline-offset:2px}
 @keyframes map-return-in{from{opacity:0;transform:translate(-50%,8px)}}
 @media(pointer:coarse){.map-return{height:44px}}
-.map-poi-filter{display:inline-flex;flex:none;align-items:center;gap:6px;height:36px;padding:0 12px 0 4px;border:0;border-radius:999px;background:#fff;color:#222;font:500 13px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 6px #00000026,0 0 0 1px #0000000d;cursor:pointer;transition:transform 160ms var(--map-ease-out),background-color 150ms ease,color 150ms ease}
+.map-poi-filter{display:inline-flex;flex:none;align-items:center;gap:6px;height:36px;padding:0 12px 0 4px;border-radius:999px;color:#222;font:500 13px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;cursor:pointer;transition:transform 160ms var(--map-ease-out),background-color 150ms ease,color 150ms ease}
 .map-poi-filter:active{transform:scale(.97)}
 .map-poi-filter:focus-visible{outline:3px solid #242b29;outline-offset:2px}
 .map-poi-filter-dot{display:grid;place-items:center;width:28px;height:28px;border:2px solid #fff;border-radius:50%;background:var(--poi-color);color:var(--poi-ink);box-sizing:border-box;transition:background-color 150ms ease,color 150ms ease}
 .map-poi-filter-count{color:#6f6f6f;font-variant-numeric:tabular-nums}
 .map-poi-filters-caption{display:inline-flex;flex:none;align-items:center;height:36px;padding:0 12px;border-radius:999px;background:#242b29;color:#fff;font:600 13px/1 'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;box-shadow:0 2px 6px #00000026}
 @media(pointer:coarse){.map-poi-filters-caption{height:44px}}
-.map-poi-filter[aria-pressed=false]{background:#f7f7f7;color:#6f6f6f}
+.map-poi-filter[aria-pressed=false]{background:#ffffff73;color:#6f6f6f}
 .map-poi-filter[aria-pressed=false] .map-poi-filter-dot{background:#e3e3e3;color:#8c8c8c}
-@media(hover:hover) and (pointer:fine){.map-poi-filter:hover{background:#f7f7f7}.map-poi-filter[aria-pressed=false]:hover{background:#efefef}}
+@media(hover:hover) and (pointer:fine){.map-poi-filter:hover{background:var(--glass-fill-hover)}.map-poi-filter[aria-pressed=false]:hover{background:var(--glass-fill)}}
+@media(prefers-reduced-transparency:reduce),(forced-colors:active){.map-poi-filter[aria-pressed=false]{background:#f7f7f7}}
 @media(pointer:coarse){.map-poi-filter{height:44px}}
 
 /* Listing card */

@@ -40,6 +40,10 @@ const ORBIT = {
   plan:{min:deg(26), max:deg(72), near:20},
 };
 const DURATION = {arrival:3.2, mode:1.2, focus:1.0, window:1.8, recenter:0.6};
+/** In tower mode, past this camera distance the neighbourhood pins appear and the city fades back in. */
+export const CITY_PINS_DIST = 180;
+const CITY_PINS_HIDE = 150;
+const CITY_REVEAL_FAR = 320;
 // Layer 1 is the only thing the bloom pass is allowed to see. Everything else is black in that pass.
 const BLOOM_LAYER = 1;
 const SKY = {day:new THREE.Color('#dde5ec'), dusk:new THREE.Color('#ead7c6'), night:new THREE.Color('#1e3358')};
@@ -69,6 +73,8 @@ const PODIUM_NIGHT = new THREE.Color('#3a4250');
 const GLAZING_MATERIAL = 'auto_18';
 const PANE_INSET = 0.22;
 const PANE_MIN_AREA = 0.8;
+// Share of colour and of emitted light the rest of the tower loses while a home is in focus.
+const FOCUS_STRENGTH = {color:0.8, glow:1};
 const GLASS_LIT = {day:new THREE.Color('#c5d0dc'), night:new THREE.Color('#ffd7b0')};
 const GLASS_DARK = {day:new THREE.Color('#7d8b9c'), night:new THREE.Color('#1c2838')};
 const GLASS_COLD = {day:new THREE.Color('#b7c4d4'), night:new THREE.Color('#8ea6c2')};
@@ -99,6 +105,20 @@ export function pickColdUnitIds(units) {
   const sold = units.filter(unit => unit.status === 'sold').sort((a, b) => a.index - b.index);
   const chosen = [sold[1], sold.at(-2)].filter(Boolean);
   return [...new Set(chosen.map(unit => unit.id))];
+}
+
+/** The rest of the tower dims while a home or a floor is in focus, in the tower and plan modes only. */
+export function focusActive({mode, windowView, hovered, selected, floor}) {
+  if (mode === 'city' || windowView) return false;
+  return !!(hovered || selected || floor);
+}
+
+/** Neighbourhood pins while zoomed out on the tower, or always in city mode. Hysteresis avoids flicker. */
+export function cityPinsVisible({mode, windowView, dist = 0, wasVisible = false}) {
+  if (windowView || mode === 'plan') return false;
+  if (mode === 'city') return true;
+  if (mode !== 'tower') return false;
+  return dist >= (wasVisible ? CITY_PINS_HIDE : CITY_PINS_DIST);
 }
 
 /** Depth of the glowing back wall, a short step from the pane toward the middle of the tower. */
@@ -237,6 +257,7 @@ export class DevelopmentScene {
     this.flight = null;
     this.tweens = new Map();
     this.labels = new Map();
+    this.cityPins = false;
     this.pointer = null;
     this.hovered = null;
     this.selected = null;
@@ -383,7 +404,8 @@ export class DevelopmentScene {
     return {
       uUnitState:{value:texture},
       uBase:{value:BUILDING.base}, uFloorH:{value:BUILDING.floorHeight}, uLevels:{value:BUILDING.levels}, uSplitZ:{value:BUILDING.splitZ}, uSplitX:{value:BUILDING.splitX},
-      uNight:{value:0}, uHover:{value:-1}, uSelected:{value:-1}, uPulse:{value:0}, uHoverLevel:{value:-1}, uCutY:{value:1e4},
+      uNight:{value:0}, uHover:{value:-1}, uSelected:{value:-1}, uPulse:{value:0}, uHoverLevel:{value:-1}, uCutY:{value:1e4}, uFocusMix:{value:0},
+      uFocusDim:{value:FOCUS_STRENGTH.color}, uFocusGlow:{value:FOCUS_STRENGTH.glow},
       uToModel:{value:new THREE.Matrix4()},
     };
   }
@@ -708,15 +730,20 @@ outgoingLight = mix(outgoingLight, diffuseColor.rgb, uNight);`,
         .replace('#include <common>', `#include <common>
 varying vec3 vModelPos;
 uniform sampler2D uUnitState;
-uniform float uBase, uFloorH, uLevels, uSplitZ, uSplitX, uCutY;`)
+uniform float uBase, uFloorH, uLevels, uSplitZ, uSplitX, uCutY, uHover, uSelected, uHoverLevel, uFocusMix, uFocusDim, uFocusGlow;`)
         .replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nif (vModelPos.y > uCutY) discard;')
         .replace('#include <color_fragment>', `#include <color_fragment>
 float level = floor((vModelPos.y - uBase) / uFloorH);
+float focusAway = uFocusMix;
 if (level >= 0.0 && level < uLevels) {
   float slot = (vModelPos.z < uSplitZ ? 0.0 : 2.0) + (vModelPos.x < uSplitX ? 0.0 : 1.0);
   float state = floor(texture2D(uUnitState, vec2((slot + 0.5) / ${UNITS_PER_FLOOR}.0, (level + 0.5) / uLevels)).r * 255.0 + 0.5);
   if (state > 2.5 && state < 3.5) diffuseColor.rgb *= 0.5;
-}`);
+  float home = level * ${UNITS_PER_FLOOR}.0 + slot;
+  if (abs(home - uHover) < 0.5 || abs(home - uSelected) < 0.5 || abs(level - uHoverLevel) < 0.5) focusAway = 0.0;
+}
+diffuseColor.rgb *= 1.0 - uFocusDim * focusAway;`)
+        .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= 1.0 - uFocusGlow * focusAway;');
     };
     material.customProgramCacheKey = () => 'torre-cut';
     material.needsUpdate = true;
@@ -1033,6 +1060,16 @@ if (level >= 0.0 && level < uLevels) {
     const floor = shownFloor ? Array.from({length:UNITS_PER_FLOOR}, (_, slot) => this.unitBoxes.get(first + slot)).filter(item => item && item !== selected) : [];
     this.hoverPass.selectedObjects = !outlined ? [] : floor.length ? floor : hovered && hovered !== selected ? [hovered] : [];
     this.selectPass.selectedObjects = outlined && selected ? [selected] : [];
+    this.unitUniforms.uHoverLevel.value = shownFloor ? shownFloor - 1 : -1;
+    this.refreshFocus(shownFloor);
+  }
+
+  refreshFocus(floor) {
+    const target = focusActive({mode:this.mode, windowView:this.windowView, hovered:this.hovered, selected:this.selected, floor}) ? 1 : 0;
+    if (target === this.focusTarget) return;
+    this.focusTarget = target;
+    const uniform = this.unitUniforms.uFocusMix;
+    this.tween('focus', uniform.value, target, 0.2, value => { uniform.value = value; }, easeOut);
   }
 
   // ----- Camera ---------------------------------------------------------------------------------------------
@@ -1502,10 +1539,24 @@ if (level >= 0.0 && level < uLevels) {
 
   reportCamera() {
     if (!this.callbacks.onCamera) return;
-    const az = this.windowView ? this.windowView.yaw : this.currentPose().az;
-    if (Math.abs((this.lastAz ?? 99) - az) < 0.01) return;
+    const pose = this.currentPose();
+    const az = this.windowView ? this.windowView.yaw : pose.az;
+    const dist = this.windowView ? 0 : pose.dist;
+    const azMoved = Math.abs((this.lastAz ?? 99) - az) >= 0.01;
+    const distMoved = Math.abs((this.lastDist ?? -1) - dist) >= 1;
+    if (!azMoved && !distMoved) return;
     this.lastAz = az;
-    this.callbacks.onCamera({azimuth:az});
+    this.lastDist = dist;
+    if (!this.windowView && this.mode === 'tower') this.syncCityReveal(dist);
+    const cityPins = cityPinsVisible({mode:this.mode, windowView:this.windowView, dist, wasVisible:this.cityPins});
+    this.cityPins = cityPins;
+    this.callbacks.onCamera({azimuth:az, dist, cityPins});
+  }
+
+  /** Softly undims the city as the tower camera pulls back, so the pins land on a readable neighbourhood. */
+  syncCityReveal(dist) {
+    if (this.tweens.has('dim')) return;
+    this.cityUniforms.uDim.value = 1 - smooth(CITY_PINS_DIST - 20, CITY_REVEAL_FAR, dist);
   }
 
   // ----- Loop -----------------------------------------------------------------------------------------------

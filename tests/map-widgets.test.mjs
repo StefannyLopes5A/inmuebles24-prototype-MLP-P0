@@ -57,6 +57,16 @@ test('stack never exceeds four widgets and follows city, colonia and home recipe
   assert.equal(colonia.widgets.length, 4);
   assert.deepEqual(colonia.widgets.map(widget => widget.id), ['summary', 'nearby', 'price', 'trend']);
   assert.equal(colonia.widgets[2].title, 'Precio en Narvarte Poniente');
+  assert.deepEqual(colonia.widgets[2].compare.map(row => row.current), [true, false, false]);
+  assert.equal(city.widgets[2].compare.some(row => row.current != null), false);
+  const trend = colonia.widgets[3];
+  assert.equal(trend.statement, true);
+  assert.equal(trend.support, undefined);
+  assert.deepEqual(trend.legend, {subject: 'Narvarte Poniente', compare: 'CDMX'});
+  const statements = {up: ['Sube más que CDMX', 'Sobe mais que a CDMX'], down: ['Baja frente a CDMX', 'Cai frente à CDMX'], flat: ['Al ritmo de CDMX', 'No ritmo da CDMX']};
+  assert.equal(trend.headline, statements[trend.direction][0]);
+  const trendPt = buildStack({level: 'colonia', colonia: 'Narvarte Poniente', search, language: 'pt-BR', session: {homes}}).widgets[3];
+  assert.equal(trendPt.headline, statements[trendPt.direction][1]);
   const nearby = colonia.widgets[1];
   assert.equal(nearby.kicker, 'a pie');
   assert.deepEqual(nearby.tiles.map(tile => tile.kind), ['transport', 'green', 'education', 'food']);

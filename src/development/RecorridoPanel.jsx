@@ -42,7 +42,7 @@ const ICONS = {
 };
 const specAsset = name => `/assets/mini-listing/${name}.svg`;
 const ease = [0.23, 1, 0.32, 1];
-const SCROLL_PAD = 68; // .rp-scroll padding-top — title rests under the toolbar
+const SCROLL_PAD = 84; // .rp-scroll padding-top — title rests under the toolbar
 const ROW_PAD = 10; // .rp-row padding-block — title starts on the label, not the row edge
 const ROW_RADIUS = 12;
 const TITLE_FROM = 16 / 28; // row label 16px grows into the 28px unit title
@@ -242,7 +242,7 @@ export function RecorridoPanel(props) {
                 label={chatUnit ? say(`Pergunte à Mora sobre a unidade ${chatUnit.id}`, `Pregúntale a Mora sobre la unidad ${chatUnit.id}`) : say('Pergunte à Mora sobre este empreendimento', 'Pregúntale a Mora sobre este desarrollo')}/>
               : <div className="pp-card-actions">
                 <button type="button" className="mini-primary" onClick={() => onOpenChat({from:'message'})}>{say('Falar com a incorporadora', 'Hablar con la desarrolladora')}</button>
-                <button type="button" className="mini-secondary" onClick={() => onOpenChat({from:'visit', visit:true})}>{visitLabel}</button>
+                {!(unitOpen && unit.status === 'sold') && <button type="button" className="mini-secondary" onClick={() => onOpenChat({from:'visit', visit:true})}>{visitLabel}</button>}
               </div>}
           </motion.div></AnimatePresence>
         </footer>
@@ -271,11 +271,9 @@ function SummaryView({home, say, onAmenity, onCityMode, onPhoto, onOpenChat, mod
           <li className="lp-specs-units"><span>{say(`${available.length} de ${UNITS.length} disponíveis`, `${available.length} de ${UNITS.length} disponibles`)}</span></li>
         </ul>
       </div>
-      <p className="rp-muted">{say(`Condomínio estimado a partir de ${formatMoney(DEVELOPMENT.maintenanceFrom)} MXN por mês`, `Mantenimiento estimado desde ${formatMoney(DEVELOPMENT.maintenanceFrom)} MXN al mes`)}</p>
     </section>
     <section className="rp-block rp-mora" aria-label="Mora">
-      <MoraInsight home={home} {...tourReading(home, language)} short={formatMoney} say={say} variant="verdict"/>
-      <p className="pp-mora-note">{moraNote(say)}</p>
+      <MoraInsight home={home} {...tourReading(home, language)} short={formatMoney} say={say} variant="verdict" note={moraNote(say)}/>
     </section>
     <section className="rp-block rp-amenities-block">
       <h2>{say('Amenidades', 'Amenidades')}</h2>
@@ -372,12 +370,11 @@ const viewPill = (views, say) => {
 
 function UnitsView({say, filters, onFilters, sort, onSort, hoverId, onHoverUnit, onUnit, reduce, selectedId}) {
   const list = listedUnits(filters, sort);
-  const baseline = listedUnits({...DEFAULT_FILTERS, onlyAvailable:filters.onlyAvailable}, sort).length;
   const groups = groupByTypology(list);
   const rowProps = unit => ({onMouseEnter:() => onHoverUnit(unit.id), onMouseLeave:() => onHoverUnit(null), onFocus:() => onHoverUnit(unit.id), onBlur:() => onHoverUnit(null), onClick:event => onUnit(unit.id, originFrom(event))});
   const from = units => units.filter(unit => unit.status === 'available').map(unit => unit.price);
   return <>
-    <UnitsBar say={say} filters={filters} onFilters={onFilters} sort={sort} onSort={onSort} list={list.length} baseline={baseline} reduce={reduce}/>
+    <UnitsBar say={say} filters={filters} onFilters={onFilters} sort={sort} onSort={onSort} list={list.length} baseline={UNITS.length} reduce={reduce}/>
     {groups.length ? groups.map(({type, units}) => {
       const prices = from(units);
       return <section key={type.id} className="rp-type">
@@ -441,8 +438,8 @@ function UnitsBar({say, filters, onFilters, sort, onSort, list, baseline, reduce
         controls={drawer} onToggle={() => toggle('sort')} onClear={() => { onSort('floor'); set({onlyAvailable:true}); if (open === 'sort') setOpen(null); }} say={say}/>
     </div>
     <div className="rp-count">
-      <p aria-live="polite">{active
-        ? <>{say(`${list} unidades`, `${list} unidades`)} <span>{say(`de ${baseline}`, `de ${baseline}`)}</span></>
+      <p aria-live="polite">{list < baseline
+        ? <>{list} <span>{say(`de ${baseline} unidades`, `de ${baseline} unidades`)}</span></>
         : say(`${list} unidades`, `${list} unidades`)}
       {active && <button type="button" className="rp-clear-link" onClick={() => { onFilters({...DEFAULT_FILTERS, onlyAvailable:filters.onlyAvailable}); setOpen(null); }}>{say('Limpar', 'Limpiar')}</button>}</p>
     </div>
@@ -630,8 +627,7 @@ function UnitLayer({unit, home, say, reduce, origin, morphId, onUnit, onHoverUni
               <span><strong>{value}</strong><small>{label}</small></span>
             </motion.li>)}</motion.ul>
             <motion.section className="rp-block rp-mora" variants={facts} aria-label={say('Mora sobre esta unidade', 'Mora sobre esta unidad')}>
-              <MoraInsight home={home} {...tourReading(home, language, unit)} short={formatMoney} say={say} variant="verdict" label={say('Sobre esta unidade', 'Sobre esta unidad')}/>
-              <p className="pp-mora-note">{moraNote(say)}</p>
+              <MoraInsight home={home} {...tourReading(home, language, unit)} short={formatMoney} say={say} variant="verdict" label={say('Sobre esta unidade', 'Sobre esta unidad')} note={moraNote(say)}/>
             </motion.section>
             <motion.section className="rp-block rp-plan" variants={facts}>
               <h2>{say('Planta', 'Planta')}</h2>

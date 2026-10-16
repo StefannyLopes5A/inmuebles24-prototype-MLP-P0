@@ -7,7 +7,10 @@ import {KIND_CATEGORY,POI_CATEGORY,poiIconUrl} from './poiCategories';
 const EASE = [0.23, 1, 0.32, 1];
 const MORA = '/assets/mini-listing/mora.svg';
 const READ_MS = 480;
+/** First read of a new scope waits for the map edge to start fading (`map-mora-edge`, 1440 ms). */
+const EDGE_READ_MS = 1080;
 const seenScopes = new Set();
+const seenEdges = new Set();
 const seenReadings = new Set();
 
 function LockIcon() {
@@ -48,6 +51,21 @@ function Spark({values, compare, direction}) {
     {compare?.length ? <polyline fill="none" stroke="#d0d0d0" strokeWidth="1.2" strokeDasharray="2.5 2.5" strokeLinecap="round" points={toPoints(compare)}/> : null}
     <polyline fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" points={toPoints(values)}/>
   </svg>;
+}
+
+function TrendArrow({direction}) {
+  const path = direction === 'down' ? 'M4 4l8 8M12 6v6H6' : direction === 'flat' ? 'M2 8h11M9 4l4 4-4 4' : 'M4 12l8-8M6 4h6v6';
+  return <svg className="map-widget-arrow" data-tone={direction} width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+    <path d={path} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>;
+}
+
+function SparkLegend({legend}) {
+  if (!legend) return null;
+  return <p className="map-widget-spark-legend">
+    <span><i data-line="solid"/>{legend.subject}</span>
+    <span><i data-line="dash"/>{legend.compare}</span>
+  </p>;
 }
 
 function Track({track}) {
@@ -93,7 +111,7 @@ function BarList({rows, poiOn, onTogglePoi, onPick}) {
     const icon = KIND_CATEGORY[row.kind] ? row.kind : null;
     const Tag = interactive ? 'button' : 'div';
     return <Tag key={row.id || row.kind || row.name || row.label} type={interactive ? 'button' : undefined} className="map-widget-bar"
-      data-icon={icon || undefined}
+      data-icon={icon || undefined} data-current={row.current == null ? undefined : String(row.current)}
       data-on={row.kind && poiOn?.has(row.kind) || undefined}
       onClick={event => {
         if (!interactive) return;
@@ -139,12 +157,17 @@ function CardVisual({widget, poiOn, onTogglePoi, onPickColonia}) {
     return <BarList rows={widget.bars} poiOn={poiOn} onTogglePoi={onTogglePoi}/>;
   }
   if (widget.compare) {
-    const max = Math.max(...widget.compare.map(row => row.value), 1);
+    const values = widget.compare.map(row => row.value);
+    const max = Math.max(...values, 1), base = Math.min(...values) * 0.8;
     return <BarList rows={widget.compare.map(row => ({
-      label: row.label, detail: `$${row.value.toLocaleString('es-MX')}`, value: Math.round((row.value / max) * 100),
+      label: row.label, detail: `$${row.value.toLocaleString('es-MX')}`, current: row.current,
+      value: Math.round(((row.value - base) / Math.max(1, max - base)) * 100),
     }))}/>;
   }
-  if (widget.spark) return <Spark values={widget.spark} compare={widget.citySpark} direction={widget.direction}/>;
+  if (widget.spark) return <div className="map-widget-trend">
+    <Spark values={widget.spark} compare={widget.citySpark} direction={widget.direction}/>
+    {widget.citySpark && <SparkLegend legend={widget.legend}/>}
+  </div>;
   if (widget.track) return <Track track={widget.track}/>;
   return null;
 }
@@ -204,7 +227,7 @@ function NearbyReading({tile, tiles, scope, reduce, language, onResize, onSelect
   const bone = ready ? '' : ' is-bone';
   return <>
     <div className={`map-widget-lead${bone}`} aria-busy={!ready || undefined}>
-      <h3 className={`map-widget-headline${mark}`}><span>{tile.headline}</span></h3>
+      <p className={`map-widget-statement${mark}`}><span>{tile.headline}</span></p>
       {tile.support && <p className={`map-widget-support${mark}`}><span>{tile.support}</span></p>}
       {!ready && <p className="map-widget-status" role="status">{language === 'pt-BR' ? 'A Mora está trazendo estes dados.' : 'Mora está trayendo estos datos.'}</p>}
     </div>
@@ -220,19 +243,17 @@ function NearbyReading({tile, tiles, scope, reduce, language, onResize, onSelect
   </>;
 }
 
-function WidgetCard({widget, index, active, hover, settling, signedIn, language, hoveredHomeLabel, readScope, reduce, onActivate, onHover, onOpen, onLogin, onTogglePoi, onPickColonia, onResize, poiOn}) {
+function WidgetCard({widget, index, active, hover, settling, signedIn, language, hoveredHomeLabel, readScope, readDelay = READ_MS, reduce, onActivate, onHover, onOpen, onLogin, onTogglePoi, onPickColonia, onResize, poiOn}) {
   const spoiler = signedIn ? spoilerFor(widget.id, widget._vision?.name) : null;
-  const read = useFreshRead(`${readScope}:${widget.id}`, reduce, READ_MS + index * 140);
+  const read = useFreshRead(`${readScope}:${widget.id}`, reduce, readDelay + index * 140);
   const nearbySelected = widget.kind === 'nearby' && widget.tiles
     ? (widget.tiles.find(tile => poiOn?.has(tile.kind)) || widget.tiles[0])
     : null;
   const skipTile = useRef(undefined);
   if (read.ready && widget.kind === 'nearby' && skipTile.current === undefined) skipTile.current = nearbySelected?.kind || null;
-  const metric = widget.headline && widget.kind !== 'summary';
+  const figure = widget.headline && widget.kind !== 'summary';
   const homeNote = hoveredHomeLabel && widget.kind === 'price' ? hoveredHomeLabel : null;
-  const hasLead = metric || widget.support || homeNote;
-  const titleInLead = metric && widget.kind !== 'price';
-  const title = <p className="map-widget-title"><span>{widget.title}</span>{widget.kicker && <span>{widget.kicker}</span>}</p>;
+  const title = <h3 className="map-widget-title"><span>{widget.title}</span>{widget.kicker && <span>{widget.kicker}</span>}</h3>;
   const reviews = widget.reviews == null ? null
     : (language === 'pt-BR' ? `${widget.reviews} avaliações de vizinhos` : `${widget.reviews} reseñas de vecinos`);
   const loading = !read.ready;
@@ -270,16 +291,18 @@ function WidgetCard({widget, index, active, hover, settling, signedIn, language,
           immediate={nearbySelected.kind === skipTile.current && !seenReadings.has(`${readScope}:${nearbySelected.kind}`)}
           onSelect={tile => onTogglePoi?.(tile.kind, tile.poi)}/>}
       </> : <>
-        {!titleInLead && title}
-        {hasLead && <div className="map-widget-lead">
-          {titleInLead && title}
-          {metric && <p className="map-widget-metric" data-tone={widget.direction}><span>{widget.headline}</span>{widget.unit && <span>{widget.unit}</span>}</p>}
+        <div className="map-widget-lead map-widget-open">
+          {title}
+          {figure && (widget.statement
+            ? <p className="map-widget-statement">{widget.direction && <TrendArrow direction={widget.direction}/>}<span>{widget.headline}</span></p>
+            : <p className="map-widget-metric"><span>{widget.headline}</span>{widget.unit && <span>{widget.unit}</span>}</p>)}
           {widget.support && <p className="map-widget-support"><span>{widget.support}</span></p>}
           <AnimatePresence initial={false}>
             {homeNote && <motion.p key={homeNote} className="map-widget-support is-live" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.15, ease:EASE}}><span>{homeNote}</span></motion.p>}
           </AnimatePresence>
-        </div>}
+        </div>
         <CardVisual widget={widget} poiOn={poiOn} onTogglePoi={onTogglePoi} onPickColonia={onPickColonia}/>
+        {widget.note && <p className="map-widget-note"><span>{widget.note}</span></p>}
         <LockRow widget={widget} signedIn={signedIn} spoiler={spoiler} onLogin={onLogin} language={language}/>
       </>}
       {loading && <p className="map-widget-status" role="status">{language === 'pt-BR' ? 'A Mora está trazendo estes dados.' : 'Mora está trayendo estos datos.'}</p>}
@@ -292,7 +315,7 @@ function Panel({widgetId, scope, vision, search, home, language, signedIn, hover
   const read = useFreshRead(`${scope}:panel:${widgetId}`, reduce);
   const loading = !read.ready;
   return <motion.section className={`map-widget-panel${loading ? ' is-bone' : ''}`} initial={reduce ? {opacity:0} : {opacity:0, transform:'translateX(-12px)'}} animate={{opacity:1, transform:'translateX(0px)'}}
-    exit={reduce ? {opacity:0} : {opacity:0, transform:'translateX(-8px)'}} transition={{duration:reduce ? .15 : .28, ease:EASE}}>
+    exit={reduce ? {opacity:0, transition:{duration:.12}} : {opacity:0, transform:'translateX(-8px)', transition:{duration:.12, ease:EASE}}} transition={{duration:reduce ? .15 : .28, ease:EASE}}>
     <div className="map-widget-panel-head">
       <button type="button" onClick={onBack} aria-label={language === 'pt-BR' ? 'Voltar' : 'Volver'}><Icon name="back" size={16}/></button>
       <span className="map-widget-brand"><img src={MORA} alt=""/><strong>Mora</strong></span>
@@ -348,8 +371,15 @@ export function MapWidgets({
   const vision = stack?.vision;
   const scopeKey = stack ? (stack.homeId ? `home:${stack.homeId}` : `${stack.level}:${stack.colonia}`) : '';
   const readingKey = stack ? `${scopeKey}:${widgets.map(widget => widget.id).join(',')}` : '';
+  const lastExpanded = useRef(expandedId);
+  const returning = useRef(false);
+  if (lastExpanded.current !== expandedId) {
+    returning.current = !!lastExpanded.current && !expandedId;
+    lastExpanded.current = expandedId;
+  }
   const playLatch = useRef(null);
   if (scopeKey && playLatch.current?.key !== scopeKey) playLatch.current = {key: scopeKey, play: !reduce && !seenScopes.has(scopeKey)};
+  const play = !!playLatch.current?.play;
   useEffect(() => {
     if (!scopeKey || reduce) return;
     const timer = setTimeout(() => seenScopes.add(scopeKey), 0);
@@ -422,18 +452,21 @@ export function MapWidgets({
   if (!stack || collapsed) return null;
 
   return <>
+    <div className="map-widget-veil" aria-hidden="true"/>
+    {play && !seenEdges.has(scopeKey) && <div key={scopeKey} className="map-mora-edge" aria-hidden="true"
+      onAnimationEnd={event => event.target === event.currentTarget && seenEdges.add(scopeKey)}><span/><span/></div>}
     <div ref={root}>
       <AnimatePresence>
         {expandedId && vision && <Panel key="panel" widgetId={expandedId} scope={scopeKey} vision={vision} search={stack.search} home={stack.home}
           language={language} signedIn={signedIn} hover={hoverWidget} reduce={reduce}
           onHover={onHover} onBack={onBack} onAsk={onAsk} onLogin={onLogin}/>}
       </AnimatePresence>
-      {!expandedId && <div ref={scroller} key={readingKey} className="map-widget-stack" data-play={playLatch.current?.play ? 'true' : undefined} aria-label={language === 'pt-BR' ? 'Leitura da Mora' : 'Lectura de Mora'}>
+      {!expandedId && <div ref={scroller} key={readingKey} className="map-widget-stack" data-play={play ? 'true' : undefined} data-return={returning.current || undefined} aria-label={language === 'pt-BR' ? 'Leitura da Mora' : 'Lectura de Mora'}>
         {widgets.map((widget, index) =>
           <WidgetCard key={widget.id} widget={{...widget, _vision: vision}} index={index}
             active={activeLayer && widget.layer === activeLayer} hover={hoverWidget === widget.id}
             settling={settling && !reduce} signedIn={signedIn} language={language} hoveredHomeLabel={widget.kind === 'price' ? positionLabel : null}
-            readScope={scopeKey} reduce={reduce} poiOn={poiOn}
+            readScope={scopeKey} readDelay={play ? EDGE_READ_MS : READ_MS} reduce={reduce} poiOn={poiOn}
             onActivate={id => {
               if (id === 'collapse') onToggleCollapse();
               else onActivate?.(id);

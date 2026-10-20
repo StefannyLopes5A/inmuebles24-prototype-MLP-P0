@@ -38,7 +38,6 @@ No contato seguinte, os dados aparecem resumidos e podem ser editados. Nome, e-m
 - Há 13 logos de origem registrada e 14 associações verificadas entre anúncio e logo; usos ilustrativos nos cards não determinam o destinatário do contato. Atribuição e arquivos originais permanecem na proveniência.
 - Espanhol mexicano é o idioma inicial; português brasileiro e moeda são preferências locais. USD usa conversão demonstrativa fixa de 20 MXN/USD. Endereços, nomes de anunciantes e fatos do catálogo não são traduzidos ou recriados.
 - Toda IA, sugestão e ação de contato é simulada no navegador. Não há serviços externos acionados pelos controles, envio de dados, login real, pagamento, crédito, agenda, contato em lote ou análise de fotografias.
-- A única exceção fica antes do protótipo: na Vercel, uma porta de acesso pede login Google com e-mail @quintoandar, porque o material é interno. Dentro do protótipo, conta, contato e visita continuam simulados.
 
 ## Continuidade
 

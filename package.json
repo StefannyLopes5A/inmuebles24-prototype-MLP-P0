@@ -8,7 +8,7 @@
     "build": "vite build && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
-    "test:v2": "node --test tests/journey.test.mjs tests/contact-flow.test.mjs tests/contact-profile.test.mjs tests/search-input.test.mjs tests/home-search.test.mjs tests/price-range.test.mjs tests/search-flow.test.mjs tests/listing-presentation.test.mjs tests/compare-reading.test.mjs tests/favorite-folders.test.mjs tests/collaborative-lists.test.mjs tests/map-locations.test.mjs tests/map-widgets.test.mjs tests/colonia-polygons.test.mjs tests/pois.test.mjs tests/mora-analysis.test.mjs tests/mora-fact-sheet.test.mjs tests/mora-validate.test.mjs tests/mora-fixture.test.mjs tests/listing-reading.test.mjs tests/listing-story.test.mjs tests/listing-card-tags.test.mjs tests/recorrido.test.mjs tests/classifieds-signals.test.mjs tests/selection-ask.test.mjs tests/access-email.test.mjs",
+    "test:v2": "node --test tests/journey.test.mjs tests/contact-flow.test.mjs tests/contact-profile.test.mjs tests/search-input.test.mjs tests/home-search.test.mjs tests/price-range.test.mjs tests/search-flow.test.mjs tests/listing-presentation.test.mjs tests/compare-reading.test.mjs tests/favorite-folders.test.mjs tests/collaborative-lists.test.mjs tests/map-locations.test.mjs tests/map-widgets.test.mjs tests/colonia-polygons.test.mjs tests/pois.test.mjs tests/mora-analysis.test.mjs tests/mora-fact-sheet.test.mjs tests/mora-validate.test.mjs tests/mora-fixture.test.mjs tests/listing-reading.test.mjs tests/listing-story.test.mjs tests/listing-card-tags.test.mjs tests/recorrido.test.mjs tests/classifieds-signals.test.mjs tests/selection-ask.test.mjs",
     "mora:sheet": "node scripts/mora-fact-sheet.mjs",
     "mora:generate": "node scripts/mora-generate.mjs",
     "mora:curate": "node scripts/mora-curate.mjs",
@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@protomaps/basemaps": "^5.7.2",
-    "@vercel/functions": "^3.10.1",
     "@vitejs/plugin-react": "5.0.4",
     "maplibre-gl": "^6.13.0",
     "motion": "^14.3.0",

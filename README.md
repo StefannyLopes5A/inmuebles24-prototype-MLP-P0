@@ -52,15 +52,9 @@ A [V2 existente no Sites](https://inmuebles24-busca-acompanada-v2.viktorherald.c
 
 O pacote do GitHub usa `.openai/hosting.json` genérico, sem `project_id`. `npm run build` produz `dist/client/index.html`, `dist/server/index.js` e `dist/.openai/hosting.json`; o worker serve os assets e as rotas da aplicação. A configuração de um destino de publicação é uma etapa separada. A CI do GitHub executa testes e build: **não faz deploy automático**.
 
-### Vercel com acesso interno
+### Vercel
 
-Na Vercel, `middleware.js` só serve o protótipo a quem entrou com Google numa conta Workspace `@quintoandar.com.br` ou `@quintoandar.com`. Quem não entrou vê `/acesso.html`. O resto do protótipo continua simulado.
-
-1. No Google Cloud, crie um cliente OAuth do tipo **Aplicativo da Web**, com o redirect `https://<domínio>/api/auth/callback`. Cada domínio de deploy que deve aceitar login precisa estar na lista.
-2. Na Vercel, cadastre `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e `AUTH_SECRET` (`openssl rand -base64 32`). Os nomes estão em `.env.example`; os valores ficam só na Vercel.
-3. Sem essas três variáveis, o deploy mostra só a tela de acesso com o aviso de configuração.
-
-`vercel.json` usa `npm run build` e publica `dist/client`. O login vale 7 dias; `/api/auth/logout` sai. No `npm run dev` não há porta, e `/acesso.html` mostra a tela.
+`vercel.json` usa `npm run build` e publica `dist/client`.
 
 Este repositório recebe somente o snapshot do aplicativo, assets, proveniência e documentação necessária. Credenciais, contas, arquivos privados de contexto, logs e protótipos antigos não fazem parte do handoff.
 

@@ -8,8 +8,13 @@
 .home-skip-intro{position:absolute;right:0;top:-10px;display:flex;align-items:center;gap:7px;min-height:44px;padding:8px 0 8px 12px;color:#888;font-size:12px;font-weight:500}
 .home-skip-intro span{font-size:16px}
 .home-skip-intro:focus-visible{outline:2px solid #f50;outline-offset:4px}
-.home-sentence{display:flex;align-items:center;flex-wrap:wrap;gap:12px;width:80%;font-size:var(--home-query-size);font-weight:600;line-height:1;letter-spacing:0;min-height:92px}
+.home-sentence{display:flex;align-items:center;flex-wrap:wrap;gap:12px;width:100%;font-size:calc(var(--home-sentence-size,var(--home-query-size)) * var(--home-sentence-fit,1));font-weight:600;line-height:1;letter-spacing:0;min-height:92px}
 .home-phrase-group{display:inline-flex;align-items:center;gap:12px;max-width:100%;min-width:0}
+/* Two fixed lines; useTwoLineSentence shrinks the font to fit or sets data-wrap to let the groups flow. */
+.home-sentence-line{display:flex;flex:0 0 100%;align-items:center;flex-wrap:nowrap;gap:inherit;min-width:0}
+.home-sentence-line>.home-phrase-group,.home-sentence-line>.mora-extra-term{flex:none;max-width:none}
+.home-sentence[data-wrap] .home-sentence-line{display:contents}
+.home-sentence[data-wrap] .home-sentence-line>.home-phrase-group{flex:0 1 auto;max-width:100%}
 .home-word{display:inline-grid;position:relative;max-width:100%;min-width:0;align-items:center}
 .home-word-control{display:inline-flex;align-items:center;gap:2px;min-width:0;max-width:100%;padding:0;min-height:40px;font:inherit;line-height:inherit;color:var(--home-suggested);text-align:left;border-radius:5px}
 .home-word-control span{min-width:0;overflow-wrap:anywhere}

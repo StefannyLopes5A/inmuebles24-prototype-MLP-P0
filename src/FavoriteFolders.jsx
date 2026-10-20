@@ -8,6 +8,8 @@ import {homes, propertyPhoto} from './data';
 import {UNIT_HOMES} from './development/torreOlmo.js';
 import {useLanguage} from './i18n';
 import {FOLDER_NAME_MAX, RECENT_ID, savedCountLabel, viewedLabel} from './favoriteLists';
+import {activeMembers, isCollaborative} from './collaborativeLists';
+import {AvatarStack} from './Collaboration';
 import {EASE, EASE_OUT, riseIn} from './favoriteMotion';
 
 const homesById = new Map([...homes, ...UNIT_HOMES].map(home => [home.id, home]));
@@ -38,20 +40,78 @@ const stepVariants = reduce => ({
   exit:direction => reduce ? {opacity:0} : {opacity:0, transform:`translateX(${direction * -24}px)`},
 });
 
+/**
+ * The folder grid shared by the heart and by "Decidir juntos". `pressed` marks a card; `badge` adds a corner mark
+ * (the members' faces on a shared folder).
+ */
+export function FolderCardList({folders, pressed, onChoose, labelFor, badge}) {
+  const {language, say} = useSay();
+  const present = useIsPresent();
+  const reduce = useReducedMotion();
+  return <ul className="folder-picker-grid">
+    {folders.map((folder, index) => {
+      const on = pressed(folder);
+      return <motion.li key={folder.id} {...riseIn(reduce, index)}>
+        <button type="button" className="folder-card" aria-pressed={!!on} onClick={() => present && onChoose(folder.id)} aria-label={labelFor(folder, on)}>
+          <span className="folder-card-media">
+            <FolderCover ids={folder.homeIds}/>
+            {on.label && <span className="folder-card-current"><Icon name="check" size={13}/>{on.label}</span>}
+            {badge?.(folder)}
+          </span>
+          <span className="folder-card-name">{folder.name}</span>
+          <span className="folder-card-meta">{savedCountLabel(folder.homeIds.length, language)}</span>
+        </button>
+      </motion.li>;
+    })}
+  </ul>;
+}
+
+/** Name a new list: header, field with the 50-character count, Cancel and Create. */
+export function CreateFolderForm({titleId, suggestion, onCreate, onBack, onClose}) {
+  const {say} = useSay();
+  const present = useIsPresent();
+  const [name, setName] = useState(suggestion);
+  const trimmed = name.trim();
+  return <form className="folder-create" onSubmit={event => {event.preventDefault(); if (trimmed && present) onCreate(trimmed);}}>
+    <header className="folder-panel-header">
+      {onBack
+        ? <button type="button" className="folder-icon-button" onClick={onBack} aria-label={say('Volver a tus listas', 'Voltar para suas listas')}><Icon name="back" size={18}/></button>
+        : <span aria-hidden="true"/>}
+      <h2 id={titleId}>{say('Crear lista de favoritos', 'Criar lista de favoritos')}</h2>
+      {onBack
+        ? <span aria-hidden="true"/>
+        : <button type="button" className="folder-icon-button" onClick={onClose} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>}
+    </header>
+    <div className="folder-create-body">
+      <div className="folder-name-field">
+        <label htmlFor={`${titleId}-name`}>{say('Nombre', 'Nome')}</label>
+        <input id={`${titleId}-name`} value={name} maxLength={FOLDER_NAME_MAX} autoComplete="off" spellCheck={false}
+          onChange={event => setName(event.target.value.slice(0, FOLDER_NAME_MAX))}
+          onFocus={event => {const end = event.target.value.length; event.target.setSelectionRange(end, end);}}
+          aria-describedby={`${titleId}-count`} autoFocus data-autofocus/>
+        {name && <button type="button" className="folder-clear" onClick={event => {setName(''); event.currentTarget.parentElement.querySelector('input')?.focus();}} aria-label={say('Borrar nombre', 'Limpar nome')}><Icon name="close" size={12}/></button>}
+      </div>
+      <p id={`${titleId}-count`} className="folder-count">{say(`${name.length}/${FOLDER_NAME_MAX} caracteres`, `${name.length}/${FOLDER_NAME_MAX} caracteres`)}</p>
+    </div>
+    <footer className="folder-panel-footer is-split">
+      <button type="button" className="folder-text-button" onClick={onBack || onClose}>{say('Cancelar', 'Cancelar')}</button>
+      <button type="submit" className="folder-primary" disabled={!trimmed}>{say('Crear', 'Criar')}</button>
+    </footer>
+  </form>;
+}
+
+export const stepMotion = (reduce, direction) => ({custom:direction, variants:stepVariants(reduce), initial:'enter', animate:'center', exit:'exit', transition:{duration:0.18, ease:EASE_OUT}});
+
 /** Folder choice; on the third save the same dialog shrinks into the sign-in invite. */
 export function FolderPicker({home, folders, suggestion, nudge, onSelect, onCreate, onClose, onLogin, onDismissNudge}) {
-  const {language, say} = useSay();
+  const {say} = useSay();
   const titleId = useId();
-  const present = useIsPresent();
   const reduce = useReducedMotion();
   const [step, setStep] = useState(folders.length ? 'select' : 'create');
   const [direction, setDirection] = useState(1);
   const [returned, setReturned] = useState(false);
-  const [name, setName] = useState(suggestion);
 
   const go = next => {setDirection(next === 'create' ? 1 : -1); setReturned(next === 'select'); setStep(next);};
-  const trimmed = name.trim();
-  const variants = stepVariants(reduce);
 
   if (nudge) return <ModalShell key="shell" labelledBy={`${titleId}-nudge`} panelKey="nudge" panelClassName="account-panel is-nudge" onClose={onDismissNudge}>
     <LoginNudge titleId={`${titleId}-nudge`} homes={nudge.homes} onLogin={onLogin} onDismiss={onDismissNudge}/>
@@ -59,8 +119,7 @@ export function FolderPicker({home, folders, suggestion, nudge, onSelect, onCrea
 
   return <ModalShell key="shell" labelledBy={titleId} panelKey="picker" onClose={onClose}>{close =>
       <AnimatePresence mode="wait" initial={false} custom={direction}>
-        <motion.div key={step} className="folder-step" custom={direction} variants={variants}
-          initial="enter" animate="center" exit="exit" transition={{duration:0.18, ease:EASE_OUT}}>
+        <motion.div key={step} className="folder-step" {...stepMotion(reduce, direction)}>
           {step === 'select' ? <>
             <header className="folder-panel-header">
               <span aria-hidden="true"/>
@@ -68,54 +127,16 @@ export function FolderPicker({home, folders, suggestion, nudge, onSelect, onCrea
               <button type="button" className="folder-icon-button" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
             </header>
             <div className="folder-panel-body">
-              <ul className="folder-picker-grid">
-                {folders.map((folder, index) => {
-                  const current = folder.homeIds.includes(home.id);
-                  return <motion.li key={folder.id} {...riseIn(reduce, index)}>
-                    <button type="button" className="folder-card" aria-pressed={current} onClick={() => present && onSelect(folder.id)}
-                      aria-label={current ? `${say('Quitar de', 'Remover de')} ${folder.name}` : `${say('Guardar en', 'Salvar em')} ${folder.name}`}>
-                      <span className="folder-card-media">
-                        <FolderCover ids={folder.homeIds}/>
-                        {current && <span className="folder-card-current"><Icon name="check" size={13}/>{say('Guardado aquí', 'Salvo aqui')}</span>}
-                      </span>
-                      <span className="folder-card-name">{folder.name}</span>
-                      <span className="folder-card-meta">{savedCountLabel(folder.homeIds.length, language)}</span>
-                    </button>
-                  </motion.li>;
-                })}
-              </ul>
+              <FolderCardList folders={folders} onChoose={onSelect}
+                pressed={folder => folder.homeIds.includes(home.id) ? {label:say('Guardado aquí', 'Salvo aqui')} : false}
+                labelFor={(folder, on) => on ? `${say('Quitar de', 'Remover de')} ${folder.name}` : `${say('Guardar en', 'Salvar em')} ${folder.name}`}/>
             </div>
             <footer className="folder-panel-footer">
               <button type="button" className="folder-primary is-wide" onClick={() => go('create')} autoFocus={returned} data-autofocus={returned || undefined}>
                 {say('Crear nueva lista de favoritos', 'Criar nova lista de favoritos')}
               </button>
             </footer>
-          </> : <form className="folder-create" onSubmit={event => {event.preventDefault(); if (trimmed && present) onCreate(trimmed);}}>
-            <header className="folder-panel-header">
-              {folders.length
-                ? <button type="button" className="folder-icon-button" onClick={() => go('select')} aria-label={say('Volver a tus listas', 'Voltar para suas listas')}><Icon name="back" size={18}/></button>
-                : <span aria-hidden="true"/>}
-              <h2 id={titleId}>{say('Crear lista de favoritos', 'Criar lista de favoritos')}</h2>
-              {folders.length
-                ? <span aria-hidden="true"/>
-                : <button type="button" className="folder-icon-button" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>}
-            </header>
-            <div className="folder-create-body">
-              <div className="folder-name-field">
-                <label htmlFor={`${titleId}-name`}>{say('Nombre', 'Nome')}</label>
-                <input id={`${titleId}-name`} value={name} maxLength={FOLDER_NAME_MAX} autoComplete="off" spellCheck={false}
-                  onChange={event => setName(event.target.value.slice(0, FOLDER_NAME_MAX))}
-                  onFocus={event => {const end = event.target.value.length; event.target.setSelectionRange(end, end);}}
-                  aria-describedby={`${titleId}-count`} autoFocus data-autofocus/>
-                {name && <button type="button" className="folder-clear" onClick={event => {setName(''); event.currentTarget.parentElement.querySelector('input')?.focus();}} aria-label={say('Borrar nombre', 'Limpar nome')}><Icon name="close" size={12}/></button>}
-              </div>
-              <p id={`${titleId}-count`} className="folder-count">{say(`${name.length}/${FOLDER_NAME_MAX} caracteres`, `${name.length}/${FOLDER_NAME_MAX} caracteres`)}</p>
-            </div>
-            <footer className="folder-panel-footer is-split">
-              <button type="button" className="folder-text-button" onClick={folders.length ? () => go('select') : close}>{say('Cancelar', 'Cancelar')}</button>
-              <button type="submit" className="folder-primary" disabled={!trimmed}>{say('Crear', 'Criar')}</button>
-            </footer>
-          </form>}
+          </> : <CreateFolderForm titleId={titleId} suggestion={suggestion} onCreate={onCreate} onBack={folders.length ? () => go('select') : null} onClose={close}/>}
         </motion.div>
       </AnimatePresence>}
   </ModalShell>;
@@ -144,15 +165,17 @@ export function FolderToast({home, folder, removed = false, onChange, onView, on
   </div>;
 }
 
-export function FavoritesIndex({folders, recent, onOpenFolder, onBack}) {
+export function FavoritesIndex({folders, recent, shared = {}, meId = null, onOpenFolder, onBack}) {
   const {language, say} = useSay();
   const reduce = useReducedMotion();
   const title = useRef(null);
   useLayoutEffect(() => {title.current?.focus({preventScroll:true});}, []);
   const latest = recent[0]?.viewedAt;
+  // Faces only on a folder shared with someone else: they are the sign that the folder is collaborative.
+  const facesOf = folder => folder.collab && meId && isCollaborative(shared[folder.id]) ? activeMembers(shared[folder.id]) : null;
   const cards = [
     ...(recent.length ? [{id:RECENT_ID, name:say('Vistos recientemente', 'Vistos recentemente'), ids:recent.map(entry => entry.id), collage:true, meta:viewedLabel(latest, Date.now(), language)}] : []),
-    ...folders.map(folder => ({id:folder.id, name:folder.name, ids:folder.homeIds, collage:false, meta:savedCountLabel(folder.homeIds.length, language)})),
+    ...folders.map(folder => ({id:folder.id, name:folder.name, ids:folder.homeIds, collage:false, meta:savedCountLabel(folder.homeIds.length, language), faces:facesOf(folder)})),
   ];
   return <article className="favorites-page">
     <header className="favorites-header">
@@ -162,7 +185,9 @@ export function FavoritesIndex({folders, recent, onOpenFolder, onBack}) {
     {cards.length ? <ul className="favorites-grid">
       {cards.map((card, index) => <motion.li key={card.id} {...riseIn(reduce, index + 1)}>
         <button type="button" className="favorites-card" onClick={() => onOpenFolder(card.id)}>
-          <span className="favorites-card-media"><FolderCover ids={card.ids} collage={card.collage}/></span>
+          <span className="favorites-card-media"><FolderCover ids={card.ids} collage={card.collage}/>
+            {card.faces && <span className="folder-card-faces"><AvatarStack members={card.faces} size={30} label={`${say('Compartida con', 'Compartilhada com')} ${card.faces.map(member => member.name).join(', ')}`}/></span>}
+          </span>
           <span className="folder-card-name">{card.name}</span>
           <span className="folder-card-meta">{card.meta}</span>
         </button>

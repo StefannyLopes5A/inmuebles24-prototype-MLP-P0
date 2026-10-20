@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes} from '../src/data.js';
 import {marketAnswer, marketQuestion, marketTopic} from '../src/marketAnswers.js';
-import {SORTS, canonicalSort, recentContacts, sortLabel, sortResults, sortSignal} from '../src/resultSort.js';
+import {SORTS, canonicalSort, sortLabel, sortResults, sortSignal} from '../src/resultSort.js';
 import {leadLine, markVisit, normalizeSeeker, readSeeker, visitMomentLabel, writeSeeker} from '../src/seekerSignals.js';
 import {DEFAULT_SEARCH, alertKey, journeyUrl, prototypeResults, readJourney} from '../src/journey.js';
-import {readSharedFolders, shareFolder, SHARED_LIMIT} from '../src/favoriteLists.js';
+import {readSharedFolders, shareFolder, SHARED_LIMIT} from '../src/collaborativeLists.js';
 import {listingCardTags} from '../src/listingCardTags.js';
 import {interpretSmartInput, matchStreet, smartDetailTokens, streetName} from '../src/searchCriteria.js';
 import {areas} from '../src/data.js';
@@ -45,15 +45,14 @@ test('the bar answers a market question without touching filters', () => {
 });
 
 test('sorting keeps exact matches ahead and orders by each signal', () => {
-  assert.deepEqual(SORTS, ['recommended', 'price', 'rarity', 'contacts']);
+  assert.deepEqual(SORTS, ['recommended', 'price', 'rarity']);
   assert.equal(canonicalSort('nope'), 'recommended');
+  assert.equal(canonicalSort('contacts'), 'recommended');
   assert.equal(sortLabel('price'), 'Precio justo');
   const items = homes.filter(home => home.mode === 'buy').slice(0, 20);
   const exact = new Set(items.slice(10).map(home => home.id));
-  const byContacts = sortResults(items, 'contacts', exact);
-  assert.deepEqual(new Set(byContacts.slice(0, 10).map(home => home.id)), exact);
-  const head = byContacts.slice(0, 10).map(recentContacts);
-  assert.deepEqual(head, [...head].sort((a, b) => b - a));
+  const byPrice = sortResults(items, 'price', exact);
+  assert.deepEqual(new Set(byPrice.slice(0, 10).map(home => home.id)), exact);
   const byRarity = sortResults(items, 'rarity').map(home => peerFacts(home).count);
   assert.deepEqual(byRarity, [...byRarity].sort((a, b) => a - b));
   const deltas = sortResults(items, 'price').map(home => marketFacts(home).delta ?? Infinity);
@@ -67,9 +66,6 @@ test('sort signals only appear for the active sort and when the signal is real',
   assert.equal(sortSignal(cheap, 'recommended'), null);
   const rare = homes.find(home => peerFacts(home).count <= 2);
   assert.match(sortSignal(rare, 'rarity', 'es-MX', {long:true}), /parecido/);
-  const busy = homes.find(home => recentContacts(home) >= 9), quiet = homes.find(home => recentContacts(home) < 9);
-  assert.match(sortSignal(busy, 'contacts'), /contactos en 7 días/);
-  assert.equal(sortSignal(quiet, 'contacts'), null);
 });
 
 test('the sort signal takes the slot after a perfect match on the card', () => {

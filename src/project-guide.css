@@ -1,0 +1,93 @@
+/* Presenter's guide: a black stage that grows out of the i24 button, bottom left, over every route. */
+.pg{--pg-edge:16px;--pg-ease:cubic-bezier(.22,1,.36,1);--pg-out:cubic-bezier(.4,0,1,1);--pg-orange:#ff5500;--pg-bottom:calc(var(--pg-edge) + env(safe-area-inset-bottom,0px));font-family:'SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+.pg-fab{position:fixed;left:var(--pg-edge);bottom:var(--pg-bottom);z-index:1200;width:56px;height:56px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:#111;cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 1px #ffffff1a,0 1px 2px #0000001f,0 10px 28px -8px #00000066;transition:transform 160ms var(--pg-ease),opacity 160ms ease-out}
+.pg-fab svg{width:14px;height:28px;transition:transform 240ms var(--pg-ease)}
+.pg-fab:active{transform:scale(.96)}
+.pg-fab:focus-visible{outline:2px solid var(--pg-orange);outline-offset:3px}
+@media(hover:hover){.pg-fab:hover svg{transform:translateY(-2px)}}
+/* Open, the button is the stage's corner: it hides under the circle the stage grows from. */
+.pg[data-open] .pg-fab{opacity:0;pointer-events:none;transition:opacity 80ms ease-out}
+.pg[data-open] .pg-fab svg{transform:scale(.6)}
+.pg-fab[data-settle]{animation:pg-settle 300ms var(--pg-ease) 280ms both}
+/* Idle, only a 16px sliver stays in view. Leaving waits a beat so a pass of the pointer doesn't flicker it. */
+.pg[data-idle] .pg-fab{transform:translateX(calc(-1 * (var(--pg-edge) + 40px)));transition:transform 520ms var(--pg-ease) 600ms}
+.pg[data-idle] .pg-fab::after{content:'';position:absolute;inset:-12px -16px -12px 0}
+.pg[data-idle] .pg-fab:is(:hover,:focus-visible){transform:none;transition:transform 320ms var(--pg-ease)}
+.pg[data-idle] .pg-fab:active{transform:scale(.96)}
+@keyframes pg-settle{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+/* The circle sits exactly on the button, so opening reads as the button becoming the stage. */
+.pg-stage{position:fixed;left:var(--pg-edge);bottom:var(--pg-bottom);z-index:1201;width:400px;max-height:min(720px,calc(100dvh - 2 * var(--pg-edge) - env(safe-area-inset-bottom,0px)));display:flex;flex-direction:column;box-sizing:border-box;background:#111;color:#fff;border-radius:28px;box-shadow:inset 0 0 0 1px #ffffff14,0 24px 64px -20px #000000a6;clip-path:circle(28px at 28px calc(100% - 28px));opacity:0;visibility:hidden;transition:clip-path 320ms var(--pg-out),opacity 120ms ease-out 240ms,visibility 0s linear 360ms}
+.pg[data-open] .pg-stage{clip-path:circle(160% at 28px calc(100% - 28px));opacity:1;visibility:visible;transition:clip-path 520ms var(--pg-ease),opacity 60ms ease-out,visibility 0s}
+
+.pg-head,.pg-item{opacity:0;transform:translateY(8px);transition:opacity 100ms ease-out,transform 100ms ease-out}
+.pg[data-open] .pg-head,.pg[data-open] .pg-item{opacity:1;transform:none;transition:opacity 260ms ease-out calc(140ms + var(--i,0) * 28ms),transform 380ms var(--pg-ease) calc(140ms + var(--i,0) * 28ms),background-color 200ms ease}
+
+.pg-head{flex:none;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px 20px 12px 24px}
+.pg-eyebrow{margin:0;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;color:#ffffff8c}
+.pg-count{margin:4px 0 0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em;color:#fff}
+.pg-close{flex:none;width:40px;height:40px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:#ffffff14;color:#fff;cursor:pointer;transition:background-color 150ms ease,transform 160ms var(--pg-ease)}
+.pg-close:active{transform:scale(.96)}
+.pg-close:focus-visible{outline:2px solid var(--pg-orange);outline-offset:2px}
+@media(hover:hover){.pg-close:hover{background:#ffffff26}}
+
+.pg-index{margin:0;padding:4px 12px 16px;list-style:none;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.pg-index::-webkit-scrollbar{display:none}
+.pg-item{border-radius:20px}
+.pg-item[data-expanded]{background:#ffffff0f}
+.pg-row{width:100%;min-height:52px;display:flex;align-items:center;gap:14px;padding:12px;border:0;border-radius:20px;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.pg-row:focus-visible{outline:2px solid var(--pg-orange);outline-offset:-2px}
+.pg-num{flex:none;width:22px;font-size:13px;line-height:22px;font-weight:600;color:var(--pg-orange);font-variant-numeric:tabular-nums}
+.pg-title{flex:1;min-width:0;font-size:17px;line-height:22px;font-weight:590;letter-spacing:-.005em;text-wrap:balance}
+.pg-toggle{flex:none;width:24px;height:24px;display:grid;place-items:center;color:#ffffff73;transition:transform 280ms var(--pg-ease),color 150ms ease}
+.pg-item[data-expanded] .pg-toggle{transform:rotate(45deg);color:#fff}
+@media(hover:hover){.pg-row:hover .pg-toggle{color:#fff}}
+
+/* Opening a stop grows its row in place; the text follows the height instead of arriving with it. */
+.pg-detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows 280ms var(--pg-ease)}
+.pg-item[data-expanded] .pg-detail{grid-template-rows:1fr}
+.pg-detail-inner{min-height:0;overflow:hidden}
+.pg-body,.pg-actions{opacity:0;transform:translateY(6px);transition:opacity 90ms ease-out,transform 90ms ease-out}
+.pg-item[data-expanded] .pg-body{opacity:1;transform:none;transition:opacity 220ms ease-out 40ms,transform 280ms var(--pg-ease) 40ms}
+.pg-item[data-expanded] .pg-actions{opacity:1;transform:none;transition:opacity 220ms ease-out 80ms,transform 280ms var(--pg-ease) 80ms}
+.pg-body{margin:0;padding:0 16px 0 48px;font-size:14px;line-height:20px;color:#ffffffb8;text-wrap:pretty}
+.pg-actions{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px 16px 48px}
+.pg-pill{min-height:36px;padding:8px 14px;border:0;border-radius:999px;background:transparent;box-shadow:inset 0 0 0 1px #ffffff29;color:#fff;font:inherit;font-size:14px;line-height:20px;font-weight:500;cursor:pointer;touch-action:manipulation;transition:background-color 150ms ease,color 150ms ease,box-shadow 150ms ease,transform 160ms var(--pg-ease)}
+.pg-pill[data-primary]{background:var(--pg-orange);box-shadow:none}
+.pg-pill:active{transform:scale(.96)}
+.pg-pill:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(hover:hover){.pg-pill:hover{background:#fff;color:#111;box-shadow:none}.pg-pill[data-primary]:hover{background:#ff6a1f;color:#fff}}
+@media(pointer:coarse){.pg-pill{min-height:44px;padding-inline:16px}}
+
+/* The ring draws once around where the redirect landed, then fades. */
+.pg-ring{position:fixed;left:0;top:0;z-index:1199;pointer-events:none;animation:pg-ring-out 240ms ease-out 460ms forwards}
+.pg-ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 8px #ff550059)}
+.pg-ring rect{fill:none;stroke:var(--pg-orange);stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;animation:pg-ring-draw 420ms var(--pg-ease) forwards}
+@keyframes pg-ring-draw{to{stroke-dashoffset:0}}
+@keyframes pg-ring-out{to{opacity:0}}
+
+@media(max-width:600px){
+  .pg{--pg-edge:12px}
+  .pg-stage{right:var(--pg-edge);width:auto;border-radius:24px}
+  .pg-head{padding:20px 16px 8px 20px}
+  .pg-index{padding:4px 8px 12px}
+  .pg-body{padding-left:44px}
+  .pg-actions{padding-left:44px}
+}
+@media(max-width:340px){
+  .pg-row{gap:10px}
+  .pg-body,.pg-actions{padding-left:12px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .pg-stage,.pg[data-open] .pg-stage{clip-path:none}
+  .pg-stage{transition:opacity 150ms ease-out,visibility 0s linear 150ms}
+  .pg[data-open] .pg-stage{transition:opacity 150ms ease-out,visibility 0s}
+  .pg-head,.pg-item,.pg[data-open] .pg-head,.pg[data-open] .pg-item,.pg-body,.pg-actions,.pg-item[data-expanded] .pg-body,.pg-item[data-expanded] .pg-actions{transform:none;transition:opacity 150ms ease-out}
+  .pg-detail,.pg-toggle{transition:none}
+  .pg-fab,.pg-fab svg{transition:opacity 150ms ease-out}
+  .pg[data-open] .pg-fab svg{transform:none}
+  .pg-fab[data-settle]{animation:none}
+  .pg[data-idle] .pg-fab,.pg[data-idle] .pg-fab:is(:hover,:focus-visible){transition:none}
+}

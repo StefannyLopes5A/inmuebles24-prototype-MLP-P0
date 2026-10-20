@@ -81,6 +81,24 @@ test('favorites routes carry only a folder id, never listing ids', () => {
   assert.equal(journeyUrl({page:'favorites', search, listId:'list-abc'}).includes('list='), false);
 });
 
+test('a folder page and an invite carry only a folder id, a token and an opaque sender', () => {
+  const search = normalizeSearch(DEFAULT_SEARCH);
+  const invite = 'AbCdEfGhIjKlMnOpQrStUv';
+  const folder = readJourney(journeyUrl({page:'folder', search, listId:'list-abc-12'}));
+  assert.equal(folder.page, 'folder');
+  assert.equal(folder.listId, 'list-abc-12');
+  assert.equal(readJourney('/?view=folder&list=recent').page, 'favorites');
+  const guest = readJourney(journeyUrl({page:'folder', search, invite, from:'acct-alex1'}));
+  assert.deepEqual([guest.page, guest.invite, guest.from], ['folder', invite, 'acct-alex1']);
+  const listing = journeyUrl({page:'listing', search, propertyId:'buy-1', invite, from:'acct-alex1'});
+  assert.equal(readJourney(listing).invite, invite);
+  assert.doesNotMatch(listing, /Alex|@/);
+  assert.equal(readJourney('/?view=listing&property=gone&invite=AbCdEfGhIjKlMnOpQrStUv').page, 'listing');
+  assert.equal(readJourney('/?view=listing&property=gone').page, 'results');
+  assert.equal(readJourney('/?view=folder&invite=short').page, 'favorites');
+  assert.equal(readJourney('/?view=results&invite=AbCdEfGhIjKlMnOpQrStUv&de=acct-alex1').invite, undefined);
+});
+
 test('a listing compared with some favorites travels in the URL as a one-off list', () => {
   const search = normalizeSearch(DEFAULT_SEARCH);
   const id = pickId(['buy-1', 'fav-torres-adalid', 'buy-1']);

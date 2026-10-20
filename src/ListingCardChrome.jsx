@@ -17,7 +17,7 @@ function TourTag({label}) {
 }
 
 export function ListingTagList({tags}) {
-  return tags.map(tag => tag.shimmer ? <TourTag key={tag.id} label={tag.label}/> : <span className="discovery-tag" key={tag.id}>{tag.label}</span>);
+  return tags.map(tag => tag.shimmer ? <TourTag key={tag.id} label={tag.label}/> : <span className="discovery-tag" data-tag={tag.id} key={tag.id}>{tag.label}</span>);
 }
 
 export function ListingAgencyLogo({home, say, logoSrc, alt, imageClass = 'discovery-agency-logo'}) {

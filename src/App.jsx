@@ -4,8 +4,16 @@ import {PropertyDetail} from './PropertyDetail';
 import {CompareFavorites} from './CompareFavorites';
 import {FavoritesIndex,FolderPicker,FolderToast} from './FavoriteFolders';
 import {AccountToast,LoginDialog} from './Account';
-import {RECENT_ID,SHARED_KEY,pickId,pickIds,createFolder,folderOf,normalizeFolders,normalizeRecent,readSharedFolders,recordView,removeHome,restoreHome,saveToFolder,savedCountLabel,savedIds,shareFolder,suggestedFolderName,uniqueFolderName} from './favoriteLists';
+import {InviteDialog,ShareSheet} from './ShareSheet';
+import {FolderPage} from './FolderPage';
+import {ConfirmDialog,InviteBanner,InviteUnavailable,JoinDialog} from './InviteLayer';
+import {RECENT_ID,pickId,pickIds,createFolder,folderOf,mergeSharedHomes,normalizeFolders,normalizeRecent,recordView,removeHome,restoreHome,saveToFolder,savedCountLabel,savedIds,suggestedFolderName,uniqueFolderName} from './favoriteLists';
+import {SHARED_KEY,accountName,activeMembers,deleteShared,findByToken,isAccountId,isCollaborative,isGuestId,joinFolder,leaveFolder,memberOf,migrateReactions,newAccountId,newEvent,newGuestId,react,readSharedFolders,removeMember,revokeInvite,setNote,shareFolder,syncShared} from './collaborativeLists';
+import {reactionLabel} from './Collaboration';
 import {ListingPanel} from './ListingPanel';
+import {SelectionMora} from './SelectionMora';
+import {ProjectGuide} from './ProjectGuide';
+import {GUIDE_COMPARE_SIZE,GUIDE_FOLDER_NAME,comparableFolder,guideEnabled} from './guideStops.js';
 import {readContactProfile,writeContactProfile} from './contactProfile.js';
 
 import {Home,HomeHeader} from './Home';
@@ -40,20 +48,27 @@ export function App(){
  const [recent,setRecent]=useState(()=>normalizeRecent(stored().recent,KNOWN_HOMES));
  const [receipts,setReceipts]=useState([]);
  const [compareView,setCompareView]=useState(()=>{const value=stored().compare;return {hidden:value?.hidden&&typeof value.hidden==='object'?value.hidden:{},seen:Array.isArray(value?.seen)?value.seen:[]}});
- const [account,setAccount]=useState(()=>({signedIn:stored().account?.signedIn===true})),[loginOpen,setLoginOpen]=useState(false);
+ const [account,setAccount]=useState(()=>{const value=stored().account||{};return {signedIn:value.signedIn===true,...(isAccountId(value.id)?{id:value.id,name:typeof value.name==='string'&&value.name.trim()?value.name.trim().slice(0,24):'Alex'}:{})}}),[loginOpen,setLoginOpen]=useState(false);
+ const [guestId]=useState(()=>{const value=stored().guestId;return isGuestId(value)?value:newGuestId()});
+ const [lastFolderId,setLastFolderId]=useState(()=>{const value=stored().lastFolderId;return typeof value==='string'?value:null});
+ const [shareSheet,setShareSheet]=useState(null),[confirm,setConfirm]=useState(null),[joinPrompt,setJoinPrompt]=useState(null),[inviteDialog,setInviteDialog]=useState(null);
  const [alerts,setAlerts]=useState(()=>{const value=stored().alerts;return Array.isArray(value)?value.filter(item=>typeof item==='string').slice(0,20):[]});
  const [shared,setShared]=useState(()=>readSharedFolders(storedShared(),KNOWN_HOMES));
  const afterLogin=useRef(null);
  const [askPrompt,setAskPrompt]=useState(null);
  const [recorridoUnitId,setRecorridoUnitId]=useState(null);
+ const [guideOn]=useState(()=>guideEnabled(window.location.search)),[guideCue,setGuideCue]=useState(null),[guideContact,setGuideContact]=useState(null);
  const saved=savedIds(folders);
  const [toast,setToast]=useState(null),[folderToast,setFolderToast]=useState(null),[picker,setPicker]=useState(null);
  const lastSearchChange=useRef({time:0,keys:''});
  const toastTimer=useRef(),loginAfterPicker=useRef(false),panelOrigin=useRef(null),routeRef=useRef(route);routeRef.current=route;
+ const accountRef=useRef(account);accountRef.current=account;
+ const sharedSeen=useRef(shared);
+ const meId=account.signedIn?account.id:null;
  const selected=homes.find(h=>h.id===propertyId)||null;
  const isRecorrido=page==='listing'&&!!selected?.development;
  const picked=page==='compare'?pickIds(listId)?.filter(id=>KNOWN_HOMES.has(id)):null;
- const activeFolder=page!=='compare'?null:picked?(picked.length>1?{id:listId,name:say('Este inmueble y tus favoritos','Este imóvel e seus favoritos'),homeIds:picked,pick:true}:null):listId===RECENT_ID?(recent.length?{id:RECENT_ID,name:say('Vistos recientemente','Vistos recentemente'),homeIds:recent.map(entry=>entry.id)}:null):folders.find(folder=>folder.id===listId)||(shared[listId]?{...shared[listId],shared:true}:null);
+ const activeFolder=page!=='compare'?null:picked?(picked.length>1?{id:listId,name:say('Este inmueble y tus favoritos','Este imóvel e seus favoritos'),homeIds:picked,pick:true}:null):listId===RECENT_ID?(recent.length?{id:RECENT_ID,name:say('Vistos recientemente','Vistos recentemente'),homeIds:recent.map(entry=>entry.id)}:null):folders.find(folder=>folder.id===listId)||(shared[listId]&&!shared[listId].deleted&&!shared[listId].members.length&&shared[listId].homeIds.length?{...shared[listId],shared:true}:null);
  const folderHomes=activeFolder?homesFor(activeFolder.homeIds):[];
  useLayoutEffect(()=>{document.documentElement.classList.toggle('is-recorrido-route',isRecorrido);if(isRecorrido)document.documentElement.style.setProperty('--flow-header-height','0px');return()=>document.documentElement.classList.remove('is-recorrido-route')},[isRecorrido]);
  useLayoutEffect(()=>{const header=document.querySelector('.home-header');if(!header)return;const measure=()=>{if(header.classList.contains('is-header-hidden')||document.documentElement.classList.contains('is-recorrido-route')){document.documentElement.style.setProperty('--flow-header-height','0px');return;}const bar=header.querySelector('.home-header-bar');document.documentElement.style.setProperty('--flow-header-height',`${(bar||header).offsetHeight}px`)};const observer=new ResizeObserver(measure);observer.observe(header);const classObserver=new MutationObserver(measure);classObserver.observe(header,{attributes:true,attributeFilter:['class']});measure();return()=>{observer.disconnect();classObserver.disconnect()}},[]);
@@ -61,18 +76,52 @@ export function App(){
  function announce(text){setFolderToast(null);setToast({text});armToast()}
  function showFolderToast(homeId,folderId,removed=false,folder=null){setToast(null);setFolderToast({homeId,folderId,removed,folder});armToast(3000)}
  function showAccountToast(text){setToast(null);setFolderToast({account:true,text});armToast(3000)}
- function navigate(next,{replace=false,scroll,layer=null}={}){
+ function navigate(next,{replace=false,scroll,layer=null,keepInvite=false}={}){
+   // An invite belongs to the page it opened; any other page drops it, so its banner never lands on another listing.
+   if(!keepInvite&&(next.invite||next.from)){next={...next};delete next.invite;delete next.from;}
    history.replaceState({...history.state,scroll:window.scrollY},'',window.location.href);
    history[replace?'replaceState':'pushState']({scroll:scroll??window.scrollY,layer},'',journeyUrl(next));routeRef.current=next;setRoute(next);
    if(scroll!==undefined)requestAnimationFrame(()=>window.scrollTo({top:scroll,behavior:'instant'}));
  }
  useEffect(()=>{history.scrollRestoration='manual';const onPop=()=>{if(morphPending()){flushSync(()=>setRoute(initialRoute()));window.scrollTo({top:history.state?.scroll||0,behavior:'instant'});settlePop();return;}setRoute(initialRoute());requestAnimationFrame(()=>window.scrollTo({top:history.state?.scroll||0,behavior:'instant'}))};window.addEventListener('popstate',onPop);const saveScroll=()=>history.replaceState({...history.state,scroll:window.scrollY},'',window.location.href);window.addEventListener('pagehide',saveScroll);return()=>{window.removeEventListener('popstate',onPop);window.removeEventListener('pagehide',saveScroll);clearTimeout(toastTimer.current)}},[]);
- useEffect(()=>{try{sessionStorage.setItem(SESSION,JSON.stringify({profile,folders,recent,saved:savedIds(folders),account,compare:compareView,alerts}))}catch{/* Session can continue without browser storage. */}},[profile,folders,recent,account,compareView,alerts]);
- useEffect(()=>{try{localStorage.setItem(SHARED_KEY,JSON.stringify(shared))}catch{/* Sharing still works in this tab. */}},[shared]);
+ useEffect(()=>{try{sessionStorage.setItem(SESSION,JSON.stringify({profile,folders,recent,saved:savedIds(folders),account,guestId,lastFolderId,compare:compareView,alerts}))}catch{/* Session can continue without browser storage. */}},[profile,folders,recent,account,guestId,lastFolderId,compareView,alerts]);
+ useEffect(()=>{try{const text=JSON.stringify(shared);if(localStorage.getItem(SHARED_KEY)!==text)localStorage.setItem(SHARED_KEY,text)}catch{/* Sharing still works in this tab. */}},[shared]);
+ // Another tab of this browser plays the other person: its writes arrive here as storage events.
+ useEffect(()=>{const onStorage=event=>{if(event.key!==SHARED_KEY)return;let raw=null;try{raw=JSON.parse(event.newValue)}catch{/* A broken copy reads as empty. */}setShared(readSharedFolders(raw,KNOWN_HOMES))};window.addEventListener('storage',onStorage);return()=>window.removeEventListener('storage',onStorage)},[]);
+ useEffect(()=>{
+   const before=sharedSeen.current;sharedSeen.current=shared;
+   if(!meId)return;
+   const lost=[];let next=folders;
+   for(const folder of folders){
+     const record=shared[folder.id];
+     if(!record||record.deleted)continue;
+     if(!memberOf(record,meId)){if(folder.collab){next=next.filter(item=>item.id!==folder.id);lost.push(folder.name)}continue;}
+     const collab=isCollaborative(record);
+     if(folder.name!==record.name||folder.homeIds.join()!==record.homeIds.join()||!!folder.collab!==collab)next=mergeSharedHomes(next,folder.id,record.name,record.homeIds,collab);
+   }
+   if(next!==folders)setFolders(next);
+   if(lost.length){announce(say(`Ya no formas parte de "${lost[0]}".`,`Você não faz mais parte de "${lost[0]}".`));return;}
+   for(const record of Object.values(shared)){
+     if(!memberOf(record,meId))continue;
+     const event=newEvent(before[record.id],record,meId);if(!event)continue;
+     const who=event.name||say('Tu invitado','Seu convidado');
+     announce(event.kind==='join'?say(`${who} se unió a "${record.name}"`,`${who} entrou em "${record.name}"`)
+       :event.kind==='add'?say(`${who} agregó un depa a "${record.name}"`,`${who} adicionou um apê em "${record.name}"`)
+       :say(`${who} reaccionó: ${reactionLabel(event.reaction,say)}`,`${who} reagiu: ${reactionLabel(event.reaction,say)}`));
+     break;
+   }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[shared,meId]);
+ useEffect(()=>{
+   if(!meId)return;
+   const changed=folders.filter(folder=>{const record=shared[folder.id];return record&&!record.deleted&&memberOf(record,meId)&&(record.name!==folder.name||record.homeIds.join()!==folder.homeIds.join())});
+   if(changed.length)setShared(current=>readSharedFolders(changed.reduce((next,folder)=>({...next,[folder.id]:syncShared(next[folder.id],folder,meId)}),current),KNOWN_HOMES));
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[folders,meId]);
  useEffect(()=>{if(propertyId)setRecent(current=>recordView(current,propertyId))},[propertyId]);
  useEffect(()=>{writeContactProfile(profile)},[profile]);
  useEffect(()=>{if(history.state?.scroll)requestAnimationFrame(()=>window.scrollTo(0,history.state.scroll))},[]);
- function updateSearch(next,label){const normalized=normalizeSearch(next);if(JSON.stringify(normalized)===JSON.stringify(search))return;const keys=Object.keys(normalized).filter(key=>JSON.stringify(normalized[key])!==JSON.stringify(search[key])).sort().join('|');const time=performance.now();const continuous=keys===lastSearchChange.current.keys&&time-lastSearchChange.current.time<600;const nextPage=page==='listing'||page==='compare'||page==='favorites'?'results':page;navigate({...route,page:nextPage,propertyId:null,search:normalized},{replace:continuous});lastSearchChange.current={time,keys};if(label)announce(label)}
+ function updateSearch(next,label){const normalized=normalizeSearch(next);if(JSON.stringify(normalized)===JSON.stringify(search))return;const keys=Object.keys(normalized).filter(key=>JSON.stringify(normalized[key])!==JSON.stringify(search[key])).sort().join('|');const time=performance.now();const continuous=keys===lastSearchChange.current.keys&&time-lastSearchChange.current.time<600;const nextPage=page==='listing'||page==='compare'||page==='favorites'||page==='folder'?'results':page;navigate({...route,page:nextPage,propertyId:null,search:normalized},{replace:continuous});lastSearchChange.current={time,keys};if(label)announce(label)}
  function changePref(next){navigate({...route,pref:next});announce(say('Listo, reordené por lo que prefieres. Tus filtros siguen igual.','Pronto, reordenei pelo que você prefere. Seus filtros continuam iguais.'))}
  function begin(next){captureHomeTransition();navigate({page:'results',search:normalizeSearch(next),pref:'none',propertyId:null},{scroll:0})}
  function open(home,event){
@@ -91,9 +140,11 @@ export function App(){
  function hideToasts(){setToast(null);setFolderToast(null)}
  function openFavorites(){hideToasts();navigate({...routeRef.current,page:'favorites',propertyId:null,listId:null},{layer:'favorites',scroll:0})}
  function returnFromFavorites(){if(history.state?.layer==='favorites')history.back();else navigate({...route,page:'results',propertyId:null,listId:null},{replace:true,scroll:0});}
- function openFolder(id,fromIndex=false){hideToasts();navigate({...routeRef.current,page:'compare',propertyId:null,listId:id},{layer:fromIndex?'folder':'compare',scroll:0})}
+ function openFolder(id){hideToasts();if(id===RECENT_ID){navigate({...routeRef.current,page:'compare',propertyId:null,listId:id},{layer:'folder',scroll:0});return;}navigate({...routeRef.current,page:'folder',propertyId:null,listId:id},{layer:'folderpage',scroll:0})}
+ function returnFromFolder(){if(history.state?.layer==='folderpage')history.back();else navigate({...routeRef.current,page:'favorites',propertyId:null,listId:null},{replace:true,scroll:0})}
+ function compareFolder(id){hideToasts();navigate({...routeRef.current,page:'compare',propertyId:null,listId:id},{layer:'folder',scroll:0})}
  function compareWith(ids){hideToasts();navigate({...routeRef.current,page:'compare',propertyId:null,listId:pickId(ids)},{layer:'pick',scroll:0})}
- function returnFromCompare(){if(history.state?.layer==='folder'||history.state?.layer==='pick')history.back();else navigate({...route,page:'favorites',propertyId:null,listId:null},{replace:true,scroll:0,layer:history.state?.layer==='compare'?'favorites':null});}
+ function returnFromCompare(){if(history.state?.layer==='folder'||history.state?.layer==='pick')history.back();else if(folders.some(folder=>folder.id===listId))navigate({...route,page:'folder'},{replace:true,scroll:0});else navigate({...route,page:'favorites',propertyId:null,listId:null},{replace:true,scroll:0,layer:history.state?.layer==='compare'?'favorites':null});}
  function changeMapMode(next){
    const current=routeRef.current.map||'mini';
    if(next===current)return;
@@ -111,13 +162,25 @@ export function App(){
  function markCompareSeen(folderId){setCompareView(current=>current.seen.includes(folderId)?current:{...current,seen:[...current.seen,folderId]})}
  function openLogin(){hideToasts();setLoginOpen(true)}
  function headerAction(action){announce(action==='agencies'?say('Abre un inmueble para conocer a su anunciante y simular un contacto.','Abra um imóvel para conhecer seu anunciante e simular um contato.'):say('Este prototipo demuestra la búsqueda de inmuebles. La publicación no forma parte de este recorrido.','Este protótipo demonstra a busca de imóveis. A publicação não faz parte deste percurso.'));}
+ /** Others in the folder lose the listing too, so taking it out of a shared folder asks first. */
+ const sharedWithOthers=folder=>!!folder&&!!meId&&isCollaborative(shared[folder.id])&&!!memberOf(shared[folder.id],meId);
+ function unsave(home,folder){setFolders(current=>removeHome(current,home.id));showFolderToast(home.id,folder.id,true,folder)}
+ function requestUnsave(home,folder){
+   if(!sharedWithOthers(folder)){unsave(home,folder);return;}
+   setPicker(null);
+   const others=activeMembers(shared[folder.id]).filter(member=>member.id!==meId).map(member=>member.name);
+   setConfirm({title:say(`¿Quitar de "${folder.name}"?`,`Remover de "${folder.name}"?`),text:others.length===1?say(`Saldrá de la lista para todos: ${others[0]} también dejará de verlo.`,`Sai da lista para todos: ${others[0]} também deixará de ver.`):say(`Saldrá de la lista para todos: ${others.join(', ')} también dejarán de verlo.`,`Sai da lista para todos: ${others.join(', ')} também deixarão de ver.`),action:say('Quitar para todos','Remover para todos'),run:()=>unsave(home,folder)});
+ }
  function requestSave(home){
    const current=folderOf(folders,home.id);
-   if(current){setFolders(removeHome(folders,home.id));showFolderToast(home.id,current.id,true,current);return;}
+   if(current){requestUnsave(home,current);return;}
    setFolderToast(null);setPicker({home});
  }
  function selectFolder(folderId){
    const home=picker?.home;if(!home||picker.nudge)return;
+   const target=folders.find(folder=>folder.id===folderId);
+   if(target?.homeIds.includes(home.id)&&sharedWithOthers(target)){requestUnsave(home,target);return;}
+   setLastFolderId(folderId);
    const result=saveToFolder(folders,folderId,home.id);
    settleSave(home,result.folders,folderId,result.removed,result.folder);
  }
@@ -125,6 +188,7 @@ export function App(){
    const home=picker?.home;if(!home||picker.nudge)return;
    const {folders:next,folder}=createFolder(folders,name,home.id);
    if(!folder)return;
+   setLastFolderId(folder.id);
    settleSave(home,next,folder.id,false,folder);
  }
  function settleSave(home,next,folderId,removed,folder){
@@ -138,25 +202,186 @@ export function App(){
  }
  function dismissNudge(){const current=picker;setPicker(null);if(current?.nudge)showFolderToast(current.home.id,current.nudge.folderId)}
  function loginFromNudge(){loginAfterPicker.current=true;setPicker(null)}
- function signIn(){setLoginOpen(false);setAccount({signedIn:true});const next=afterLogin.current;afterLogin.current=null;if(next){next();return;}showAccountToast(say('Sesión iniciada · tus favoritos quedan guardados','Login feito · seus favoritos ficam salvos'))}
+ /** A stable id and a display name only; a second account in this browser gets another fictitious name. */
+ function startSession(){
+   const current=accountRef.current;
+   const who=current.id?{id:current.id,name:current.name}:{id:newAccountId(),name:accountName(Object.values(shared).flatMap(record=>record.members.map(member=>member.name)))};
+   const next={signedIn:true,...who};accountRef.current=next;setAccount(next);return who;
+ }
+ function signIn(){setLoginOpen(false);const who=startSession();const next=afterLogin.current;afterLogin.current=null;if(next){next(who);return;}showAccountToast(say('Sesión iniciada · tus favoritos quedan guardados','Login feito · seus favoritos ficam salvos'))}
  function closeLogin(){afterLogin.current=null;setLoginOpen(false)}
  /** Alert and folder sharing ask for the simulated login first, then finish what was asked. */
- function withAccount(run){if(account.signedIn){run();return;}afterLogin.current=run;openLogin()}
+ function withAccount(run){if(account.signedIn){run(account);return;}afterLogin.current=run;openLogin()}
  const searchAlertKey=alertKey(search),alertOn=alerts.includes(searchAlertKey);
  function toggleAlert(){
    if(alertOn){setAlerts(current=>current.filter(item=>item!==searchAlertKey));showAccountToast(say('Alerta desactivada','Alerta desativado'));return;}
    withAccount(()=>{setAlerts(current=>[searchAlertKey,...current.filter(item=>item!==searchAlertKey)].slice(0,20));showAccountToast(say('Listo, te avisamos cuando entre algo así','Pronto, avisamos quando entrar algo assim'))});
  }
- function shareActive(){
-   const folder=folders.find(item=>item.id===listId);if(!folder)return null;
-   const url=new URL(journeyUrl({page:'compare',search,listId:folder.id}),window.location.origin).href;
-   setShared(current=>shareFolder(current,folder));
-   return url;
+ const absolute=path=>new URL(path,window.location.origin).href;
+ const writeShared=next=>setShared(readSharedFolders(next,KNOWN_HOMES));
+ const updateRecord=(id,change)=>setShared(current=>current[id]?readSharedFolders({...current,[id]:change(current[id])},KNOWN_HOMES):current);
+ /** The public listing link; with an account it carries only an opaque sender id. */
+ const publicUrl=home=>absolute(journeyUrl({page:'listing',search,propertyId:(listingOf(home)||home).id,from:meId}));
+ function openShare(home){hideToasts();setShareSheet({home})}
+ /** "Decidir juntos": keeps the listing in the chosen folder and makes sure the folder has a live invite. */
+ function saveTogether({folderId,name}){
+   const home=shareSheet?.home,who=accountRef.current;if(!home||!who.id)return null;
+   let next=folders,folder;
+   if(name){({folders:next,folder}=createFolder(folders,name,home.id));if(!folder)return null;}
+   else{folder=folders.find(item=>item.id===folderId);if(!folder)return null;if(!folder.homeIds.includes(home.id))({folders:next,folder}=saveToFolder(folders,folderId,home.id));}
+   const now=Date.now(),before=shared[folder.id];
+   const created=shareFolder(shared,{...folder,homeIds:before&&!before.deleted?before.homeIds:folder.homeIds},now,who);
+   const record=syncShared(created[folder.id],folder,who.id,now);
+   writeShared({...created,[folder.id]:record});
+   setFolders(next);setLastFolderId(folder.id);
+   const others=activeMembers(record).filter(member=>member.id!==who.id).map(member=>member.name);
+   return {folder,others,url:absolute(journeyUrl({page:'listing',search,propertyId:(listingOf(home)||home).id,invite:record.inviteToken,from:who.id}))};
  }
+ function sentTogether(saved,channel){
+   setShareSheet(null);
+   announce(saved.others.length&&!channel?say(`Guardado en "${saved.folder.name}". ${saved.others.join(', ')} ya lo ven.`,`Salvo em "${saved.folder.name}". ${saved.others.join(', ')} já veem.`)
+     :say(`Guardado en tu lista. Te avisamos cuando reaccionen.`,`Salvo na sua lista. Avisamos quando reagirem.`));
+ }
+
+ /** The folder's "+": the first invite turns the list into a shared one, with this account as owner. */
+ function inviteToFolder(folder,cover){
+   withAccount(who=>{
+     const created=shareFolder(shared,folder,Date.now(),who);writeShared(created);
+     const record=created[folder.id];
+     setInviteDialog({folderName:folder.name,cover,count:record.homeIds.length,url:absolute(journeyUrl({page:'folder',search,invite:record.inviteToken,from:who.id}))});
+   });
+ }
+ function reactInFolder(folderId,homeId,kind){if(meId)updateRecord(folderId,record=>react(record,meId,homeId,kind))}
+ function noteInFolder(folderId,homeId,text){if(meId)updateRecord(folderId,record=>setNote(record,meId,homeId,text))}
+ function renameFolder(folderId,name){setFolders(current=>current.map(folder=>folder.id===folderId?{...folder,name}:folder))}
+ function leaveSharedFolder(folderId){
+   const folder=folders.find(item=>item.id===folderId);if(!folder)return;
+   setConfirm({title:say(`¿Salir de "${folder.name}"?`,`Sair de "${folder.name}"?`),text:say('Dejarás de ver la lista y sus inmuebles. Para volver, necesitarás una nueva invitación.','Você deixa de ver a lista e os imóveis dela. Para voltar, vai precisar de um novo convite.'),action:say('Salir','Sair'),
+     run:()=>{updateRecord(folderId,record=>leaveFolder(record,meId));setFolders(current=>current.filter(item=>item.id!==folderId));returnFromFolder()}});
+ }
+ function removeFolderMember(folderId,memberId){updateRecord(folderId,record=>removeMember(record,meId,memberId))}
+ function revokeFolderLink(folderId){updateRecord(folderId,record=>revokeInvite(record,meId));announce(say('Listo. Los enlaces que ya enviaste dejaron de funcionar.','Pronto. Os links que você já enviou pararam de funcionar.'))}
+ function deleteFolder(folderId){
+   const folder=folders.find(item=>item.id===folderId);if(!folder)return;
+   setConfirm({title:say(`¿Eliminar "${folder.name}"?`,`Excluir "${folder.name}"?`),
+     text:sharedWithOthers(folder)?say('Los miembros perderán acceso; les ofreceremos guardar una copia.','Os membros perderão o acesso; vamos oferecer que guardem uma cópia.'):say('Los inmuebles guardados aquí saldrán de tus favoritos.','Os imóveis salvos aqui sairão dos seus favoritos.'),
+     action:say('Eliminar lista','Excluir lista'),
+     run:()=>{if(shared[folderId]&&meId)setShared(current=>readSharedFolders(deleteShared(current,folderId,meId),KNOWN_HOMES));setFolders(current=>current.filter(item=>item.id!==folderId));returnFromFolder()}});
+ }
+ /** A member of a deleted list keeps its listings as a private copy. */
+ function copyDeletedFolder(folderId){
+   const folder=folders.find(item=>item.id===folderId);if(!folder)return;
+   const rest=folders.filter(item=>item.id!==folderId);
+   const {folders:next,folder:copy}=createFolder(rest,uniqueFolderName(say(`${folder.name} (copia)`,`${folder.name} (cópia)`),rest),null);
+   setFolders(next.map(item=>item.id===copy.id?{...item,homeIds:folder.homeIds}:item));
+   navigate({...routeRef.current,page:'folder',listId:copy.id},{replace:true,scroll:0});
+ }
+ function dismissDeletedFolder(folderId){setFolders(current=>current.filter(item=>item.id!==folderId));returnFromFolder()}
+
+ /** Joining from an invite: the anonymous reactions of this tab move to the account. */
+ function joinShared(record,who){
+   setShared(current=>current[record.id]?readSharedFolders({...current,[record.id]:migrateReactions(joinFolder(current[record.id],who),guestId,who.id)},KNOWN_HOMES):current);
+   setFolders(current=>mergeSharedHomes(current,record.id,record.name,record.homeIds,true));
+ }
+ const inviteRecord=route.invite?findByToken(shared,route.invite):null;
+ const inviteSender=inviteRecord?(inviteRecord.members.find(member=>member.id===route.from)||inviteRecord.members.find(member=>member.role==='owner'&&!member.left)||null):null;
+ function openInvitedFolder(record){navigate({...routeRef.current,page:'folder',listId:record.id,propertyId:null},{layer:'folderpage',scroll:0})}
+ function joinAndOpen(record,who){
+   joinShared(record,who);
+   const name=record.members.find(member=>member.id===route.from)?.name||record.members.find(member=>member.role==='owner')?.name;
+   announce(name?say(`Te uniste a la lista de ${name}`,`Você entrou na lista de ${name}`):say('Te uniste a la lista','Você entrou na lista'));
+   navigate({...routeRef.current,page:'folder',listId:record.id,propertyId:null},{replace:routeRef.current.page==='folder',scroll:0});
+ }
+ /** Guests react without an account; the first reaction invites them in. A signed-in guest joins by reacting. */
+ function reactAsGuest(kind){
+   const record=inviteRecord,homeId=propertyId;if(!record||!homeId)return;
+   if(meId){if(!memberOf(record,meId)){joinShared(record,account);announce(say('Te uniste a la lista','Você entrou na lista'))}updateRecord(record.id,current=>react(current,meId,homeId,kind));return;}
+   const first=!Object.values(record.reactions).some(byActor=>byActor[guestId]);
+   updateRecord(record.id,current=>react(current,guestId,homeId,kind));
+   if(first)setJoinPrompt({record,reason:'react'});
+ }
+ function requestJoin(record){if(meId){joinAndOpen(record,account);return;}setJoinPrompt({record,reason:'folder'})}
+ function signInToJoin(){const prompt=joinPrompt;setJoinPrompt(null);const who=startSession();if(prompt?.record)joinAndOpen(prompt.record,who)}
  function changeSort(next){navigate({...routeRef.current,sort:next},{replace:true})}
+
+ /** The guide's stops land on the results grid unless they need another page; the search itself is kept. */
+ function guideResults(extra={}){
+   const current=routeRef.current;
+   const there=current.page==='results'&&!current.propertyId&&(current.map||'mini')!=='full'&&!current.listId;
+   const next={...current,page:'results',propertyId:null,listId:null,map:current.map==='half'?'half':'mini',...extra};
+   if(there&&JSON.stringify(next)===JSON.stringify(current))return false;
+   navigate(next,there?{replace:true}:{scroll:0});
+   return !there;
+ }
+ function guideCueBar(view){
+   const current=routeRef.current.search;
+   // Credit only exists in a purchase, so that stop moves a rent search to buying.
+   const extra=view==='credit'&&current.mode==='rent'?{search:normalizeSearch({...current,mode:'buy',budget:7500000,minBudget:0})}:{};
+   guideResults(extra);
+   setGuideCue({view,id:Date.now()});
+ }
+ /** Opens the first listing on screen through the card itself, so the panel keeps its morph. */
+ function guideOpenCard(){
+   const current=routeRef.current;
+   if(current.page==='results'&&current.propertyId)return;
+   const moved=guideResults();
+   const started=performance.now();
+   const find=()=>{
+     const cards=[...document.querySelectorAll('.flow-listings .discovery-item[data-home-id]')].filter(node=>!lookupHome(node.dataset.homeId)?.development&&node.getBoundingClientRect().height>0);
+     if(!cards.length){if(performance.now()-started<2500)requestAnimationFrame(find);return;}
+     const card=cards.find(node=>{const rect=node.getBoundingClientRect();return rect.top>=0&&rect.bottom<=innerHeight})||cards[0];
+     const home=lookupHome(card.dataset.homeId);if(!home)return;
+     open(home,{currentTarget:card.querySelector('.discovery-open')});
+   };
+   setTimeout(()=>requestAnimationFrame(find),moved?480:0);
+ }
+ /** A folder with three or more homes, or a new "Guide" one with homes from this search that aren't saved yet. */
+ function guideFolder(){
+   const existing=comparableFolder(folders);if(existing)return existing.id;
+   const savedNow=new Set(savedIds(folders));
+   const picks=[...matchingHomes(search),...prototypeResults(search)].filter((home,index,list)=>!home.development&&!savedNow.has(home.id)&&list.findIndex(item=>item.id===home.id)===index).slice(0,GUIDE_COMPARE_SIZE).map(home=>home.id);
+   const {folders:next,folder}=createFolder(folders,uniqueFolderName(GUIDE_FOLDER_NAME,folders),null);
+   if(!folder)return null;
+   setFolders(next.map(item=>item.id===folder.id?{...item,homeIds:picks}:item));
+   return folder.id;
+ }
+ function guideCompare(contact){
+   const id=guideFolder();if(!id)return;
+   hideToasts();
+   setGuideContact(contact?{folderId:id,id:Date.now()}:null);
+   navigate({...routeRef.current,page:'compare',propertyId:null,listId:id},{layer:'folder',scroll:0});
+ }
+ function guideAction(action){
+   const current=routeRef.current;
+   setLoginOpen(false);
+   switch(action){
+     case 'home':navigate({...current,page:'home',propertyId:null,listId:null,map:'mini'},{scroll:0});return;
+     case 'mora-answer':guideCueBar('answer');return;
+     case 'mora-suggest':guideCueBar('suggest');return;
+     case 'ask-moment':guideCueBar('moment');return;
+     case 'ask-credit':guideCueBar('credit');return;
+     case 'ask-work':guideCueBar('qualify');return;
+     case 'map-full':case 'context-map':
+       if(current.page==='results'&&!current.propertyId&&current.map==='full')return;
+       navigate({...current,page:'results',propertyId:null,listId:null,map:'full'},{layer:'map',scroll:0});return;
+     case 'grid':case 'favorites':guideResults({sort:'recommended'});return;
+     case 'sort-rarity':guideResults({sort:'rarity'});return;     case 'mini-listing':case 'context-panel':guideOpenCard();return;
+     case 'context-listing':{
+       const home=matchingHomes(current.search).find(item=>!item.development)||homes.find(item=>!item.development);
+       navigate({...current,page:'listing',propertyId:home.id,listId:null,map:'mini'},{layer:'listing',scroll:0});return;
+     }
+     case 'sign-in':if(account.signedIn)showAccountToast(say('Ya tienes sesión iniciada','Você já está com login feito'));else openLogin();return;
+     case 'share-list':{const id=guideFolder();if(id)navigate({...current,page:'folder',propertyId:null,listId:id},{layer:'folderpage',scroll:0});return;}
+     case 'compare':guideCompare(false);return;
+     case 'batch':guideCompare(true);return;
+     case 'tour':setRecorridoUnitId(null);navigate({...current,page:'listing',propertyId:'torre-olmo',listId:null,map:'mini'},{layer:'listing',scroll:0});return;
+     default:
+   }
+ }
+ useEffect(()=>{if(page!=='compare')setGuideContact(null)},[page]);
  function accountAction(action){
    if(action==='favorites'){openFavorites();return;}
-   if(action==='logout'){setAccount({signedIn:false});return;}
+   if(action==='logout'){setAccount(current=>({...current,signedIn:false}));return;}
    showAccountToast(say('Disponible fuera de este prototipo','Disponível fora deste protótipo'));
  }
  const toastFolder=folderToast&&(folders.find(folder=>folder.id===folderToast.folderId)||(folderToast.removed?folderToast.folder:null));
@@ -166,18 +391,51 @@ export function App(){
  const visible=prototypeResults(search).sort((a,b)=>Number(exactIds.has(b.id))-Number(exactIds.has(a.id))||((pref==='extra'||pref==='separate')?Number(b.beds>=3)-Number(a.beds>=3):0)||(exactIds.has(a.id)?listingPrice(a)-listingPrice(b):0));
  const addReceipt=receipt=>setReceipts(current=>[receipt,...current.filter(r=>r.id!==receipt.id)]);
 
- const showResults=page!=='home'&&page!=='listing'&&page!=='compare'&&page!=='favorites';
+ const pageFolder=page==='folder'&&listId?folders.find(folder=>folder.id===listId)||null:null;
+ const pageRecord=page==='folder'?(listId?shared[listId]||null:inviteRecord):null;
+ const folderMode=page!=='folder'?null
+   :pageFolder?(pageFolder.collab&&pageRecord?.deleted&&!memberOf(pageRecord,meId)?'deleted':pageFolder.collab&&!meId?'gate':'member')
+   :route.invite?(pageRecord?'preview':'missing'):null;
+ const folderRecord=folderMode==='member'&&pageRecord&&!pageRecord.deleted&&memberOf(pageRecord,meId)?pageRecord:folderMode==='preview'||folderMode==='deleted'?pageRecord:null;
+ const folderPageHomes=homesFor(folderMode==='preview'?pageRecord.homeIds:pageFolder?.homeIds||[]);
+ // Opening your own link lands in the folder itself, without the invite banner.
+ useEffect(()=>{
+   if(!route.invite||!inviteRecord||!meId||!memberOf(inviteRecord,meId))return;
+   if(page==='folder'||(page==='listing'&&route.from===meId)){
+     if(!folders.some(folder=>folder.id===inviteRecord.id))setFolders(current=>mergeSharedHomes(current,inviteRecord.id,inviteRecord.name,inviteRecord.homeIds,isCollaborative(inviteRecord)));
+     navigate({...route,page:'folder',listId:inviteRecord.id,propertyId:null},{replace:true,scroll:0});
+   }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[route.invite,page,meId,inviteRecord?.id]);
+ const myReaction=inviteRecord&&propertyId?inviteRecord.reactions[propertyId]?.[meId&&memberOf(inviteRecord,meId)?meId:guestId]?.kind||null:null;
+ const inviteBanner=page==='listing'&&route.invite?<InviteBanner record={inviteRecord} sender={inviteSender} reaction={myReaction} joined={!!meId&&!!memberOf(inviteRecord,meId)}
+   onReact={reactAsGuest} onJoin={()=>inviteRecord&&requestJoin(inviteRecord)}
+   onOpenList={()=>{if(!inviteRecord)return;if(meId&&memberOf(inviteRecord,meId))openInvitedFolder(inviteRecord);else navigate({...route,page:'folder',propertyId:null,listId:null},{keepInvite:true,layer:'folderpage',scroll:0})}}/>:null;
+ const showResults=page!=='home'&&page!=='listing'&&page!=='compare'&&page!=='favorites'&&page!=='folder';
  const panelHome=page==='home'||showResults?selected:null;
- const favoritesPage=page==='favorites'||(page==='compare'&&!activeFolder);
+ const favoritesPage=page==='favorites'||(page==='compare'&&!activeFolder)||(page==='folder'&&!folderMode);
  const folderMeta=activeFolder?.pick?say(`${folderHomes.length} inmuebles lado a lado`,`${folderHomes.length} imóveis lado a lado`):activeFolder?.id===RECENT_ID?say(`${folderHomes.length} vistos en esta sesión`,`${folderHomes.length} vistos nesta sessão`):activeFolder?.shared?`${savedCountLabel(folderHomes.length,language)} · ${say('carpeta compartida','pasta compartilhada')}`:savedCountLabel(folderHomes.length,language);
  return <><HomeHeader results={page!=='home'} signedIn={account.signedIn} onAction={headerAction} onLogin={openLogin} onAccount={accountAction} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/>
- <main>{page==='home'?<div><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?selected.development?<Suspense fallback={<RecorridoShell home={selected}/>}><RecorridoPage key={selected.id} home={selected} savedIds={saved} initialUnitId={recorridoUnitId} onLike={requestSave} onClose={returnFromListing} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/></Suspense>:<div className="search-flow-page home-evolution listing-route"><div><PropertyDetail key={selected.id} home={selected} search={search} pref={pref} sort={sort} favorites={homesFor(saved)} saved={saved} receipts={receipts} onLike={requestSave} onOpenListing={openListingFromCompare} onMore={()=>navigate({...routeRef.current,page:'results',propertyId:null},{scroll:0})} onFavorite={navigateListing} onCompare={compareWith} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} profile={profile} onProfile={setProfile} onReceipt={addReceipt}/></div></div>:favoritesPage?<FavoritesIndex folders={folders} recent={recent} onOpenFolder={id=>openFolder(id,true)} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} folderName={activeFolder.name} meta={folderMeta} homes={folderHomes} hiddenIds={(compareView.hidden[activeFolder.id]||[]).filter(id=>folderHomes.some(home=>home.id===id))} onHide={id=>hideFromCompare(activeFolder.id,id)} onShowAll={()=>showAllInCompare(activeFolder.id)} receipts={receipts} profile={profile} onProfile={setProfile} onReceipts={list=>setReceipts(current=>[...list,...current])} intro={!compareView.seen.includes(activeFolder.id)&&!folderHomes.some(home=>receipts.some(receipt=>receipt.propertyId===home.id))} onIntroSeen={()=>markCompareSeen(activeFolder.id)} onClose={returnFromCompare} onOpen={openListingFromCompare} onExplore={()=>navigate({...route,page:'results',propertyId:null,listId:null},{scroll:0})} backLabel={activeFolder.pick?say('Volver al inmueble','Voltar ao imóvel'):undefined} onShare={!activeFolder.pick&&!activeFolder.shared&&activeFolder.id!==RECENT_ID?onDone=>withAccount(()=>onDone(shareActive())):undefined}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} sort={sort} onSort={changeSort} alert={{on:alertOn,onToggle:toggleAlert}} receipts={receipts} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:false,signedIn:account.signedIn,onLogin:openLogin,onAskMora:text=>setAskPrompt({text,id:Date.now()})}}/></div></div>:null}</main>
+ <main>{page==='home'?<div><Home choices={homeChoices} onChoose={key=>setHomeChoices(current=>key==='template'?{...current,mode:true,propertyType:true}:{...current,[key]:true})} skipIntro={homeIntroDone} onIntroDone={()=>setHomeIntroDone(true)} search={search} setSearch={next=>{const updated={...route,search:typeof next==='function'?next(search):next};history.replaceState(history.state,'',journeyUrl(updated));setRoute(updated)}} onSearch={begin} saved={saved} receipts={receipts} onOpen={open} onLike={requestSave}/></div>:page==='listing'&&selected?selected.development?<Suspense fallback={<RecorridoShell home={selected}/>}><RecorridoPage key={selected.id} home={selected} savedIds={saved} initialUnitId={recorridoUnitId} onLike={requestSave} onShare={openShare} onClose={returnFromListing} onHome={()=>navigate({...routeRef.current,page:'home',propertyId:null},{scroll:0})}/></Suspense>:<div className="search-flow-page home-evolution listing-route">{inviteBanner}<div><PropertyDetail key={selected.id} home={selected} search={search} pref={pref} sort={sort} favorites={homesFor(saved)} saved={saved} receipts={receipts} onLike={requestSave} onShare={openShare} onOpenListing={openListingFromCompare} onMore={()=>navigate({...routeRef.current,page:'results',propertyId:null},{scroll:0})} onFavorite={navigateListing} onCompare={compareWith} receipt={receipts.find(r=>r.propertyId===selected.id)} onClose={returnFromListing} profile={profile} onProfile={setProfile} onReceipt={addReceipt}/></div></div>:page==='listing'&&route.invite?<div className="search-flow-page home-evolution listing-route">{inviteBanner}<InviteUnavailable search={search} onOpen={home=>navigate({...routeRef.current,page:'listing',propertyId:home.id},{scroll:0})}/></div>
+ :folderMode?<FolderPage key={`${listId||route.invite}|${folderMode}`} mode={folderMode} name={folderMode==='preview'||folderMode==='missing'?pageRecord?.name||'':pageFolder.name} homes={folderPageHomes} record={folderRecord} meId={meId} me={account.signedIn?account:null} sender={inviteSender} search={search} saved={saved} receipts={receipts} onLike={requestSave}
+   onBack={folderMode==='preview'||folderMode==='missing'?()=>navigate({...routeRef.current,page:'results',listId:null,propertyId:null},{scroll:0}):returnFromFolder} onOpen={openListingFromCompare} onCompare={()=>compareFolder(listId)} onExplore={()=>navigate({...route,page:'results',propertyId:null,listId:null},{scroll:0})}
+   onInvite={()=>inviteToFolder(pageFolder,folderPageHomes[0])} onReact={(homeId,kind)=>reactInFolder(listId,homeId,kind)} onNote={(homeId,text)=>noteInFolder(listId,homeId,text)}
+   onRename={name=>renameFolder(listId,name)} onLeave={()=>leaveSharedFolder(listId)} onRemoveMember={id=>removeFolderMember(listId,id)} onRevoke={()=>revokeFolderLink(listId)} onDelete={()=>deleteFolder(listId)}
+   onCopy={()=>copyDeletedFolder(listId)} onDismiss={()=>dismissDeletedFolder(listId)} onJoin={()=>pageRecord&&requestJoin(pageRecord)} onLogin={()=>startSession()}/>
+ :favoritesPage?<FavoritesIndex folders={folders} recent={recent} shared={shared} meId={meId} onOpenFolder={openFolder} onBack={returnFromFavorites}/>:page==='compare'?<div className="compare-route"><CompareFavorites key={activeFolder.id} folderName={activeFolder.name} meta={folderMeta} homes={folderHomes} hiddenIds={(compareView.hidden[activeFolder.id]||[]).filter(id=>folderHomes.some(home=>home.id===id))} onHide={id=>hideFromCompare(activeFolder.id,id)} onShowAll={()=>showAllInCompare(activeFolder.id)} receipts={receipts} profile={profile} onProfile={setProfile} onReceipts={list=>setReceipts(current=>[...list,...current])} intro={!compareView.seen.includes(activeFolder.id)&&!folderHomes.some(home=>receipts.some(receipt=>receipt.propertyId===home.id))} onIntroSeen={()=>markCompareSeen(activeFolder.id)} startContact={guideContact?.folderId===activeFolder.id?guideContact.id:null} onClose={returnFromCompare} onOpen={openListingFromCompare} onExplore={()=>navigate({...route,page:'results',propertyId:null,listId:null},{scroll:0})} backLabel={activeFolder.pick?say('Volver al inmueble','Voltar ao imóvel'):folders.some(folder=>folder.id===activeFolder.id)?say('Volver a la lista','Voltar para a lista'):undefined}/></div>:showResults?<div className="results-layout"><div className="results-main"><ResultsFlowPage blocked={!!propertyId} search={search} onChange={updateSearch} visible={visible} saved={saved} onSave={requestSave} onOpen={open} sort={sort} onSort={changeSort} alert={{on:alertOn,onToggle:toggleAlert}} receipts={receipts} cue={guideCue} onCue={()=>setGuideCue(null)} assistantProps={{search,pref,onPref:changePref,onChange:updateSearch}} mapProps={{mode:mapMode,onMode:changeMapMode,onOpenListing:openListingFromMap,recent:recent.map(entry=>entry.id),hidden:false,signedIn:account.signedIn,onLogin:openLogin,onAskMora:text=>setAskPrompt({text,id:Date.now()})}}/></div></div>:null}</main>
  <AnimatePresence>{panelHome&&<ListingPanel key="listing-panel" home={panelHome} origin={panelOrigin.current} search={search} pref={pref} hasSearch={page!=='home'} favorites={homesFor(saved)} profile={profile} onProfile={setProfile} onReceipt={addReceipt} onClose={closeDetail} onNavigate={navigateListing} onDetails={openDetails}/>}</AnimatePresence>
- {page!=='compare'&&page!=='favorites'&&!isRecorrido&&<footer className="site-footer"><span>inmuebles24</span><p>{say('Prototipo V2 · Contacto simulado','Protótipo V2 · Contato simulado')}</p><div className="footer-controls"><select className="footer-language" aria-label={t('Idioma')} value={language} onChange={e=>changeLanguage(e.target.value)}>{languages.map(o=><option key={o.code} value={o.code}>{o.label}</option>)}</select></div></footer>}
+ {page!=='compare'&&page!=='favorites'&&page!=='folder'&&!isRecorrido&&<footer className="site-footer"><span>inmuebles24</span><p>{say('Prototipo V2 · Contacto simulado','Protótipo V2 · Contato simulado')}</p><div className="footer-controls"><select className="footer-language" aria-label={t('Idioma')} value={language} onChange={e=>changeLanguage(e.target.value)}>{languages.map(o=><option key={o.code} value={o.code}>{o.label}</option>)}</select></div></footer>}
 
  {toast&&<div className="toast" role="status"><span>{toast.text}</span><button className="icon-button" onClick={()=>setToast(null)} aria-label={t('Cerrar aviso')}><Icon name="close" size={16}/></button></div>}
  <AnimatePresence>{folderToast?.account?<AccountToast key="folder-toast" text={folderToast.text} onHold={()=>clearTimeout(toastTimer.current)} onRelease={()=>armToast(3000)}/>:toastFolder&&toastHome&&<FolderToast key="folder-toast" home={toastHome} folder={toastFolder} removed={folderToast.removed} onUndo={()=>{setFolders(current=>restoreHome(current,toastFolder,toastHome.id));showFolderToast(toastHome.id,toastFolder.id)}} onChange={()=>{setFolderToast(null);setPicker({home:toastHome})}} onView={()=>openFolder(toastFolder.id)} onHold={()=>clearTimeout(toastTimer.current)} onRelease={()=>armToast(3000)}/>}</AnimatePresence>
  <AnimatePresence onExitComplete={()=>{if(loginAfterPicker.current){loginAfterPicker.current=false;setLoginOpen(true)}}}>{picker&&<FolderPicker key="folder-picker" home={picker.home} folders={folders} suggestion={uniqueFolderName(suggestedFolderName(search),folders)} nudge={picker.nudge} onSelect={selectFolder} onCreate={createList} onClose={()=>setPicker(null)} onLogin={loginFromNudge} onDismissNudge={dismissNudge}/>}</AnimatePresence>
+ <AnimatePresence>{shareSheet&&<ShareSheet key="share-sheet" home={shareSheet.home} signedIn={account.signedIn} folders={folders} shared={shared} lastFolderId={lastFolderId}
+   suggestion={uniqueFolderName(suggestedFolderName(search),folders)} publicUrl={publicUrl(shareSheet.home)} onSignIn={startSession} onSave={saveTogether} onSent={sentTogether} onClose={()=>setShareSheet(null)}/>}</AnimatePresence>
+ <AnimatePresence>{inviteDialog&&<InviteDialog key="invite-dialog" folderName={inviteDialog.folderName} cover={inviteDialog.cover} count={inviteDialog.count} url={inviteDialog.url} onSent={()=>{setInviteDialog(null);announce(say('Invitación lista. Te avisamos cuando se unan.','Convite pronto. Avisamos quando entrarem.'))}} onClose={()=>setInviteDialog(null)}/>}</AnimatePresence>
+ <AnimatePresence>{joinPrompt&&<JoinDialog key="join" reason={joinPrompt.reason} record={joinPrompt.record} sender={inviteSender} onSignIn={signInToJoin} onClose={()=>setJoinPrompt(null)}/>}</AnimatePresence>
+ <AnimatePresence>{confirm&&<ConfirmDialog key="confirm" {...confirm} onConfirm={()=>{const run=confirm.run;setConfirm(null);run()}} onClose={()=>setConfirm(null)}/>}</AnimatePresence>
  <AnimatePresence>{loginOpen&&<LoginDialog key="login" onSignIn={signIn} onClose={closeLogin}/>}</AnimatePresence>
+ <SelectionMora contextHome={selected} routeKey={`${page}|${propertyId||''}|${listId||''}`}/>
+ {guideOn&&<ProjectGuide onAction={guideAction}/>}
  </>;
 }

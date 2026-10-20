@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes} from '../src/data.js';
-import {listingCardTags, agencyTopService, LISTING_TAG_LIMIT} from '../src/listingCardTags.js';
+import {listingCardTags, agencyTopService, LISTING_TAG_LIMIT, DEMAND_CONTACTS} from '../src/listingCardTags.js';
+import {recentContacts} from '../src/resultSort.js';
 
 test('agency top service starts at 4.7', () => {
   assert.equal(agencyTopService(4.6), false);
@@ -19,4 +20,12 @@ test('contacted reserves one tag slot', () => {
   const full = listingCardTags(home, {language:'pt-BR', contacted:false});
   const withContact = listingCardTags(home, {language:'pt-BR', contacted:true});
   assert.ok(withContact.length <= full.length);
+});
+
+test('high demand marks listings with many recent contacts', () => {
+  const busy = homes.find(home => !home.development && recentContacts(home) >= DEMAND_CONTACTS);
+  const quiet = homes.find(home => !home.development && recentContacts(home) < DEMAND_CONTACTS);
+  assert.ok(listingCardTags(busy, {language:'es-MX', max:9}).some(tag => tag.id === 'demand' && tag.label === 'Alta demanda'));
+  assert.ok(listingCardTags(busy, {language:'pt-BR', max:9}).some(tag => tag.label === 'Alta procura'));
+  assert.ok(!listingCardTags(quiet, {language:'es-MX', max:9}).some(tag => tag.id === 'demand'));
 });

@@ -205,6 +205,55 @@ function useSentenceIntro(parts, skip, onDone, sentenceOnly=false) {
   return {...frame, elapsed, timeline, skipped, speed, finish};
 }
 
+const SENTENCE_LINES = [[[0,1],[2,3],[4,5]], [[6,7],[8,9]]];
+const SENTENCE_MIN_FONT = 28;
+
+/**
+ * Two fixed lines: the font shrinks until the widest line fits, never below SENTENCE_MIN_FONT.
+ * When even that does not fit (phones), the groups wrap freely as before.
+ * Gaps and chevrons stay in px, so the width is not proportional to the font and the scale is bisected.
+ */
+function useTwoLineSentence(ref, textKey) {
+  useLayoutEffect(() => {
+    const sentence = ref.current;
+    if (!sentence) return;
+    let frame = 0;
+    const fit = () => {
+      sentence.removeAttribute('data-wrap');
+      sentence.style.setProperty('--home-sentence-fit', '1');
+      const lines = [...sentence.querySelectorAll(':scope > .home-sentence-line')];
+      const base = parseFloat(getComputedStyle(sentence).fontSize);
+      const room = sentence.clientWidth;
+      if (!lines.length || !base || !room) return;
+      const minFit = Math.min(1, SENTENCE_MIN_FONT / base);
+      const fits = scale => {
+        sentence.style.setProperty('--home-sentence-fit', String(scale));
+        return Math.max(...lines.map(line => line.scrollWidth)) <= room + 0.5;
+      };
+      if (fits(1)) return;
+      if (!fits(minFit)) {
+        sentence.style.setProperty('--home-sentence-fit', '1');
+        sentence.setAttribute('data-wrap', '');
+        return;
+      }
+      let low = minFit;
+      let high = 1;
+      for (let pass = 0; pass < 7; pass++) {
+        const mid = (low + high) / 2;
+        if (fits(mid)) low = mid; else high = mid;
+      }
+      fits(low);
+    };
+    const schedule = () => {cancelAnimationFrame(frame);frame = requestAnimationFrame(fit);};
+    fit();
+    const observer = new ResizeObserver(schedule);
+    observer.observe(sentence.parentElement);
+    sentence.querySelectorAll('.home-phrase-group,.mora-extra-term').forEach(node => observer.observe(node));
+    document.fonts?.ready.then(schedule);
+    return () => {observer.disconnect();cancelAnimationFrame(frame);};
+  }, [ref, textKey]);
+}
+
 function StreamedWord({word, count}) {
   return count ? <span className="home-soft-ink">{word.chunks.map((chunk, index) => <React.Fragment key={index}><span className="home-soft-word" data-reveal-delay={index * word.revealStep}>{chunk.trimEnd()}</span>{chunk.match(/\s+$/)?.[0]}</React.Fragment>)}</span> : null;
 }
@@ -220,6 +269,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   const [locationTerm, setLocationTerm] = useState('');
   const refs = useRef({});
   const form = useRef(null);
+  const sentenceRef = useRef(null);
   const localeIndex = language === 'pt-BR' ? 1 : 2;
   const typeLabel = PROPERTY_TYPES.find(([key]) => key === type)?.[localeIndex] || PROPERTY_TYPES[0][localeIndex];
   const operationLabel = OPERATIONS.find(([key]) => key === search.mode)?.[localeIndex] || 'Comprar';
@@ -233,6 +283,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     {text:t('Agrega aquí más detalles'), details:true},
   ];
   const intro = useSentenceIntro(parts, skipIntro, onIntroDone, variant === 'results');
+  useTwoLineSentence(sentenceRef, `${language}|${parts.map(part => part.text).join('|')}|${(search.criteria || []).join('|')}`);
   const ready = intro.ready;
   const revealExtras = variant === 'results' && !intro.done;
   const extrasVisible = intro.words.at(-1).visible;
@@ -271,8 +322,8 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       <h1>{variant === 'results' ? say('Refine a sua busca', 'Refina tu búsqueda') : t('Describe el hogar que imaginas')}</h1>
       {!intro.done && <button type="button" className="home-skip-intro" style={variant === 'results' ? {right:64} : undefined} aria-label={say('Pular animação', 'Saltar animación')} onClick={skipAnimation}>{variant === 'results' ? say('Pular', 'Saltar') : say('Pular animação', 'Saltar animación')}<span aria-hidden="true">↗</span></button>}
       {variant === 'home' && <p className="sr-only" role="status">{ready ? canSubmit ? say('Sua busca está pronta para começar.', 'Tu búsqueda está lista para empezar.') : say('Escolha a operação e o tipo de imóvel para começar.', 'Elige la operación y el tipo de inmueble para empezar.') : say('Preparando uma sugestão de busca.', 'Preparando una sugerencia de búsqueda.')}</p>}
-      <div className="home-sentence" aria-busy={!ready}>
-        {[[0,1],[2,3],[4,5],[6,7],[8,9]].map(indices => <span className="home-phrase-group" key={indices[0]}>{indices.map(index => {
+      <div ref={sentenceRef} className="home-sentence" aria-busy={!ready}>
+        {SENTENCE_LINES.map((groups, line) => <span className="home-sentence-line" key={line}>{groups.map(indices => <span className="home-phrase-group" key={indices[0]}>{indices.map(index => {
           const part = parts[index];
           const word = intro.words[index];
           const tip = !ready && intro.activeWord === index;
@@ -282,7 +333,8 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
               : intro.done ? <span>{part.text}</span> : <>{(!preserveIntroLayout || !part.key) && <span className="home-word-measure" aria-hidden="true">{part.text}</span>}<span className="home-word-stream" aria-hidden="true"><StreamedWord word={intro.timeline.words[index]} count={word.count}/>{tip && <span data-writing-tip/>}</span></>}
           </span>;
         })}</span>)}
-        {revealExtras ? React.Children.map(extraContent, child => React.cloneElement(child, {className:`${child.props.className}${extrasVisible ? ' home-soft-word' : ''}`, style:{...child.props.style,visibility:extrasVisible ? 'visible' : 'hidden'}})) : extraContent}
+        {line === SENTENCE_LINES.length - 1 && (revealExtras ? React.Children.map(extraContent, child => React.cloneElement(child, {className:`${child.props.className}${extrasVisible ? ' home-soft-word' : ''}`, style:{...child.props.style,visibility:extrasVisible ? 'visible' : 'hidden'}})) : extraContent)}
+        </span>)}
       </div>
       <div className="home-detail-row">
         {detailContent || (ready ? <SearchDetails value={search.note} onChange={note => setSearch(updateSearchNote(search, note))} language={language}/>

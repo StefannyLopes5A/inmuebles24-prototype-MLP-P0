@@ -7,11 +7,10 @@ export {SORTS, canonicalSort};
 /**
  * How the results grid can be ordered. Recommended is the existing order (exact matches first). The others reorder
  * inside the exact matches and inside the suggestions, so a listing outside the filters never jumps ahead of one inside.
- * Recent contacts are a prototype figure seeded per listing, like days on market.
+ * Recent contacts, behind the high-demand card tag, are a prototype figure seeded per listing, like days on market.
  */
 
 const RARE_PEERS = 2;
-const BUSY_CONTACTS = 9;
 const NEAR_MEDIAN = 0.03;
 
 export function sortLabel(sort, language = 'es-MX') {
@@ -20,7 +19,6 @@ export function sortLabel(sort, language = 'es-MX') {
     recommended:pt ? 'Recomendados' : 'Recomendados',
     price:pt ? 'Preço justo' : 'Precio justo',
     rarity:pt ? 'Raridade' : 'Rareza',
-    contacts:pt ? 'Mais contatos recentes' : 'Más contactos recientes',
   }[canonicalSort(sort)];
 }
 
@@ -29,7 +27,6 @@ export const recentContacts = home => seed(`contacts|${home.id}`) % 15;
 function sortKey(home, sort) {
   if (sort === 'price') return marketFacts(home).delta ?? Infinity;
   if (sort === 'rarity') return peerFacts(home).count;
-  if (sort === 'contacts') return -recentContacts(home);
   return 0;
 }
 
@@ -62,7 +59,5 @@ export function sortSignal(home, sort, language = 'es-MX', {long = false} = {}) 
       : count === 1 ? say('Só 1 parecido no catálogo', 'Solo 1 parecido en el catálogo')
       : say(`Só ${count} parecidos no catálogo`, `Solo ${count} parecidos en el catálogo`);
   }
-  const count = recentContacts(home);
-  if (count < BUSY_CONTACTS) return null;
-  return long ? say(`${count} contatos nos últimos 7 dias`, `${count} contactos en los últimos 7 días`) : say(`${count} contatos em 7 dias`, `${count} contactos en 7 días`);
+  return null;
 }

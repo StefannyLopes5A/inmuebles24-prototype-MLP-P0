@@ -76,7 +76,7 @@ function ListingNav({intro, card, price, advertiser, onContact, say}) {
 }
 
 /** The full listing: Airbnb-style page built from the catalog plus a stable invented story. Contact grows inside the price card. */
-export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], onLike, onFavorite, onCompare, onOpenListing, onMore, onClose, profile, onProfile, onReceipt, receipt}) {
+export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], onLike, onShare, onFavorite, onCompare, onOpenListing, onMore, onClose, profile, onProfile, onReceipt, receipt}) {
   const {language, money, currency} = useLanguage(), pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
@@ -131,6 +131,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   const operation = say(home.mode === 'rent' ? 'Alugar · Apartamento' : 'Comprar · Apartamento', home.mode === 'rent' ? 'Renta · Departamento' : 'Venta · Departamento');
 
   async function share() {
+    if (onShare) { onShare(home); return; }
     try { await navigator.clipboard.writeText(window.location.href); } catch { return; }
     setCopied(true);
     clearTimeout(copyTimer.current);

@@ -1,6 +1,6 @@
 /** Attributes and inconsistencies Mora can read from the listing title. Confidence stays at the announcement, never a confirmed fact. */
 
-const ATTRIBUTES = [
+export const ATTRIBUTES = [
   {id:'roof', es:'roof garden', pt:'roof garden', pattern:/roof\s*(?:top|garden)|azotea/i},
   {id:'penthouse', es:'penthouse', pt:'penthouse', pattern:/pent\s*-?\s*house|\bpenthouse\b/i},
   {id:'levels', es:'dos niveles', pt:'dois andares', pattern:/2\s*pisos|dos\s+(?:pisos|niveles)|tres\s+niveles/i},

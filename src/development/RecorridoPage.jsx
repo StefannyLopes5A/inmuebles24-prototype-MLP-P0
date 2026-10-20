@@ -43,7 +43,7 @@ const unitFromUrl = () => {
   try { return unitById(new URLSearchParams(window.location.search).get('unit'))?.id || null; } catch { return null; }
 };
 
-export default function RecorridoPage({home, savedIds = [], initialUnitId, onLike, onClose}) {
+export default function RecorridoPage({home, savedIds = [], initialUnitId, onLike, onShare, onClose}) {
   const {language} = useLanguage();
   const pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
@@ -296,6 +296,7 @@ export default function RecorridoPage({home, savedIds = [], initialUnitId, onLik
   }
 
   async function share() {
+    if (onShare) { onShare(unit ? unitAsHome(unit) : home); return; }
     const url = new URL(window.location.href);
     if (unitId) url.searchParams.set('unit', unitId);
     else url.searchParams.delete('unit');

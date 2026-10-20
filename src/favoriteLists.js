@@ -55,7 +55,7 @@ export function normalizeFolders(raw, legacySaved = [], known) {
     const name = cleanFolderName(folder.name);
     if (!name) return [];
     seen.add(folder.id);
-    return [{id:folder.id, name, homeIds:uniqueIds(folder.homeIds, known), createdAt:Number(folder.createdAt) || 0}];
+    return [{id:folder.id, name, homeIds:uniqueIds(folder.homeIds, known), createdAt:Number(folder.createdAt) || 0, ...(folder.collab ? {collab:true} : {})}];
   });
   if (Array.isArray(raw)) return dedupeHomes(folders);
   const legacy = uniqueIds(legacySaved, known);
@@ -65,8 +65,11 @@ export function normalizeFolders(raw, legacySaved = [], known) {
 function dedupeHomes(folders) {
   const placed = new Set();
   return folders.map(folder => ({...folder, homeIds:folder.homeIds.filter(id => !placed.has(id) && placed.add(id))}))
-    .filter(folder => folder.homeIds.length);
+    .filter(keepFolder);
 }
+
+/** A private list with no homes stops existing; a shared one stays, empty, for everyone in it. */
+const keepFolder = folder => folder.homeIds.length > 0 || folder.collab === true;
 
 export function normalizeRecent(raw, known) {
   const seen = new Set();
@@ -79,10 +82,22 @@ export function normalizeRecent(raw, known) {
 
 export const folderOf = (folders, homeId) => folders.find(folder => folder.homeIds.includes(homeId)) || null;
 export const savedIds = folders => folders.flatMap(folder => folder.homeIds);
-/** A list with no homes stops existing. */
 export const removeHome = (folders, homeId) => folders
   .map(folder => ({...folder, homeIds:folder.homeIds.filter(id => id !== homeId)}))
-  .filter(folder => folder.homeIds.length);
+  .filter(keepFolder);
+
+/** Shared listings win: a home that arrives in a shared folder leaves the person's other lists. */
+export function mergeSharedHomes(folders, folderId, name, homeIds, collab = true) {
+  const incoming = new Set(homeIds);
+  const present = folders.some(folder => folder.id === folderId);
+  const base = present ? folders : [{id:folderId, name, homeIds:[], createdAt:Date.now()}, ...folders];
+  return base.map(folder => {
+    if (folder.id !== folderId) return {...folder, homeIds:folder.homeIds.filter(id => !incoming.has(id))};
+    const next = {...folder, name, homeIds:[...homeIds]};
+    if (collab) next.collab = true; else delete next.collab;
+    return next;
+  }).filter(keepFolder);
+}
 
 export function restoreHome(folders, folder, homeId) {
   if (folders.some(item => item.id === folder.id)) return saveToFolder(folders, folder.id, homeId).folders;
@@ -111,27 +126,6 @@ export function saveToFolder(folders, folderId, homeId) {
 export function recordView(recent, homeId, now = Date.now()) {
   if (!homeId) return recent;
   return [{id:homeId, viewedAt:now}, ...recent.filter(entry => entry.id !== homeId)].slice(0, RECENT_LIMIT);
-}
-
-/**
- * "Compartir" keeps a snapshot of the folder in this browser's localStorage, keyed by the folder id, so the link
- * (which carries only that id) opens the folder in another tab of the same browser. Nothing leaves the device.
- */
-export const SHARED_KEY = 'inmuebles24-v2-shared-folders';
-export const SHARED_LIMIT = 12;
-
-export function readSharedFolders(raw, known) {
-  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-  return Object.fromEntries(Object.entries(source).flatMap(([id, folder]) => {
-    if (!FOLDER_ID.test(id) || !folder) return [];
-    const name = cleanFolderName(folder.name), homeIds = uniqueIds(folder.homeIds, known);
-    return name && homeIds.length ? [[id, {id, name, homeIds, sharedAt:Number(folder.sharedAt) || 0}]] : [];
-  }).sort((a, b) => b[1].sharedAt - a[1].sharedAt).slice(0, SHARED_LIMIT));
-}
-
-export function shareFolder(shared, folder, now = Date.now()) {
-  if (!folder || !FOLDER_ID.test(folder.id)) return shared;
-  return readSharedFolders({...shared, [folder.id]:{name:folder.name, homeIds:folder.homeIds, sharedAt:now}});
 }
 
 export function savedCountLabel(count, language = 'es-MX') {

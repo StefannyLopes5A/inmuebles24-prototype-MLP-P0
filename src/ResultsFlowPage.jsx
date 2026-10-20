@@ -48,7 +48,7 @@ function SortControl({sort,onSort,language,say}) {
   </>;
 }
 
-export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,receipts,assistantProps,blocked,mapProps,sort:rawSort,onSort,alert}) {
+export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,receipts,assistantProps,blocked,mapProps,sort:rawSort,onSort,alert,cue,onCue}) {
   const {language,t}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const sort=canonicalSort(rawSort);
   const root=useRef(null),[updating,setUpdating]=useState(false);
@@ -104,7 +104,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
     </div>;
   }
   return <div ref={root} className="search-flow-page home-evolution">
-    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert}/>
+    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert} cue={cue} onCue={onCue}/>
     <div className="flow-results-content" data-map-layout={layout} inert={mapFull} aria-hidden={mapFull||undefined}>
       <div className="flow-results-heading">
         <h1>{say('Todos os resultados','Todos los resultados')}<span aria-label={say('imóveis encontrados','inmuebles encontrados')} className="results-count">{visible.length}</span></h1>

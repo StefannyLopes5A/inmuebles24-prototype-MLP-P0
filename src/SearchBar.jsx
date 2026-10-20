@@ -33,7 +33,7 @@ function MoraMessage({headline,detail,note}) {
   </div>;
 }
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[allFilters,setAllFilters]=useState(false);
@@ -118,6 +118,25 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   };
   useEffect(()=>{if(request)expand(request.key||'input',request.animate!==false);},[request]);
   useEffect(()=>{if(!askPrompt?.text)return;setDraft(askPrompt.text);expand('input');},[askPrompt?.id]);
+  // The presenter's guide opens a Mora turn on demand, skipping the scroll pause; each prompt still counts as asked.
+  useEffect(()=>{
+    if(!cue?.view)return;
+    pendingMenu.current=null;awaitingSentence.current=false;setSentenceIntro(false);setFocused(false);setMenuRequest(null);
+    trigger.current=null;
+    if(cue.view==='answer')setQuestion(marketQuestion('notary',language));
+    if(cue.view==='suggest')prompted.current.region=true;
+    if(cue.view==='qualify'){prompted.current.work=true;pendingWork.current=false;}
+    if(cue.view==='moment'){prompted.current.moment=true;writeSeeker({asked:true});}
+    transition(cue.view);
+    onCue?.();
+    // The close button mounts with the expanded surface, a few frames after the view changes.
+    let frames=0;
+    const focusClose=()=>{
+      const close=bar.current?.querySelector('.mora-close');
+      if(close)close.focus({preventScroll:true});else if(++frames<30)requestAnimationFrame(focusClose);
+    };
+    requestAnimationFrame(focusClose);
+  },[cue?.id]);
   useEffect(()=>{
     let startedInDetails=false;
     const cancelPointer=()=>{startedInDetails=false;};

@@ -20,11 +20,14 @@ import "./map-widgets.css";
 import "./compare-favorites.css";
 import "./favorite-folders.css";
 import "./account.css";
+import "./collaboration.css";
 import "./mobile-polish.css";
 import "./listing-panel.css";
 import "./mora-voice.css";
+import "./selection-mora.css";
 import "./glass.css";
 import "./recorrido.css";
+import "./project-guide.css";
 
 const finalUrl = migratePrototypeUrl(location.href);
 if (finalUrl) history.replaceState(history.state,"",finalUrl);

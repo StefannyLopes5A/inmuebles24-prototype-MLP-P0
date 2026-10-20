@@ -281,7 +281,7 @@ function Composer({recipients, profile, mobile, reduce, morph, pending, onCancel
     </form>;
 }
 
-export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare}) {
+export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare, startContact = null}) {
   const {language, compactMoney, say} = useSay();
   const reduce = useReducedMotion();
   const mobile = useMediaQuery('(max-width: 700px)');
@@ -359,6 +359,15 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
     if (stage !== 'idle' || sentMode || !selected.length) return;
     setStage('composer');
   }
+  const latestRequest = useRef(request);
+  latestRequest.current = request;
+  // The guide asks for the batch composer: every open home selected, after the columns have settled.
+  useEffect(() => {
+    if (!startContact) return;
+    setDeselected(new Set());
+    const id = setTimeout(() => latestRequest.current(), reduce ? 60 : 640);
+    return () => clearTimeout(id);
+  }, [startContact]);
   function closeComposer() {
     setStage('idle');
     requestAnimationFrame(() => cta.current?.focus({preventScroll:true}));

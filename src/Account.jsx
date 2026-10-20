@@ -23,27 +23,32 @@ function fanOrder(homes) {
   return rest.length > 1 ? [rest[0], newest, rest[1]] : rest.length ? [rest[0], newest] : [newest];
 }
 
-export function LoginNudge({titleId, homes, onLogin, onDismiss}) {
-  const say = useSay();
+/** The third-save fan: up to three photos, the newest in front. */
+export function NudgeFan({homes}) {
   const reduce = useReducedMotion();
-  const present = useIsPresent();
   const order = fanOrder(homes);
   const slots = order.length === 3 ? FAN : order.length === 2 ? [{x:-32, rotate:-6, z:1}, {x:32, rotate:6, z:2}] : [FAN[1]];
+  return <div className="nudge-fan" aria-hidden="true">
+    {order.map((home, index) => {
+      const slot = slots[index];
+      return <motion.img key={home.id} className="nudge-photo" src={propertyPhoto(home)} alt="" style={{zIndex:slot.z}}
+        initial={reduce ? {opacity:0} : {opacity:0, transform:'translateX(0px) rotate(0deg) scale(0.9)'}}
+        animate={{opacity:1, transform:`translateX(${slot.x}px) rotate(${slot.rotate}deg) scale(1)`}}
+        transition={reduce ? {duration:0.2, ease:EASE_OUT} : {
+          transform:{type:'spring', duration:0.5, bounce:0.2, delay:0.12 + index * 0.06},
+          opacity:{duration:0.2, ease:EASE_OUT, delay:0.12},
+        }}/>;
+    })}
+  </div>;
+}
+
+export function LoginNudge({titleId, homes, onLogin, onDismiss}) {
+  const say = useSay();
+  const present = useIsPresent();
 
   return <div className="account-nudge">
     <button type="button" className="folder-icon-button account-close" onClick={() => present && onDismiss()} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
-    <div className="nudge-fan" aria-hidden="true">
-      {order.map((home, index) => {
-        const slot = slots[index];
-        return <motion.img key={home.id} className="nudge-photo" src={propertyPhoto(home)} alt="" style={{zIndex:slot.z}}
-          initial={reduce ? {opacity:0} : {opacity:0, transform:'translateX(0px) rotate(0deg) scale(0.9)'}}
-          animate={{opacity:1, transform:`translateX(${slot.x}px) rotate(${slot.rotate}deg) scale(1)`}}
-          transition={reduce ? {duration:0.2, ease:EASE_OUT} : {
-            transform:{type:'spring', duration:0.5, bounce:0.2, delay:0.12 + index * 0.06},
-            opacity:{duration:0.2, ease:EASE_OUT, delay:0.12},
-          }}/>;
-      })}
-    </div>
+    <NudgeFan homes={homes}/>
     <h2 id={titleId}>{say('No pierdas tus favoritos', 'Não perca seus favoritos')}</h2>
     <p>{say('Inicia sesión para mantener tus listas guardadas y verlas desde cualquier dispositivo.', 'Entre na sua conta para manter suas listas salvas e encontrá-las em qualquer dispositivo.')}</p>
     <button type="button" className="folder-primary is-wide account-cta" onClick={() => present && onLogin()} autoFocus data-autofocus>{say('Iniciar sesión', 'Fazer login')}</button>
@@ -61,6 +66,40 @@ const GoogleMark = () => <svg width="22" height="22" viewBox="0 0 24 24" aria-hi
 const AppleMark = () => <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
   <path fill="#000" d="M16.37 12.73c-.03-2.6 2.12-3.85 2.22-3.91a4.78 4.78 0 0 0-3.76-2.03c-1.6-.16-3.12.94-3.93.94-.82 0-2.06-.92-3.39-.9a5.02 5.02 0 0 0-4.25 2.58c-1.81 3.14-.46 7.79 1.3 10.34.87 1.25 1.9 2.65 3.24 2.6 1.3-.05 1.8-.84 3.37-.84 1.57 0 2.02.84 3.4.81 1.4-.02 2.29-1.27 3.14-2.53a11.1 11.1 0 0 0 1.43-2.93 4.52 4.52 0 0 1-2.77-4.13ZM13.8 5.1A4.5 4.5 0 0 0 14.86 1.8a4.6 4.6 0 0 0-3 1.55 4.3 4.3 0 0 0-1.08 3.16 3.8 3.8 0 0 0 3.02-1.41Z"/>
 </svg>;
+
+export const WhatsAppMark = ({size = 22}) => <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+  <path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/>
+  <path fill="#fff" d="M16.9 14.4c-.3-.1-1.6-.8-1.8-.9-.3-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.6.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/>
+</svg>;
+
+/**
+ * Sign-in inside another dialog, dressed as the third-save invite. Google, Apple or a WhatsApp code all sign in;
+ * nothing typed is kept or sent.
+ */
+export function InlineLogin({titleId, homes = [], title, text, cancelLabel, onSignIn, onCancel}) {
+  const say = useSay();
+  const present = useIsPresent();
+  const [code, setCode] = useState(null);
+  const signIn = () => {if (present) onSignIn();};
+  return <div className="account-nudge account-inline">
+    {homes.length > 0 && <NudgeFan homes={homes}/>}
+    <h2 id={titleId}>{title}</h2>
+    {text && <p>{text}</p>}
+    {code === null ? <div className="account-inline-actions">
+      <button type="button" className="account-inline-provider" onClick={signIn} autoFocus data-autofocus><GoogleMark/>{say('Continuar con Google', 'Continuar com Google')}</button>
+      <button type="button" className="account-inline-provider" onClick={signIn}><AppleMark/>{say('Continuar con Apple', 'Continuar com Apple')}</button>
+      <button type="button" className="account-inline-provider" onClick={() => setCode('')}><WhatsAppMark/>{say('Recibir código por WhatsApp', 'Receber código pelo WhatsApp')}</button>
+    </div> : <form className="account-inline-code" onSubmit={event => {event.preventDefault(); if (code.length === 4) signIn();}}>
+      <label htmlFor={`${titleId}-code`}>{say('Escribe el código de 4 dígitos que te enviamos por WhatsApp', 'Digite o código de 4 dígitos que enviamos pelo WhatsApp')}</label>
+      <input id={`${titleId}-code`} inputMode="numeric" autoComplete="one-time-code" maxLength={4} value={code} placeholder="0000" autoFocus
+        onChange={event => setCode(event.target.value.replace(/\D/g, '').slice(0, 4))}/>
+      <button type="submit" className="folder-primary is-wide" disabled={code.length !== 4}>{say('Entrar', 'Entrar')}</button>
+      <button type="button" className="folder-text-button account-skip" onClick={() => setCode(null)}>{say('Usar otra opción', 'Usar outra opção')}</button>
+    </form>}
+    <p className="account-note">{say('Inicio de sesión simulado: no se envía ningún dato ni código.', 'Login simulado: nenhum dado ou código é enviado.')}</p>
+    <button type="button" className="folder-text-button account-skip" onClick={() => present && onCancel()}>{cancelLabel || say('Ahora no', 'Agora não')}</button>
+  </div>;
+}
 
 /** Simulated sign-in: every action signs in and nothing typed is kept or sent. */
 export function LoginDialog({onSignIn, onClose}) {

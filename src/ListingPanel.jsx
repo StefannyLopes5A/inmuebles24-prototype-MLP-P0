@@ -812,7 +812,7 @@ export function ListingPanel({home, origin, search, pref, hasSearch = true, favo
       if (closing.current) return;
       const target = event.target;
       if (!(target instanceof Element) || shell.current?.contains(target)) return;
-      if (target.closest('.discovery-item, dialog, [role="dialog"], [role="alertdialog"], [data-feedback-toolbar]')) return;
+      if (target.closest('.discovery-item, dialog, [role="dialog"], [role="alertdialog"], [data-feedback-toolbar], [data-project-guide]')) return;
       onClose();
     };
     document.addEventListener('pointerdown', press, true);

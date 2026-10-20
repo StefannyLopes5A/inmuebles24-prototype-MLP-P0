@@ -3,6 +3,7 @@ import {available} from './development/torreOlmo.js';
 import {normalizeCriteria, matchesCriteria, criteriaFromText} from './searchCriteria.js';
 import {PROPERTY_TYPES, OPERATIONS} from './homeSearchModel.js';
 import {isFolderId} from './favoriteLists.js';
+import {isAccountId, isInviteToken} from './collaborativeLists.js';
 
 const ALL_AREAS = 'Ambas zonas';
 const knownAreas = new Set(homes.map(home => home.area));
@@ -10,7 +11,7 @@ const knownProperties = new Map(homes.map(home => [home.id, home]));
 const preferences = new Set(['none', 'open', 'separate', 'extra']);
 const canonicalPreference = pref => pref === 'separate' ? 'extra' : preferences.has(pref) ? pref : 'none';
 /** How the results grid is ordered; recommended is the default and stays out of the URL. */
-export const SORTS = Object.freeze(['recommended', 'price', 'rarity', 'contacts']);
+export const SORTS = Object.freeze(['recommended', 'price', 'rarity']);
 export const canonicalSort = value => SORTS.includes(value) ? value : 'recommended';
 export const DEFAULT_SEARCH = Object.freeze({
   mode:'buy', area:'Narvarte Poniente', areas:Object.freeze(['Narvarte Poniente']),
@@ -184,6 +185,7 @@ export function readJourney(locationLike = {}) {
   const url = asUrl(locationLike);
   const params = url.searchParams;
   const page = params.get('view') === 'compare' ? 'compare'
+    : params.get('view') === 'folder' ? 'folder'
     : params.get('view') === 'favorites' ? 'favorites'
     : params.get('view') === 'listing' ? 'listing'
     : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results'
@@ -202,21 +204,29 @@ export function readJourney(locationLike = {}) {
   const requestedId = params.get('property');
   const propertyId = knownProperties.has(requestedId)
     && (page !== 'results' || prototypeResults(search).some(home => home.id === requestedId)) ? requestedId : null;
-  const listId = page === 'compare' && isFolderId(params.get('list')) ? params.get('list') : null;
+  const rawList = params.get('list');
+  const listId = (page === 'compare' && isFolderId(rawList)) || (page === 'folder' && /^list-[a-z0-9-]{1,40}$/.test(rawList || '')) ? rawList : null;
   const map = (page === 'results' || page === 'listing') ? canonicalMapMode(params.get('map')) : 'mini';
   const sort = (page === 'results' || page === 'listing') ? canonicalSort(params.get('sort')) : 'recommended';
-  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {}), ...(map !== 'mini' ? {map} : {}), ...(sort !== 'recommended' ? {sort} : {})};
+  // An invite token rides only on a listing or a folder; `de` is an opaque sender id, never a name or contact.
+  const invite = (page === 'listing' || page === 'folder') && isInviteToken(params.get('invite')) ? params.get('invite') : null;
+  const from = isAccountId(params.get('de')) ? params.get('de') : null;
+  // A withdrawn listing stays on its invite so the sender's banner can explain it.
+  const landing = page === 'listing' && !propertyId && !invite ? 'results' : page === 'folder' && !listId && !invite ? 'favorites' : page;
+  return {page:landing, search, pref, propertyId, ...(listId ? {listId} : {}), ...(map !== 'mini' ? {map} : {}), ...(sort !== 'recommended' ? {sort} : {}),
+    ...(invite ? {invite} : {}), ...(from && (page === 'listing' || page === 'folder') ? {from} : {})};
 }
 
 export const MAP_MODES = Object.freeze(['mini', 'half', 'full']);
 export const canonicalMapMode = value => MAP_MODES.includes(value) ? value : 'mini';
 
 /** Shareable URLs contain criteria and a folder id at most; never contact identity, receipts or saved listing ids. */
-export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini', sort = 'recommended'} = {}) {
+export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini', sort = 'recommended', invite = null, from = null} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'compare' ? 'compare'
-    : page === 'favorites' ? 'favorites'
-    : page === 'listing' && knownProperties.has(propertyId) ? 'listing'
+    : page === 'folder' && (listId || isInviteToken(invite)) ? 'folder'
+    : page === 'favorites' || page === 'folder' ? 'favorites'
+    : page === 'listing' && (knownProperties.has(propertyId) || isInviteToken(invite)) ? 'listing'
     : page === 'results' || page === 'listing' ? 'results'
     : 'home';
   const params = new URLSearchParams({view, mode:current.mode,
@@ -235,6 +245,9 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
   if (canonicalPref !== 'none') params.set('pref', canonicalPref);
   if (knownProperties.has(propertyId) && (page !== 'results' || prototypeResults(current).some(home => home.id === propertyId))) params.set('property', propertyId);
   if (page === 'compare' && isFolderId(listId)) params.set('list', listId);
+  if (view === 'folder' && /^list-[a-z0-9-]{1,40}$/.test(listId || '')) params.set('list', listId);
+  if ((view === 'listing' || view === 'folder') && isInviteToken(invite)) params.set('invite', invite);
+  if ((view === 'listing' || view === 'folder') && isAccountId(from)) params.set('de', from);
   const mapMode = canonicalMapMode(map);
   if ((view === 'results' || view === 'listing') && mapMode !== 'mini') params.set('map', mapMode);
   if ((view === 'results' || view === 'listing') && canonicalSort(sort) !== 'recommended') params.set('sort', canonicalSort(sort));

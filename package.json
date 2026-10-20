@@ -30,9 +30,7 @@
     "vite": "6.4.2"
   },
   "devDependencies": {
-    "@nudge-ui/mcp": "^0.2.5",
-    "agentation": "^3.1.2",
-    "nudge-ui": "^0.2.5"
+    "agentation": "^3.1.2"
   },
   "engines": {
     "node": ">=22.12.0"

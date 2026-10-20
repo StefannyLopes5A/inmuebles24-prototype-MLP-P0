@@ -7,6 +7,8 @@
 .compare-page-header h1{font-size:32px;line-height:1.2;font-weight:600;outline:none;margin:0}
 .compare-folder-meta{font-size:16px;line-height:1.4;color:#000000b8;margin:8px 0 0}
 .compare-empty-copy{font-size:15px;line-height:1.45;color:#555;margin:12px 0 0}
+.compare-share-link{max-width:620px;margin:10px 0 0;font-size:14px;line-height:1.45;color:#555;overflow-wrap:anywhere}
+.compare-share-link a{color:#b43c00;text-decoration:underline;text-underline-offset:3px}
 .compare-header-actions{display:flex;align-items:center;gap:16px;flex:none}
 .compare-more{min-height:48px;padding-inline:20px;white-space:nowrap}
 .compare-route{overflow:visible}
@@ -113,6 +115,8 @@
 .compare-action-copy>.compare-stack{display:grid}
 .compare-action-copy:focus{outline:none}
 .compare-action-inner[data-sent]{justify-content:center;min-height:72px;padding:8px 24px;text-align:center}
+.compare-action-inner[data-sent]:has(.compare-explore){justify-content:space-between;padding:8px 8px 8px 24px;text-align:left}
+.compare-explore{flex:none}
 .compare-cta-wrap{position:relative;flex:none}
 .compare-cta{min-width:180px;justify-content:center}
 .compare-cta>.compare-stack{justify-content:center}
@@ -172,6 +176,7 @@
   .compare-action-inner:has(.compare-action-copy[data-pitch]){padding:8px}
   .compare-action-copy[data-pitch]+.compare-cta-wrap{flex:1}
   .compare-action-copy[data-pitch]+.compare-cta-wrap .compare-cta{width:100%}
+  .compare-action-inner[data-sent]:has(.compare-explore){flex-direction:column;align-items:stretch;gap:8px;padding:12px 8px 8px;text-align:center}
 }
 @media(max-width:360px){
   .compare-page-header h1{font-size:24px}

@@ -40,8 +40,11 @@ function isPerfectMatch(home, search, pref, language) {
   return decided.length > 0 && decided.every(item => item.status === 'met');
 }
 
-/** Up to two tags for discovery cards and photo chrome; contacted reserves one slot when shown separately. */
-export function listingCardTags(home, {search, pref = 'none', language = 'es-MX', contacted = false, max = LISTING_TAG_LIMIT} = {}) {
+/**
+ * Up to two tags for discovery cards and photo chrome; contacted reserves one slot when shown separately.
+ * `signal` is the active sort's tag (e.g. "Por debajo de la mediana"): it comes right after a perfect match.
+ */
+export function listingCardTags(home, {search, pref = 'none', language = 'es-MX', contacted = false, max = LISTING_TAG_LIMIT, signal = null} = {}) {
   const say = (br, es) => (language === 'pt-BR' ? br : es);
   const limit = Math.max(0, contacted ? max - 1 : max);
   const candidates = [];
@@ -49,6 +52,7 @@ export function listingCardTags(home, {search, pref = 'none', language = 'es-MX'
   if (isPerfectMatch(home, search, pref, language)) {
     candidates.push({id:'match', priority:100, label:say('Match perfeito', 'Match perfecto')});
   }
+  if (signal) candidates.push({id:'signal', priority:95, label:signal});
 
   const market = marketFacts(home);
   if (market.drop) {

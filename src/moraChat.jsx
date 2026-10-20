@@ -1,8 +1,11 @@
-import React, {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {AnimatePresence, animate, motion} from 'motion/react';
 import {Icon} from './App';
-import {propertyPhoto} from './data';
+import {homes, listingPrice, propertyPhoto} from './data';
+import {similarListings} from './listingStory.js';
+import {MARKET_TOPICS, marketAnswer, marketQuestion, marketTopic} from './marketAnswers.js';
 import {MoraThinking, MoraWords, wordCount} from './MoraVoice';
+import {VISIT_MOMENTS, leadLine, markVisit, readSeeker, visitMomentLabel} from './seekerSignals.js';
 import {SOFT_MOTION} from './homeIntro.js';
 import {EASE_FADE, SPRING_SIZE} from './listingPanelMotion';
 
@@ -21,72 +24,106 @@ export const AGENCY = ['imobiliária', 'inmobiliaria'];
 
 export const typing = target => target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
 
-const PERIODS = [
-  {id:'morning', es:['Mañana', 'por la mañana'], br:['Manhã', 'de manhã']},
-  {id:'afternoon', es:['Tarde', 'por la tarde'], br:['Tarde', 'à tarde']},
-  {id:'evening', es:['Noche', 'por la noche'], br:['Noite', 'à noite']},
-];
-const VISIT_WINDOW = 4;
-const capital = text => text.charAt(0).toUpperCase() + text.slice(1);
 export const placeOf = home => home.street.toLowerCase().includes(home.area.toLowerCase()) ? home.street : `${home.street}, ${home.area}`;
-/** Today and the next three days. A visit is an intention: a day and a period, never a time. */
-function visitDays(language) {
-  const today = new Date();
-  return Array.from({length:VISIT_WINDOW}, (_, i) => {
-    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-    return {index:i, date, weekday:capital(date.toLocaleDateString(language, {weekday:'short'}).replace('.', '')), day:String(date.getDate())};
-  });
-}
-const periodPhrase = (periodId, say) => {
-  const item = PERIODS.find(entry => entry.id === periodId);
-  return item ? say(item.br[1], item.es[1]) : '';
-};
-const dayName = (slot, language, say, long) => slot.index === 0
-  ? say('Hoje', 'Hoy')
-  : capital(slot.date.toLocaleDateString(language, long ? {weekday:'long', day:'numeric', month:'long'} : {weekday:'long'}));
-export const intentionLong = (slot, language, say) => `${dayName(slot, language, say, true)} ${periodPhrase(slot.period, say)}`;
-const intentionTitle = (slot, language, say) => `${dayName(slot, language, say, false)} ${periodPhrase(slot.period, say)}`;
+/** A visit intention is a broad window, or the person's own words if they typed a day or a time. Never a slot. */
+const intentionTitle = (slot, language) => slot?.moment ? visitMomentLabel(slot.moment, language) : `“${slot?.note || ''}”`;
 
 export function replyLine(advertiser, say) {
   return advertiser.domi ? say('Responde em minutos pelo WhatsApp', 'Responde en minutos por WhatsApp') : say(`Costuma responder em ${advertiser.replyHours} h`, `Suele responder en ${advertiser.replyHours} h`);
 }
 
 /**
- * What Mora says to each turn and the widget that follows it. Availability is the one question she answers herself;
- * a visit becomes an intention; anything else waits for the person to confirm before it reaches the agency.
+ * What Mora says to each turn and the widget that follows it. She answers availability and the market questions
+ * (notary, guarantee, credit) herself, with illustrative ranges; a visit becomes a broad intention whose time the agency
+ * proposes; anything else waits for the person to confirm before it reaches the agency.
  * A turn that brings its own `reply` was answered by the page that asked (the tour's inventory and camera).
  */
-function moraReply(turn, say, advertiser, agency = AGENCY) {
+function moraReply(turn, say, advertiser, agency = AGENCY, home = null, language = 'es-MX', similar = null) {
   const [br, es] = agency;
   if (turn.reply) return {widget:turn.action ? 'scene' : null, text:turn.reply};
-  if (turn.kind === 'visit' || (turn.kind === 'ask' && /visit/i.test(turn.text))) return {widget:'picker', text:say(`Quando você quer visitar? Escolha um dia e um período; a ${br} propõe o horário.`, `¿Cuándo te gustaría visitarlo? Elige un día y un periodo; la ${es} propone el horario.`)};
-  if (turn.kind === 'intention') return {widget:'slot', text:say('Perfeito. Confira sua intenção de visita:', 'Perfecto. Revisa tu intención de visita:')};
-  if (turn.kind === 'confirm') return {widget:null, text:say(`Enviei sua intenção para ${advertiser.name}. Eles vão propor um horário com você.`, `Envié tu intención a ${advertiser.name}. Te propondrán un horario.`)};
-  if (turn.kind === 'agency-sent') return {widget:null, text:agencySentLine(advertiser, say)};
+  if (turn.kind === 'visit' || (turn.kind === 'ask' && /visit/i.test(turn.text))) return {widget:'moment', text:say(`Claro! Para quando você gostaria de ir? Eu passo seu interesse e a ${br} te propõe o horário.`, `¡Claro! ¿Para cuándo te gustaría ir? Le paso tu interés y la ${es} te propone el horario.`)};
+  if (turn.kind === 'intention') return {widget:'slot', text:turn.slot?.note
+    ? say(`Perfeito, vai do jeitinho que você escreveu. Confira antes de eu enviar:`, `Perfecto, va tal cual lo escribiste. Revísalo antes de que lo envíe:`)
+    : say('Perfeito. Confira sua intenção de visita:', 'Perfecto. Revisa tu intención de visita:')};
+  const offer = lead => similar?.items.length ? {widget:'similar-offer', text:` ${say(`${lead[0]}, encontrei ${similar.offer[0]}. Quer ver?`, `${lead[1]}, encontré ${similar.offer[1]}. ¿Te las muestro?`)}`} : {widget:null, text:''};
+  if (turn.kind === 'confirm') {
+    const sent = say(`Pronto! Já passei seu interesse para ${advertiser.name} e eles vão te propor um horário ${visitWhen(turn.slot, 'pt-BR')}.`, `¡Listo! Ya le compartí tu interés a ${advertiser.name} y te propondrán un horario ${visitWhen(turn.slot, 'es-MX')}.`);
+    const next = offer(['Enquanto isso', 'Mientras tanto']);
+    return {widget:next.widget, text:sent + next.text};
+  }
+  if (turn.kind === 'similar' && !similar?.items.length) return {widget:null, text:say('Agora não encontrei parecidos perto deste preço. Posso te ajudar com outra coisa?', 'Por ahora no encontré parecidas cerca de este precio. ¿Te ayudo con algo más?')};
+  if (turn.kind === 'similar') return {widget:'similar', text:say(similar.list[0], similar.list[1]), think:say('Buscando parecidos…', 'Buscando parecidas…')};
+  if (turn.kind === 'similar-later') return {widget:null, think:say('Pensando…', 'Pensando…'), text:say('Combinado. Quando quiser, eu te mostro. Posso te ajudar com outra coisa?', 'Va. Cuando quieras, te las muestro. ¿Te ayudo con algo más?')};
+  const topic = turn.kind === 'ask' ? marketTopic(turn.text) : null;
+  if (topic && home) {
+    const answer = marketAnswer(topic, {mode:home.mode, price:listingPrice(home), language, listing:true});
+    const ask = answer.ask ? ` ${say(`O anúncio não diz isso. Quer que eu pergunte à ${br}?`, `El anuncio no lo dice. ¿Quieres que le pregunte a la ${es}?`)}` : '';
+    const more = answer.ask ? [] : MARKET_TOPICS.filter(item => item !== topic && item !== (home.mode === 'rent' ? 'credit' : 'guarantee'));
+    return {widget:answer.ask ? 'card' : more.length ? 'topics' : null, topics:more, text:`${answer.headline} ${answer.detail}${ask}`, note:answer.note, think:say('Revisando referências da CDMX…', 'Revisando referencias de CDMX…')};
+  }
+  if (turn.kind === 'agency-sent') {
+    const next = offer(['Enquanto você espera', 'Mientras esperas']);
+    return {widget:next.widget, text:agencySentLine(advertiser, say) + next.text};
+  }
   if (turn.kind === 'agency-later') return {widget:null, text:say(
     `Tudo bem. Se mudar de ideia, posso enviar essa dúvida para a ${br}. Posso te ajudar com outra coisa?`,
     `Está bien. Si cambias de idea, puedo enviarle esta pregunta a la ${es}. ¿Te ayudo con algo más?`)};
   return /disponib|disponív/i.test(turn.text)
     ? {widget:'action', text:say(
-      `Sim, continua disponível. As informações do anúncio foram atualizadas recentemente, a ${br} segue anunciando o imóvel e ele recebeu visitas nos últimos 7 dias.`,
-      `Sí, sigue disponible. La información del anuncio se actualizó hace poco, la ${es} lo sigue anunciando e incluso recibió visitas en los últimos 7 días.`)}
+      `Sim, continua disponível. As informações do anúncio foram atualizadas recentemente e a ${br} segue anunciando o imóvel.`,
+      `Sí, sigue disponible. La información del anuncio se actualizó hace poco y la ${es} lo sigue publicando.`)}
     : {widget:'card', text:say(
       `Revisei o anúncio, as fotos e a descrição, e não encontrei essa resposta. Quer que eu envie sua dúvida para a ${br}?`,
       `Revisé el anuncio, las fotos y la descripción, y no encontré esa respuesta. ¿Quieres que le envíe tu pregunta a la ${es}?`)};
+}
+
+/** When the agency will propose a time, in the window the person chose. */
+function visitWhen(slot, language) {
+  const pt = language === 'pt-BR';
+  if (!slot?.moment) return pt ? 'a partir do que você escreveu' : 'a partir de lo que escribiste';
+  return {
+    asap:pt ? 'o quanto antes' : 'lo antes posible',
+    week:pt ? 'esta semana' : 'esta semana',
+    weekend:pt ? 'para o fim de semana' : 'para el fin de semana',
+    open:pt ? 'quando for melhor para você' : 'cuando mejor te acomode',
+  }[slot.moment];
+}
+
+/** Most of the parecidos share the colonia; otherwise they are only close to it. */
+function similarPlace(similar, home, say) {
+  const same = similar.filter(item => item.area === home.area).length;
+  return same * 2 >= similar.length ? say(`em ${home.area}`, `en ${home.area}`) : say(`perto de ${home.area}`, `cerca de ${home.area}`);
+}
+
+export const SIMILAR_COUNT = 5;
+/** Turns after which Mora offers parecidos, and the one that lists them. */
+const SIMILAR_KINDS = ['confirm', 'agency-sent', 'similar'];
+/** Parecidos to offer after a visit intention: same operation, near in price and colonia, within the search budget, never developments. */
+export function visitAlternatives(home, search) {
+  const cap = search?.budget > 0 && search.mode === home.mode ? search.budget * 1.1 : Infinity;
+  return similarListings(home, homes.filter(item => !item.development && listingPrice(item) <= cap), SIMILAR_COUNT);
 }
 
 /** After sending, Mora sets the expectation from how fast this agency usually answers. */
 function agencySentLine(advertiser, say) {
   const {name, domi, replyHours:hours} = advertiser;
   if (domi) return say(
-    `Pronto, passei sua dúvida para ${name}. Eles costumam responder em minutos pelo WhatsApp, então a resposta deve chegar rápido.`,
-    `Listo, le pasé tu pregunta a ${name}. Suelen responder en minutos por WhatsApp, así que la respuesta debería llegar pronto.`);
-  if (hours <= 2) return say(
-    `Pronto, passei sua dúvida para ${name}. Eles costumam responder em cerca de ${hours} h, então não deve demorar.`,
-    `Listo, le pasé tu pregunta a ${name}. Suelen responder en unas ${hours} h, así que no debería tardar.`);
+    `Pronto! Já passei sua dúvida para ${name}. Eles costumam responder em minutos pelo WhatsApp.`,
+    `¡Listo! Ya le pasé tu pregunta a ${name}. Suelen responder en minutos por WhatsApp.`);
   return say(
-    `Pronto, passei sua dúvida para ${name}. Eles costumam levar cerca de ${hours} h para responder, então pode demorar um pouco.`,
-    `Listo, le pasé tu pregunta a ${name}. Suelen tardar unas ${hours} h en responder, así que puede demorar un poco.`);
+    `Pronto! Já passei sua dúvida para ${name}. Eles costumam responder em cerca de ${hours} h, pelo WhatsApp.`,
+    `¡Listo! Ya le pasé tu pregunta a ${name}. Suelen responder en unas ${hours} h, por WhatsApp.`);
+}
+
+/** The listing's parecidos, worded for the offer and for the list. */
+function listingAlternatives(home, search, say) {
+  const items = visitAlternatives(home, search);
+  if (!items.length) return null;
+  const where = similarPlace(items, home, say);
+  return {items,
+    offer:[`alguns imóveis parecidos ${where} que podem te interessar`, `algunas propiedades parecidas ${where} que te podrían gustar`],
+    list:[`Estes são ${items.length} parecidos ${where}, numa faixa de preço similar:`, `Estas son ${items.length} parecidas ${where}, en un rango de precio similar:`],
+    label:say('Imóveis parecidos', 'Propiedades parecidas')};
 }
 
 /**
@@ -171,9 +208,10 @@ function AgencyQuestionCard({home, question, advertiser, agency, agencyState, re
  * One exchange: the bubble, Mora's fixed reply and the card. Every stage is derived from when the turn was created,
  * so leaving the chat and coming back shows the turn where it is instead of replaying it.
  */
-export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduce, copy, onAsk, onAgencyAction}) {
+export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduce, copy, search, onAsk, onAgencyAction, onOpenHome, alternatives}) {
   const {say, language} = copy;
-  const {text:reply, widget} = moraReply(turn, say, advertiser, agency);
+  const similar = onOpenHome && SIMILAR_KINDS.includes(turn.kind) ? (alternatives ? alternatives(home) : listingAlternatives(home, search, say)) : null;
+  const {text:reply, widget, note, topics, think:replyThink} = moraReply(turn, say, advertiser, agency, home, language, similar);
   const card = widget === 'card';
   const agencyState = turn.agencyState || 'pending';
   const done = MORA_THINK_MS + (wordCount(reply) - 1) * SOFT_MOTION.wordStep + SOFT_MOTION.fade;
@@ -187,8 +225,8 @@ export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduc
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turn.at, reduce]);
-  const think = turn.think || (turn.kind === 'visit' || turn.kind === 'intention' || turn.kind === 'confirm'
-    ? say('Revisando a agenda…', 'Revisando la agenda…')
+  const think = turn.think || replyThink || (turn.kind === 'visit' || turn.kind === 'intention' || turn.kind === 'confirm'
+    ? say('Anotando seu interesse…', 'Anotando tu interés…')
     : turn.kind === 'agency-sent' ? say(`Enviando para a ${agency[0]}…`, `Enviando a la ${agency[1]}…`)
     : turn.kind === 'agency-later' ? say('Pensando…', 'Pensando…')
     : say('Revisando o anúncio…', 'Revisando el anuncio…'));
@@ -196,6 +234,7 @@ export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduc
     <Bubble turn={turn} reduce={reduce}/>
     <div className="lp-turn-mora">
       {stage === 0 ? <MoraThinking text={think}/> : <MoraWords text={reply} animate={ink}/>}
+      {note && stage >= 2 && <motion.p className="lp-turn-note" initial={reduce ? false : {opacity:0}} animate={{opacity:1}} transition={{duration:0.2, ease:EASE_FADE}}>{note}</motion.p>}
       {card && stage >= 2 && <AgencyQuestionCard home={home} question={turn.text} advertiser={advertiser} agency={agency} agencyState={agencyState} reduce={reduce} say={say}
         onSend={source => { onAgencyAction(turn.id, 'sent'); onAsk(say('Enviar pergunta', 'Enviar pregunta'), source, 'agency-sent'); }}
         onDismiss={source => { onAgencyAction(turn.id, 'dismissed'); onAsk(say('Agora não', 'Ahora no'), source, 'agency-later'); }}/>}
@@ -206,13 +245,55 @@ export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduc
         {widget === 'scene' && <AnimatePresence initial={false}>{active && <Collapse key="scene" reduce={reduce}>
           <button type="button" className="lp-chat-action" onClick={() => turn.action.run()}>{turn.action.icon}{turn.action.label}</button>
         </Collapse>}</AnimatePresence>}
-        {widget === 'picker' && <VisitPicker active={active} reduce={reduce} copy={copy} agency={agency} onPick={(slot, source) => onAsk(intentionLong(slot, language, say), source, 'intention', slot)}/>}
-        {widget === 'slot' && <IntentionCard home={home} slot={turn.slot} sent={turn.agencyState === 'sent'} active={active} reduce={reduce} copy={copy} agency={agency}
-          onConfirm={source => { onAgencyAction(turn.id, 'sent'); onAsk(say('Enviar intenção', 'Enviar intención'), source, 'confirm', turn.slot); }}
+        {widget === 'moment' && <MomentPicker active={active} reduce={reduce} copy={copy} onPick={(moment, source) => onAsk(visitMomentLabel(moment, language), source, 'intention', {moment})}/>}
+        {widget === 'slot' && <IntentionCard home={home} slot={turn.slot} sent={turn.agencyState === 'sent'} active={active} reduce={reduce} copy={copy} agency={agency} search={search}
+          onConfirm={source => { markVisit(home.id); onAgencyAction(turn.id, 'sent'); onAsk(say('Enviar intenção', 'Enviar intención'), source, 'confirm', turn.slot); }}
           onChange={source => onAsk(say('Quero outro momento', 'Quiero otro momento'), source, 'visit')}/>}
+        {widget === 'similar-offer' && <SimilarOffer active={active} reduce={reduce} say={say} onAsk={onAsk}/>}
+        {widget === 'similar' && <SimilarList items={similar.items} label={similar.label} copy={copy} onOpen={onOpenHome}/>}
+        {widget === 'topics' && <TopicChips topics={topics} active={active} reduce={reduce} language={language} say={say} onAsk={onAsk}/>}
       </Grow>}
     </div>
   </motion.li>;
+}
+
+/** Yes or not now. Typing either answer in the field does the same. */
+function SimilarOffer({active, reduce, say, onAsk}) {
+  const picked = useRef(false);
+  const pick = (text, kind) => event => { if (!active || picked.current) return; picked.current = true; onAsk(text, event.currentTarget, kind); };
+  return <AnimatePresence initial={false}>{active && <Collapse key="offer" reduce={reduce}>
+    <div className="lp-moment-row">
+      <button type="button" className="lp-moment" onClick={pick(say('Sim, quero ver', 'Sí, muéstramelas'), 'similar')}>{say('Sim, quero ver', 'Sí, muéstramelas')}</button>
+      <button type="button" className="lp-moment" onClick={pick(say('Agora não', 'Ahora no'), 'similar-later')}>{say('Agora não', 'Ahora no')}</button>
+    </div>
+  </Collapse>}</AnimatePresence>;
+}
+
+/** After a general answer, the other market questions, one tap each. */
+function TopicChips({topics, active, reduce, language, say, onAsk}) {
+  return <AnimatePresence initial={false}>{active && <Collapse key="topics" reduce={reduce}>
+    <div className="lp-moment-row" role="group" aria-label={say('Outras dúvidas', 'Otras dudas')}>
+      {topics.map(topic => <button key={topic} type="button" className="lp-moment" onClick={event => onAsk(marketQuestion(topic, language), event.currentTarget)}>{marketQuestion(topic, language)}</button>)}
+    </div>
+  </Collapse>}</AnimatePresence>;
+}
+
+/** The parecidos as compact rows; each opens that listing in the same panel. */
+function SimilarList({items, label, copy, onOpen}) {
+  const {say, money, currency} = copy;
+  return <ul className="lp-similar" aria-label={label}>
+    {items.map(item => <li key={item.id}>
+      <button type="button" className="lp-similar-row" onClick={() => onOpen(item.id)}>
+        <img src={propertyPhoto(item)} alt=""/>
+        <span>
+          <strong>{money(listingPrice(item))} {currency}{item.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</strong>
+          <span>{placeOf(item)}</span>
+          <span>{[item.size >= 20 && `${item.size} m²`, item.beds != null && `${item.beds} ${say('quartos', 'rec.')}`].filter(Boolean).join(' · ')}</span>
+        </span>
+        <Icon name="arrow" size={16}/>
+      </button>
+    </li>)}
+  </ul>;
 }
 
 function Calendar() {
@@ -230,27 +311,21 @@ function Collapse({reduce, children}) {
     transition={{height:reduce ? {duration:0.15} : SPRING_SIZE, opacity:{duration:0.16, ease:EASE_FADE}}}>{children}</motion.div>;
 }
 
-/** Visit intention: four days and a period; the agency proposes the time. */
-export function VisitPicker({active, reduce, copy, agency = AGENCY, onPick}) {
+/**
+ * Visit intention: where the person is, never a day grid. A day or time only exists if they type it in the field below,
+ * and then it travels as their own words.
+ */
+function MomentPicker({active, reduce, copy, onPick}) {
   const {say, language} = copy;
-  const days = useMemo(() => visitDays(language), [language]);
-  const [day, setDay] = useState(0), [period, setPeriod] = useState(null), picked = useRef(false);
+  const picked = useRef(false);
   return <AnimatePresence initial={false} mode="popLayout">
     {active ? <Collapse key="open" reduce={reduce}>
       <div className="lp-proof-card lp-pick-card">
-        <p className="lp-pick-label">{say('Escolha um dia', 'Elige un día')}</p>
-        <div className="lp-pick-days" role="group" aria-label={say('Dia da visita', 'Día de la visita')}>{days.map(item => <button key={item.index} type="button" className="lp-pick-day" aria-pressed={day === item.index} onClick={() => setDay(item.index)}
-          aria-label={dayName(item, language, say, true)}>
-          <span aria-hidden="true">{item.index === 0 ? say('Hoje', 'Hoy') : item.weekday}</span><strong aria-hidden="true">{item.day}</strong>
-        </button>)}</div>
-        <p className="lp-pick-label">{say('Escolha um período', 'Elige un periodo')}</p>
-        <div className="lp-period-rail" role="group" aria-label={say('Período do dia', 'Periodo del día')}>
-          {PERIODS.map(item => <button key={item.id} type="button" className="lp-period-seg" aria-pressed={period === item.id}
-            onClick={() => setPeriod(item.id)}>{say(item.br[0], item.es[0])}</button>)}
+        <div className="lp-moment-row" role="group" aria-label={say('Momento da visita', 'Momento de la visita')}>
+          {VISIT_MOMENTS.map(moment => <button key={moment} type="button" className="lp-moment"
+            onClick={event => { if (!active || picked.current) return; picked.current = true; onPick(moment, event.currentTarget); }}>{visitMomentLabel(moment, language)}</button>)}
         </div>
-        <p className="lp-pick-note">{say(`O horário fica com a ${agency[0]}.`, `El horario lo define la ${agency[1]}.`)}</p>
-        <button type="button" className="lp-proof-primary lp-pick-submit" aria-disabled={!period || undefined}
-          onClick={event => { if (!period || !active || picked.current) return; picked.current = true; onPick({...days[day], period}, event.currentTarget); }}>{say('Pedir visita', 'Pedir visita')}</button>
+        <p className="lp-pick-note">{say('Tem um dia ou horário em mente? Escreva abaixo e vai na mensagem.', '¿Tienes un día u hora en mente? Escríbelo abajo y va en el mensaje.')}</p>
       </div>
     </Collapse> : <Collapse key="folded" reduce={reduce}>
       <span className="lp-chat-action is-done"><Calendar/>{say('Intenção de visita', 'Intención de visita')}</span>
@@ -259,18 +334,21 @@ export function VisitPicker({active, reduce, copy, agency = AGENCY, onPick}) {
 }
 
 /** The intention card is also its own receipt: sending turns it into "sent" in place instead of adding a second card. */
-function IntentionCard({home, slot, sent, active, reduce, copy, agency, onConfirm, onChange}) {
+function IntentionCard({home, slot, sent, active, reduce, copy, agency, search, onConfirm, onChange}) {
   const {say, language} = copy;
   const acted = useRef(false);
+  // Read once: after sending, this listing's own visit must not start counting in its own line.
+  const [lead] = useState(() => leadLine({search, seeker:readSeeker(), homeId:home.id, language}));
   const once = run => event => { if (!active || sent || acted.current) return; acted.current = true; run(event.currentTarget); };
   return <div className="lp-proof-card">
     <div className="lp-proof-head">
       <img src={propertyPhoto(home)} alt=""/>
       <div>
         <ProofStatus sent={sent} reduce={reduce} label={sent ? say('Intenção enviada', 'Intención enviada') : say('Intenção de visita', 'Intención de visita')}/>
-        <p className="lp-proof-title">{intentionTitle(slot, language, say)}</p>
-        <p className="lp-proof-meta">{sent ? say('Vão propor um horário com você.', 'Te propondrán un horario.') : say(`A ${agency[0]} propõe o horário.`, `La ${agency[1]} propone el horario.`)}</p>
+        <p className="lp-proof-title">{intentionTitle(slot, language)}</p>
+        <p className="lp-proof-meta">{sent ? say(`A ${agency[0]} vai propor o horário.`, `La ${agency[1]} te propondrá el horario.`) : say(`O horário fica com a ${agency[0]}.`, `El horario lo propone la ${agency[1]}.`)}</p>
         <p className="lp-proof-meta">{placeOf(home)}</p>
+        {lead && <p className="lp-proof-lead"><span>{say(`O que a ${agency[0]} recebe`, `Lo que recibe la ${agency[1]}`)}</span>{lead}</p>}
       </div>
     </div>
     <AnimatePresence initial={false}>{active && !sent && <Collapse key="actions" reduce={reduce}>
@@ -363,7 +441,7 @@ export function MoraComposer({id, field, draft, onDraft, onAsk, hints, quick, sh
  * types out and every card as it opens. Only the person scrolling up lets go (our own scrolling never does); reaching the
  * end again, or asking, holds on again. `push` returns false for an empty question.
  */
-export function useMoraThread({on, threadRef, scroller, reduce}) {
+export function useMoraThread({on, threadRef, scroller, reduce, offersSimilar = false}) {
   const [turns, setTurns] = useState([]);
   const pinned = useRef(false), turnId = useRef(0);
   useEffect(() => {
@@ -405,10 +483,24 @@ export function useMoraThread({on, threadRef, scroller, reduce}) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [on, reduce]);
-  /** Every turn starts as a bubble flying from `source`: the field, a suggestion or a chat widget's button. */
+  const latest = useRef(turns);
+  latest.current = turns;
+  const awaitingMoment = turns.at(-1)?.kind === 'visit';
+  /**
+   * Every turn starts as a bubble flying from `source`: the field, a suggestion or a chat widget's button.
+   * While Mora waits for the visit's moment, whatever the person types is that moment, in their own words.
+   */
   function push(value, source, kind = 'ask', slot = null, extra = null) {
     const asked = value.trim();
     if (!asked) return false;
+    const last = latest.current.at(-1)?.kind;
+    if (kind === 'ask' && last === 'visit') { kind = 'intention'; slot = {note:asked}; }
+    // A typed yes or no right after Mora offers the parecidos answers that offer.
+    else if (kind === 'ask' && offersSimilar && (last === 'confirm' || last === 'agency-sent')) {
+      const answer = asked.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[¡!¿?.,\s]+$/, '');
+      if (/^(si|sim|claro|dale|va|ok|okay|por favor|muestr\w*|mostr\w*)\b/.test(answer)) kind = 'similar';
+      else if (/^(no|nao|ahora no|agora nao|despues|depois|luego)\b/.test(answer)) kind = 'similar-later';
+    }
     let from = null;
     if (source) {
       const box = source.getBoundingClientRect(), css = getComputedStyle(source);
@@ -422,5 +514,5 @@ export function useMoraThread({on, threadRef, scroller, reduce}) {
   function agencyAction(id, agencyState) {
     setTurns(current => current.map(turn => turn.id === id ? {...turn, agencyState} : turn));
   }
-  return {turns, push, agencyAction};
+  return {turns, push, agencyAction, awaitingMoment};
 }

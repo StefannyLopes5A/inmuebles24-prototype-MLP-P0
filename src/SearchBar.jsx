@@ -5,8 +5,10 @@ import {AllFilters} from './AllFilters';
 import {Icon} from './App';
 import {PROPERTY_TYPES,OPERATIONS,foldSearchText} from './homeSearchModel';
 import {interpretSmartInput,smartDetailTokens,criterionLabel} from './searchCriteria';
-import {areas,listingPrice,propertyPhoto} from './data';
+import {areas,homes,listingPrice,propertyPhoto} from './data';
 import {expansionOptions,addArea,matchingHomes} from './journey';
+import {MARKET_TOPICS,marketAnswer,marketQuestion,marketTopic} from './marketAnswers.js';
+import {readSeeker,writeSeeker} from './seekerSignals.js';
 import {useLanguage,DEMO_MXN_PER_USD} from './i18n';
 import {measureBar,animateBar} from './searchFlowMotion';
 import {useReducedMotion} from 'motion/react';
@@ -16,45 +18,49 @@ const chosen={mode:true,propertyType:true,beds:true,area:true,budget:true};
 const noop=()=>{};
 const asset=name=>`/assets/search-flow/${name}.svg`;
 const Chevron=()=> <img className="mora-chevron" src={asset('chevron')} alt=""/>;
+// Streets with listings in each operation, so a street only becomes a token where it has something to show.
+const STREETS={rent:homes.filter(home=>home.mode==='rent').map(home=>home.street),buy:homes.filter(home=>home.mode!=='rent').map(home=>home.street)};
+const streetsFor=search=>STREETS[search?.mode==='rent'?'rent':'buy'];
 
 /** Mora's turn in the bar: signed, the headline inks in, the detail continues its cadence. Replies are local, so there is no thinking line. */
-function MoraMessage({headline,detail}) {
+function MoraMessage({headline,detail,note}) {
   const animate=!useReducedMotion();
   return <div className="mora-message" aria-live="polite">
     <MoraSignature/>
     <MoraWords as="h2" text={headline} animate={animate}/>
     {detail&&<MoraWords text={detail} animate={animate} offset={wordCount(headline)}/>}
+    {note&&<small className="mora-message-note">{note}</small>}
   </div>;
 }
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[allFilters,setAllFilters]=useState(false);
   const [focused,setFocused]=useState(false),[message,setMessage]=useState('');
   const [filtersAtEnd,setFiltersAtEnd]=useState(true);
-  const [sentenceIntro,setSentenceIntro]=useState(false);
+  const [sentenceIntro,setSentenceIntro]=useState(false),[missingStreet,setMissingStreet]=useState('');
   const bar=useRef(null),scroll=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
   const current=useRef({search,view,draft,blocked,proactive});current.current={search,view,draft,blocked:blocked||allFilters,proactive};
-  const prompted=useRef({region:false,work:false}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
-  const appliedDraft=useRef('');
+  const prompted=useRef({region:false,work:false,moment:readSeeker().asked}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
+  const appliedDraft=useRef(''),beforeStreet=useRef(null);
   const lastProcessed=useRef(''),scrollIdle=useRef(null),lastScroll=useRef(window.scrollY);
   const interaction=useRef(noop),pointerFocus=useRef(false),pendingMenu=useRef(null);
   const awaitingSentence=useRef(false),awaitingSurface=useRef(false);
   const options=expansionOptions(search).slice(0,5),matches=matchingHomes(search);
-  const tokenMatcher=useCallback(text=>smartDetailTokens(text,search.criteria),[(search.criteria||[]).join('|')]);
+  const tokenMatcher=useCallback(text=>smartDetailTokens(text,search.criteria,streetsFor(search)),[(search.criteria||[]).join('|'),search.mode]);
   const locale=pt?1:2;
   const filters=[
     ['mode',OPERATIONS.find(([key])=>key===search.mode)?.[locale]],
     ['propertyType',PROPERTY_TYPES.find(([key])=>key===(search.propertyType||'apartment'))?.[locale]],
     ['beds',`${search.beds}+ ${say('quartos','recámaras')}`],
-    ['area',search.areas.length>1?`${search.areas[0]} +${search.areas.length-1}`:search.areas[0]||say('Cidade do México','Ciudad de México')],
+    ['area',search.address&&!search.areas.length?search.address:search.areas.length>1?`${search.areas[0]} +${search.areas.length-1}`:search.areas[0]||say('Cidade do México','Ciudad de México')],
     ['budget',`${search.minBudget?money(search.minBudget)+' – ':''}${money(search.budget)} ${currency}`],
     ...(search.criteria||[]).map(id=>[`criterion:${id}`,criterionLabel(id,language)]),
     ...(pendingWork.current||pref!=='none'?[['work',say('Home office','Home office')]]:[]),
     ...(search.tour3d?[['tour3d',say('Só com tour 3D','Solo con tour 3D')]]:[]),
   ];
-  const filterContents=JSON.stringify(filters);
+  const filterContents=JSON.stringify([filters,alert?.on]);
   useLayoutEffect(()=>{
     const rail=scroll.current;if(!rail)return;
     const update=()=>setFiltersAtEnd(rail.scrollWidth-rail.clientWidth-rail.scrollLeft<=1);
@@ -142,7 +148,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   function process(text,commit=false,allowConversation=true) {
     if(text===lastProcessed.current)return;
     const activeSearch=current.current.search;
-    const nextDraft=interpretSmartInput(text,{...activeSearch,criteria:[],note:''},currency,areas,DEMO_MXN_PER_USD,commit);
+    const nextDraft=interpretSmartInput(text,{...activeSearch,criteria:[],note:''},currency,areas,DEMO_MXN_PER_USD,commit,streetsFor(activeSearch));
     if(nextDraft.kind==='question') {
       if(!allowConversation||!commit&&!text.trim().endsWith('?'))return;
       lastProcessed.current=text;setQuestion(text);setFocused(false);
@@ -151,16 +157,26 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
       requestAnimationFrame(()=>bar.current?.querySelector('.mora-close')?.focus({preventScroll:true}));
       return;
     }
+    if(nextDraft.kind==='street-missing') {
+      if(!allowConversation)return;
+      lastProcessed.current=text;setMissingStreet(nextDraft.street);setFocused(false);transition('street');
+      requestAnimationFrame(()=>bar.current?.querySelector('.mora-close')?.focus({preventScroll:true}));
+      return;
+    }
     if(nextDraft.kind==='draft')return;
-    const previous=appliedDraft.current?interpretSmartInput(appliedDraft.current,{...activeSearch,criteria:[],note:''},currency,areas,DEMO_MXN_PER_USD,true).search.criteria||[]:[];
-    const base={...activeSearch,criteria:(activeSearch.criteria||[]).filter(id=>!previous.includes(id)),note:activeSearch.note.split('; ').filter(part=>part!==appliedDraft.current).join('; ')};
-    const parsed=interpretSmartInput(text,base,currency,areas,DEMO_MXN_PER_USD,commit);
+    const previous=appliedDraft.current?interpretSmartInput(appliedDraft.current,{...activeSearch,criteria:[],note:''},currency,areas,DEMO_MXN_PER_USD,true,streetsFor(activeSearch)).search.criteria||[]:[];
+    // Deleting a street token gives back the location it replaced, unless the location was changed since.
+    const street=beforeStreet.current,restore=street&&activeSearch.address===street.address&&!nextDraft.street?street.location:null;
+    const base={...activeSearch,...restore,criteria:(activeSearch.criteria||[]).filter(id=>!previous.includes(id)),note:activeSearch.note.split('; ').filter(part=>part!==appliedDraft.current).join('; ')};
+    const parsed=interpretSmartInput(text,base,currency,areas,DEMO_MXN_PER_USD,commit,streetsFor(activeSearch));
+    if(parsed.street)beforeStreet.current={address:parsed.search.address,location:street&&activeSearch.address===street.address?street.location:{areas:activeSearch.areas,area:activeSearch.area,address:activeSearch.address}};
+    else if(restore||street&&activeSearch.address!==street.address)beforeStreet.current=null;
     lastProcessed.current=text;appliedDraft.current=text;apply(parsed.search);
     pendingWork.current=!!parsed.qualify;
     setMessage(say('Busca atualizada.','Búsqueda actualizada.'));
     if(allowConversation&&commit&&parsed.qualify){prompted.current.work=true;setFocused(false);transition('qualify');requestAnimationFrame(()=>bar.current?.querySelector('.mora-close')?.focus({preventScroll:true}));}
   }
-  const isCustomDraft=text=>interpretSmartInput(text,search,currency,areas,DEMO_MXN_PER_USD).kind==='draft';
+  const isCustomDraft=text=>interpretSmartInput(text,search,currency,areas,DEMO_MXN_PER_USD,false,streetsFor(search)).kind==='draft';
 
   // Prompts follow a pause after actual browsing, never a timer on load or an interrupted edit.
   useEffect(()=>{
@@ -173,6 +189,8 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
         if(!state.proactive||state.view!=='collapsed'||state.blocked||document.hidden||document.querySelector('dialog[open]')||document.activeElement?.closest('input,[contenteditable],select'))return;
         if(pendingWork.current&&!prompted.current.work){prompted.current.work=true;transition('qualify');}
         else if(!prompted.current.region&&expansionOptions(state.search).length){prompted.current.region=true;transition('suggest');}
+        // Once per session, after the region prompt: where the person is in the move. Never asked on load or mid-edit.
+        else if(prompted.current.region&&!prompted.current.moment){prompted.current.moment=true;writeSeeker({asked:true});transition('moment');}
       },750);
     }
     window.addEventListener('scroll',onScroll,{passive:true});return()=>{window.removeEventListener('scroll',onScroll);clearTimeout(scrollIdle.current);};
@@ -191,7 +209,16 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     else onPref(kind);
     setDraft('');collapse();
   }
+  function chooseMoment(move) {
+    if(!move){collapse();return;}
+    writeSeeker({move});
+    if(search.mode!=='rent')transition('credit');else collapse();
+  }
+  function chooseCredit(credit) {if(credit)writeSeeker({credit});collapse();}
+  function askMarket(topic) {setQuestion(marketQuestion(topic,language));transition('answer');}
   const isEditor=view==='edit'||view==='input';
+  const market=view==='answer'?marketTopic(question):null;
+  const marketReply=market?marketAnswer(market,{mode:search.mode,price:search.budget,language}):null;
   const focusedInput=isEditor&&focused;
   const answerType=/bairro|barrio|zona|onde|donde/.test(foldSearchText(question))?'area':/pre[cç]o|precio|valor|or[cç]amento|presupuesto/.test(foldSearchText(question))?'price':'general';
   const cheapest=[...matches].sort((a,b)=>listingPrice(a)-listingPrice(b))[0];
@@ -201,6 +228,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
       {view==='collapsed'?<div className="mora-collapsed">
         <div className="mora-filter-region" data-scroll-end={filtersAtEnd}><div className="mora-filter-scroll" ref={scroll} role="group" aria-label={say('Filtros da busca; role para ver todos','Filtros de búsqueda; desplázate para ver todos')}>
           {filters.map(([key,label])=>key==='tour3d'?<button className="mora-filter is-removable" key={key} data-search-key={key} onClick={()=>apply({...current.current.search,tour3d:false})} aria-label={`${say('Remover','Quitar')} ${label}`}><span>{label}</span><Icon name="close" size={14}/></button>:<button className="mora-filter" key={key} data-search-key={key} onClick={event=>expand(key,event.detail>0)} aria-expanded="false"><span>{label}</span><Chevron/></button>)}
+          {alert&&<button className={`mora-filter mora-alert ${alert.on?'is-on':''}`} aria-pressed={alert.on} onClick={alert.onToggle}><Icon name={alert.on?'check':'bell'} size={16}/><span>{alert.on?say('Avisamos se entrar algo assim','Te avisamos si entra algo así'):say('Avisar-me','Avisarme')}</span></button>}
         </div><button className="mora-more" onClick={()=>setAllFilters(true)}>{say('Mais filtros','Más filtros')}<Chevron/></button></div>
         <button className="mora-smart-trigger" onClick={event=>expand('input',event.detail>0)}><span>{say('Digite para tirar dúvidas ou alterar a busca...','Escribe para resolver dudas o cambiar tu búsqueda...')}</span><Icon name="spark" size={20}/></button>
       </div>:<div className={`mora-expanded ${isEditor?'mora-editor':'mora-conversation'}`}>
@@ -211,12 +239,20 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
             detailContent={<SearchDetails value={draft} onChange={setDraft} language={language} placeholder={say('Digite para tirar dúvidas ou alterar a busca...','Escribe para resolver dudas o cambiar tu búsqueda...')} mobilePlaceholder={say('O que você procura ou quer saber?','¿Qué buscas o quieres saber?')} label={say('Pergunte ou altere sua busca','Pregunta o cambia tu búsqueda')} onSubmit={text=>process(text,true)} onSettle={text=>process(text,isCustomDraft(text))} settleDelay={text=>isCustomDraft(text)?1400:650} onFocus={()=>setFocused(true)} autoFocus={view==='input'} tokenMatcher={tokenMatcher}/>}/>
           <span className="sr-only" role="status">{message}</span>
         </>:<>
-          <MoraMessage key={view} headline={view==='suggest'?say('Você também pode gostar de imóveis nesses bairros.','También podrían gustarte inmuebles en estos barrios.'):view==='qualify'?say('Como você gostaria de trabalhar em casa?','¿Cómo te gustaría trabajar en casa?'):answerType==='area'?say('Vamos explorar os bairros dentro da sua busca.','Exploremos los barrios dentro de tu búsqueda.'):answerType==='price'&&cheapest?say(`As opções começam em ${money(listingPrice(cheapest))} ${currency}.`,`Las opciones empiezan en ${money(listingPrice(cheapest))} ${currency}.`):matches.length?say(`Encontrei ${matches.length} imóveis dentro dos seus filtros.`,`Encontré ${matches.length} inmuebles dentro de tus filtros.`):say('Podemos ajustar sua busca para encontrar mais opções.','Podemos ajustar tu búsqueda para encontrar más opciones.')}
-            detail={view==='qualify'?say('Quer um canto para trabalhar ou um ambiente só para isso?','¿Buscas un rincón para trabajar o un ambiente solo para eso?'):view==='answer'?(answerType==='area'?say('Você pode incluir outro bairro mantendo o orçamento e os demais filtros.','Puedes incluir otro barrio manteniendo el presupuesto y los demás filtros.'):say('Posso ajudar com preços, bairros e filtros. Os detalhes de planta e disponibilidade precisam ser confirmados no anúncio.','Puedo ayudar con precios, barrios y filtros. Confirma la distribución y disponibilidad en el anuncio.')):null}/>
+          {marketReply?<MoraMessage key={view+question} headline={marketReply.headline} detail={marketReply.detail} note={marketReply.note}/>
+          :view==='moment'?<MoraMessage key={view} headline={say('Quer se mudar logo ou ainda está olhando?','¿Quieres mudarte pronto o todavía estás viendo?')} detail={say('Assim a imobiliária sabe como te atender. Não muda seus filtros.','Así la inmobiliaria sabe cómo atenderte. No cambia tus filtros.')}/>
+          :view==='credit'?<MoraMessage key={view} headline={say('Já tem financiamento, vai pagar à vista, ou ainda não chegou nisso?','¿Ya tienes crédito, vas de contado, o aún no llegas a eso?')} detail={say('Só vai junto quando você pedir contato.','Solo va cuando pidas contacto.')}/>
+          :view==='street'?<MoraMessage key={view+missingStreet} headline={say(`Não há anúncios em ${missingStreet}.`,`No hay anuncios en ${missingStreet}.`)} detail={say('Posso buscar em bairros próximos da sua busca.','Puedo buscar en colonias cercanas a tu búsqueda.')}/>
+          :<MoraMessage key={view+question} headline={view==='suggest'?say('Você também pode gostar de imóveis nesses bairros.','También podrían gustarte inmuebles en estos barrios.'):view==='qualify'?say('Como você gostaria de trabalhar em casa?','¿Cómo te gustaría trabajar en casa?'):answerType==='area'?say('Vamos explorar os bairros dentro da sua busca.','Exploremos los barrios dentro de tu búsqueda.'):answerType==='price'&&cheapest?say(`As opções começam em ${money(listingPrice(cheapest))} ${currency}.`,`Las opciones empiezan en ${money(listingPrice(cheapest))} ${currency}.`):matches.length?say(`Encontrei ${matches.length} imóveis dentro dos seus filtros.`,`Encontré ${matches.length} inmuebles dentro de tus filtros.`):say('Podemos ajustar sua busca para encontrar mais opções.','Podemos ajustar tu búsqueda para encontrar más opciones.')}
+            detail={view==='qualify'?say('Quer um canto para trabalhar ou um ambiente só para isso?','¿Buscas un rincón para trabajar o un ambiente solo para eso?'):view==='answer'?(answerType==='area'?say('Você pode incluir outro bairro mantendo o orçamento e os demais filtros.','Puedes incluir otro barrio manteniendo el presupuesto y los demás filtros.'):say('Posso ajudar com preços, bairros e filtros. Os detalhes de planta e disponibilidade precisam ser confirmados no anúncio.','Puedo ayudar con precios, barrios y filtros. Confirma la distribución y disponibilidad en el anuncio.')):null}/>}
           <div className="mora-replies">
-            {(view==='suggest'||view==='answer'&&answerType==='area')&&<>{options.map(option=><button className="mora-pill" key={option.area} onClick={()=>chooseArea(option.area)}>{option.area}<span>+{option.additional}</span></button>)}{!options.length&&<button className="mora-pill" onClick={()=>expand('area')}>{say('Escolher bairros','Elegir barrios')}</button>}<button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Nenhuma dessas opções','Ninguna de estas opciones')}</button></>}
+            {marketReply&&<>{MARKET_TOPICS.filter(topic=>topic!==market).map(topic=><button className="mora-pill" key={topic} onClick={()=>askMarket(topic)}>{marketQuestion(topic,language)}</button>)}<button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Continuar explorando','Seguir explorando')}</button></>}
+            {view==='moment'&&<><button className="mora-pill" onClick={()=>chooseMoment('asap')}>{say('O quanto antes','Lo antes posible')}</button><button className="mora-pill" onClick={()=>chooseMoment('months')}>{say('Nos próximos meses','En los próximos meses')}</button><button className="mora-pill" onClick={()=>chooseMoment('exploring')}>{say('Só estou explorando','Solo estoy explorando')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>chooseMoment(null)}>{say('Agora não','Ahora no')}</button></>}
+            {view==='credit'&&<><button className="mora-pill" onClick={()=>chooseCredit('credit')}>{say('Com financiamento','Con crédito')}</button><button className="mora-pill" onClick={()=>chooseCredit('cash')}>{say('À vista','De contado')}</button><button className="mora-pill" onClick={()=>chooseCredit('open')}>{say('Ainda não cheguei nisso','Aún no llego a eso')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>chooseCredit(null)}>{say('Agora não','Ahora no')}</button></>}
+            {view==='street'&&<>{options.map(option=><button className="mora-pill" key={option.area} onClick={()=>chooseArea(option.area)}>{option.area}<span>+{option.additional}</span></button>)}<button className="mora-pill" onClick={()=>expand('area')}>{say('Escolher bairros','Elegir colonias')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Nenhuma dessas opções','Ninguna de estas opciones')}</button></>}
+            {!market&&(view==='suggest'||view==='answer'&&answerType==='area')&&<>{options.map(option=><button className="mora-pill" key={option.area} onClick={()=>chooseArea(option.area)}>{option.area}<span>+{option.additional}</span></button>)}{!options.length&&<button className="mora-pill" onClick={()=>expand('area')}>{say('Escolher bairros','Elegir barrios')}</button>}<button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Nenhuma dessas opções','Ninguna de estas opciones')}</button></>}
             {view==='qualify'&&<><button className="mora-pill" onClick={()=>chooseWork('open')}>{say('Um canto na sala','Un rincón en la sala')}</button><button className="mora-pill" onClick={()=>chooseWork('extra')}>{say('Um quarto dedicado ao trabalho','Una recámara para trabajar')}</button><button className="mora-pill" onClick={()=>chooseWork('coworking')}>{say('Condomínio com coworking','Edificio con coworking')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>chooseWork('none')}>{say('Não sei ainda','Aún no lo sé')}</button></>}
-            {view==='answer'&&answerType!=='area'&&<>{cheapest&&<button className="mora-mini-listing" onClick={()=>{collapse(false,false);onOpen(cheapest);}}><img src={propertyPhoto(cheapest)} alt=""/><span><strong>{money(listingPrice(cheapest))} {currency}</strong><span>{cheapest.street} · {cheapest.area}</span></span><Icon name="arrow"/></button>}<button className="mora-pill" onClick={()=>expand('budget')}>{say('Ajustar orçamento','Ajustar presupuesto')}</button><button className="mora-pill" onClick={()=>{prompted.current.region=true;transition('suggest');}}>{say('Explorar bairros','Explorar barrios')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Continuar explorando','Seguir explorando')}</button></>}
+            {!market&&view==='answer'&&answerType!=='area'&&<>{cheapest&&<button className="mora-mini-listing" onClick={()=>{collapse(false,false);onOpen(cheapest);}}><img src={propertyPhoto(cheapest)} alt=""/><span><strong>{money(listingPrice(cheapest))} {currency}</strong><span>{cheapest.street} · {cheapest.area}</span></span><Icon name="arrow"/></button>}<button className="mora-pill" onClick={()=>expand('budget')}>{say('Ajustar orçamento','Ajustar presupuesto')}</button><button className="mora-pill" onClick={()=>{prompted.current.region=true;transition('suggest');}}>{say('Explorar bairros','Explorar barrios')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Continuar explorando','Seguir explorando')}</button></>}
           </div>
         </>}
       </div>}

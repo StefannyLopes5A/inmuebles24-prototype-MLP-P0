@@ -113,6 +113,27 @@ export function recordView(recent, homeId, now = Date.now()) {
   return [{id:homeId, viewedAt:now}, ...recent.filter(entry => entry.id !== homeId)].slice(0, RECENT_LIMIT);
 }
 
+/**
+ * "Compartir" keeps a snapshot of the folder in this browser's localStorage, keyed by the folder id, so the link
+ * (which carries only that id) opens the folder in another tab of the same browser. Nothing leaves the device.
+ */
+export const SHARED_KEY = 'inmuebles24-v2-shared-folders';
+export const SHARED_LIMIT = 12;
+
+export function readSharedFolders(raw, known) {
+  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  return Object.fromEntries(Object.entries(source).flatMap(([id, folder]) => {
+    if (!FOLDER_ID.test(id) || !folder) return [];
+    const name = cleanFolderName(folder.name), homeIds = uniqueIds(folder.homeIds, known);
+    return name && homeIds.length ? [[id, {id, name, homeIds, sharedAt:Number(folder.sharedAt) || 0}]] : [];
+  }).sort((a, b) => b[1].sharedAt - a[1].sharedAt).slice(0, SHARED_LIMIT));
+}
+
+export function shareFolder(shared, folder, now = Date.now()) {
+  if (!folder || !FOLDER_ID.test(folder.id)) return shared;
+  return readSharedFolders({...shared, [folder.id]:{name:folder.name, homeIds:folder.homeIds, sharedAt:now}});
+}
+
 export function savedCountLabel(count, language = 'es-MX') {
   if (language === 'pt-BR') return count === 1 ? '1 item salvo' : `${count} itens salvos`;
   return count === 1 ? '1 inmueble guardado' : `${count} inmuebles guardados`;

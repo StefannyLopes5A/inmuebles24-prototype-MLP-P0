@@ -14,6 +14,7 @@ import {Amenities, Description, Host, Location, Specs} from './ListingSections';
 import {ListingReviews} from './ListingReviews';
 import {SimilarListings} from './SimilarListings';
 import {ListingContactCard, ListingQuestions} from './ListingContact';
+import {sortSignal} from './resultSort';
 import './property-page.css';
 
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
@@ -75,7 +76,7 @@ function ListingNav({intro, card, price, advertiser, onContact, say}) {
 }
 
 /** The full listing: Airbnb-style page built from the catalog plus a stable invented story. Contact grows inside the price card. */
-export function PropertyDetail({home, search, pref = 'none', favorites = [], saved = [], receipts = [], onLike, onFavorite, onCompare, onOpenListing, onMore, onClose, profile, onProfile, onReceipt, receipt}) {
+export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], onLike, onFavorite, onCompare, onOpenListing, onMore, onClose, profile, onProfile, onReceipt, receipt}) {
   const {language, money, currency} = useLanguage(), pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
@@ -87,6 +88,7 @@ export function PropertyDetail({home, search, pref = 'none', favorites = [], sav
   const story = useMemo(() => listingStory(home), [home]);
   const advertiser = useMemo(() => advertiserFor(home, agencies.logos), [home]);
   const similar = useMemo(() => similarListings(home, homes), [home]);
+  const signal = sortSignal(home, sort, language, {long:true});
   const favoriteIds = favorites.map(item => item.id).join(',');
   const reading = useMemo(() => ({
     options:{search, pref, favorites:favorites.filter(item => item.id !== home.id), stage:'deciding', language, money, short},
@@ -187,7 +189,7 @@ export function PropertyDetail({home, search, pref = 'none', favorites = [], sav
       <aside ref={card} className="pp-aside" aria-label={say('Preço e contato', 'Precio y contacto')}>
         <ListingContactCard home={home} advertiser={advertiser} search={search} language={language} contact={contact} stuck={stuck}
           onContact={openContact} onClose={() => setContact(null)} onReviews={reviewsFromContact} profile={profile} onProfile={onProfile} onReceipt={onReceipt} receipt={receipt} say={say}
-          price={<p className="pp-card-price">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>}
+          price={<><p className="pp-card-price">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>{signal && <p className="pp-card-signal">{signal}</p>}</>}
           fee={<p className="pp-card-fee">{home.mode === 'rent'
             ? say(`+ ${money(facts.fee)} de condomínio · ${money(price + facts.fee)} ${currency} por mês no total`, `+ ${money(facts.fee)} de mantenimiento · ${money(price + facts.fee)} ${currency} al mes en total`)
             : say(`Condomínio de ${money(facts.fee)} ${currency} por mês`, `Mantenimiento de ${money(facts.fee)} ${currency} al mes`)}</p>}/>

@@ -3,6 +3,7 @@ import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
 import {contactMessage, contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow.js';
 import {ContactStage, ContactWho, Toggle} from './ListingPanel';
+import {markVisit} from './seekerSignals.js';
 
 const MORPH = {type:'spring', duration:0.45, bounce:0.1};
 const EASE = [0.2, 0.8, 0.2, 1];
@@ -153,7 +154,7 @@ export function ListingContactCard({home, advertiser, search, language, contact,
         </> : <Contact home={home} advertiser={advertiser} search={search} language={language} intent={contact?.intent || lastIntent.current} question={contact?.question || ''}
           profile={profile} sent={sent} reduce={reduce} say={say} onClose={close} onReviews={onReviews}
           onIntent={intent => onContact(intent, contact?.question || '')}
-          onSent={(next, data) => { onReceipt(next); onProfile(normalizeContactProfile(data)); setSent(next); }}/>}
+          onSent={(next, data) => { if (next.intent === 'visit') markVisit(next.propertyId); onReceipt(next); onProfile(normalizeContactProfile(data)); setSent(next); }}/>}
       </motion.div>
     </AnimatePresence>
   </motion.div>;

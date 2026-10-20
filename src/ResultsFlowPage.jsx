@@ -4,9 +4,11 @@ import {HouseCard} from './Home';
 import {NeighborhoodRail} from './NeighborhoodRail.jsx';
 import {Icon} from './App';
 import {useLanguage} from './i18n';
-import {pinShowcaseDevelopments,selectedAreas,spreadTourListings} from './journey';
+import {matchingHomes,pinShowcaseDevelopments,selectedAreas,spreadTourListings} from './journey';
 import {installHomeMotion} from './homeMotion';
 import {playHomeTransition} from './searchFlowMotion';
+import {HomePopover} from './HomeSearch';
+import {SORTS,canonicalSort,sortLabel,sortResults,sortSignal} from './resultSort';
 
 const SearchMap=lazy(()=>import('./SearchMap.jsx'));
 const FIRST_ROWS = 4;
@@ -25,12 +27,30 @@ function gridColumns(width, layout) {
 
 function mapAreaLabel(search, say) {
   const areas=selectedAreas(search).filter(area=>area!=='Ambas zonas');
+  if (!areas.length && search.address) return `${search.address}, CDMX`;
   if (!areas.length) return say('Cidade do México','Ciudad de México');
   return areas.length===1 ? `${areas[0]}, CDMX` : `${areas[0]} +${areas.length-1}`;
 }
 
-export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onFavorites,receipts,assistantProps,blocked,mapProps}) {
+/** Results order, in the bar's filter style. Favorites are reached from the heart, the toast and the avatar. */
+function SortControl({sort,onSort,language,say}) {
+  const anchor=useRef(null),[open,setOpen]=useState(false),[menuMotion,setMenuMotion]=useState(true);
+  const close=(restore=false,animate=true)=>{setMenuMotion(animate);setOpen(false);if(restore)anchor.current?.focus({preventScroll:true});};
+  const label=sortLabel(sort,language);
+  return <>
+    <button ref={anchor} type="button" className="mora-filter flow-sort" aria-haspopup="listbox" aria-expanded={open} aria-label={`${say('Ordenar por','Ordenar por')}: ${label}`}
+      onClick={event=>{setMenuMotion(event.detail>0);setOpen(current=>!current);}} onKeyDown={event=>{if(event.key==='ArrowDown'){event.preventDefault();setMenuMotion(false);setOpen(true);}}}>
+      <span>{label}</span><img className="mora-chevron" src="/assets/search-flow/chevron.svg" alt=""/>
+    </button>
+    <HomePopover open={open} animate={menuMotion} anchor={anchor.current} label={say('Ordenar resultados','Ordenar resultados')} kind="list" variant="sort" onClose={close}>
+      {SORTS.map(key=><button type="button" role="option" className="home-option" aria-selected={key===sort} key={key} onClick={event=>{onSort(key);close(true,event.detail>0);}}>{sortLabel(key,language)}</button>)}
+    </HomePopover>
+  </>;
+}
+
+export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,receipts,assistantProps,blocked,mapProps,sort:rawSort,onSort,alert}) {
   const {language,t}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
+  const sort=canonicalSort(rawSort);
   const root=useRef(null),[updating,setUpdating]=useState(false);
   const [width,setWidth]=useState(viewportWidth);
   const wantsHalf=mapProps.mode==='half'&&width>=SPLIT_MIN;
@@ -38,8 +58,11 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
   const [reflowing,setReflowing]=useState(false),[gridKey,setGridKey]=useState(0);
   const [hoveredId,setHoveredId]=useState(null);
   const columns=gridColumns(width,layout);
-  const signature=JSON.stringify(search),prior=useRef(signature),refresh=useRef(null);
-  const ordered=pinShowcaseDevelopments(spreadTourListings(visible, columns), search);
+  // The sort is part of the signature, so reordering the same set of cards plays the skeleton and the cascade again.
+  const signature=JSON.stringify([search,sort]),prior=useRef(signature),refresh=useRef(null);
+  const ordered=sort==='recommended'
+    ?pinShowcaseDevelopments(spreadTourListings(visible, columns), search)
+    :sortResults(visible, sort, new Set(matchingHomes(search).map(home=>home.id)));
   const splitAt=Math.min(ordered.length, FIRST_ROWS * columns);
   const leading=ordered.slice(0, splitAt);
   const trailing=ordered.slice(splitAt);
@@ -77,15 +100,15 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,onF
   function renderGrid(items, orderOffset=0){
     if(!items.length)return null;
     return <div key={`${gridKey}-${orderOffset}`} className={`results-grid flow-grid ${updating?'is-updating':''}`} aria-busy={updating}>
-      {items.map((home,index)=><div className="flow-result-item" key={home.id} style={{'--result-order':Math.min(orderOffset+index,7)}} {...hoverProps(home.id)}><HouseCard home={home} search={search} pref={assistantProps.pref} contacted={receipts.some(receipt=>receipt.propertyId===home.id)} saved={saved.includes(home.id)} onLike={onSave} onOpen={onOpen}/></div>)}
+      {items.map((home,index)=><div className="flow-result-item" key={home.id} style={{'--result-order':Math.min(orderOffset+index,7)}} {...hoverProps(home.id)}><HouseCard home={home} search={search} pref={assistantProps.pref} signal={sortSignal(home,sort,language)} contacted={receipts.some(receipt=>receipt.propertyId===home.id)} saved={saved.includes(home.id)} onLike={onSave} onOpen={onOpen}/></div>)}
     </div>;
   }
   return <div ref={root} className="search-flow-page home-evolution">
-    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull}/>
+    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert}/>
     <div className="flow-results-content" data-map-layout={layout} inert={mapFull} aria-hidden={mapFull||undefined}>
       <div className="flow-results-heading">
         <h1>{say('Todos os resultados','Todos los resultados')}<span aria-label={say('imóveis encontrados','inmuebles encontrados')} className="results-count">{visible.length}</span></h1>
-        {onFavorites&&<button className="compare-favorites-link" type="button" onClick={onFavorites}>{say('Ver favoritos','Ver favoritos')}</button>}
+        <SortControl sort={sort} onSort={onSort} language={language} say={say}/>
       </div>
       {assistantProps.pref!=='none'&&<div className="flow-current-state">
         {assistantProps.pref!=='none'&&<button onClick={()=>assistantProps.onPref('none')}>{assistantProps.pref==='extra'?say('Prioridade: 3+ quartos','Prioridad: 3+ recámaras'):say('Preferência: espaço na sala','Preferencia: espacio en la sala')}<Icon name="close" size={14}/></button>}

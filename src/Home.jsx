@@ -192,10 +192,10 @@ export function RailListingCopy({home:h, videoRef}) {
   </>;
 }
 
-export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none'}) {
+export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none', signal=null}) {
   const {t,language}=useLanguage();
   const videoRef=useRef(null);
-  const tags=useMemo(()=>listingCardTags(home,{search,pref,language,contacted}),[home,search,pref,language,contacted]);
+  const tags=useMemo(()=>listingCardTags(home,{search,pref,language,contacted,signal}),[home,search,pref,language,contacted,signal]);
   const intent=useHoverIntent(home);
   const videoDelay=useRef(null);
   useEffect(()=>()=>clearTimeout(videoDelay.current),[]);

@@ -5,7 +5,7 @@ import {ListingReviews} from '../ListingReviews.jsx';
 import {advertiserFor} from '../listingAdvertiser.js';
 import {useLanguage} from '../i18n';
 import {SIDES} from './buildingConfig.js';
-import {AMENITIES, DEVELOPMENT, DEVELOPER, GALLERY, RANGES, TYPOLOGIES, UNITS, available, unitAsHome, unitById} from './torreOlmo.js';
+import {AMENITIES, DEVELOPMENT, DEVELOPER, GALLERY, RANGES, TYPOLOGIES, UNITS, available, unitAsHome, unitById, unitHomeId} from './torreOlmo.js';
 import {CONTENT_DELAY, CONTENT_OUT, EASE_FADE, SPRING_MORPH} from '../listingPanelMotion.js';
 import {ChatTurn, MoraComposer, useMoraThread} from '../moraChat.jsx';
 import {developmentFacts, developmentKind} from './listingFacts.js';
@@ -148,7 +148,7 @@ const tourQuick = say => [say('Qual unidade tem a melhor vista?', '¿Qué unidad
 
 export function RecorridoPanel(props) {
   const {home, say, view, onView, unitId, onBack, onCloseUnit, saved, onLike, onShare, collapsed, onCollapse, collapsible, modelFailed, reduce, held, chat, onOpenChat, onCloseChat, onTourAsk} = props;
-  const {language} = useLanguage();
+  const {language, money, currency} = useLanguage();
   const unit = unitId ? unitById(unitId) : null;
   const tab = view === 'summary' ? 'summary' : 'units';
   const unitOpen = !!(unit && !collapsed);
@@ -159,10 +159,30 @@ export function RecorridoPanel(props) {
   const threadRef = useRef(null), chatScroll = useRef(null), askField = useRef(null);
   const askId = useId();
   const [draft, setDraft] = useState('');
-  const {turns, push, agencyAction} = useMoraThread({on:chatOpen, threadRef, scroller:() => chatScroll.current, reduce});
-  /** A free question goes the mini-listing's way; the tour's own questions come back answered from the inventory and the scene. */
+  const {turns, push, agencyAction, awaitingMoment} = useMoraThread({on:chatOpen, threadRef, scroller:() => chatScroll.current, reduce, offersSimilar:true});
+  /** In a development the parecidos are its own units: like the one being asked about, or the available ones by price. */
+  const alternatives = () => {
+    const units = chatUnit ? similarUnits(chatUnit) : [...available].sort((a, b) => a.price - b.price).slice(0, 5);
+    if (!units.length) return null;
+    const items = units.map(item => ({...unitAsHome(item), image:home.image}));
+    return {items,
+      offer:chatUnit ? [`${units.length === 1 ? 'uma unidade parecida' : 'algumas unidades parecidas'} com a ${chatUnit.id} neste empreendimento`, `${units.length === 1 ? 'una unidad parecida' : 'algunas unidades parecidas'} a la ${chatUnit.id} en este desarrollo`]
+        : ['as unidades disponíveis com o melhor preço neste empreendimento', 'las unidades disponibles con mejor precio en este desarrollo'],
+      list:chatUnit ? [`Estas são parecidas com a ${chatUnit.id}:`, `Estas se parecen a la ${chatUnit.id}:`] : ['Estas são as disponíveis com o melhor preço:', 'Estas son las disponibles con mejor precio:'],
+      label:say('Unidades parecidas', 'Unidades similares')};
+  };
+  function openUnit(id) {
+    const unit = UNITS.find(item => unitHomeId(item.id) === id);
+    if (!unit) return;
+    onCloseChat();
+    props.onUnit(unit.id);
+  }
+  /**
+   * A free question goes the mini-listing's way; the tour's own questions come back answered from the inventory and the scene.
+   * While Mora waits for a visit's moment, the typed text is that moment and never a tour question.
+   */
   function ask(value, source, kind = 'ask', slot = null) {
-    const answer = kind === 'ask' ? onTourAsk(value) : null;
+    const answer = kind === 'ask' && !awaitingMoment ? onTourAsk(value) : null;
     if (push(value, source, answer ? 'answer' : kind, slot, {...answer, subject})) setDraft('');
   }
   const backToPanel = chatUnit || unitOpen ? say('Voltar para a unidade', 'Volver a la unidad')
@@ -228,7 +248,7 @@ export function RecorridoPanel(props) {
                 </div>
                 <ol ref={threadRef} className="lp-thread" role="log" aria-label={say('Conversa com a Mora', 'Conversación con Mora')}>
                   {turns.map((turn, i) => <ChatTurn key={turn.id} turn={turn} home={turn.subject || subject} advertiser={advertiser} agency={DEVELOPER_NOUN} active={i === turns.length - 1}
-                    reduce={reduce} copy={{say, language}} onAsk={ask} onAgencyAction={agencyAction}/>)}
+                    reduce={reduce} copy={{say, language, money, currency}} onAsk={ask} onAgencyAction={agencyAction} onOpenHome={openUnit} alternatives={alternatives}/>)}
                 </ol>
               </div>
             </div>

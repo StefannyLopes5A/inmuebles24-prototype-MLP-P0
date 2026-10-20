@@ -36,6 +36,11 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 .mora-conversation{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding-right:calc(var(--home-page-gutter) + 72px)}
 .mora-message h2{font-size:32px;line-height:1.2;font-weight:600;letter-spacing:0;margin:0;max-width:636px}
 .mora-message p{font-size:20px;line-height:1.4;font-weight:500;color:var(--muted);margin:16px 0 0;max-width:600px}
+.mora-message-note{display:block;margin:12px 0 0;font-size:12px;line-height:16px;font-weight:500;color:#6a6a6a}
+.mora-alert{gap:6px;color:#b43c00}
+.mora-alert.is-on{color:var(--ink)}
+.mora-alert svg{flex:none}
+@media(hover:hover) and (pointer:fine){.mora-alert:not(.is-on):hover{color:#8a2e00}}
 .mora-replies{display:flex;flex-wrap:wrap;align-content:center;align-items:center;gap:16px 12px}
 .mora-pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:56px;padding:16px 24px;border-radius:99px;background:var(--pale);color:#b43c00;font-size:14px;font-weight:600;line-height:20px;transition:background 160ms ease,transform 220ms var(--flow-motion)}
 .mora-pill span{display:inline-flex;align-items:center;justify-content:center;border-radius:99px;padding:2px 7px;height:24px;background:#ff550014}
@@ -46,7 +51,13 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 .flow-results-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:0 var(--home-page-gutter);margin-bottom:48px}
 .flow-results-heading h1{display:flex;align-items:center;gap:12px;font-size:24px;line-height:34px;font-weight:590;letter-spacing:-.22px;margin:0;color:#000}
 .flow-results-heading .results-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:99px;color:#fff;background:#000;font-size:14px;line-height:20px;font-weight:700;padding:4px 6px}
-.compare-favorites-link{min-height:44px;padding:0 4px;font-size:14px;font-weight:590;color:#b43c00;text-decoration:underline;text-underline-offset:3px;flex:none}
+.flow-sort{min-height:44px;padding:10px 4px;color:#111}
+.flow-sort[aria-expanded=true] .mora-chevron{transform:rotate(180deg)}
+.flow-sort .mora-chevron{transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+.home-popover-variant-sort{width:max-content;min-width:260px;font-size:20px;line-height:1.2;border-radius:18px}
+.home-popover-variant-sort>.home-option{min-height:52px;padding:12px 20px}
+.home-popover-variant-sort>.home-option:first-child{padding-top:20px;min-height:64px}
+.home-popover-variant-sort>.home-option:last-child{padding-bottom:20px;min-height:64px}
 
 .flow-current-state{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:-24px var(--home-page-gutter) 24px;font-size:13px;color:#666}.flow-current-state button{display:inline-flex;align-items:center;gap:8px;min-height:32px}
 .flow-results-workspace{display:flex;align-items:flex-start;gap:0}.flow-listings{flex:1;min-width:0}.flow-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:48px 16px;margin:0;padding-inline:var(--home-page-gutter)}
@@ -59,7 +70,7 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 @media(max-width:1200px){.mora-smart-trigger{flex-basis:34%;padding-right:var(--home-page-gutter);font-size:14px}.mora-more{--mora-more-fade-inset:52px}.mora-filter-scroll{gap:0 20px}.mora-conversation{gap:32px}.mora-message h2{font-size:28px}.mora-pill{padding:12px 18px;min-height:48px}.flow-results-heading{flex-wrap:wrap}.flow-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:950px){.flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mora-smart-trigger{flex-basis:30%;padding-right:24px}.mora-smart-trigger svg{display:block}.mora-smart-trigger span{max-height:40px;overflow:hidden}.mora-more{--mora-more-fade-inset:40px;padding:0 20px 0 0;font-size:16px}.mora-filter{font-size:16px}.mora-editor .home-sentence{width:calc(100% - 64px);font-size:34px}.mora-conversation{grid-template-columns:1fr;padding-right:var(--home-page-gutter);gap:24px}.mora-message{padding-right:60px}.mora-replies{max-width:680px}.mora-message p{font-size:18px}}
 @media(max-width:700px){.mora-collapsed{height:auto;flex-wrap:wrap}.mora-filter-region{width:100%;flex:auto;height:64px}.mora-filter-scroll{gap:0 20px}.mora-more{--mora-more-fade-inset:38px;font-size:14px;padding:0 20px 0 0}.mora-more .mora-chevron{width:16px}.mora-smart-trigger{flex-basis:100%;height:56px;border-left:0;border-top:1px solid #0000000a;padding:0 24px;font-size:14px}.mora-smart-trigger span{max-height:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mora-expanded{padding:28px 24px}.mora-editor{padding:0;min-height:350px;max-height:calc(100dvh - var(--flow-header-height) - 24px);overflow-y:auto}.mora-editor .home-search{padding:32px 24px 42px}.mora-editor .home-search h1{font-size:16px;margin-bottom:28px;padding-right:50px}.mora-editor .home-sentence{font-size:28px;line-height:1.1;width:100%;gap:10px;min-height:0}.mora-editor .home-phrase-group{gap:8px}.mora-editor .home-word-control{min-height:32px}.mora-editor .home-detail-row{margin-top:32px;gap:12px}.mora-editor .home-details{font-size:28px}.mora-editor .home-details-editor{min-height:68px;max-height:150px}.mora-close{width:40px;height:40px;right:24px;top:24px}.mora-close img{width:20px;height:20px}.mora-message h2{font-size:26px}.mora-message p{font-size:16px}.mora-replies{gap:10px}.mora-pill{font-size:13px;min-height:46px;padding:12px 16px}.mora-conversation{max-height:calc(100dvh - var(--flow-header-height) - 24px);overflow-y:auto}.flow-results-content{padding-top:32px}.flow-results-heading{margin-bottom:24px;gap:16px}.flow-results-heading h1{font-size:22px}.flow-current-state{margin:0 24px 24px}.flow-grid{grid-template-columns:1fr;gap:32px}.flow-empty{padding-top:28px}.flow-empty h2{font-size:24px}.flow-results-workspace{flex-direction:column}.all-filters-dialog{width:100%;max-height:94dvh;margin:auto 0 0;border-radius:24px 24px 0 0}.all-filters-dialog>header{padding:24px}.all-filters-body{padding:24px}.all-filters-dialog .home-step{width:40px;height:40px}}
-@media(prefers-reduced-motion:reduce){.mora-bar *,.all-filters-dialog *{animation:none!important;transition:none!important}.flow-grid:not(.is-updating) .flow-result-item,.all-filters-dialog[open]{animation:none}.search-morph-layer{display:none}}
+@media(prefers-reduced-motion:reduce){.mora-bar *,.all-filters-dialog *,.flow-sort *{animation:none!important;transition:none!important}.flow-grid:not(.is-updating) .flow-result-item,.all-filters-dialog[open]{animation:none}.search-morph-layer{display:none}}
 
 body:has(.search-flow-page) .home-popover-area{width:445px}
 

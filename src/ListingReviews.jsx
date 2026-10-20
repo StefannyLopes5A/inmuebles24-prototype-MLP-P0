@@ -146,8 +146,8 @@ export function ListingReviews({home, advertiser, language, say, compact = false
   const [a, b] = tags;
   const pick = tag => say(...tag.phrase);
   const summary = say(
-    `De ${total} avaliações, ${share(a.mentions, total, say)} diz que ${pick(a)}, e ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre as mais bem avaliadas de ${home.area}; ${visits} dessas avaliações são de visitas feitas com a Mora.`,
-    `De ${total} reseñas, ${share(a.mentions, total, say)} dice que ${pick(a)}, y ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre las mejor calificadas de ${home.area}; ${visits} de esas reseñas son de visitas hechas con Mora.`,
+    `De ${total} avaliações, ${share(a.mentions, total, say)} diz que ${pick(a)}, e ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre as mais bem avaliadas de ${home.area}; ${visits} dessas avaliações são de quem chegou pela Mora.`,
+    `De ${total} reseñas, ${share(a.mentions, total, say)} dice que ${pick(a)}, y ${share(b.mentions, total, say)}, que ${pick(b)}. Está entre las mejor calificadas de ${home.area}; ${visits} de esas reseñas son de personas que llegaron por Mora.`,
   );
   const shown = compact || all ? reviews : reviews.slice(0, PREVIEW);
   const cloud = <div className="pp-rating-cloud">

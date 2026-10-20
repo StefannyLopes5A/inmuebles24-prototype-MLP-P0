@@ -9,6 +9,9 @@ const knownAreas = new Set(homes.map(home => home.area));
 const knownProperties = new Map(homes.map(home => [home.id, home]));
 const preferences = new Set(['none', 'open', 'separate', 'extra']);
 const canonicalPreference = pref => pref === 'separate' ? 'extra' : preferences.has(pref) ? pref : 'none';
+/** How the results grid is ordered; recommended is the default and stays out of the URL. */
+export const SORTS = Object.freeze(['recommended', 'price', 'rarity', 'contacts']);
+export const canonicalSort = value => SORTS.includes(value) ? value : 'recommended';
 export const DEFAULT_SEARCH = Object.freeze({
   mode:'buy', area:'Narvarte Poniente', areas:Object.freeze(['Narvarte Poniente']),
   address:'', budget:7_500_000, beds:2, note:'', fromIdea:false,
@@ -50,6 +53,12 @@ export function normalizeSearch(input = {}) {
 
 export const selectedAreas = search => normalizeSearch(search).areas;
 
+/** A search alert follows the hard filters, not the free text or the order of the grid. */
+export function alertKey(search) {
+  const current = normalizeSearch(search);
+  return JSON.stringify([current.mode, current.propertyType || 'apartment', [...current.areas].sort(), current.address, current.beds, current.minBudget || 0, current.budget]);
+}
+
 // A development fits when one of its available units fits; its record keeps the smallest unit.
 const developmentFits = (current) => available.some(unit => unit.beds >= current.beds
   && unit.price <= current.budget && unit.price >= (current.minBudget || 0));
@@ -78,6 +87,11 @@ export function prototypeResults(search) {
   // "Solo con tour 3D" is a showcase filter: only the developments with a tour, whatever else is set.
   if (current.tour3d) return developments;
   const found = matchingHomes(current);
+  // A catalog street is a precise place: the grid keeps only that street (all of it if the other filters leave none).
+  if (current.address) {
+    const onStreet = homes.filter(home => home.mode === (current.mode === 'rent' ? 'rent' : 'buy') && fold(home.street).includes(fold(current.address)));
+    if (onStreet.length) return found.length ? found : onStreet;
+  }
   // Desarrollos has a single development in the catalog; it leads, and buy listings fill the grid.
   const exact = current.mode === 'development' ? [...developments, ...found.filter(home => !home.development)] : found;
   if (exact.length >= PROTOTYPE_MIN_RESULTS) return exact;
@@ -190,14 +204,15 @@ export function readJourney(locationLike = {}) {
     && (page !== 'results' || prototypeResults(search).some(home => home.id === requestedId)) ? requestedId : null;
   const listId = page === 'compare' && isFolderId(params.get('list')) ? params.get('list') : null;
   const map = (page === 'results' || page === 'listing') ? canonicalMapMode(params.get('map')) : 'mini';
-  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {}), ...(map !== 'mini' ? {map} : {})};
+  const sort = (page === 'results' || page === 'listing') ? canonicalSort(params.get('sort')) : 'recommended';
+  return {page:page === 'listing' && !propertyId ? 'results' : page, search, pref, propertyId, ...(listId ? {listId} : {}), ...(map !== 'mini' ? {map} : {}), ...(sort !== 'recommended' ? {sort} : {})};
 }
 
 export const MAP_MODES = Object.freeze(['mini', 'half', 'full']);
 export const canonicalMapMode = value => MAP_MODES.includes(value) ? value : 'mini';
 
 /** Shareable URLs contain criteria and a folder id at most; never contact identity, receipts or saved listing ids. */
-export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini'} = {}) {
+export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini', sort = 'recommended'} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'compare' ? 'compare'
     : page === 'favorites' ? 'favorites'
@@ -222,6 +237,7 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
   if (page === 'compare' && isFolderId(listId)) params.set('list', listId);
   const mapMode = canonicalMapMode(map);
   if ((view === 'results' || view === 'listing') && mapMode !== 'mini') params.set('map', mapMode);
+  if ((view === 'results' || view === 'listing') && canonicalSort(sort) !== 'recommended') params.set('sort', canonicalSort(sort));
   return `/?${params}`;
 }
 

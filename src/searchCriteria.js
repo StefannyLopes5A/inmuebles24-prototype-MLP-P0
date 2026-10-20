@@ -43,8 +43,13 @@ export function matchesCriteria(home, criteria = []) {
   });
 }
 
-export function smartDetailTokens(text, criteria = []) {
+export function smartDetailTokens(text, criteria = [], streets = []) {
   if (isQuestion(text)) return [];
+  const street = matchStreet(text, streets);
+  if (street?.address) {
+    const start = text.search(/\S/);
+    return [{start, end:start + street.typed.length, text:text.slice(start, start + street.typed.length), kind:'extra'}];
+  }
   const tokens = detailTokens(text);
   const extra = /(?<![\p{L}\p{N}])(?:home\s*office|trabalhar\s+em\s+casa|trabajar\s+en\s+casa|varanda(?:\s+gourmet)?|balc[oó]n(?:\s+con\s+asador)?|coworking)(?![\p{L}\p{N}])/giu;
   const recognized=[...tokens, ...[...text.matchAll(extra)].map(m => ({start:m.index,end:m.index+m[0].length,text:m[0],kind:'extra'}))];
@@ -52,11 +57,31 @@ export function smartDetailTokens(text, criteria = []) {
   return recognized.sort((a,b) => a.start-b.start);
 }
 
-export function interpretSmartInput(value, search, currency, areas, rate = 20, commit = false) {
+const STREET_PREFIX = /^(?:calle|c\/|avenida|av\.?|calzada|rua|r\.)\s+(.{2,80})$/i;
+/** "Calle Arquímedes 54" → "Calle Arquímedes": the catalog street without its number, for the token and the filter. */
+export const streetName = street => String(street || '').replace(/,.*$/, '').replace(/\s+(?:al\s+)?\d+[a-z]?$/i, '').trim();
+
+/** A typed street ("Calle Arquímedes") against the catalog streets. Only a street prefix makes text a street. */
+export function matchStreet(text, streets = []) {
+  const typed = text.trim().match(STREET_PREFIX);
+  if (!typed) return null;
+  const term = foldSearchText(typed[1].replace(/\s+\d+[a-z]?$/i, '').trim());
+  if (term.length < 3) return null;
+  const found = streets.find(street => foldSearchText(street).includes(term));
+  return {typed:typed[0].replace(/\s+\d+[a-z]?$/i, '').trim(), address:found ? streetName(found) : null};
+}
+
+export function interpretSmartInput(value, search, currency, areas, rate = 20, commit = false, streets = []) {
   const text = value.trim(), folded = foldSearchText(text);
   if (!text) return {kind:'empty',search};
   // Questions are classified first, so a price or neighborhood inside a question never changes filters.
   if (isQuestion(text)) return {kind:'question',question:text,search};
+  // A street the catalog has becomes the location token; one it doesn't have is answered by Mora, never a text criterion.
+  const street = matchStreet(text, streets);
+  if (street) {
+    if (!street.address) return commit ? {kind:'street-missing',street:street.typed,search} : {kind:'draft',search};
+    return {kind:'filters',search:{...search,areas:[],area:'Ambas zonas',address:street.address},qualify:false,street:true};
+  }
   const parsed = parseSearchInput(text, search, currency, areas, rate);
   const type=[['condominium',/\bcasa(?:s)? (?:em|en) condominio\b/],['house',/\bcasas?\b/],['apartment',/\b(?:apartamentos?|departamentos?)\b/],['land',/\b(?:terrenos?|lotes?)\b/]].find(([,pattern])=>pattern.test(folded))?.[0];
   if(type){parsed.search.propertyType=type;parsed.structured=true;}

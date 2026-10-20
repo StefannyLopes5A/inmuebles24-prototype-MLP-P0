@@ -228,7 +228,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     {text:type === 'house' || type === 'condominium' ? say('uma', 'una') : say('um', 'un')},
     {key:'propertyType', label:t('Tipo de inmueble'), text:typeLabel.toLowerCase()}, {text:t('con')},
     {key:'beds', label:t('Número de recámaras'), text:`${search.beds}+ ${say(search.beds === 1 ? 'quarto' : 'quartos', search.beds === 1 ? 'recámara' : 'recámaras')}`},
-    {text:t('en')}, {key:'area', label:t('Zona para vivir'), text:search.areas?.length > 1 ? `${search.area} +${search.areas.length - 1}` : search.area === 'Ambas zonas' ? t('Ciudad de México') : search.area},
+    {text:t('en')}, {key:'area', label:t('Zona para vivir'), text:search.address && !search.areas?.length ? search.address : search.areas?.length > 1 ? `${search.area} +${search.areas.length - 1}` : search.area === 'Ambas zonas' ? t('Ciudad de México') : search.area},
     {text:t('hasta')}, {key:'budget', label:t('Presupuesto máximo'), text:`${money(search.budget)} ${currency}`},
     {text:t('Agrega aquí más detalles'), details:true},
   ];

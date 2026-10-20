@@ -10,6 +10,7 @@ import {textOf} from './mapWidgetContent';
 import {contactRecipient, contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow';
 import {EASE, EASE_IN_OUT, EASE_OUT, riseIn, useMediaQuery} from './favoriteMotion';
 import {SOFT_MOTION} from './homeIntro.js';
+import {markVisit} from './seekerSignals.js';
 
 const MAX_COLUMNS = 6;
 const COMPARING_MS = 600, SEND_MS = 2500, MORPH_MS = 280, SWEEP_MS = 600;
@@ -280,7 +281,7 @@ function Composer({recipients, profile, mobile, reduce, morph, pending, onCancel
     </form>;
 }
 
-export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, backLabel}) {
+export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare}) {
   const {language, compactMoney, say} = useSay();
   const reduce = useReducedMotion();
   const mobile = useMediaQuery('(max-width: 700px)');
@@ -293,6 +294,15 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
   const [hoverRow, setHoverRow] = useState(null);
   const [stage, setStage] = useState('idle');
   const [batch, setBatch] = useState(null);
+  const [shareUrl, setShareUrl] = useState(null), [copied, setCopied] = useState(false);
+  /** A local link: it carries only the folder id, and this browser keeps the snapshot that opens it. */
+  function share() {
+    onShare(url => {
+      if (!url) return;
+      setShareUrl(url);
+      navigator.clipboard?.writeText(url).then(() => setCopied(true), () => setCopied(false));
+    });
+  }
 
   useLayoutEffect(() => {heading.current?.focus({preventScroll:true});}, []);
   useEffect(() => {if (intro) onIntroSeen?.();}, []);
@@ -358,6 +368,7 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
       home, broker:recipientOf(home, language), intent:'visit', channel:'whatsapp', profile:data,
       message:`${text}\n\n${home.street}, ${home.area} (${say('anúncio', 'anuncio')} ${home.listingId})`,
     }));
+    selected.forEach(home => markVisit(home.id));
     onProfile({...profile, ...data});
     onReceipts(created);
     setBatch({ids:selected.map(home => home.id), receiptIds:created.map(receipt => receipt.id), names:recipients.map(item => item.display)});
@@ -369,9 +380,9 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
       : selected.length === 1 ? 'one' : 'many';
   const ctaLabel = {
     none:say('Escolha pelo menos uma', 'Elige al menos una'),
-    remaining:say('Solicitar a visita que falta', 'Solicitar la visita que falta'),
+    remaining:say('Contatar a imobiliária que falta', 'Contactar la inmobiliaria que falta'),
     one:say('Solicitar visita', 'Solicitar visita'),
-    many:<>{say('Solicitar', 'Solicitar')}<RollingCount value={selected.length} reduce={reduce}/>&nbsp;{say('visitas', 'visitas')}</>,
+    many:<>{say('Contatar', 'Contactar')}<RollingCount value={selected.length} reduce={reduce}/>&nbsp;{say('imobiliárias', 'inmobiliarias')}</>,
   }[ctaState];
   const inactive = ctaState === 'none';
   const composing = stage === 'composer';
@@ -381,8 +392,8 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
 
   const barLine = sentMode
     ? batch
-      ? (batch.ids.length === 1 ? say(`Enviado a ${batch.names[0]}. Vai responder pelo WhatsApp.`, `Enviado a ${batch.names[0]}. Te responderá por WhatsApp.`) : say(`Enviado a ${batch.ids.length} imobiliárias. Vão responder pelo WhatsApp.`, `Enviado a ${batch.ids.length} inmobiliarias. Te responderán por WhatsApp.`))
-      : say('Você já contatou as imobiliárias desta comparação.', 'Ya contactaste a las inmobiliarias de esta comparación.')
+      ? (batch.ids.length === 1 ? say(`Pronto! ${batch.names[0]} já tem sua mensagem e vai responder pelo WhatsApp.`, `¡Listo! ${batch.names[0]} ya tiene tu mensaje y te responderá por WhatsApp.`) : say(`Pronto! ${batch.ids.length} imobiliárias já têm sua mensagem e vão responder pelo WhatsApp.`, `¡Listo! ${batch.ids.length} inmobiliarias ya tienen tu mensaje y te responderán por WhatsApp.`))
+      : say('Você já falou com as imobiliárias desta comparação.', 'Ya hablaste con las inmobiliarias de esta comparación.')
     : selected.length
       ? say('Uma só mensagem. Cada imobiliária responde pelo WhatsApp.', 'Un solo mensaje. Cada inmobiliaria te responde por WhatsApp.')
       : say('Marque pelo menos um imóvel para enviar a mensagem.', 'Marca al menos un inmueble para enviar el mensaje.');
@@ -419,11 +430,16 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
           {count > 0 && <p className="compare-folder-meta">{folderName}{meta ? ` · ${meta}` : ''}</p>}
           {count === 0 && <p className="compare-empty-copy">{say('Esta pasta está vazia. Toque no coração de um imóvel para salvá-lo aqui.', 'Esta carpeta está vacía. Toca el corazón de un inmueble para guardarlo aquí.')}</p>}
           {count > 0 && !shown.length && <p className="compare-empty-copy">{say('Você tirou todos desta comparação. Eles continuam salvos na pasta.', 'Quitaste todos de esta comparación. Siguen guardados en la carpeta.')}</p>}
+          {shareUrl && <p className="compare-share-link" role="status">
+            {copied ? say('Link copiado. Abra neste navegador para ver a pasta: ', 'Enlace copiado. Ábrelo en este navegador para ver la carpeta: ') : say('Abra este link neste navegador para ver a pasta: ', 'Abre este enlace en este navegador para ver la carpeta: ')}
+            <a href={shareUrl} target="_blank" rel="noopener noreferrer">{shareUrl.replace(/^https?:\/\//, '')}</a>
+          </p>}
         </motion.div>
       </div>
-      {(shown.length > MAX_COLUMNS || hiddenIds.length > 0) && <motion.div className="compare-header-actions" {...riseIn(reduce, 1, 6)}>
+      {(shown.length > MAX_COLUMNS || hiddenIds.length > 0 || (onShare && count > 0)) && <motion.div className="compare-header-actions" {...riseIn(reduce, 1, 6)}>
         {hiddenIds.length > 0 && <button className="mini-text-action" type="button" onClick={onShowAll}>{say(`Mostrar todos (${count})`, `Mostrar todos (${count})`)}</button>}
         {shown.length > MAX_COLUMNS && <button className="mini-secondary compare-more" type="button" onClick={compareOthers}>{say('Comparar outros', 'Comparar otros')}</button>}
+        {onShare && count > 0 && <button className="mini-secondary compare-share" type="button" onClick={share}>{say('Compartilhar', 'Compartir')}</button>}
       </motion.div>}
     </header>
 
@@ -523,11 +539,12 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
               <p ref={copy} tabIndex={-1} className="compare-action-copy" aria-live="polite" data-pitch={!sentMode || undefined}><Crossfade id={barLine}>{barLine}</Crossfade></p>
               {!sentMode && <motion.div className="compare-cta-wrap" layoutId="compare-cta" transition={{layout:morph}}>
                 <button ref={cta} type="button" className="mini-primary compare-cta" data-state={ctaState} onClick={request}
-                  aria-label={ctaState === 'many' ? say(`Solicitar ${selected.length} visitas`, `Solicitar ${selected.length} visitas`) : undefined}
+                  aria-label={ctaState === 'many' ? say(`Contatar ${selected.length} imobiliárias`, `Contactar ${selected.length} inmobiliarias`) : undefined}
                   aria-disabled={inactive || undefined} aria-haspopup={sentMode ? undefined : 'dialog'}>
                   <Crossfade id={ctaState} layout>{ctaLabel}</Crossfade>
                 </button>
               </motion.div>}
+              {sentMode && onExplore && <button type="button" className="mini-secondary compare-explore" onClick={onExplore}>{say('Ver mais imóveis', 'Ver más inmuebles')}</button>}
             </motion.div>}
         </AnimatePresence>
         {batch && !reduce && <SentSweep key={batch.receiptIds[0]}/>}

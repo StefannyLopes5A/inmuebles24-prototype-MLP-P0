@@ -248,18 +248,12 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-chat-action{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-top:6px;padding:8px 16px;border-radius:99px;background:#f2f2f2;font-size:14px;line-height:20px;font-weight:600;color:#111}
 .lp-chat-action.is-done{background:#f7f7f7;color:#0000005c;font-weight:500}
 .lp-pick-card{display:flex;flex-direction:column;gap:12px}
-.lp-pick-label{margin:0;font-size:14px;line-height:20px;font-weight:600;color:#111}
-.lp-pick-days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.lp-pick-day{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60px;padding:8px 4px;border:1px solid #ebebeb;border-radius:16px;background:#fff;color:#111;transition:background-color 150ms,border-color 150ms,color 150ms}
-.lp-pick-day span{font-size:11px;line-height:14px;color:#6a6a6a}
-.lp-pick-day strong{font-size:15px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums}
-.lp-pick-day[aria-pressed=true]{border-color:#ff925c;background:#fff1e9;color:#a13600}
-.lp-pick-day[aria-pressed=true] span{color:#a13600}
-.lp-period-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:2px;border:1px solid #ebebeb;border-radius:16px;background:#f7f7f7}
-.lp-period-seg{min-height:44px;padding:8px 6px;border:0;border-radius:14px;background:transparent;font-size:14px;line-height:18px;font-weight:600;color:#111;transition:background-color 150ms,color 150ms}
-.lp-period-seg[aria-pressed=true]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);color:#a13600}
+.lp-moment-row{display:flex;flex-wrap:wrap;gap:8px}
+.lp-moment{min-height:40px;padding:8px 16px;border:1px solid #ebebeb;border-radius:99px;background:#fff;font-size:14px;line-height:20px;font-weight:600;color:#111;transition:background-color 150ms,border-color 150ms,color 150ms}
 .lp-pick-note{margin:0;font-size:13px;line-height:18px;color:#6a6a6a}
-.lp-pick-submit{margin-top:4px}
+.lp-turn-note{margin:0;font-size:12px;line-height:16px;color:#6a6a6a}
+.lp-proof-lead{display:grid;gap:2px;margin:10px 0 0;padding-top:10px;border-top:1px solid #ebebeb;font-size:13px;line-height:18px;color:#111}
+.lp-proof-lead>span{font-size:12px;line-height:16px;font-weight:600;color:#6a6a6a}
 
 /* The open field from the search: no box, large type, orange caret. The caret is the focus cue, so the field drops the outline. */
 .lp-phase-question .lp-footer{padding-top:4px}
@@ -358,7 +352,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 /* One orange→blue pass of light through the sent sentence, 600 ms, like the comparison's confirmation. */
 .lp-stage-title.is-sent>span{background-image:linear-gradient(90deg,#111 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,#111 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:lp-done-sweep 600ms linear 200ms both}
 @keyframes lp-done-sweep{from{background-position:100% 50%}to{background-position:0% 50%}}
-.lp-toggle:focus-visible,.lp-who-change:focus-visible,.lp-chat-action:focus-visible,.lp-pick-day:focus-visible,.lp-period-seg:focus-visible,.lp-proof-primary:focus-visible,.lp-proof-ghost:focus-visible,.lp-ask-suggest-row button:focus-visible,.lp-ask-send:focus-visible,.lp-ask-back:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
+.lp-toggle:focus-visible,.lp-who-change:focus-visible,.lp-chat-action:focus-visible,.lp-moment:focus-visible,.lp-proof-primary:focus-visible,.lp-proof-ghost:focus-visible,.lp-ask-suggest-row button:focus-visible,.lp-ask-send:focus-visible,.lp-ask-back:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
 .lp-content.is-compact .lp-scroll{padding-top:24px}
 .lp-content.is-compact .lp-flow{gap:14px}
 .lp-content.is-compact .lp-specs{margin-top:-10px}
@@ -388,7 +382,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
   .lp-toggle[aria-pressed=false]:hover{border-color:#222}
   .lp-who-change:hover{background:#f2f2f2}
   .lp-chat-action:not(.is-done):hover{background:#e8e8e8}
-  .lp-pick-day[aria-pressed=false]:hover,.lp-period-seg[aria-pressed=false]:hover,.lp-proof-ghost:hover{background:#f7f7f7}
+  .lp-moment:hover,.lp-proof-ghost:hover{background:#f7f7f7}
   .lp-proof-primary:not([aria-disabled]):hover,.lp-ask-send:hover{background:#f05427}
   .lp-avatar:hover{box-shadow:0 0 0 2px #000}
   .lp-favorites-compare:hover{border-color:#222}
@@ -428,7 +422,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-grab{position:absolute;top:0;left:0;right:0;height:32px;z-index:3;display:flex;justify-content:center;padding-top:8px;touch-action:none;cursor:grab}
 .lp-grab span{width:36px;height:5px;border-radius:99px;background:#ffffffd9;box-shadow:0 0 0 1px #0000001f}
 @media(max-width:359px){.lp-secondary{flex:1 1 auto}.lp-actions.is-summary .lp-secondary{flex-basis:100%}.lp-specs{gap:6px 14px;font-size:13px}.lp-proof-head>img{width:56px;height:56px}.lp-ask-field{--ask-line:26px}.lp-ask-hint,.lp-ask-mirror,.lp-ask-field textarea{font-size:18px}.lp-ask-bar{gap:8px}}
-@media(pointer:coarse){.lp-chat-action,.lp-period-seg,.lp-toggle,.lp-ask-suggest-row button{min-height:44px}.lp-ask-send{width:44px;height:44px;margin-bottom:0}}
+@media(pointer:coarse){.lp-chat-action,.lp-moment,.lp-toggle,.lp-ask-suggest-row button{min-height:44px}.lp-ask-send{width:44px;height:44px;margin-bottom:0}}
 .lp-gallery{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:#0b0b0bf2}
 .lp-gallery>img{max-width:min(1200px,calc(100vw - 32px));max-height:calc(100dvh - 128px);object-fit:contain;border-radius:12px}
 .lp-gallery-close,.lp-gallery-step{position:absolute;display:grid;place-items:center;border-radius:50%;background:#ffffff1f;color:#fff}
@@ -470,5 +464,16 @@ html[data-listing-panel] .toast{z-index:76}
   .lp-mora-working>span{animation:none;background:none;-webkit-text-fill-color:currentColor}
 }
 @media(prefers-reduced-motion:reduce){.lp-stage-title.is-sent>span,.lp-primary-note{animation:none;background:none;-webkit-text-fill-color:currentColor}.lp-float>span{transition:none}}
-@media(forced-colors:active){.lp-bubble{background:Canvas;border:1px solid CanvasText;color:CanvasText}.lp-stage-title.is-sent>span,.lp-primary-note{animation:none;background:none;-webkit-text-fill-color:currentColor}.lp-review-stars .is-on{color:CanvasText}.lp-toggle[aria-pressed=true],.lp-pick-day[aria-pressed=true],.lp-period-seg[aria-pressed=true]{border:2px solid Highlight}.lp-float:focus-within,.lp-message:focus-within,.lp-ask-field:focus-within{outline:2px solid Highlight}.lp-ask-hint{color:GrayText}.lp-ask-caret{background:Highlight}}
+@media(forced-colors:active){.lp-bubble{background:Canvas;border:1px solid CanvasText;color:CanvasText}.lp-stage-title.is-sent>span,.lp-primary-note{animation:none;background:none;-webkit-text-fill-color:currentColor}.lp-review-stars .is-on{color:CanvasText}.lp-toggle[aria-pressed=true]{border:2px solid Highlight}.lp-float:focus-within,.lp-message:focus-within,.lp-ask-field:focus-within{outline:2px solid Highlight}.lp-ask-hint{color:GrayText}.lp-ask-caret{background:Highlight}}
 @media(prefers-reduced-motion:reduce){.lp-ask-caret{animation:none}}
+.lp-similar{display:grid;gap:8px;margin:6px 0 0;padding:0;list-style:none}
+.lp-similar-row{display:grid;grid-template-columns:56px minmax(0,1fr) 16px;align-items:center;gap:12px;width:100%;padding:8px 14px 8px 8px;border-radius:16px;background:#fff;box-shadow:0 0 0 1px #ebebeb;text-align:left;color:#111;transition:background-color 150ms,box-shadow 150ms}
+.lp-similar-row img{width:56px;height:56px;border-radius:10px;object-fit:cover}
+.lp-similar-row>span{display:grid;gap:1px;min-width:0}
+.lp-similar-row strong{font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.lp-similar-row small{font-size:12px;font-weight:500;color:#6a6a6a}
+.lp-similar-row>span>span{overflow:hidden;font-size:12px;line-height:16px;color:#6a6a6a;white-space:nowrap;text-overflow:ellipsis}
+.lp-similar-row svg{color:#6a6a6a}
+.lp-similar-row:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.lp-similar-row:hover{background:#f7f7f7;box-shadow:0 0 0 1px #dddddd}}
+@media(forced-colors:active){.lp-similar-row{border:1px solid ButtonText}}

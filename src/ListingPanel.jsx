@@ -11,6 +11,8 @@ import {listingDetails} from './listingPresentation';
 import {contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow';
 import {advertiserFor, advertiserReviews} from './listingAdvertiser';
 import {shortMoney} from './moraAnalysis';
+import {marketQuestion} from './marketAnswers.js';
+import {markVisit} from './seekerSignals.js';
 import {MoraInsight} from './MoraInsight';
 import {GridIcon, TourControls, useTour} from './ListingGallery';
 import {CHECK_PATH, ChatTurn, MoraComposer, crossfade, placeOf, replyLine, typing, useMoraThread} from './moraChat';
@@ -331,7 +333,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState({}), [sending, setSending] = useState(false), [sendError, setSendError] = useState('');
   const prefix = useId(), formId = `${prefix}-contact`, askId = `${prefix}-ask`, root = useRef(null), askField = useRef(null), threadRef = useRef(null), timer = useRef(null), pending = useRef(false), lastPhase = useRef(phase);
-  const {turns, push, agencyAction} = useMoraThread({on:phase === 'question', threadRef, scroller:() => root.current?.querySelector('.lp-scroll'), reduce});
+  const {turns, push, agencyAction} = useMoraThread({on:phase === 'question', offersSimilar:true, threadRef, scroller:() => root.current?.querySelector('.lp-scroll'), reduce});
   const showName = editing || !known.name, showPhone = editing || !known.phone;
   const hints = askHints(home, say);
   const showFacts = phase === 'summary' || phase === 'advertiser', showHost = showFacts || phase === 'question';
@@ -389,6 +391,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
       try {
         const next = createContactReceipt({home, broker:{name:advertiser.name, verified:advertiser.verified, logo:advertiser.logo}, intent:initialAction?.type === 'visit' ? 'visit' : 'message', channel:'whatsapp', profile:data,
           message:`${text.trim()}\n\n${home.street}, ${home.area} (${say('anúncio', 'anuncio')} ${home.listingId})`});
+        if (next.intent === 'visit') markVisit(home.id);
         onProfile({...profile, ...normalizeContactProfile(data)}); onReceipt(next); setPhase('sent');
       } catch {
         setSendError(say('Não foi possível registrar o envio. Tente novamente.', 'No se pudo registrar el envío. Inténtalo de nuevo.'));
@@ -416,8 +419,8 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
     <span>{label}</span>
   </label>;
   const usual = home.mode === 'rent'
-    ? [say('Ainda está disponível?', '¿Sigue disponible?'), say('Quais são os requisitos para alugar?', '¿Qué requisitos piden para rentar?'), say('Tem custos além do aluguel?', '¿Hay gastos además de la renta?')]
-    : [say('Ainda está disponível?', '¿Sigue disponible?'), say('Aceitam financiamento?', '¿Aceptan crédito hipotecario?'), say('Tem custos além do preço?', '¿Hay gastos además del precio?')];
+    ? [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('guarantee', copy.language), say('Tem custos além do aluguel?', '¿Hay gastos además de la renta?')]
+    : [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('notary', copy.language), marketQuestion('credit', copy.language)];
   const quick = gap ? [gap, ...usual.filter(line => line !== gap)].slice(0, 3) : usual;
   const talkToMora = () => {
     setGap(verdict?.question?.match(/^[^?]*\?/)?.[0].trim() || null);
@@ -467,7 +470,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
   </form>;
 
   const thread = phase === 'question' && <ol ref={threadRef} className="lp-thread" role="log" aria-label={say('Conversa com a Mora', 'Conversación con Mora')}>
-    {turns.map((turn, i) => <ChatTurn key={turn.id} turn={turn} home={home} advertiser={advertiser} active={i === turns.length - 1} reduce={reduce} copy={copy} onAsk={ask} onAgencyAction={agencyAction}/>)}
+    {turns.map((turn, i) => <ChatTurn key={turn.id} turn={turn} home={home} advertiser={advertiser} active={i === turns.length - 1} reduce={reduce} copy={copy} search={reading.search} onAsk={ask} onAgencyAction={agencyAction} onOpenHome={onFavorite}/>)}
   </ol>;
   const body = {
     advertiser:<HostProfile home={home} advertiser={advertiser} copy={copy} onOpen={onFavorite}/>,

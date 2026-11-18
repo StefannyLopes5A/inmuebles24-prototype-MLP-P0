@@ -254,16 +254,16 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         <Amenities amenities={story.amenities} gallery={story.gallery} language={language} say={say} onRoom={(index, element) => openGallery.current?.(index, element)}/>
       </section>
 
-      {offers && <section id="pp-offers" className="pp-section" aria-labelledby="pp-offers-title">
-        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={onAskSection}/>
-      </section>}
-
       {home.mode === 'buy' && price > 0 && <section id="pp-costs" className="pp-section" aria-labelledby="pp-costs-title">
         <ListingCosts key={home.id} price={price} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
       </section>}
 
       {history && <section id="pp-history" className="pp-section" aria-labelledby="pp-history-title">
         <ListingPriceHistory key={home.id} history={history} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
+      </section>}
+
+      {offers && <section id="pp-offers" className="pp-section" aria-labelledby="pp-offers-title">
+        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={onAskSection}/>
       </section>}
     </div>
 

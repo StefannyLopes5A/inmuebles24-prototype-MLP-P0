@@ -15,6 +15,7 @@ const frames = {
   idea: () => [{opacity:0,transform:'perspective(1200px) translateZ(-240px)',filter:'blur(6px)'},{opacity:1,transform:'perspective(1200px) translateZ(0)',filter:'blur(0)'}],
   discovery: discoveryEntrance,
   step: () => [{opacity:.65,transform:'scale(1.15)',filter:'blur(2px)'},{opacity:1,transform:'scale(1)',filter:'blur(0)'}],
+  pill: () => [{opacity:0,translate:'0 8px',scale:.92,filter:'blur(4px)'},{opacity:1,translate:'0 0',scale:1,filter:'blur(0)'}],
 };
 
 let activeController = null;
@@ -84,9 +85,16 @@ function createHomeMotion(root) {
     ],SOFT_MOTION.sweep/speed,0,close);
     animation?.effect.updateTiming({easing:'linear'});
   }
+  function revealPills(card, cardDelay) {
+    const pills = card.querySelectorAll('.home-pill');
+    if (!pills.length) return;
+    // The card lands first. Each pill then loads on its own.
+    const start = cardDelay + 420;
+    pills.forEach((pill, index) => play(pill, frames.pill(), 460, start + index * 150));
+  }
   function revealCard(card,index,template=false) {
     const delay = index * 65;
-    if (!template) {play(card,frames.discovery(),900,delay); return;}
+    if (!template) {play(card,frames.discovery(),900,delay); revealPills(card, delay); return;}
     play(card,frames.idea(),1000,delay);
     play(card.querySelector('.idea-title'),frames.row(),650,delay+200);
     card.querySelectorAll('.idea-photo img').forEach((img,i) => play(img,[{transform:'scale(1.2)',filter:'brightness(.7)'},{transform:'scale(1)',filter:'brightness(1)'}],950,delay+i*75));

@@ -144,7 +144,7 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
       changes: {area: name, areas: [name]},
     }))},
   ].filter(group => group.items.length);
-  const columns = groups;
+  const columns = evenColumns(groups);
 
   return <section className="home-links is-results" aria-labelledby="results-links-title">
     <h2 id="results-links-title">{say('Buscas relacionadas', 'Búsquedas relacionadas')}</h2>

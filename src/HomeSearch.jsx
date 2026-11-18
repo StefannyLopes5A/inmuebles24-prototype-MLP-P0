@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, 
 import {createPortal} from 'react-dom';
 import {areas, homes} from './data';
 import {useLanguage, DEMO_MXN_PER_USD} from './i18n';
-import {PROPERTY_TYPES, OPERATIONS, canStartSearch, canStartHomeSearch, priceDistribution, parseBudgetAmount} from './homeSearchModel.js';
+import {PROPERTY_TYPES, OPERATIONS, canStartSearch, canStartHomeSearch, hasChosenLocation, priceDistribution, parseBudgetAmount} from './homeSearchModel.js';
 import {SearchDetails} from './SearchDetails';
 import {PriceHistogram} from './PriceHistogram';
 import {createHomeIntro, homeIntroFrame} from './homeIntro.js';
@@ -557,7 +557,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     if (variant === 'results' && intro.done) form.current?.querySelectorAll('.mora-extra-term,.home-chevron').forEach(el => el.getAnimations().forEach(animation => animation.cancel()));
   }, [variant, intro.done]);
   const canSubmit = layout === 'original'
-    ? originalChosen.mode === true && originalChosen.propertyType === true
+    ? hasChosenLocation(originalDraft)
     : composer
     ? canStartHomeSearch(query, detected, {...overrides, places:placeList})
     : ready && canStartSearch(choices);
@@ -635,7 +635,8 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   function typeOriginal(note) {
     const found = describeHomeQuery(note, areas, currency, DEMO_MXN_PER_USD);
     const base = {mode:'buy', propertyType:'house', beds:2, baths:1, budget:7_500_000, minBudget:0, areas:[], area:'Ambas zonas', address:'', places:[], criteria:[], fromIdea:false, note:''};
-    setOriginalDraft(composeHomeDraft(base, found, {}, note));
+    const composed = composeHomeDraft(base, found, {}, note);
+    setOriginalDraft(composed);
     const nextFit = {
       ...(found.mode ? {mode:found.mode} : {}),
       ...(found.propertyType ? {propertyType:found.propertyType} : {}),
@@ -646,8 +647,14 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     const previous = originalFitted.current;
     originalFitted.current = nextFit;
     for (const key of Object.keys(nextFit)) if (previous[key] !== nextFit[key]) markOriginalSweep(key);
+    const located = hasChosenLocation(composed);
+    setOriginalChosen(current => {
+      const next = {...current, ...Object.fromEntries(Object.keys(nextFit).map(key => [key, true]))};
+      if (located) next.area = true;
+      else delete next.area;
+      return next;
+    });
     if (!Object.keys(nextFit).length) return;
-    setOriginalChosen(current => ({...current, ...Object.fromEntries(Object.keys(nextFit).map(key => [key, true]))}));
     for (const key of Object.keys(nextFit)) onChoose(key);
   }
   function clearOriginal() {
@@ -729,16 +736,21 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   }
   function togglePlace(place) {
     if (layout === 'original') {
-      setOriginalDraft(current => {
-        const places = visiblePlaces(current);
-        const active = places.some(item => item.key === place.key);
-        const next = active
-          ? places.filter(item => item.key !== place.key)
-          : place.kind === 'city' || place.kind === 'state'
-            ? [place]
-            : [...places.filter(item => item.kind !== 'city' && item.kind !== 'state'), place];
-        const areas = areasFromPlaces(next);
-        return {...current, places:next, areas, area:areas[0] || 'Ambas zonas', address:addressFromPlaces(next)};
+      const places = visiblePlaces(originalDraft);
+      const active = places.some(item => item.key === place.key);
+      const next = active
+        ? places.filter(item => item.key !== place.key)
+        : place.kind === 'city' || place.kind === 'state'
+          ? [place]
+          : [...places.filter(item => item.kind !== 'city' && item.kind !== 'state'), place];
+      const nextAreas = areasFromPlaces(next);
+      setOriginalDraft({...originalDraft, places:next, areas:nextAreas, area:nextAreas[0] || 'Ambas zonas', address:addressFromPlaces(next)});
+      setOriginalChosen(current => {
+        if (next.length) return {...current, area:true};
+        if (!current.area) return current;
+        const rest = {...current};
+        delete rest.area;
+        return rest;
       });
       onChoose('area');
       return;
@@ -861,7 +873,10 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     clearTimeout(homeDepartTimer.current);
     clearTimeout(startTipTimer.current);
   }, []);
-  const needsLocationTip = composer && !canSubmit && !homeDeparting;
+  const needsLocationTip = (composer || layout === 'original') && !canSubmit && !homeDeparting;
+  const locationTipCopy = layout === 'original'
+    ? say(<>Escolha pelo menos uma <b>localização</b> para ver resultados.</>, <>Elige al menos una <b>ubicación</b> para ver resultados.</>)
+    : say(<>Adicione uma <b>localização</b> na descrição para ver resultados.</>, <>Agrega una <b>ubicación</b> en la descripción para ver resultados.</>);
   const MORA_MARK = '/assets/mini-listing/mora.svg';
   function pokeStartTip(event) {
     if (!needsLocationTip) return;
@@ -1038,7 +1053,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
                 <button className="home-start" type="submit" disabled={!canSubmit || homeDeparting} aria-busy={homeDeparting || undefined} aria-describedby={needsLocationTip ? 'home-start-tip home-search-help' : undefined} tabIndex={needsLocationTip ? -1 : undefined}>{t('Comenzar a buscar')}<img src={homeAsset(canSubmit && !homeDeparting ? 'arrow' : 'arrow-disabled')} alt=""/></button>
                 {needsLocationTip && <span id="home-start-tip" className="home-start-tip" role="tooltip">
                   <img className="home-start-tip-mark" src={MORA_MARK} alt="" width="20" height="20" decoding="async" aria-hidden="true"/>
-                  <span className="home-start-tip-copy">{say(<>Adicione uma <b>localização</b> na descrição para ver resultados.</>, <>Agrega una <b>ubicación</b> en la descripción para ver resultados.</>)}</span>
+                  <span className="home-start-tip-copy">{locationTipCopy}</span>
                 </span>}
               </span>
             </div>
@@ -1069,9 +1084,26 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       <div className="home-detail-row">
         {detailContent || (ready ? <SearchDetails value={layout === 'original' ? originalDraft.note : search.note} onChange={note => layout === 'original' ? typeOriginal(note) : setSearch(updateSearchNote(search, note))} language={language}/>
           : <div className="home-detail-stream" aria-hidden="true"><StreamedWord word={intro.timeline.words.at(-1)} count={intro.words.at(-1).count}/>{intro.activeWord === parts.length - 1 && <span data-writing-tip/>}</div>)}
-        {layout === 'original' && <span key={originalTake} className="home-start-slot" data-visible="true">
-          <button className="home-start" type="submit" disabled={!canSubmit}>{t('Comenzar a buscar')}<img src={homeAsset(canSubmit ? 'arrow' : 'arrow-disabled')} alt=""/></button>
+        {layout === 'original' && <span
+          key={originalTake}
+          className="home-start-slot"
+          data-visible="true"
+          data-needs-location={needsLocationTip || undefined}
+          data-tip-open={startTipOpen || undefined}
+          tabIndex={needsLocationTip ? 0 : undefined}
+          onPointerDown={needsLocationTip ? pokeStartTip : undefined}
+          onMouseEnter={needsLocationTip ? () => setStartTipOpen(true) : undefined}
+          onMouseLeave={needsLocationTip ? () => {clearTimeout(startTipTimer.current); setStartTipOpen(false);} : undefined}
+          onFocus={needsLocationTip ? () => setStartTipOpen(true) : undefined}
+          onBlur={needsLocationTip ? () => setStartTipOpen(false) : undefined}
+          onKeyDown={needsLocationTip ? event => {if (event.key === 'Enter' || event.key === ' ') pokeStartTip(event);} : undefined}>
+          <button className="home-start" type="submit" disabled={!canSubmit} aria-describedby={needsLocationTip ? 'home-start-tip home-search-help' : undefined} tabIndex={needsLocationTip ? -1 : undefined}>{t('Comenzar a buscar')}<img src={homeAsset(canSubmit ? 'arrow' : 'arrow-disabled')} alt=""/></button>
+          {needsLocationTip && <span id="home-start-tip" className="home-start-tip" role="tooltip">
+            <img className="home-start-tip-mark" src={MORA_MARK} alt="" width="20" height="20" decoding="async" aria-hidden="true"/>
+            <span className="home-start-tip-copy">{locationTipCopy}</span>
+          </span>}
         </span>}
+        {layout === 'original' && <span id="home-search-help" className="sr-only">{say('Escolha um bairro, uma rua ou um lugar do catálogo para ativar a busca. Vários lugares podem ser combinados.', 'Elige un barrio, una calle o un lugar del catálogo para activar la búsqueda. Puedes combinar varios lugares.')}</span>}
       </div>
       </>}
     </form>

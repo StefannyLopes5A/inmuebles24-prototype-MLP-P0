@@ -3,8 +3,8 @@ import {matchingHomes, normalizeSearch, parkingSpots} from './journey.js';
 import {CRITERIA, matchesCriteria} from './searchCriteria.js';
 import {homes as catalog, listingPrice} from './data.js';
 
-/** Each related-search column shows at least this many links. */
-export const MIN_RELATED_LINKS = 5;
+/** Each related-search column shows this many links, the same count as the home columns. */
+export const MIN_RELATED_LINKS = 7;
 
 const publishedCounts = (listings, key, minimum = 1) => [...new Set(listings.map(home => home[key]).filter(count => count >= minimum))].sort((a, b) => a - b);
 const publishedParking = listings => [...new Set(listings.map(parkingSpots).filter(count => count > 0))].sort((a, b) => a - b);
@@ -13,7 +13,7 @@ const publishedCriteria = listings => CRITERIA.filter(item => listings.some(home
 /**
  * Related searches for the results page (Figma 12874:36444), on the same block as the home links.
  * Bedrooms, parking and nearby colonias come from the catalog. A short colonia borrows the same
- * kind of published fact from the nearest colonias so every column has at least five links.
+ * kind of published fact from the nearest colonias so every column has seven links.
  */
 export function relatedSearches(search, inventory = catalog) {
   const area = regionArea(search, inventory);

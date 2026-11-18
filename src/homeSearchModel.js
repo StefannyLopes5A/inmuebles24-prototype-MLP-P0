@@ -7,6 +7,13 @@ export const PROPERTY_TYPES = [
 ];
 export const OPERATIONS = [['rent', 'Alugar', 'Rentar'], ['buy', 'Comprar', 'Comprar'], ['development', 'Desenvolvimentos', 'Desarrollos'], ['auction', 'Liquidação', 'Remate']];
 export const canStartSearch = choices => choices.mode === true && choices.propertyType === true;
+/** A place the person picked. The suggested city on an empty search is not a choice. */
+export function hasChosenLocation(search = {}) {
+  if (Array.isArray(search.places) && search.places.some(place => place && (place.id || place.key))) return true;
+  if (String(search.address || '').trim()) return true;
+  if (Array.isArray(search.areas) && search.areas.some(area => area && area !== 'Ambas zonas')) return true;
+  return Boolean(search.area && search.area !== 'Ambas zonas');
+}
 /** Home composer: typed description with a recognized location is enough to start. */
 export function canStartHomeSearch(query, detected, overrides = {}) {
   const text = String(query || '').trim();

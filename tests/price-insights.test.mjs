@@ -149,7 +149,7 @@ test('related searches use the searched colonia, its bedrooms and the next colon
   assert.equal(relatedLinkChanges({...narvarte, beds:2}, twoBeds.changes).budget, 7_500_000);
 });
 
-test('every related-search column and header column has at least five links', () => {
+test('every related-search column has seven links and every header column has at least five', () => {
   const areas = [...new Set(homes.filter(home => !home.development).map(home => home.area))];
   for (const area of areas) {
     for (const mode of ['buy', 'rent']) {
@@ -173,7 +173,7 @@ test('every related-search column and header column has at least five links', ()
   }
   for (const menu of headerMenus) {
     for (const column of menu.columns) {
-      assert.ok(column.items.length >= MIN_RELATED_LINKS, `${menu.id} ${column.titleKey} ${column.items.length}`);
+      assert.ok(column.items.length >= 5, `${menu.id} ${column.titleKey} ${column.items.length}`);
     }
   }
 });

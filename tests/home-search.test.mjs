@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {canStartSearch, canStartHomeSearch, detailTokens, foldSearchText, priceDistribution, parseBudgetAmount} from '../src/homeSearchModel.js';
+import {canStartSearch, canStartHomeSearch, hasChosenLocation, detailTokens, foldSearchText, priceDistribution, parseBudgetAmount} from '../src/homeSearchModel.js';
 import {homeQuerySuggestions} from '../src/homeQuerySuggest.js';
 import {IDEA_RECENT_CARD_LIMIT, demoRecentIdeaCards, ideaSuggestionCards, recordSearchHistory, shouldRecordSearch} from '../src/searchHistory.js';
 import {CITY_EXPLORE_LINKS, POPULAR_HOME_CITIES, cityLinkBudget} from '../src/popularHomeCities.js';
@@ -76,6 +76,15 @@ test('home filter chips rewrite the natural-language query', () => {
   assert.match(withStreet, /en Narvarte Poniente/);
   assert.equal(patchHomeQueryForPlace(withStreet, {label:'Narvarte Poniente'}, false, 'es'), 'departamento en Polanco');
   assert.equal(patchHomeQueryForPlace('departamento en Narvarte Poniente y Polanco cerca del metro', {label:'Polanco'}, false, 'es'), 'departamento en Narvarte Poniente cerca del metro');
+});
+
+test('home search stays locked until a location is chosen; the suggested city does not count', () => {
+  assert.equal(hasChosenLocation({area:'Ambas zonas', areas:[], places:[], address:''}), false);
+  assert.equal(hasChosenLocation({area:'Roma Norte', areas:['Roma Norte'], places:[]}), true);
+  assert.equal(hasChosenLocation({area:'Ambas zonas', areas:[], places:[{kind:'city', id:'cdmx'}], address:''}), true);
+  assert.equal(hasChosenLocation({area:'Ambas zonas', areas:[], places:[], address:'Calle Arquímedes'}), true);
+  assert.equal(canStartHomeSearch('quiero comprar una casa', describeHomeQuery('quiero comprar una casa', areas)), false);
+  assert.equal(canStartHomeSearch('casa en Roma Norte', describeHomeQuery('casa en Roma Norte', areas)), true);
 });
 
 test('home composer unlocks search when the description names a location', () => {

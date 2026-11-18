@@ -15,7 +15,7 @@ import {HomeCityGuide} from './HomeCityGuide.jsx';
 import {HomeBrokers} from './HomeBrokers.jsx';
 import {HomeInternalLinks} from './HomeInternalLinks.jsx';
 import {RailHeading, useRailScroll} from './DiscoveryRail.jsx';
-import {canStartHomeSearch} from './homeSearchModel.js';
+import {canStartHomeSearch, hasChosenLocation} from './homeSearchModel.js';
 import {areas} from './data';
 import {DEMO_MXN_PER_USD} from './i18n';
 import {describeHomeQuery} from './searchCriteria.js';
@@ -306,6 +306,7 @@ export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],
   function submit(next){
     if (searchLayout === 'original') {
       const source = next && typeof next === 'object' ? next : search;
+      if (!hasChosenLocation(source)) return;
       onSearch({...source, area: source.area || 'Ambas zonas', fromIdea: false});
       return;
     }

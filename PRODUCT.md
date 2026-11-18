@@ -10,7 +10,7 @@ O protótipo serve para discutir a experiência com designers e testar sua compr
 
 ## Busca e exploração
 
-1. A home Holofote apresenta uma frase editável. Operação e tipo de imóvel precisam ser escolhidos explicitamente para liberar a busca, inclusive quando a pessoa aceita os valores sugeridos. Pular a animação não satisfaz esse requisito. Uma ideia da home aplica uma busca completa e conta como escolha explícita.
+1. A home Holofote apresenta a busca em três versões: híbrida, padrão e original. O CTA só libera quando a pessoa escolhe pelo menos uma localização — um lugar do catálogo na descrição, ou a localização na frase original. Operação, tipo e os demais filtros continuam opcionais. A cidade sugerida numa busca vazia não conta como escolha. Uma ideia da home aplica uma busca completa.
 2. A transição Onda transforma a primeira dobra na barra compacta e revela os resultados. Ações novas interrompem a sequência; movimento reduzido usa a troca imediata. Os cinco carrosséis da home mantêm dez imóveis distintos por seleção e a operação escolhida.
 3. Na barra, filtros abrem a frase expandida e seu menu. Mudanças atualizam os resultados sem botão Aplicar. O orçamento usa um histograma ilustrativo manipulável; o gráfico não é uma contagem real de anúncios. Valores de filtro continuam em MXN.
 4. O Smart Input interpreta localmente termos reconhecidos, cria tokens editáveis/removíveis e distingue perguntas de mudanças de critérios. Texto não reconhecido permanece contexto. Preferências de trabalho em casa podem significar canto na sala, quarto dedicado ou coworking; são intenção da pessoa, não evidência de uma planta ou ambiente real.

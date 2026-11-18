@@ -15,7 +15,7 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5180
 ```
 
-Abra o endereço informado pelo Vite. Não é necessário criar `.env` nem configurar contas de serviços. Com nvm instalado, execute `nvm use` antes de instalar as dependências.
+Abra o endereço informado pelo Vite. A primeira tela pede a senha de `src/prototypeAccess.js` para abrir o protótipo; ela fica nesta sessão do navegador e não cria conta. Não é necessário criar `.env` nem configurar contas de serviços. Com nvm instalado, execute `nvm use` antes de instalar as dependências.
 
 ## Verificar e continuar
 

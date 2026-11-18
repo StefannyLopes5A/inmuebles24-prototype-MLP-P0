@@ -1,9 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import { createRoot } from "react-dom/client";
 import { Agentation } from "agentation";
 import { App } from "./App.jsx";
 import {migratePrototypeUrl} from "./journey.js";
 import { LanguageProvider } from "./i18n.jsx";
+import { PrototypeGate } from "./PrototypeGate.jsx";
+import {passwordSource, readPrototypeUnlock, writePrototypeUnlock} from "./prototypeAccess.js";
 import "./styles.css";
 import "./home.css";
 import "./results.css";
@@ -32,14 +34,21 @@ import "./selection-mora.css";
 import "./glass.css";
 import "./recorrido.css";
 import "./project-guide.css";
+import "./prototype-gate.css";
 
 const finalUrl = migratePrototypeUrl(location.href);
 if (finalUrl) history.replaceState(history.state,"",finalUrl);
 
+function GateOrApp() {
+  const [unlocked, setUnlocked] = useState(() => readPrototypeUnlock(sessionStorage));
+  if (!unlocked) return <PrototypeGate expected={passwordSource()} onUnlock={() => {writePrototypeUnlock(sessionStorage); setUnlocked(true);}}/>;
+  return <App/>;
+}
+
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <LanguageProvider>
-      <App />
+      <GateOrApp />
       {import.meta.env.DEV ? <Agentation /> : null}
     </LanguageProvider>
   </React.StrictMode>,

@@ -1,0 +1,13 @@
+.prototype-gate{min-height:100dvh;display:grid;place-items:center;padding:32px 24px;background:#fff;color:#111}
+.prototype-gate form{width:min(440px,100%);display:flex;flex-direction:column;align-items:stretch}
+.prototype-gate-logo{align-self:center;width:168px;height:auto;margin-bottom:48px}
+.prototype-gate h1{margin:0 0 40px;font-size:32px;line-height:1.2;font-weight:600;letter-spacing:-.03em;text-align:center;color:#111}
+.prototype-gate input{height:56px;border:1px solid #e4e4e4;border-radius:12px;padding:0 16px;background:#fff}
+.prototype-gate input[aria-invalid="true"]{border-color:#b12b1e}
+.prototype-gate-error{margin:10px 0 0;color:#b12b1e;font-size:14px;line-height:1.4;text-align:center}
+.prototype-gate button{height:56px;margin-top:16px;border-radius:12px;background:#111;color:#fff;font-size:16px;font-weight:500}
+.prototype-gate button:focus-visible,.prototype-gate input:focus-visible{outline:3px solid #111;outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.prototype-gate button:hover{background:#000}}
+@media(max-width:390px){.prototype-gate{padding:24px 16px}.prototype-gate-logo{width:148px;margin-bottom:36px}.prototype-gate h1{font-size:26px;margin-bottom:28px}}
+@media(max-width:320px){.prototype-gate h1{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.prototype-gate button{transition:none}}

@@ -89,7 +89,7 @@ export function nearbyCounts(center, options) {
 }
 
 const WALK_M_PER_MIN = 80;
-const walkMinutes = distance => Math.max(1, Math.round(distance / WALK_M_PER_MIN));
+export const walkMinutes = distance => Math.max(1, Math.round(distance / WALK_M_PER_MIN));
 
 function uniqueByName(features) {
   const seen = new Set(), unique = [];

@@ -1,17 +1,28 @@
 import React, {useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {AccountMenu} from './Account';
 import {FavoriteHeart} from './FavoriteHeart';
-import {createPortal} from 'react-dom';
-import {listingPrice,areaLabel, propertyPhoto, inspirationCollections} from './data';
+import {listingPrice,areaLabel, propertyPhoto, inspirationCollections, homes} from './data';
+import {demoRecentIdeaCards, ideaCardsFromHistory, ideaSuggestionCards} from './searchHistory.js';
 import {advertiserFor} from './listingAdvertiser';
 import {listingDetails} from './listingPresentation';
 import {Icon} from './App';
 import {HomeSearch} from './HomeSearch.jsx';
 import {NeighborhoodRail} from './NeighborhoodRail.jsx';
-import {canStartSearch} from './homeSearchModel.js';
+import {HomeGuestPromo} from './HomeGuestPromo.jsx';
+import {HomePopularCities} from './HomePopularCities.jsx';
+import {HomeBlog} from './HomeBlog.jsx';
+import {HomeCityGuide} from './HomeCityGuide.jsx';
+import {HomeBrokers} from './HomeBrokers.jsx';
+import {HomeInternalLinks} from './HomeInternalLinks.jsx';
+import {RailHeading, useRailScroll} from './DiscoveryRail.jsx';
+import {canStartHomeSearch} from './homeSearchModel.js';
+import {areas} from './data';
+import {DEMO_MXN_PER_USD} from './i18n';
+import {describeHomeQuery} from './searchCriteria.js';
 import {headerMenus, padMenuColumns} from './headerMenuData.js';
 import {useLanguage,roomCount,bathCount} from './i18n';
-import {installHomeMotion,playIdeaPreview} from './homeMotion.js';
+import {installHomeMotion} from './homeMotion.js';
+import {PropertyPreview, previewPhotoProps, usePropertyPreview} from './ideaPreview.jsx';
 import {useHoverIntent} from './listingPreload';
 import {listingCardTags} from './listingCardTags';
 import {ListingAgencyLogo, ListingTagList} from './ListingCardChrome';
@@ -138,10 +149,10 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
             </div>;
           })}
           <a href="#imobiliarias" onMouseEnter={closeFromHover} onClick={event=>{event.preventDefault();onAction?.('agencies');}}>{t('Buscar imobiliárias')}</a>
-          <a href="#publicar" onMouseEnter={closeFromHover} onClick={event=>{event.preventDefault();onAction?.('publish');}}>{t('Publicar')}</a>
         </div>
-        <div className="figma-header-actions" onMouseEnter={closeFromHover}>
-          <div className="header-currency" ref={currencyControl}><button type="button" aria-expanded={currencyInfo} aria-label={`${t('Moneda de visualización')}: ${currency}`} onClick={()=>setCurrencyInfo(!currencyInfo)}>${currency}<img src="/assets/figma-results/currency-chevron.svg" alt=""/></button>{currencyInfo&&<div className="currency-info"><strong>{t('Moneda de visualización')}</strong><div className="currency-options" role="group" aria-label={t('Moneda de visualización')}><button type="button" aria-pressed={currency==='USD'} onClick={()=>{setCurrency('USD');setCurrencyInfo(false)}}>{t('Dólar estadounidense (USD)')}</button><button type="button" aria-pressed={currency==='MXN'} onClick={()=>{setCurrency('MXN');setCurrencyInfo(false)}}>{t('Peso mexicano (MXN)')}</button></div>{currency==='USD'&&<p>{t('Conversión ilustrativa: 1 USD = 20 MXN. Confirma el precio en el anuncio original.')}</p>}</div>}</div>
+        <div className={'figma-header-actions'+(signedIn?' is-signed-in':'')} onMouseEnter={closeFromHover}>
+          {signedIn && <div className="header-currency" ref={currencyControl}><button type="button" aria-expanded={currencyInfo} aria-label={`${t('Moneda de visualización')}: ${currency}`} onClick={()=>setCurrencyInfo(!currencyInfo)}>${currency}<img src="/assets/figma-results/currency-chevron.svg" alt=""/></button>{currencyInfo&&<div className="currency-info"><strong>{t('Moneda de visualización')}</strong><div className="currency-options" role="group" aria-label={t('Moneda de visualización')}><button type="button" aria-pressed={currency==='USD'} onClick={()=>{setCurrency('USD');setCurrencyInfo(false)}}>{t('Dólar estadounidense (USD)')}</button><button type="button" aria-pressed={currency==='MXN'} onClick={()=>{setCurrency('MXN');setCurrencyInfo(false)}}>{t('Peso mexicano (MXN)')}</button></div>{currency==='USD'&&<p>{t('Conversión ilustrativa: 1 USD = 20 MXN. Confirma el precio en el anuncio original.')}</p>}</div>}</div>}
+          {!signedIn && <a className="figma-publish" href="#publicar" onClick={event=>{event.preventDefault();onAction?.('publish');}}>{t('Anunciar')}</a>}
           {signedIn
             ? <AccountMenu onSelect={action=>onAccount?.(action)}/>
             : <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onLogin?.();}}>{t('Entrar')}</a>}
@@ -161,12 +172,6 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
       </div>
     </div>}
   </header>;
-}
-
-function ListingCopy({home:h}) {
-  const {t,language,money,currency}=useLanguage();
-  if (h.development) return <><span>{developmentKind(language)}</span><strong>{money(listingPrice(h))} <small>{currency}</small></strong><b>{h.street} · {h.area}</b><span>{developmentFacts(language).join(' · ')}</span></>;
-  return <><span>{t(h.mode==='buy'?'Venta':'Renta')} · {t('Departamento')}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong><b>{h.street} · {h.area}</b><span>{t(areaLabel(h))} · {roomCount(h.beds,language)} · {bathCount(h.baths,language)}</span></>;
 }
 
 function canPlayHoverVideo() {
@@ -227,138 +232,113 @@ export function HouseCard({home, saved, onLike, onOpen, contacted=false, search,
   </article>;
 }
 
-function InspirationRail({title,subtitle,items,saved,onLike,onOpen,receipts=[],compact=false,search,pref='none'}) {
+function InspirationRail({title,subtitle,titleValues,items,saved,onLike,onOpen,receipts=[],compact=false,search,pref='none'}) {
   const {t}=useLanguage();
-  const rail=useRef(null);
-  const [position,setPosition]=useState({start:true,end:false});
-  useEffect(()=>{if(!rail.current)return;const observer=new ResizeObserver(measure);observer.observe(rail.current);measure();return()=>observer.disconnect()},[items.length,items[0]?.id]);
-  function move(direction){const el=rail.current;el.scrollBy({left:direction*(el.clientWidth*.8),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
-  function measure(){const el=rail.current;if(el)setPosition({start:el.scrollLeft<2,end:el.scrollLeft+el.clientWidth>=el.scrollWidth-2});}
-  return <section className={'discovery-section '+(compact?'compact-rail':'')} aria-label={t(title)}>
-    <div className="discovery-heading"><div><h2>{t(title)}</h2><p>{t(subtitle)}</p></div><div className="rail-controls"><button className="icon-button" aria-label={t('Anterior: ')+t(title)} disabled={position.start} onClick={()=>move(-1)}><Icon name="back"/></button><button className="icon-button" aria-label={t('Siguiente: ')+t(title)} disabled={position.end||items.length<2} onClick={()=>move(1)}><Icon name="arrow"/></button></div></div>
+  const heading=t(title,titleValues);
+  const {rail,position,measure,move}=useRailScroll([items.length,items[0]?.id]);
+  return <section className={'discovery-section '+(compact?'compact-rail':'')} aria-label={heading}>
+    <RailHeading title={heading} subtitle={t(subtitle)} prevLabel={t('Anterior: ')+heading} nextLabel={t('Siguiente: ')+heading} position={position} onMove={move} nextDisabled={items.length<2}/>
     <div className="discovery-rail" ref={rail} onScroll={measure}>{items.map(h=><HouseCard key={h.id} home={h} search={search} pref={pref} contacted={receipts.some(r=>r.propertyId===h.id)} saved={saved.includes(h.id)} onLike={onLike} onOpen={onOpen}/>)}</div>
   </section>;
 }
 
-function IdeaCards({collections,onChoose,onOpen,saved,onLike}) {
+function IdeaCards({cards,heading,onRunSearch,onOpen,saved,onLike,variant='suggestions',infiniteLoop=false}) {
   const {t}=useLanguage();
   const rail=useRef(null);
-  const [preview,setPreview]=useState(null);
-  const closeTimer=useRef();
-  const popup=useRef(null);
-  const trigger=useRef(null);
-  const previewInput=useRef('hover');
-  const previewMotion=useRef(null);
-  const restoringFocus=useRef(false);
-  function cancelClose(){clearTimeout(closeTimer.current);}
-  function closeSoon(){
-    cancelClose();
-    closeTimer.current=setTimeout(()=>{
-      const hovering=trigger.current?.matches(':hover')||popup.current?.matches(':hover');
-      const keyboardFocus=previewInput.current==='keyboard'&&(document.activeElement===trigger.current||popup.current?.contains(document.activeElement));
-      if(!hovering&&!keyboardFocus)dismissPreview();
-    },300);
-  }
-  function dismissPreview(restoreFocus=false,animate=previewInput.current!=='keyboard'){
-    cancelClose();
-    if(restoreFocus){restoringFocus.current=true;trigger.current?.focus({preventScroll:true});restoringFocus.current=false;}
-    if(animate&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!document.hidden){
-      setPreview(value=>value?{...value,closing:true,animate}:null);
-    }else setPreview(null);
-  }
-  function show(home,event,input='hover'){
-    cancelClose();previewInput.current=input;trigger.current=event.currentTarget;
-    const anchor=event.currentTarget.getBoundingClientRect(),width=Math.min(310,window.innerWidth-32);
-    setPreview({home,anchor,left:Math.max(16,Math.min(anchor.left-65,window.innerWidth-width-16)),top:anchor.bottom+12,width,closing:false,animate:input!=='keyboard'});
-  }
-  useLayoutEffect(()=>{
-    if(!preview||!popup.current)return;
-    // Measure the real card so the hover path is a short gap, never an overlap.
-    const height=popup.current.offsetHeight,{anchor}=preview;
-    const above=anchor.top-height-12;
-    const top=Math.max(16,Math.min(above>=16?above:anchor.bottom+12,window.innerHeight-height-16));
-    popup.current.style.top=`${top}px`;
-  },[preview]);
-  useLayoutEffect(()=>{
-    const panel=popup.current,previous=previewMotion.current;
-    const style=panel&&previous?.playState==='running'?getComputedStyle(panel):null;
-    const interrupted=style?{opacity:style.opacity,transform:style.transform,filter:style.filter}:null;
-    previewMotion.current=null;previous?.cancel();
-    if(!preview||!panel)return;
-    const animation=playIdeaPreview(panel,!preview.closing,preview.animate,preview.anchor,interrupted);
-    previewMotion.current=animation;
-    if(preview.closing){
-      if(!animation){setPreview(null);return;}
-      const finish=()=>{
-        if(previewMotion.current!==animation)return;
-        previewMotion.current=null;
-        setPreview(value=>value?.closing?null:value);
-      };
-      animation.finished.then(finish,finish);
-    }
-  },[preview?.home.id,preview?.closing]);
-  function cycleWidth(){const el=rail.current;return el?.children[collections.length]?.offsetLeft-el?.children[0]?.offsetLeft||0;}
-  function loopScroll(){const el=rail.current;const width=cycleWidth();if(!el||!width)return;if(el.scrollLeft<width/2)el.scrollLeft+=width;else if(el.scrollLeft>width*1.5)el.scrollLeft-=width;}
+  const previewApi=usePropertyPreview();
+  const {preview,dismissPreview}=previewApi;
+  function cycleWidth(){const el=rail.current;return el?.children[cards.length]?.offsetLeft-el?.children[0]?.offsetLeft||0;}
+  function runCard(card){dismissPreview(false,false);onRunSearch(card);}
+  function cardActivate(event,card){if(event.target.closest('.idea-photo'))return;runCard(card);}
+  function loopScroll(){if(!infiniteLoop)return;const el=rail.current;const width=cycleWidth();if(!el||!width)return;if(el.scrollLeft<width/2)el.scrollLeft+=width;else if(el.scrollLeft>width*1.5)el.scrollLeft-=width;}
   useEffect(()=>{
     const el=rail.current;if(!el)return;
     const alignStart=()=>{
-      el.scrollLeft=cycleWidth();
-      // The rail starts in its middle copy. Stagger by screen position, not DOM order.
-      const cards=[...el.children].map(card=>({card,box:card.getBoundingClientRect()}));
-      const first=cards.find(({box})=>box.right>0)?.box.left||0;
-      cards.forEach(({card,box})=>card.style.setProperty('--intro-card-delay',`${Math.max(0,Math.min(4,Math.round((box.left-first)/(box.width+16))))*65}ms`));
+      el.scrollLeft=infiniteLoop?cycleWidth():0;
+      const items=[...el.children].map(card=>({card,box:card.getBoundingClientRect()}));
+      const first=items.find(({box})=>box.right>0)?.box.left||0;
+      items.forEach(({card,box})=>card.style.setProperty('--intro-card-delay',`${Math.max(0,Math.min(4,Math.round((box.left-first)/(box.width+16))))*65}ms`));
     };
     alignStart();const observer=new ResizeObserver(alignStart);observer.observe(el);
     return()=>observer.disconnect();
-  },[]);
-  useEffect(()=>{
-    const close=()=>dismissPreview(false,false);
-    const key=e=>{if(e.key==='Escape'&&popup.current)dismissPreview(true,false);};
-    const outside=e=>{if(popup.current&&!popup.current.contains(e.target)&&!trigger.current?.contains(e.target))dismissPreview();};
-    const scroll=e=>{
-      if(popup.current?.contains(e.target))return;
-      if(previewInput.current==='keyboard'&&trigger.current){
-        const anchor=trigger.current.getBoundingClientRect();
-        setPreview(value=>value?{...value,anchor}:null);
-      }else close();
-    };
-    window.addEventListener('resize',close);window.addEventListener('keydown',key);window.addEventListener('scroll',scroll,true);document.addEventListener('pointerdown',outside);
-    return()=>{cancelClose();const animation=previewMotion.current;previewMotion.current=null;animation?.cancel();window.removeEventListener('resize',close);window.removeEventListener('keydown',key);window.removeEventListener('scroll',scroll,true);document.removeEventListener('pointerdown',outside);};
-  },[]);
-  return <section className="idea-section" aria-label={t('Ideas para empezar')}><h2>{t('O empieza por algo que te inspire')}</h2><div className="idea-rail" ref={rail} tabIndex={0} aria-label={t('Ideas para empezar')} onScroll={loopScroll}>{[0,1,2].flatMap(copy=>collections.map(idea=><article className="idea-card" key={`${copy}-${idea.id}`}><div className="idea-bottom"><div className="photo-stack">{idea.previewItems.map(h=><button className="idea-photo" key={h.id} aria-label={t('Vista previa de ')+h.street} aria-expanded={!preview?.closing&&preview?.home.id===h.id} aria-controls={!preview?.closing&&preview?.home.id===h.id?'idea-property-preview':undefined}
-      onPointerEnter={e=>{if(e.pointerType!=='touch')show(h,e);}} onPointerLeave={e=>{if(e.pointerType!=='touch')closeSoon();}}
-      onFocus={e=>{if(!restoringFocus.current&&e.currentTarget.matches(':focus-visible'))show(h,e,'keyboard');}}
-      onBlur={e=>{if(!popup.current?.contains(e.relatedTarget))closeSoon();}}
-      onKeyDown={e=>{if(e.key==='ArrowDown'){e.preventDefault();cancelClose();requestAnimationFrame(()=>popup.current?.querySelector('button')?.focus({preventScroll:true}));}}}
-      onClick={e=>show(h,e,e.detail?'click':'keyboard')}><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/></button>)}</div></div><button className="idea-title" onClick={()=>onChoose(idea)} title={t(idea.queryLead)}>{t(idea.queryLead)}</button></article>))}</div>{preview&&createPortal(<section ref={popup} id="idea-property-preview" className="idea-property-preview" aria-label={t('Vista previa: ')+preview.home.street} data-open={!preview.closing} data-preview-motion={preview.animate} inert={preview.closing} aria-hidden={preview.closing||undefined} style={{left:preview.left,top:preview.top,width:preview.width}} onPointerEnter={cancelClose} onPointerLeave={e=>{if(e.pointerType!=='touch')closeSoon();}} onFocus={cancelClose} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))closeSoon();}}>
-    <span className="preview-visual" key={preview.home.id}><img className="preview-photo" src={propertyPhoto(preview.home)} alt={preview.home.imageAlt}/></span><button className="preview-close icon-button" aria-label={t('Cerrar vista previa')} onClick={e=>dismissPreview(true,e.detail>0)}><Icon name="close" size={17}/></button><div className="preview-copy"><ListingCopy home={preview.home}/></div><div className="preview-actions"><button className="text-button" onClick={e=>{onOpen(preview.home,{currentTarget:trigger.current});dismissPreview(false,false);}}>{t('Ver inmueble')}<Icon name="arrow" size={17}/></button><button className="icon-button" aria-label={t('Guardar ')+preview.home.street} aria-pressed={saved.includes(preview.home.id)} onClick={()=>onLike(preview.home)}><Icon name="heart"/></button></div>
-  </section>,document.body)}</section>;
+  },[cards.length,infiniteLoop]);
+  const railCards=infiniteLoop?[0,1,2].flatMap(copy=>cards.map(card=>({card,key:`${copy}-${card.id}`}))):cards.map(card=>({card,key:card.id}));
+  return <section className="idea-section" data-idea-variant={variant} aria-label={heading}><h2>{heading}</h2><div className={`idea-rail${infiniteLoop?'':' idea-rail--scroll'}`} ref={rail} tabIndex={0} aria-label={heading} onScroll={infiniteLoop?loopScroll:undefined}>{railCards.map(({card,key})=><article className="idea-card" data-clickable key={key} tabIndex={0} aria-label={t(card.queryLead)} onClick={event=>cardActivate(event,card)} onKeyDown={event=>{if(event.target.closest('.idea-photo'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();runCard(card);}}}>{card.recent&&<span className="idea-recent-mark" aria-hidden="true"><Icon name="history" size={18}/></span>}<div className="idea-bottom"><div className="photo-stack">{card.previewItems.map(h=><button type="button" className="idea-photo" key={h.id} aria-label={t('Vista previa de ')+h.street} {...previewPhotoProps(h,previewApi)}><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/></button>)}</div></div><span className="idea-title">{t(card.queryLead)}</span></article>)}</div><PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/></section>;
 }
 
-export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],choices,onChoose,skipIntro,onIntroDone}) {
-  const {t}=useLanguage();
+export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],choices,onChoose,skipIntro,onIntroDone,signedIn=false,searchHistory=[],recent=[],onLogin,searchLayout='inline'}) {
+  const {t,currency,language}=useLanguage();
+  const say=(pt,es)=>language==='pt-BR'?pt:es;
   const motionRoot=useRef(null);
   useLayoutEffect(()=>installHomeMotion(motionRoot.current),[]);
-  const [{stage,animate},setStage]=useState({stage:skipIntro?3:0,animate:!skipIntro});
-  const collections=inspirationCollections(search.mode==='rent'?'rent':'buy');
+  const [{stage,animate},setStage]=useState({stage:3,animate:false});
+  const mode=search.mode==='rent'?'rent':'buy';
+  const collections=inspirationCollections(mode);
+  const byId=Object.fromEntries(collections.map(collection=>[collection.id,collection]));
+  const places='Diez lugares para empezar a imaginar tu vida en CDMX.';
+  const wide='Explora los espacios más amplios de esta selección.';
+  const city='Ciudad de México';
+  const seen=recent.map(entry=>homes.find(home=>home.id===(entry.id||entry))).filter(home=>home&&home.mode===mode);
+  const guestRails=[
+    {...byId.discover,title:'Próximos lanzamientos inmobiliarios al máximo',subtitle:places},
+    {...byId.space,title:'Propiedades más vistas de la semana',subtitle:wide},
+  ];
+  const closingRail={...byId.city,title:'Casas y Departamentos en Ciudad de México',subtitle:wide};
+  const memberRails=[
+    {...byId.discover,title:'Apartamentos para ti en {city}',subtitle:places,titleValues:{city}},
+    {...byId.routine,title:'Continúa buscando {city}',subtitle:places,titleValues:{city}},
+  ];
+  const memberAfterPrice=[
+    {...byId.possibilities,title:'Casas en tendencia en {city}',subtitle:places,titleValues:{city}},
+    {...byId.space,title:'Visto recientemente',subtitle:wide,items:seen.length?seen:byId.space.items},
+  ];
+  const suggestionCards=useMemo(()=>ideaSuggestionCards(mode, value=>t(value)),[mode,language]);
+  const recentCards=useMemo(()=>{
+    const saved=ideaCardsFromHistory(searchHistory,mode);
+    if (saved.length) return saved;
+    return signedIn ? demoRecentIdeaCards(mode) : [];
+  },[searchHistory,mode,signedIn]);
+  const ideaCards=signedIn?recentCards:suggestionCards;
+  const ideaHeading=signedIn?say('Suas buscas recentes','Tus búsquedas recientes'):t('Sugerencia de búsquedas');
   const common={saved,onLike,onOpen,receipts};
-  function submit(){if(canStartSearch(choices))onSearch({...search,area:search.area||'Ambas zonas',address:'',fromIdea:false});}
-  return <div ref={motionRoot} className="discovery-home home-evolution" data-intro-stage={stage} data-intro-animate={animate}>
+  function runIdeaSearch(card){onIntroDone();onChoose('template');onSearch({...card.search,fromIdea:!!card.search.fromIdea});}
+  function openNeighborhood(area,nextMode){onIntroDone();onChoose('template');onSearch({...search,mode:nextMode,propertyType:'apartment',criteria:[],minBudget:0,budget:nextMode==='rent'?28000:7500000,area,areas:[area],address:'',fromIdea:false});}
+  function submit(next){
+    if (searchLayout === 'original') {
+      const source = next && typeof next === 'object' ? next : search;
+      onSearch({...source, area: source.area || 'Ambas zonas', fromIdea: false});
+      return;
+    }
+    const detected = describeHomeQuery(search.note, areas, currency, DEMO_MXN_PER_USD);
+    if (!canStartHomeSearch(search.note, detected)) return;
+    onSearch({...search, area: search.area || 'Ambas zonas', address: '', fromIdea: false});
+  }
+  return <div ref={motionRoot} className="discovery-home home-evolution" data-home-session={signedIn?'member':'guest'} data-intro-stage={stage} data-intro-animate={animate}>
     <div className="home-firstfold">
-    <HomeSearch search={search} setSearch={setSearch} choices={choices} onChoose={onChoose} skipIntro={skipIntro} onIntroDone={onIntroDone} onStage={setStage} onSubmit={submit}/>
+    <HomeSearch search={search} setSearch={setSearch} choices={choices} onChoose={onChoose} skipIntro={skipIntro} onIntroDone={onIntroDone} onStage={setStage} onSubmit={submit} layout={searchLayout}/>
     <div className="home-ideas-reveal" inert={stage<1}>
-      <IdeaCards key={search.mode} collections={collections} saved={saved} onLike={onLike} onOpen={onOpen} onChoose={idea=>{onIntroDone();onChoose('template');onSearch({...search,mode:search.mode==='rent'?'rent':'buy',propertyType:'apartment',criteria:[],minBudget:0,area:idea.area,areas:[idea.area],address:'',beds:idea.beds,budget:idea.budget,note:t(idea.note),ideaLabel:idea.queryLead,fromIdea:true});}}/>
+      <IdeaCards key={`${search.mode}-${signedIn}-${ideaCards[0]?.id||'ideas'}`} cards={ideaCards} heading={ideaHeading} variant={signedIn?'recent':'suggestions'} infiniteLoop={false} saved={saved} onLike={onLike} onOpen={onOpen} onRunSearch={runIdeaSearch}/>
     </div>
+    {!signedIn && <div className="home-guest-promo-reveal" inert={stage<1}><HomeGuestPromo onLogin={onLogin} saved={saved} onLike={onLike} onOpen={onOpen}/></div>}
     </div>
     <div className="home-discovery-reveal" inert={stage<3}>
-      {collections.map((collection,i)=><React.Fragment key={search.mode+collection.id}>
-        <InspirationRail {...collection} compact={i>0} {...common}/>
-        {i===1&&<NeighborhoodRail
-          mode={search.mode}
-          onModeChange={(mode,budget)=>setSearch(current=>({...current,mode,budget,minBudget:0}))}
-          onSelect={(area,mode)=>{onIntroDone();onChoose('template');onSearch({...search,mode,propertyType:'apartment',criteria:[],minBudget:0,budget:mode==='rent'?28000:7500000,area,areas:[area],address:'',fromIdea:false});}}
-        />}
-      </React.Fragment>)}
+      {signedIn
+        ? <>
+          {memberRails.map((collection,index)=><InspirationRail key={collection.title} {...collection} compact={index>0} search={search} {...common}/>)}
+          <NeighborhoodRail onSelect={openNeighborhood}/>
+          {memberAfterPrice.map(collection=><InspirationRail key={collection.title} {...collection} compact search={search} {...common}/>)}
+          <HomePopularCities search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+        </>
+        : <>
+          <HomePopularCities search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+          {guestRails.map((collection,index)=><InspirationRail key={collection.title} {...collection} compact={index>0} search={search} {...common}/>)}
+          <NeighborhoodRail onSelect={openNeighborhood}/>
+        </>}
+      <HomeBlog/>
+      <HomeCityGuide search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+      <HomeBrokers search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+      <InspirationRail {...closingRail} compact search={search} {...common}/>
+      <HomeInternalLinks search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
     </div>
   </div>;
 }

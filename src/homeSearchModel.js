@@ -7,6 +7,15 @@ export const PROPERTY_TYPES = [
 ];
 export const OPERATIONS = [['rent', 'Alugar', 'Rentar'], ['buy', 'Comprar', 'Comprar'], ['development', 'Desenvolvimentos', 'Desarrollos'], ['auction', 'Liquidação', 'Remate']];
 export const canStartSearch = choices => choices.mode === true && choices.propertyType === true;
+/** Home composer: typed description with a recognized location is enough to start. */
+export function canStartHomeSearch(query, detected, overrides = {}) {
+  const text = String(query || '').trim();
+  if (!text) return false;
+  if (Array.isArray(overrides.places) && overrides.places.length) return true;
+  if (Array.isArray(detected?.places) && detected.places.length) return true;
+  const area = overrides.area ?? detected?.area;
+  return area != null && area !== '';
+}
 export const foldSearchText = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 export function parseBudgetAmount(text, factor = 1) {

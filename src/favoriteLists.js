@@ -1,3 +1,5 @@
+import {normalizeBoard} from './boardModel.js';
+
 export const FOLDER_NAME_MAX = 50;
 export const RECENT_LIMIT = 24;
 export const RECENT_ID = 'recent';
@@ -55,7 +57,9 @@ export function normalizeFolders(raw, legacySaved = [], known) {
     const name = cleanFolderName(folder.name);
     if (!name) return [];
     seen.add(folder.id);
-    return [{id:folder.id, name, homeIds:uniqueIds(folder.homeIds, known), createdAt:Number(folder.createdAt) || 0, ...(folder.collab ? {collab:true} : {})}];
+    const homeIds = uniqueIds(folder.homeIds, known);
+    const board = normalizeBoard(folder.board, homeIds);
+    return [{id:folder.id, name, homeIds, createdAt:Number(folder.createdAt) || 0, ...(folder.collab ? {collab:true} : {}), ...(folder.kept === true ? {kept:true} : {}), ...(board ? {board} : {})}];
   });
   if (Array.isArray(raw)) return dedupeHomes(folders);
   const legacy = uniqueIds(legacySaved, known);
@@ -64,12 +68,17 @@ export function normalizeFolders(raw, legacySaved = [], known) {
 
 function dedupeHomes(folders) {
   const placed = new Set();
-  return folders.map(folder => ({...folder, homeIds:folder.homeIds.filter(id => !placed.has(id) && placed.add(id))}))
-    .filter(keepFolder);
+  return folders.map(folder => {
+    const homeIds = folder.homeIds.filter(id => !placed.has(id) && placed.add(id));
+    const board = normalizeBoard(folder.board, homeIds);
+    const next = {...folder, homeIds};
+    if (board) next.board = board; else delete next.board;
+    return next;
+  }).filter(keepFolder);
 }
 
-/** A private list with no homes stops existing; a shared one stays, empty, for everyone in it. */
-const keepFolder = folder => folder.homeIds.length > 0 || folder.collab === true;
+/** A private list with no homes stops existing, unless the person created it by name. A shared one stays empty. */
+const keepFolder = folder => folder.homeIds.length > 0 || folder.collab === true || folder.kept === true;
 
 export function normalizeRecent(raw, known) {
   const seen = new Set();

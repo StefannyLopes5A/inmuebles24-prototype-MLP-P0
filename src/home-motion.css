@@ -1,6 +1,6 @@
 /* Holofote is the V2 home default. Portal styles exist only while home is mounted. */
 body[data-home-motion=holofote] .home-word-echo {display:none}
-body[data-home-motion=holofote] :is(.home-word-control.just-morphed .home-choice-label,.home-word-control.just-morphed .home-chevron path,.home-choice-label.just-selected,.detail-token.token-converted,.detail-token.token-selected>span,.home-bed-stepper output,.home-start,.home-start-slot,.home-search h1,.home-evolution .idea-section h2,.home-evolution .idea-card,.home-evolution .idea-photo,.home-evolution .home-discovery-reveal>.discovery-section) {animation:none}
+body[data-home-motion=holofote] :is(.home-word-control.just-morphed .home-choice-label,.home-word-control.just-morphed .home-chevron path,.home-choice-label.just-selected,.detail-token.token-converted,.detail-token.token-selected>span,.home-bed-stepper output,.home-start,.home-start-slot,.home-search h1,.home-evolution .idea-section h2,.home-evolution .idea-card,.home-evolution .idea-photo,.home-evolution .home-discovery-reveal>.discovery-section,.home-evolution .home-discovery-reveal>.home-blog,.home-evolution .home-discovery-reveal>.home-city-guide) {animation:none}
 body[data-home-motion=holofote] .home-popover {transition:none;border:0;box-shadow:0 0 0 1px #0000000a,0 6px 16px #3524160d,0 24px 70px -16px #48251229;background:#fff;border-radius:24px;overflow-x:hidden}
 body[data-home-motion=holofote] .home-popover[data-open=false] {opacity:0;transform:none}
 body[data-home-motion=holofote] .home-popover[data-open=true] {opacity:1;transform:none}
@@ -32,6 +32,15 @@ body[data-home-motion=holofote] .home-evolution .photo-stack {position:relative;
 body[data-home-motion=holofote] .photo-stack .idea-photo {transition:translate 450ms cubic-bezier(.22,1,.36,1),rotate 450ms cubic-bezier(.22,1,.36,1)}
 body[data-home-motion=holofote] .idea-card[data-motion-hover=true] .idea-photo:first-child {translate:-10px -3px;rotate:-10deg}
 body[data-home-motion=holofote] .idea-card[data-motion-hover=true] .idea-photo:last-child {translate:15px -8px;rotate:12deg}
+body[data-home-motion=holofote] .home-guest-promo-fan[data-motion-hover=true] .idea-photo:first-child {translate:-10px -3px;rotate:-10deg}
+body[data-home-motion=holofote] .home-guest-promo-fan[data-motion-hover=true] .idea-photo:nth-child(2) {translate:-4px -5px;rotate:-4deg}
+body[data-home-motion=holofote] .home-guest-promo-fan[data-motion-hover=true] .idea-photo:nth-child(3) {translate:6px -6px;rotate:5deg}
+body[data-home-motion=holofote] .home-guest-promo-fan[data-motion-hover=true] .idea-photo:last-child {translate:15px -8px;rotate:12deg}
+body[data-home-motion=holofote] .region-fan .region-fan-photo {transition:transform 240ms cubic-bezier(.22,1,.36,1),translate 450ms cubic-bezier(.22,1,.36,1),rotate 450ms cubic-bezier(.22,1,.36,1)}
+body[data-home-motion=holofote] .region-fan[data-motion-hover=true] .region-fan-photo:first-child {translate:-10px -3px;rotate:-10deg}
+body[data-home-motion=holofote] .region-fan[data-motion-hover=true] .region-fan-photo:nth-child(2) {translate:-4px -5px;rotate:-4deg}
+body[data-home-motion=holofote] .region-fan[data-motion-hover=true] .region-fan-photo:nth-child(3) {translate:6px -6px;rotate:5deg}
+body[data-home-motion=holofote] .region-fan[data-motion-hover=true] .region-fan-photo:last-child {translate:15px -8px;rotate:12deg}
 body[data-home-motion=holofote] .idea-property-preview {animation:none}
 body[data-home-motion=holofote] .preview-visual {display:block;position:relative;overflow:hidden}
 body[data-home-motion=holofote] .idea-property-preview[data-open=false] {pointer-events:none;opacity:0}
@@ -42,8 +51,8 @@ body[data-home-motion=holofote] .idea-property-preview[data-open=true][data-prev
 body[data-home-motion=holofote] .home-evolution .discovery-card {overflow:visible}
 body[data-home-motion=holofote] .home-evolution :is(.discovery-tags,.discovery-like) {transition:translate 500ms cubic-bezier(.22,1,.36,1)}
 body[data-home-motion=holofote] .home-evolution .discovery-rail {padding-top:36px;padding-bottom:52px;margin-top:-36px;margin-bottom:-52px}
-body[data-home-motion=holofote] .discovery-section[data-motion-pending=true] {opacity:0}
-body[data-home-motion=holofote] .discovery-section:focus-within {opacity:1}
+body[data-home-motion=holofote] :is(.idea-section,.discovery-section,.home-blog,.home-brokers,.home-links,.home-guest-promo-reveal,.catalog-footer)[data-motion-pending=true] {opacity:0}
+body[data-home-motion=holofote] :is(.idea-section,.discovery-section,.home-blog,.home-brokers,.home-links,.home-guest-promo-reveal,.catalog-footer):focus-within {opacity:1}
 body[data-home-motion=holofote] .discovery-media::after {z-index:1}
 body[data-home-motion=holofote] .discovery-copy {z-index:2}
 
@@ -53,7 +62,7 @@ body[data-home-motion=holofote] .discovery-copy {z-index:2}
 @media(prefers-reduced-motion:reduce) {
   body[data-home-motion=holofote] :is(.home-evolution,.home-popover,.idea-property-preview),
   body[data-home-motion=holofote] :is(.home-evolution,.home-popover,.idea-property-preview) * {animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  body[data-home-motion=holofote] .discovery-section[data-motion-pending=true] {opacity:1}
+  body[data-home-motion=holofote] :is(.idea-section,.discovery-section,.home-blog,.home-brokers,.home-links,.home-guest-promo-reveal,.catalog-footer)[data-motion-pending=true] {opacity:1}
   body[data-home-motion=holofote] .motion-glyph-sweep {background:none;-webkit-text-fill-color:currentColor}
 }
 @media(forced-colors:active) {body[data-home-motion=holofote] .motion-glyph-sweep {background:none;-webkit-text-fill-color:currentColor}}

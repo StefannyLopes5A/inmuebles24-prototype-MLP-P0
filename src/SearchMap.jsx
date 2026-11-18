@@ -177,7 +177,7 @@ function MapCard({home, saved, compact, onSave, onClose, onOpen, search, pref}) 
   </motion.article>;
 }
 
-export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent, areaLabel:label, hidden, onOpenListing, onSave, search, pref='none', signedIn=false, onLogin, onAskMora}) {
+export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent, areaLabel:label, hidden, tuck=false, onOpenListing, onSave, search, pref='none', signedIn=false, onLogin, onAskMora}) {
   const {t,language}=useLanguage();
   const shell=useRef(null), host=useRef(null), probe=useRef(null), mapRef=useRef(null);
   const miniButton=useRef(null), halfButton=useRef(null), fullButton=useRef(null);
@@ -582,6 +582,10 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
   }
 
   const interactive=shown !== 'mini' && !hidden;
+  const tucked=tuck && shown === 'mini' && !hidden;
+  useEffect(() => {
+    if (tucked && shell.current?.contains(document.activeElement)) document.activeElement.blur();
+  }, [tucked]);
   const hoveredHome=hoveredId ? homes.find(home => home.id === hoveredId) : null;
   const hoveredPosition=hoveredHome && vision ? homePosition(hoveredHome, vision) : null;
   const outOfSearch=!!search?.areas?.length && colonia && !placeMatchesSearch(colonia, search);
@@ -600,9 +604,9 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
 
   return createPortal(<>
     <div className="map-backdrop" data-active={shown === 'full' && !hidden} aria-hidden="true"/>
-    <section ref={shell} className="map-shell" data-mode={shown} data-entered={entered} data-hidden={hidden}
+    <section ref={shell} className="map-shell" data-mode={shown} data-entered={entered} data-hidden={hidden} data-tuck={tucked || undefined}
       data-focus={selected && interactive ? 'home' : undefined} data-widgets={widgetsOn || undefined}
-      aria-label={t('Mapa de resultados')} inert={hidden || undefined}>
+      aria-label={t('Mapa de resultados')} inert={hidden || tucked || undefined}>
     <span ref={probe} className="map-safe-probe" aria-hidden="true"/>
     <div ref={host} className="map-canvas" data-ready={ready}/>
     <button ref={miniButton} type="button" className="map-mini-trigger" tabIndex={shown === 'mini' ? 0 : -1} aria-hidden={shown !== 'mini'}

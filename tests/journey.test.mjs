@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes, listingPrice} from '../src/data.js';
-import {DEFAULT_SEARCH, normalizeSearch, matchingHomes, prototypeResults, expansionOptions, addArea, readJourney, journeyUrl, factualReason, migratePrototypeUrl} from '../src/journey.js';
+import {DEFAULT_SEARCH, normalizeSearch, matchingHomes, prototypeResults, expansionOptions, addArea, readJourney, journeyUrl, factualReason, migratePrototypeUrl, builtArea, lotArea, parkingSpots} from '../src/journey.js';
 
 test('retired animation links open final V2 without losing search, criteria or detail state', () => {
   const query='?v=6&bar=home&reference=1&view=results&mode=rent&areas=&budget=28000&beds=2&type=apartment&note=Precisa+ter+portaria+24h+e+ser+mobiliado&criterion=security&criterion=furnished&property=rent-149449697';
@@ -162,4 +162,23 @@ test('map mode survives results and listing routes but stays out of other views'
   assert.doesNotMatch(journeyUrl({page:'favorites', search:DEFAULT_SEARCH, map:'full'}), /map=/);
   assert.equal(at('/?view=favorites&map=full').map, undefined);
   assert.equal(at('/?view=results&map=giant').map, undefined);
+});
+
+test('baths, parking and published area narrow the catalog without inventing missing measures', () => {
+  const broad = matchingHomes({...DEFAULT_SEARCH, areas:[], beds:1, budget:50_000_000});
+  const baths = matchingHomes({...DEFAULT_SEARCH, areas:[], beds:1, baths:4, budget:50_000_000});
+  assert.ok(baths.length && baths.every(home => home.baths >= 4) && baths.length < broad.length);
+  const parked = matchingHomes({...DEFAULT_SEARCH, areas:[], beds:1, parking:2, budget:50_000_000});
+  assert.ok(parked.length && parked.length < broad.length && parked.every(home => parkingSpots(home) >= 2));
+  const built = matchingHomes({...DEFAULT_SEARCH, areas:[], beds:1, minSize:100, maxSize:150, budget:50_000_000});
+  assert.ok(built.length && built.every(home => {const size = builtArea(home); return size >= 100 && size <= 150 && lotArea(home) == null;}));
+  const lots = matchingHomes({mode:'rent', areas:[], beds:1, minLot:80, maxLot:150, budget:200_000});
+  assert.ok(lots.length && lots.every(home => {const lot = lotArea(home); return lot >= 80 && lot <= 150;}));
+  assert.ok(lots.every(home => builtArea(home) == null));
+  const round = readJourney(journeyUrl({page:'results', search:{...DEFAULT_SEARCH, baths:3, parking:2, minSize:50, maxSize:100, minLot:80, maxLot:150}}));
+  assert.equal(round.search.baths, 3);
+  assert.equal(round.search.parking, 2);
+  assert.equal(round.search.minSize, 50);
+  assert.equal(round.search.maxLot, 150);
+  assert.doesNotMatch(journeyUrl({page:'results', search:DEFAULT_SEARCH}), /baths=|parking=|minSize=/);
 });

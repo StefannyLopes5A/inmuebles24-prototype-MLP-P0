@@ -4,7 +4,7 @@ import agencies from '../AGENCY-SOURCES.json';
 import {Icon} from './App';
 import {RailListingCopy} from './Home';
 import {useLanguage} from './i18n';
-import {PRICE_BANDS, TRAVEL_MODES, byPricePerM2, compareReading} from './compareReading';
+import {PRICE_BANDS, byPricePerM2, compareReading} from './compareReading';
 import {AmenityIcon} from './MapWidgetStack';
 import {textOf} from './mapWidgetContent';
 import {contactRecipient, contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow';
@@ -12,7 +12,7 @@ import {EASE, EASE_IN_OUT, EASE_OUT, riseIn, useMediaQuery} from './favoriteMoti
 import {SOFT_MOTION} from './homeIntro.js';
 import {markVisit} from './seekerSignals.js';
 
-const MAX_COLUMNS = 6;
+const MAX_COLUMNS = 5;
 const COMPARING_MS = 600, SEND_MS = 2500, MORPH_MS = 280, SWEEP_MS = 600;
 const summaryWords = summary => `${summary.lead} ${summary.text}`.trim().split(/\s+/).length;
 const LOGO_STAGGER = 0.04, LOGO_FADE = 0.15;
@@ -117,16 +117,6 @@ function PriceBar({band, position, index, animate}) {
 }
 
 const MODE_LABELS = {walk:['A pé', 'A pie'], bike:['Bike', 'Bici'], car:['Carro', 'Auto']};
-function TravelModes({mode, onChange, reduce, hidden}) {
-  const {say} = useSay();
-  const group = useId();
-  return <div className="compare-modes" role="group" aria-label={say('Como você vai', 'Cómo te mueves')} aria-hidden={hidden || undefined}>
-    {TRAVEL_MODES.map(item => <button key={item} type="button" aria-pressed={item === mode} tabIndex={hidden ? -1 : undefined} onClick={() => onChange(item)}>
-      {item === mode && <motion.span className="compare-modes-pill" layoutId={`${group}-pill`} transition={reduce ? {duration:0} : {duration:0.2, ease:EASE_OUT}}/>}
-      <span className="compare-modes-label">{say(...MODE_LABELS[item])}</span>
-    </button>)}
-  </div>;
-}
 
 function NearbyPlaces({places, mode, fastest}) {
   const {say, language} = useSay();
@@ -281,7 +271,7 @@ function Composer({recipients, profile, mobile, reduce, morph, pending, onCancel
     </form>;
 }
 
-export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare, startContact = null}) {
+export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare, onBoard, chipActions = false, startContact = null}) {
   const {language, compactMoney, say} = useSay();
   const reduce = useReducedMotion();
   const mobile = useMediaQuery('(max-width: 700px)');
@@ -289,7 +279,6 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
   const [run, setRun] = useState(0);
   const [revealed, setRevealed] = useState(() => reduce ? Infinity : 0);
   const [offset, setOffset] = useState(0);
-  const [travel, setTravel] = useState('walk');
   const [deselected, setDeselected] = useState(() => new Set());
   const [hoverRow, setHoverRow] = useState(null);
   const [stage, setStage] = useState('idle');
@@ -416,7 +405,7 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
   const fastest = {};
   if (reading.cards.length > 1) {
     const times = {};
-    for (const card of reading.cards) for (const place of card.nearby) (times[place.kind] ??= []).push(place.minutes[travel]);
+    for (const card of reading.cards) for (const place of card.nearby) (times[place.kind] ??= []).push(place.minutes.walk);
     for (const [kind, list] of Object.entries(times)) if (Math.min(...list) < Math.max(...list)) fastest[kind] = Math.min(...list);
   }
   const rowProps = row => ({
@@ -434,20 +423,26 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
         <button className="compare-back" type="button" onClick={onClose} aria-label={backLabel || say('Voltar para favoritos', 'Volver a favoritos')}>
           <Icon name="back" size={20}/>
         </button>
-        <motion.div {...riseIn(reduce, 0, 6)}>
-          <h1 ref={heading} tabIndex={-1}>{count ? say('Compare seus favoritos', 'Compara tus favoritos') : folderName}</h1>
-          {count > 0 && <p className="compare-folder-meta">{folderName}{meta ? ` · ${meta}` : ''}</p>}
-          {count === 0 && <p className="compare-empty-copy">{say('Esta pasta está vazia. Toque no coração de um imóvel para salvá-lo aqui.', 'Esta carpeta está vacía. Toca el corazón de un inmueble para guardarlo aquí.')}</p>}
-          {count > 0 && !shown.length && <p className="compare-empty-copy">{say('Você tirou todos desta comparação. Eles continuam salvos na pasta.', 'Quitaste todos de esta comparación. Siguen guardados en la carpeta.')}</p>}
-          {shareUrl && <p className="compare-share-link" role="status">
-            {copied ? say('Link copiado. Abra neste navegador para ver a pasta: ', 'Enlace copiado. Ábrelo en este navegador para ver la carpeta: ') : say('Abra este link neste navegador para ver a pasta: ', 'Abre este enlace en este navegador para ver la carpeta: ')}
-            <a href={shareUrl} target="_blank" rel="noopener noreferrer">{shareUrl.replace(/^https?:\/\//, '')}</a>
-          </p>}
-        </motion.div>
+        <div className={onBoard ? 'compare-title-row' : undefined}>
+          <motion.div {...riseIn(reduce, 0, 6)}>
+            <h1 ref={heading} tabIndex={-1}>{count ? say('Compare seus favoritos', 'Compara tus favoritos') : folderName}</h1>
+            {count > 0 && <p className="compare-folder-meta">{folderName}{meta ? ` · ${meta}` : ''}</p>}
+            {count === 0 && <p className="compare-empty-copy">{say('Esta pasta está vazia. Toque no coração de um imóvel para salvá-lo aqui.', 'Esta carpeta está vacía. Toca el corazón de un inmueble para guardarlo aquí.')}</p>}
+            {count > 0 && !shown.length && <p className="compare-empty-copy">{say('Você tirou todos desta comparação. Eles continuam salvos na pasta.', 'Quitaste todos de esta comparación. Siguen guardados en la carpeta.')}</p>}
+            {shareUrl && <p className="compare-share-link" role="status">
+              {copied ? say('Link copiado. Abra neste navegador para ver a pasta: ', 'Enlace copiado. Ábrelo en este navegador para ver la carpeta: ') : say('Abra este link neste navegador para ver a pasta: ', 'Abre este enlace en este navegador para ver la carpeta: ')}
+              <a href={shareUrl} target="_blank" rel="noopener noreferrer">{shareUrl.replace(/^https?:\/\//, '')}</a>
+            </p>}
+          </motion.div>
+          {onBoard && <div className="board-views" role="group" aria-label={say('Visualização da lista', 'Vista de la lista')}>
+            <button type="button" aria-pressed="false" onClick={onBoard}>{say('Quadro', 'Tablero')}</button>
+            <button type="button" aria-pressed="true">{say('Comparar', 'Comparar')}</button>
+          </div>}
+        </div>
       </div>
       {(shown.length > MAX_COLUMNS || hiddenIds.length > 0 || (onShare && count > 0)) && <motion.div className="compare-header-actions" {...riseIn(reduce, 1, 6)}>
         {hiddenIds.length > 0 && <button className="mini-text-action" type="button" onClick={onShowAll}>{say(`Mostrar todos (${count})`, `Mostrar todos (${count})`)}</button>}
-        {shown.length > MAX_COLUMNS && <button className="mini-secondary compare-more" type="button" onClick={compareOthers}>{say('Comparar outros', 'Comparar otros')}</button>}
+        {shown.length > MAX_COLUMNS && <button className={`${chipActions ? 'folder-chip' : 'mini-secondary'} compare-more`} type="button" onClick={compareOthers}>{say('Comparar outros', 'Comparar otros')}</button>}
         {onShare && count > 0 && <button className="mini-secondary compare-share" type="button" onClick={share}>{say('Compartilhar', 'Compartir')}</button>}
       </motion.div>}
     </header>
@@ -518,12 +513,9 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
             </div>
 
             <div {...cell('nearby')}>
-              <div className="compare-nearby-head" data-repeat={index > 0 || undefined}>
-                {label('nearby')}
-                <TravelModes mode={travel} onChange={setTravel} reduce={reduce} hidden={index > 0 && !mobile}/>
-              </div>
+              {label('nearby')}
               <div className="compare-dim">
-                <NearbyPlaces places={card.nearby} mode={travel} fastest={fastest}/>
+                <NearbyPlaces places={card.nearby} mode="walk" fastest={fastest}/>
               </div>
             </div>
           </motion.section>;

@@ -12,6 +12,10 @@ import {homeCoordinates} from './mapLocations.js';
 import {nearbyPois, poisFor} from './pois.js';
 import {marketFacts, peerFacts, placeName, priceClass, ZONE_MEDIAN_DAYS} from './moraAnalysis.js';
 import {MARKET_TOPICS, marketAnswer, marketQuestion, marketTopic} from './marketAnswers.js';
+import {descriptionHighlights, listingNeighborhood} from './listingStory.js';
+import {priceHistory} from './priceHistory.js';
+import {offerIdeas} from './offerIdeas.js';
+import {COST_DEFAULTS, purchaseCosts} from './purchaseCosts.js';
 
 export const SELECTION_MIN = 2;
 export const SELECTION_MAX = 280;
@@ -63,6 +67,186 @@ function nearestMetro(home) {
   const poi = nearbyPois(point, poisFor(null, ['metro']), {radius:2500, limit:1})[0];
   if (!poi) return null;
   return {name:placeName('metro', poi.properties.name), walk:travelMinutes(Math.round(poi.properties.meters * 1.3), 'walk')};
+}
+
+/**
+ * What a section pill on the listing page is asking. The price pill reads this listing against its colonia;
+ * a section Mora does not read returns null, so the chat does not invent an answer.
+ */
+export function sectionReading(section, home, language = 'es-MX') {
+  if (!home || home.development) return null;
+  if (section === 'price') return priceReading(home, say(language));
+  if (section === 'description') return descriptionReading(home, language);
+  if (section === 'offer') return offerReading(home, language);
+  if (section === 'costs') return costsReading(home, language);
+  if (section === 'history') return historyReading(home, language);
+  return null;
+}
+
+/** The quick questions under each section pill, in the order the person is likely to ask them. */
+const FOLLOW_UPS = {
+  price: ['cheaper', 'speed'],
+  description: ['nearby', 'fee'],
+  offer: ['lower', 'negotiable'],
+  costs: ['upfront', 'monthly'],
+  history: ['forecast', 'own'],
+};
+
+const FOLLOW_UP_LABELS = {
+  cheaper: ['Tem parecidos mais baratos?', '¿Hay parecidos más baratos?'],
+  speed: ['Quanto tempo leva para vender?', '¿Cuánto tarda en venderse?'],
+  nearby: ['O que tem perto?', '¿Qué hay cerca?'],
+  fee: ['Quanto é o condomínio?', '¿Cuánto es el mantenimiento?'],
+  lower: ['E se eu oferecer menos?', '¿Y si ofrezco menos?'],
+  negotiable: ['O preço é negociável?', '¿El precio es negociable?'],
+  upfront: ['Quanto preciso na assinatura?', '¿Cuánto necesito al firmar?'],
+  monthly: ['Qual seria a parcela?', '¿Cuánto sería la mensualidad?'],
+  forecast: ['Vai continuar subindo?', '¿Va a seguir subiendo?'],
+  own: ['O anúncio já baixou de preço?', '¿El anuncio ya bajó de precio?'],
+};
+
+const sharePct = (share, locale) => `${share >= 0 ? '+' : '−'}${Math.abs(share * 100).toLocaleString(locale, {maximumFractionDigits:1})}%`;
+
+/** Each answer uses the same numbers as its pill, and returns `{text, ask, note}` or null when the listing lacks them. */
+const FOLLOW_UP_ANSWERS = {
+  cheaper(home, s) {
+    const peers = peerFacts(home);
+    return {text:peers.cheaper
+      ? s(`Sim: ${peers.cheaper} ${plural(peers.cheaper, 'parecido custa', 'parecidos custam')} até ${peers.savings}% menos no catálogo.`, `Sí: ${peers.cheaper} ${plural(peers.cheaper, 'parecido cuesta', 'parecidos cuestan')} hasta ${peers.savings}% menos en el catálogo.`)
+      : s('No catálogo, nenhum parecido custa pelo menos 10% menos.', 'En el catálogo, ningún parecido cuesta al menos 10% menos.'), ask:false};
+  },
+  speed(home, s) {
+    const facts = marketFacts(home);
+    return {text:facts.days > ZONE_MEDIAN_DAYS
+      ? s(`Em ${home.area}, um anúncio costuma durar ${ZONE_MEDIAN_DAYS} dias. Este já está no ar há ${facts.days}: isso dá margem para negociar.`, `En ${home.area}, un anuncio suele durar ${ZONE_MEDIAN_DAYS} días. Este ya lleva ${facts.days} publicado: eso da margen para negociar.`)
+      : s(`Em ${home.area}, um anúncio costuma durar ${ZONE_MEDIAN_DAYS} dias. Este está no ar há ${facts.days}, ainda dentro do normal.`, `En ${home.area}, un anuncio suele durar ${ZONE_MEDIAN_DAYS} días. Este lleva ${facts.days} publicado, todavía dentro de lo normal.`), ask:false};
+  },
+  nearby(home, s) {
+    return distanceReading(home, '', s);
+  },
+  fee(home, s) {
+    return feeReading(home, null, s);
+  },
+  lower(home, s) {
+    const ideas = offerIdeas(home);
+    if (!ideas) return null;
+    const [, , moderate, weak] = ideas.levels;
+    return {text:s(
+      `Entre ${money(moderate.from)} e ${money(moderate.to)}, a chance de fechar é de ${moderate.chance}%. Abaixo de ${money(weak.to)}, cai para ${weak.chance}%.`,
+      `Entre ${money(moderate.from)} y ${money(moderate.to)}, la probabilidad de cerrar es ${moderate.chance}%. Por debajo de ${money(weak.to)}, baja a ${weak.chance}%.`), ask:false};
+  },
+  negotiable(home, s) {
+    return {text:s(
+      'Quem decide o preço é o dono, e quem sabe se há margem é a imobiliária. Pergunto?',
+      'El precio lo decide el dueño, y quien sabe si hay margen es la inmobiliaria. ¿Le pregunto?'), ask:true};
+  },
+  upfront(home, s, language) {
+    const costs = purchaseCosts({offer:listingPrice(home)});
+    return {text:s(
+      `Na assinatura, uns ${money(costs.upfront)}: entrada de ${money(costs.enganche)} e ${money(costs.isai + costs.closing)} de imposto, cartório e registro.`,
+      `Al firmar, unos ${money(costs.upfront)}: enganche de ${money(costs.enganche)} y ${money(costs.isai + costs.closing)} de impuesto, notaría y registro.`),
+    note:s('Referência ilustrativa', 'Referencia ilustrativa'), ask:false};
+  },
+  monthly(home, s, language) {
+    const locale = language === 'pt-BR' ? 'pt-BR' : 'es-MX';
+    const costs = purchaseCosts({offer:listingPrice(home)});
+    const rate = (COST_DEFAULTS.rate * 100).toLocaleString(locale);
+    return {text:s(
+      `Com 20% de entrada, ${COST_DEFAULTS.years} anos e taxa fixa de ${rate}%, a parcela fica em ${money(costs.monthly)} por mês. Para não passar de 30% da renda, os bancos costumam pedir uns ${money(costs.income)} por mês.`,
+      `Con 20% de enganche, ${COST_DEFAULTS.years} años y tasa fija de ${rate}%, la mensualidad queda en ${money(costs.monthly)} al mes. Para no pasar del 30% del ingreso, los bancos suelen pedir unos ${money(costs.income)} al mes.`),
+    note:s('Referência ilustrativa', 'Referencia ilustrativa'), ask:false};
+  },
+  forecast(home, s, language) {
+    const history = priceHistory(home, listingNeighborhood(home)?.(language));
+    if (!history) return null;
+    const locale = language === 'pt-BR' ? 'pt-BR' : 'es-MX';
+    const ahead = Math.round(history.months.at(-1).value * (1 + history.forecast) / 100) * 100;
+    return {text:s(
+      `Se seguir a tendência, em um ano o m² ficaria perto de ${money(ahead)} (${sharePct(history.forecast, locale)}). É uma tendência da colônia, não uma promessa.`,
+      `Si sigue la tendencia, en un año el m² estaría cerca de ${money(ahead)} (${sharePct(history.forecast, locale)}). Es una tendencia de la colonia, no una promesa.`), ask:false};
+  },
+  own(home, s, language) {
+    const history = priceHistory(home, listingNeighborhood(home)?.(language));
+    if (!history) return null;
+    return {text:history.drop
+      ? s(`Sim: já baixou ${money(history.drop)} há ${history.dropDays} dias.`, `Sí: ya bajó ${money(history.drop)} hace ${history.dropDays} días.`)
+      : s(`Não. Não mudou de preço nos ${history.days} dias em que está no ar.`, `No. No cambió de precio en los ${history.days} días que lleva publicado.`), ask:false};
+  },
+};
+
+/** The quick questions for a section pill, only where Mora reads that section for this listing. */
+export function sectionFollowUps(section, home, language = 'es-MX') {
+  if (!sectionReading(section, home, language)) return [];
+  const s = say(language);
+  return (FOLLOW_UPS[section] || []).map(id => ({id, label:s(...FOLLOW_UP_LABELS[id])}));
+}
+
+/** The local answer to one quick question; null when this listing lacks the figures it needs. */
+export function followUpReading(id, home, language = 'es-MX') {
+  if (!home || home.development || !FOLLOW_UP_ANSWERS[id]) return null;
+  return FOLLOW_UP_ANSWERS[id](home, say(language), language);
+}
+
+/** The history pill: where the colonia's m² has gone and where its trend points, kept apart from this listing's price. */
+function historyReading(home, language) {
+  const history = priceHistory(home, listingNeighborhood(home)?.(language));
+  if (!history) return null;
+  const voice = say(language);
+  const locale = language === 'pt-BR' ? 'pt-BR' : 'es-MX';
+  const pct = share => `${share >= 0 ? '+' : '−'}${Math.abs(share * 100).toLocaleString(locale, {maximumFractionDigits:1})}%`;
+  const first = history.months[0].value, last = history.months.at(-1).value;
+  const ahead = Math.round(last * (1 + history.forecast) / 100) * 100;
+  const own = history.drop
+    ? voice(`Este anúncio já baixou ${money(history.drop)} há ${history.dropDays} dias.`, `Este anuncio ya bajó ${money(history.drop)} hace ${history.dropDays} días.`)
+    : voice(`Este anúncio não mudou de preço nos ${history.days} dias em que está no ar.`, `Este anuncio no ha cambiado de precio en los ${history.days} días que lleva publicado.`);
+  return {text:voice(
+    `Em ${history.area}, o m² passou de ${money(first)} para ${money(last)} em 12 meses (${pct(history.change)}). Se seguir a tendência, em um ano ficaria perto de ${money(ahead)} (${pct(history.forecast)}). É uma tendência da colônia, não uma promessa. ${own}`,
+    `En ${history.area}, el m² pasó de ${money(first)} a ${money(last)} en 12 meses (${pct(history.change)}). Si sigue la tendencia, en un año estaría cerca de ${money(ahead)} (${pct(history.forecast)}). Es una tendencia de la colonia, no una promesa. ${own}`), ask:false};
+}
+
+/** The cost pill: what a bigger down payment trades, cash on signing day against the monthly payment and interest. */
+function costsReading(home, language) {
+  if (home.mode !== 'buy') return null;
+  const offer = listingPrice(home);
+  if (!(offer > 0)) return null;
+  const voice = say(language);
+  const {years, rate} = COST_DEFAULTS;
+  const base = purchaseCosts({offer}), more = purchaseCosts({offer, down:0.3});
+  const pct = (rate * 100).toLocaleString(language === 'pt-BR' ? 'pt-BR' : 'es-MX');
+  return {text:voice(
+    `Com 20% de entrada, você precisa de uns ${money(base.upfront)} na assinatura e a parcela fica em ${money(base.monthly)} por ${years} anos. Com 30%, assina com ${money(more.upfront - base.upfront)} a mais, a parcela cai para ${money(more.monthly)} e você economiza ${money(base.interest - more.interest)} em juros. Taxa ilustrativa de ${pct}% fixa; a sua, quem dá é o banco.`,
+    `Con 20% de enganche necesitas unos ${money(base.upfront)} al firmar y la mensualidad queda en ${money(base.monthly)} a ${years} años. Con 30%, firmas con ${money(more.upfront - base.upfront)} más, la mensualidad baja a ${money(more.monthly)} y te ahorras ${money(base.interest - more.interest)} en intereses. Tasa ilustrativa de ${pct}% fija; la tuya te la da el banco.`), ask:false};
+}
+
+/** The offer pill: the strong band read against comparable listings and how long this one has been published. */
+function offerReading(home, language) {
+  const ideas = offerIdeas(home);
+  if (!ideas) return null;
+  const voice = say(language);
+  const facts = marketFacts(home), peers = peerFacts(home);
+  const strong = ideas.levels[0];
+  const cut = (strong.cut[1] * 100).toLocaleString(language === 'pt-BR' ? 'pt-BR' : 'es-MX', {maximumFractionDigits:1});
+  const pct = facts.delta == null ? null : Math.round(Math.abs(facts.delta) * 100);
+  const position = pct == null ? ''
+    : pct < 5 ? voice(` O m² está em linha com ${facts.comparables} parecidos em ${home.area}.`, ` El m² está en línea con ${facts.comparables} parecidos en ${home.area}.`)
+    : facts.delta > 0 ? voice(` O m² está ${pct}% acima de ${facts.comparables} parecidos em ${home.area}.`, ` El m² está ${pct}% arriba de ${facts.comparables} parecidos en ${home.area}.`)
+    : voice(` O m² está ${pct}% abaixo de ${facts.comparables} parecidos em ${home.area}.`, ` El m² está ${pct}% abajo de ${facts.comparables} parecidos en ${home.area}.`);
+  const time = ideas.days > ideas.zoneDays
+    ? voice(` Está há ${ideas.days} dias no ar, e a região vende em ${ideas.zoneDays}: isso dá margem.`, ` Lleva ${ideas.days} días publicado y la zona vende en ${ideas.zoneDays}: eso da margen.`)
+    : voice(` Está há ${ideas.days} dias no ar, dentro dos ${ideas.zoneDays} da região: há pouca pressa do lado de quem vende.`, ` Lleva ${ideas.days} días publicado, dentro de los ${ideas.zoneDays} de la zona: hay poca prisa del lado de quien vende.`);
+  const cheaper = peers.cheaper
+    ? voice(` No catálogo, ${peers.cheaper} ${plural(peers.cheaper, 'parecido custa', 'parecidos custam')} até ${peers.savings}% menos.`, ` En el catálogo, ${peers.cheaper} ${plural(peers.cheaper, 'parecido cuesta', 'parecidos cuestan')} hasta ${peers.savings}% menos.`)
+    : '';
+  return {text:voice(`Uma oferta de até ${cut}% abaixo, ${money(strong.from)} ou mais, é a que mais chance tem de fechar.`, `Una oferta de hasta ${cut}% abajo, ${money(strong.from)} o más, es la que más chance tiene de cerrar.`)
+    + position + time + cheaper, ask:false};
+}
+
+/** The description pill: the same phrases the page sets in bold, read back as what is worth a closer look. */
+function descriptionReading(home, language) {
+  const highlights = descriptionHighlights(home, language).slice(0, 4);
+  if (!highlights.length) return null;
+  const voice = say(language);
+  return {text:voice(`O que vale olhar de perto: ${highlights.join('; ')}.`, `Lo que vale mirar de cerca: ${highlights.join('; ')}.`), ask:false};
 }
 
 function priceReading(home, say) {

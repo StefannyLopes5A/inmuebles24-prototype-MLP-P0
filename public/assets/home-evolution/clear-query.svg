@@ -1,0 +1,8 @@
+<svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<mask id="home-clear-ring" fill="white">
+<path d="M0 29C0 12.9837 12.9837 0 29 0V0C45.0163 0 58 12.9837 58 29V29C58 45.0163 45.0163 58 29 58V58C12.9837 58 0 45.0163 0 29V29Z"/>
+</mask>
+<path d="M0 29M58 29M58 29M0 29M29 0M58 29M29 58M0 29M29 58V57C13.536 57 1 44.464 1 29H0H-1C-1 45.5685 12.4315 59 29 59V58ZM58 29H57C57 44.464 44.464 57 29 57V58V59C45.5685 59 59 45.5685 59 29H58ZM29 0V1C44.464 1 57 13.536 57 29H58H59C59 12.4315 45.5685 -1 29 -1V0ZM29 0V-1C12.4315 -1 -1 12.4315 -1 29H0H1C1 13.536 13.536 1 29 1V0Z" fill="black" fill-opacity="0.08" mask="url(#home-clear-ring)"/>
+<path d="M35.9697 37.0294L20.9697 22.0294L22.0304 20.9688L37.0304 35.9688L35.9697 37.0294Z" fill-rule="evenodd" clip-rule="evenodd" fill="black"/>
+<path d="M22.0304 37.0294L37.0304 22.0294L35.9697 20.9688L20.9697 35.9688L22.0304 37.0294Z" fill-rule="evenodd" clip-rule="evenodd" fill="black"/>
+</svg>

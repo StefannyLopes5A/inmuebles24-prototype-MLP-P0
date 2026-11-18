@@ -47,7 +47,7 @@ function Ring({target,onDone}) {
   </div>;
 }
 
-export function ProjectGuide({onAction}) {
+export function ProjectGuide({onAction, searchLayout='inline'}) {
   const reduce=useReducedMotion();
   const [open,setOpen]=useState(false),[expanded,setExpanded]=useState(null);
   const [ring,setRing]=useState(null),[settling,setSettling]=useState(false),[idle,setIdle]=useState(false);
@@ -151,6 +151,11 @@ export function ProjectGuide({onAction}) {
           </li>;
         })}
       </ol>
+      <div className="pg-try" style={{'--i':GUIDE_STOPS.length + 1}}>
+        <div className="pg-layouts" role="group" aria-label="Search version">
+          {[['hybrid','hybrid-search','Hybrid search'],['inline','inline-search','Default search'],['original','original-search','Original search']].map(([layout,id,label])=><button type="button" key={id} className="pg-pill" data-primary={searchLayout===layout||undefined} aria-pressed={searchLayout===layout} onClick={()=>act({id, target:'.home-search'})}>{label}</button>)}
+        </div>
+      </div>
     </section>
     {ring&&<Ring key={ring.key} target={ring.target} onDone={()=>setRing(null)}/>}
   </div>;

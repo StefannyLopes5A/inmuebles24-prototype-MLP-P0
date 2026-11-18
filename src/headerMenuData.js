@@ -49,11 +49,12 @@ export const headerMenus = [
           'Guía para comprar un inmueble',
           '¿Cómo saber el precio de mi casa?',
           'Publicar inmueble para venta',
+          'Checklist para comprar una casa',
         ],
       },
       {
         titleKey: 'Otras operaciones',
-        items: ['Desarrollos'],
+        items: ['Desarrollos', 'Remates', 'Preventas', 'Traspasos', 'Renta vacacional'],
       },
     ],
   },
@@ -121,6 +122,7 @@ export const headerMenus = [
           'Guía para rentar un inmueble',
           'Conoce la mejor forma de publicar la renta de departamentos',
           'Publicar inmueble para renta',
+          'Checklist para rentar un departamento',
         ],
       },
     ],
@@ -135,6 +137,8 @@ export const headerMenus = [
           '¿Qué necesito para rentar?',
           'Tips de Mudanza',
           'Sugerencia de ciudades donde rentar',
+          'Qué cubre el seguro',
+          'Cómo usar el seguro',
         ],
       },
       {
@@ -144,6 +148,7 @@ export const headerMenus = [
           '¿Qué necesito para comprar?',
           '¿Qué necesito para vender?',
           'Publica un inmueble',
+          'Preguntas frecuentes',
         ],
       },
       {
@@ -159,11 +164,11 @@ export const headerMenus = [
       },
       {
         titleKey: 'Números del mercado',
-        items: ['Index CDMX', 'Index Monterrey', 'Index Guadalajara'],
+        items: ['Index CDMX', 'Index Monterrey', 'Index Guadalajara', 'Index Puebla', 'Index Querétaro'],
       },
       {
         titleKey: 'Novedades',
-        items: ['Blog', 'Tips', 'Encuestas'],
+        items: ['Blog', 'Tips', 'Encuestas', 'Noticias', 'Guías'],
       },
     ],
   },

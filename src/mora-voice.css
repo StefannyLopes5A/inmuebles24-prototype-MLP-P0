@@ -2,7 +2,7 @@
 .mora-signature{display:flex;align-items:center;gap:6px;min-height:20px;margin:0;font-size:12px;line-height:16px;color:#6a6a6a}
 .mora-signature img{width:20px;height:20px;flex:none}
 .mora-signature img.is-working{animation:mora-breathe 1.2s ease-in-out infinite}
-.mora-signature strong{color:#e45244;font-weight:700}
+.mora-signature strong{color:#e45244;font-weight:600}
 @keyframes mora-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
 .mora-thinking{margin:0;color:#000000b8}

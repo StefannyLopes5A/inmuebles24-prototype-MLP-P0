@@ -16,7 +16,7 @@ export function parseSearchInput(value, search, displayCurrency, areas, mxnPerUs
   const normalized=fold(value);
   const area=areas.filter(name=>name!=='Ambas zonas').sort((a,b)=>b.length-a.length)
     .find(name=>new RegExp(`(?:^|[^a-z0-9])${escapePattern(fold(name))}(?=$|[^a-z0-9])`).test(normalized));
-  const rooms=normalized.match(/(\d+)\s*(?:recamaras?|quartos?|habitaciones?)/);
+  const rooms=normalized.match(/(\d+)\+?\s*(?:recamaras?|quartos?|habitaciones?)/);
   const budget=normalized.match(/(?:\$|hasta|ate|menos de)\s*([\d.,]+)\s*(milhoes|milhao|millones|millon|mil|mi)?/);
   const operation=/\b(renta|rentar|alugar|aluguel)\b/.test(normalized)?'rent':/\b(compra|comprar|venta|venda)\b/.test(normalized)?'buy':null;
   let amount=null;

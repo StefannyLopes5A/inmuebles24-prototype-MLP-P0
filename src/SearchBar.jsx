@@ -1,12 +1,14 @@
 import React,{useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
-import {HomeSearch} from './HomeSearch';
+import {BudgetPicker, HomePopover, HomeSearch, LocationSearch} from './HomeSearch';
 import {SearchDetails} from './SearchDetails';
 import {AllFilters} from './AllFilters';
 import {Icon} from './App';
 import {PROPERTY_TYPES,OPERATIONS,foldSearchText} from './homeSearchModel';
-import {interpretSmartInput,smartDetailTokens,criterionLabel} from './searchCriteria';
+import {CRITERIA,interpretSmartInput,smartDetailTokens,criterionLabel} from './searchCriteria';
 import {areas,homes,listingPrice,propertyPhoto} from './data';
 import {expansionOptions,addArea,matchingHomes} from './journey';
+import {searchLocations, suggestedLocations, visiblePlaces} from './locationSearch';
+import {LocationMenu} from './LocationMenu.jsx';
 import {MARKET_TOPICS,marketAnswer,marketQuestion,marketTopic} from './marketAnswers.js';
 import {readSeeker,writeSeeker} from './seekerSignals.js';
 import {useLanguage,DEMO_MXN_PER_USD} from './i18n';
@@ -18,6 +20,18 @@ const chosen={mode:true,propertyType:true,beds:true,area:true,budget:true};
 const noop=()=>{};
 const asset=name=>`/assets/search-flow/${name}.svg`;
 const Chevron=()=> <img className="mora-chevron" src={asset('chevron')} alt=""/>;
+function quickFilterVariant(key) {return !key || key.startsWith('criterion:') ? 'amenity' : key;}
+function quickFilterKind(key) {return key==='beds' || key==='baths' || key==='parking' || key==='budget' || key==='area' ? key : 'list';}
+function quickFilterLabel(key, say) {
+  if (!key || key.startsWith('criterion:')) return say('Comodidades','Comodidades');
+  if (key==='mode') return say('Quero comprar ou alugar','Quiero comprar o rentar');
+  if (key==='propertyType') return say('Tipo de imóvel','Tipo de inmueble');
+  if (key==='beds') return say('Número de quartos','Número de recámaras');
+  if (key==='baths') return say('Número de banheiros','Número de baños');
+  if (key==='parking') return say('Número de vagas','Número de estacionamientos');
+  if (key==='area') return say('Localização','Ubicación');
+  return say('Orçamento máximo','Presupuesto máximo');
+}
 // Streets with listings in each operation, so a street only becomes a token where it has something to show.
 const STREETS={rent:homes.filter(home=>home.mode==='rent').map(home=>home.street),buy:homes.filter(home=>home.mode!=='rent').map(home=>home.street)};
 const streetsFor=search=>STREETS[search?.mode==='rent'?'rent':'buy'];
@@ -36,11 +50,11 @@ function MoraMessage({headline,detail,note}) {
 export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
-  const [menuRequest,setMenuRequest]=useState(null),[allFilters,setAllFilters]=useState(false);
+  const [menuRequest,setMenuRequest]=useState(null),[filterMenu,setFilterMenu]=useState(null),[allFilters,setAllFilters]=useState(false);
   const [focused,setFocused]=useState(false),[message,setMessage]=useState('');
-  const [filtersAtEnd,setFiltersAtEnd]=useState(true);
+  const [filterEdges,setFilterEdges]=useState({start:true,end:true}),[filterPoint,setFilterPoint]=useState({start:false,end:false}),[locationTerm,setLocationTerm]=useState('');
   const [sentenceIntro,setSentenceIntro]=useState(false),[missingStreet,setMissingStreet]=useState('');
-  const bar=useRef(null),scroll=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
+  const bar=useRef(null),scroll=useRef(null),filterAnchor=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
   const current=useRef({search,view,draft,blocked,proactive});current.current={search,view,draft,blocked:blocked||allFilters,proactive};
   const prompted=useRef({region:false,work:false,moment:readSeeker().asked}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
   const appliedDraft=useRef(''),beforeStreet=useRef(null);
@@ -50,11 +64,16 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   const options=expansionOptions(search).slice(0,5),matches=matchingHomes(search);
   const tokenMatcher=useCallback(text=>smartDetailTokens(text,search.criteria,streetsFor(search)),[(search.criteria||[]).join('|'),search.mode]);
   const locale=pt?1:2;
+  const places=visiblePlaces(search);
+  const locationLabel=places.length>1?'Multilocation':places[0]?.label||say('Cidade do México','Ciudad de México');
+  const locationChoices=locationTerm.trim().length>=2?searchLocations(locationTerm,8):places.length?places:suggestedLocations(8);
   const filters=[
     ['mode',OPERATIONS.find(([key])=>key===search.mode)?.[locale]],
     ['propertyType',PROPERTY_TYPES.find(([key])=>key===(search.propertyType||'apartment'))?.[locale]],
+    ['area',locationLabel],
     ['beds',`${search.beds}+ ${say('quartos','recámaras')}`],
-    ['area',search.address&&!search.areas.length?search.address:search.areas.length>1?`${search.areas[0]} +${search.areas.length-1}`:search.areas[0]||say('Cidade do México','Ciudad de México')],
+    ['baths',`${search.baths || 1}+ ${say((search.baths || 1) === 1 ? 'banheiro' : 'banheiros', (search.baths || 1) === 1 ? 'baño' : 'baños')}`],
+    ...(search.parking ? [['parking',`${search.parking}+ ${say(search.parking === 1 ? 'vaga' : 'vagas', search.parking === 1 ? 'estacionamiento' : 'estacionamientos')}`]] : []),
     ['budget',`${search.minBudget?money(search.minBudget)+' – ':''}${money(search.budget)} ${currency}`],
     ...(search.criteria||[]).map(id=>[`criterion:${id}`,criterionLabel(id,language)]),
     ...(pendingWork.current||pref!=='none'?[['work',say('Home office','Home office')]]:[]),
@@ -63,7 +82,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   const filterContents=JSON.stringify([filters,alert?.on]);
   useLayoutEffect(()=>{
     const rail=scroll.current;if(!rail)return;
-    const update=()=>setFiltersAtEnd(rail.scrollWidth-rail.clientWidth-rail.scrollLeft<=1);
+    const update=()=>setFilterEdges({start:rail.scrollLeft<=1,end:rail.scrollWidth-rail.clientWidth-rail.scrollLeft<=1});
     const resize=new ResizeObserver(update);
     resize.observe(rail);for(const filter of rail.children)resize.observe(filter);
     rail.addEventListener('scroll',update,{passive:true});update();
@@ -84,8 +103,65 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     },!sentenceIntro);
     before.current=null;return()=>animation.current();
   },[view]);
+  function closeFilterMenu(restore=false) {
+    const anchor=filterAnchor.current;
+    setFilterMenu(null);
+    if(restore)requestAnimationFrame(()=>anchor?.focus({preventScroll:true}));
+  }
+  function openQuickFilter(key, event, forceOpen=false) {
+    if(key==='work'){expand(key,event.detail>0);return;}
+    if(!forceOpen&&filterMenu?.key===key){closeFilterMenu(false);return;}
+    filterAnchor.current=event.currentTarget;
+    if(key==='area')setLocationTerm('');
+    setFilterMenu({key,animate:event.detail>0});
+  }
+  function pointAtFilters(event) {
+    if(event.pointerType==='touch')return;
+    const box=event.currentTarget.getBoundingClientRect();
+    const x=event.clientX-box.left;
+    const zone=88;
+    const next={start:x<=zone,end:box.width-x<=zone};
+    setFilterPoint(current=>current.start===next.start&&current.end===next.end?current:next);
+  }
+  function revealFilters(direction) {
+    const rail=scroll.current;if(!rail)return;
+    const edge=rail.getBoundingClientRect();
+    const items=[...rail.querySelectorAll('.mora-filter')];
+    const behavior=matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth';
+    if(direction>0){
+      const next=items.find(item=>item.getBoundingClientRect().right>edge.right+1);
+      rail.scrollTo({left:next?next.offsetLeft-8:rail.scrollWidth,behavior});
+    }else{
+      const prev=[...items].reverse().find(item=>item.getBoundingClientRect().left<edge.left-1);
+      rail.scrollTo({left:prev?Math.max(0,prev.offsetLeft-rail.clientWidth+prev.offsetWidth+8):0,behavior});
+    }
+  }
+  function removePlace(place) {
+    apply({...current.current.search,places:places.filter(item=>item.key!==place.key)});
+  }
+  function choosePlace(place) {
+    const active=places.some(item=>item.key===place.key);
+    const next=active?places.filter(item=>item.key!==place.key):place.kind==='city'||place.kind==='state'?[place]:[...places.filter(item=>item.kind!=='city'&&item.kind!=='state'),place];
+    apply({...current.current.search,places:next});
+    closeFilterMenu(true);
+  }
+  function applyMode(mode) {
+    const active=current.current.search;
+    const next={...active,mode};
+    if(mode!==active.mode){next.budget=mode==='rent'?28000:7500000;next.minBudget=0;}
+    apply(next);
+  }
+  function applyCriterion(id) {
+    const active=current.current.search;
+    const opened=filterMenu?.key?.startsWith('criterion:')?filterMenu.key.slice('criterion:'.length):'';
+    const criteria=active.criteria||[];
+    const next=opened&&opened!==id
+      ? criteria.includes(id)?criteria.filter(item=>item!==opened):criteria.map(item=>item===opened?id:item)
+      : criteria.includes(id)?criteria.filter(item=>item!==id):[...criteria,id];
+    apply({...active,criteria:next});
+  }
   function expand(key,withMotion=true) {
-    pendingMenu.current=null;
+    pendingMenu.current=null;setFilterMenu(null);
     trigger.current=document.activeElement;
     if(key==='work'){transition('qualify',withMotion);return;}
     const reveal=view==='collapsed'&&withMotion&&!matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -245,11 +321,11 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     <section ref={bar} className={`mora-bar ${view!=='collapsed'?'is-expanded':''} ${focusedInput?'is-input-focused':''}`} data-view={view} aria-label={say('Busca e assistência Mora','Búsqueda y asistencia Mora')}>
       <div className="mora-bar-surface" aria-hidden="true"/>
       {view==='collapsed'?<div className="mora-collapsed">
-        <div className="mora-filter-region" data-scroll-end={filtersAtEnd}><div className="mora-filter-scroll" ref={scroll} role="group" aria-label={say('Filtros da busca; role para ver todos','Filtros de búsqueda; desplázate para ver todos')}>
-          {filters.map(([key,label])=>key==='tour3d'?<button className="mora-filter is-removable" key={key} data-search-key={key} onClick={()=>apply({...current.current.search,tour3d:false})} aria-label={`${say('Remover','Quitar')} ${label}`}><span>{label}</span><Icon name="close" size={14}/></button>:<button className="mora-filter" key={key} data-search-key={key} onClick={event=>expand(key,event.detail>0)} aria-expanded="false"><span>{label}</span><Chevron/></button>)}
-          {alert&&<button className={`mora-filter mora-alert ${alert.on?'is-on':''}`} aria-pressed={alert.on} onClick={alert.onToggle}><Icon name={alert.on?'check':'bell'} size={16}/><span>{alert.on?say('Avisamos se entrar algo assim','Te avisamos si entra algo así'):say('Avisar-me','Avisarme')}</span></button>}
-        </div><button className="mora-more" onClick={()=>setAllFilters(true)}>{say('Mais filtros','Más filtros')}<Chevron/></button></div>
         <button className="mora-smart-trigger" onClick={event=>expand('input',event.detail>0)}><span>{say('Digite para tirar dúvidas ou alterar a busca...','Escribe para resolver dudas o cambiar tu búsqueda...')}</span><Icon name="spark" size={20}/></button>
+        <div className="mora-filter-region" data-scroll-end={filterEdges.end}><div className="mora-filter-rail" onPointerMove={pointAtFilters} onPointerLeave={()=>setFilterPoint({start:false,end:false})}><div className="mora-filter-scroll" ref={scroll} role="group" aria-label={say('Filtros da busca; role para ver todos','Filtros de búsqueda; desplázate para ver todos')}>
+          {filters.map(([key,label])=>key==='tour3d'?<button className="mora-filter is-removable" key={key} data-search-key={key} onClick={()=>apply({...current.current.search,tour3d:false})} aria-label={`${say('Remover','Quitar')} ${label}`}><span>{label}</span><Icon name="close" size={14}/></button>:<button className="mora-filter" key={key} data-search-key={key} aria-haspopup={key==='work'?undefined:key==='beds'||key==='baths'||key==='parking'||key==='budget'||key==='area'?'dialog':'listbox'} aria-expanded={key==='work'?false:filterMenu?.key===key} onClick={event=>openQuickFilter(key,event)} onKeyDown={event=>{if(event.key==='ArrowDown'&&key!=='work'){event.preventDefault();openQuickFilter(key,event,true);}}}><span>{label}</span><Chevron/></button>)}
+        </div>{!filterEdges.start&&<button type="button" className={`mora-filter-nav is-prev${filterPoint.start?' is-shown':''}`} aria-label={say('Ver filtros anteriores','Ver filtros anteriores')} onClick={()=>revealFilters(-1)}><Chevron/></button>}{!filterEdges.end&&<button type="button" className={`mora-filter-nav is-next${filterPoint.end?' is-shown':''}`} aria-label={say('Ver mais filtros','Ver más filtros')} onClick={()=>revealFilters(1)}><Chevron/></button>}</div><button className="mora-more" onClick={()=>setAllFilters(true)}><img src={asset('tune')} alt=""/>{say('Mais filtros','Más filtros')}</button></div>
+        {alert&&<button className={`mora-save ${alert.on?'is-on':''}`} aria-pressed={alert.on} onClick={alert.onToggle}>{alert.on?say('Busca salva','Búsqueda guardada'):say('Salvar busca','Guardar búsqueda')}</button>}
       </div>:<div className={`mora-expanded ${isEditor?'mora-editor':'mora-conversation'}`}>
         <button className="mora-close" aria-label={say('Recolher barra de busca','Contraer barra de búsqueda')} onClick={event=>collapse(event.detail>0)}><img src={asset('close')} alt=""/></button>
         {isEditor?<>
@@ -275,6 +351,15 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
           </div>
         </>}
       </div>}
+      {view==='collapsed' && <HomePopover open={!!filterMenu} animate={filterMenu?.animate!==false} anchor={filterAnchor.current} label={quickFilterLabel(filterMenu?.key, say)} kind={quickFilterKind(filterMenu?.key)} variant={quickFilterVariant(filterMenu?.key)} onClose={restore=>closeFilterMenu(restore)}>
+        {(filterMenu?.key==='mode'?OPERATIONS:filterMenu?.key==='propertyType'?PROPERTY_TYPES:[]).map(([option,ptLabel,esLabel])=><button type="button" className="home-option" role="option" aria-selected={option===(filterMenu.key==='mode'?search.mode:(search.propertyType||'apartment'))} key={option} onClick={()=>{if(filterMenu.key==='mode')applyMode(option);else apply({...current.current.search,propertyType:option});closeFilterMenu(true);}}>{say(ptLabel,esLabel)}</button>)}
+        {filterMenu?.key?.startsWith('criterion:') && CRITERIA.map(item=><button type="button" className="home-option" role="option" aria-selected={(search.criteria||[]).includes(item.id)} key={item.id} onClick={()=>{applyCriterion(item.id);closeFilterMenu(true);}}>{criterionLabel(item.id,language)}</button>)}
+        {filterMenu?.key==='beds' && <div className="home-bed-stepper"><button type="button" className="home-step" disabled={search.beds<=1} aria-label={say('Diminuir quartos','Reducir recámaras')} onClick={()=>apply({...current.current.search,beds:Math.max(1,search.beds-1)})}><img src="/assets/home-evolution/minus.svg" alt=""/></button><output aria-live="polite">{search.beds}+</output><button type="button" className="home-step" disabled={search.beds>=10} aria-label={say('Aumentar quartos','Aumentar recámaras')} onClick={()=>apply({...current.current.search,beds:Math.min(10,search.beds+1)})}><img src="/assets/home-evolution/plus.svg" alt=""/></button></div>}
+        {filterMenu?.key==='baths' && <div className="home-bed-stepper"><button type="button" className="home-step" disabled={(search.baths||1)<=1} aria-label={say('Diminuir banheiros','Reducir baños')} onClick={()=>apply({...current.current.search,baths:Math.max(1,(search.baths||1)-1)})}><img src="/assets/home-evolution/minus.svg" alt=""/></button><output aria-live="polite">{search.baths||1}+</output><button type="button" className="home-step" disabled={(search.baths||1)>=10} aria-label={say('Aumentar banheiros','Aumentar baños')} onClick={()=>apply({...current.current.search,baths:Math.min(10,(search.baths||1)+1)})}><img src="/assets/home-evolution/plus.svg" alt=""/></button></div>}
+        {filterMenu?.key==='parking' && <div className="home-bed-stepper"><button type="button" className="home-step" disabled={search.parking<=1} aria-label={say('Diminuir vagas','Reducir estacionamientos')} onClick={()=>apply({...current.current.search,parking:Math.max(1,search.parking-1)})}><img src="/assets/home-evolution/minus.svg" alt=""/></button><output aria-live="polite">{search.parking}+</output><button type="button" className="home-step" disabled={search.parking>=6} aria-label={say('Aumentar vagas','Aumentar estacionamientos')} onClick={()=>apply({...current.current.search,parking:Math.min(6,search.parking+1)})}><img src="/assets/home-evolution/plus.svg" alt=""/></button></div>}
+        {filterMenu?.key==='area' && <><LocationSearch label={say('Buscar localização','Buscar ubicación')} placeholder={say('Bairro, rua, metrô, escola…','Colonia, calle, metro, escuela…')} clearLabel={say('Limpar localização','Borrar ubicación')} value={locationTerm} onChange={setLocationTerm}/><LocationMenu label={say('Localização','Ubicación')} places={locationChoices} selectedKeys={places.map(place=>place.key)} say={say} onChoose={choosePlace} onRemove={removePlace} empty={locationTerm.trim().length>=2 && !locationChoices.length ? say('Nenhum lugar encontrado. Tente outro nome.','No encontramos ese lugar. Prueba otro nombre.') : null}/></>}
+        {filterMenu?.key==='budget' && <BudgetPicker search={search} say={say} onChange={values=>apply({...current.current.search,...values})}/>}
+      </HomePopover>}
       <div className="mora-bar-divider" aria-hidden="true"/>
     </section>
     {allFilters&&<AllFilters search={search} onChange={apply} onClose={()=>setAllFilters(false)} onSmartInput={()=>expand('input')}/>}

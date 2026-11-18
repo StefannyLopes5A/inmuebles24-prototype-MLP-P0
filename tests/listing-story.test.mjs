@@ -13,6 +13,10 @@ test('the invented story is stable per listing and keeps catalog facts', () => {
   assert.deepEqual(a.facts, b.facts);
   assert.deepEqual(a.amenities, b.amenities);
   assert.deepEqual(a.description('es-MX'), b.description('es-MX'));
+  const paragraph = a.description('es-MX').map(parts => parts.map(part => part.text).join('')).join(' ');
+  assert.match(paragraph, new RegExp(String(a.facts.size)));
+  assert.match(paragraph, new RegExp(String(a.facts.beds)));
+  assert.ok(a.description('es-MX').flat().some(part => part.strong && part.text.includes(String(a.facts.size))));
   assert.equal(a.facts.beds, rent.beds);
   assert.equal(a.facts.size, rent.size);
   for (const home of homes) {
@@ -48,12 +52,17 @@ test('similar listings share the operation, skip the open one and draw a stable 
   assert.deepEqual(seededShuffle([1, 2, 3, 4], 'x'), seededShuffle([1, 2, 3, 4], 'x'));
 });
 
-test('the panel keeps its three reviews; the listing page extends the same list to six', () => {
+test('the panel keeps its three reviews; the listing page extends the same list to twelve', () => {
   const advertiser = advertiserFor(rent);
   const three = advertiserReviews(advertiser, 'rent');
   const six = advertiserReviews(advertiser, 'rent', 6);
+  const twelve = advertiserReviews(advertiser, 'rent', 12);
   assert.equal(three.length, 3);
   assert.equal(six.length, 6);
+  assert.equal(twelve.length, 12);
   assert.deepEqual(six.slice(0, 3), three);
-  assert.equal(new Set(six.map(review => review.text[1])).size, 6);
+  assert.deepEqual(twelve.slice(0, 6), six);
+  assert.equal(new Set(twelve.map(review => review.text[1])).size, 12);
+  assert.equal(new Set(twelve.map(review => review.name)).size, 12);
+  assert.equal(new Set(twelve.map(review => review.color)).size, 12);
 });

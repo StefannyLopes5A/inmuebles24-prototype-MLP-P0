@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   FOLDER_NAME_MAX, RECENT_LIMIT, suggestedFolderName, cleanFolderName, normalizeFolders, normalizeRecent,
-  createFolder, saveToFolder, uniqueFolderName, savedIds, folderOf, recordView, isFolderId, viewedLabel, savedCountLabel, pickId, pickIds,
+  createFolder, saveToFolder, removeHome, uniqueFolderName, savedIds, folderOf, recordView, isFolderId, viewedLabel, savedCountLabel, pickId, pickIds,
 } from '../src/favoriteLists.js';
 import {DEFAULT_SEARCH, journeyUrl, normalizeSearch, readJourney} from '../src/journey.js';
 
@@ -39,6 +39,16 @@ test('a home lives in a single folder and choosing its current folder removes it
   const removed = saveToFolder(moved.folders, b.id, 'home-1');
   assert.equal(removed.removed, true);
   assert.equal(folderOf(removed.folders, 'home-1'), null);
+});
+
+test('a list created by name stays empty, and one that only lost its last home does not', () => {
+  const known = new Set(['h1']);
+  const kept = normalizeFolders([{id:'list-viaje', name:'Viaje', homeIds:[], kept:true, createdAt:1}], [], known);
+  assert.equal(kept[0].kept, true);
+  assert.deepEqual(kept[0].homeIds, []);
+  assert.deepEqual(normalizeFolders([{id:'list-viaje', name:'Viaje', homeIds:[]}], [], known), []);
+  const named = [{id:'list-viaje', name:'Viaje', homeIds:['h1'], kept:true}];
+  assert.equal(removeHome(named, 'h1')[0].id, 'list-viaje');
 });
 
 test('a legacy saved list becomes one folder and malformed session folders are dropped', () => {

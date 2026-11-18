@@ -1,6 +1,7 @@
 import React, {useEffect, useId, useRef, useState} from 'react';
 import {AnimatePresence, motion, useIsPresent, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
+import {BrandMark} from './BrandMark.jsx';
 import {propertyPhoto} from './data';
 import {useLanguage} from './i18n';
 import {ModalShell} from './ModalShell';
@@ -111,7 +112,7 @@ export function LoginDialog({onSignIn, onClose}) {
   return <ModalShell labelledBy={titleId} panelClassName="account-panel" onClose={onClose}>{close =>
     <form className="account-login" onSubmit={event => {event.preventDefault(); signIn();}}>
       <button type="button" className="folder-icon-button account-close" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
-      <img className="account-logo" src="/assets/figma-home/d0d59.svg" alt="Inmuebles24"/>
+      <BrandMark className="account-logo"/>
       <h2 id={titleId}>{say('Inicia sesión o regístrate', 'Entrar ou cadastrar-se')}</h2>
       <label className="account-field">
         <span className="sr-only">{say('Teléfono o correo electrónico', 'Telefone ou e-mail')}</span>
@@ -142,7 +143,7 @@ export function AccountToast({text, onHold, onRelease}) {
 }
 
 const MENU = [
-  [{id:'favorites', icon:'heart', es:'Favoritos', br:'Favoritos'}, {id:'messages', icon:'message', es:'Mensajes', br:'Mensagens'}, {id:'profile', icon:'user', es:'Perfil', br:'Perfil'}, {id:'notifications', icon:'bell', es:'Notificaciones', br:'Notificações'}],
+  [{id:'favorites', icon:'heart', es:'Favoritos', br:'Favoritos'}, {id:'messages', icon:'message', es:'Mensajes', br:'Mensagens'}, {id:'saved', icon:'search', es:'Búsquedas guardadas', br:'Buscas salvas'}, {id:'profile', icon:'user', es:'Perfil', br:'Perfil'}, {id:'notifications', icon:'bell', es:'Notificaciones', br:'Notificações'}],
   [{id:'settings', icon:'settings', es:'Configuración de la cuenta', br:'Configurações da conta'}, {id:'help', icon:'help', es:'Centro de ayuda', br:'Central de ajuda'}],
   [{id:'logout', icon:'logout', es:'Cerrar sesión', br:'Sair da conta'}],
 ];
@@ -193,7 +194,7 @@ export function AccountMenu({onSelect}) {
         {MENU.map((group, groupIndex) => <React.Fragment key={groupIndex}>
           {groupIndex > 0 && <div className="account-menu-divider" role="separator"/>}
           {group.map(item => <button key={item.id} type="button" role="menuitem" tabIndex={-1} className="account-menu-item"
-            onClick={() => {dismiss(item.id !== 'favorites'); onSelect(item.id);}}>
+            onClick={() => {dismiss(item.id !== 'favorites' && item.id !== 'saved'); onSelect(item.id);}}>
             <Icon name={item.icon} size={20}/>{say(item.es, item.br)}
           </button>)}
         </React.Fragment>)}

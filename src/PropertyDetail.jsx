@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
+import React, {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {useReducedMotion} from 'motion/react';
 import {Icon} from './App';
 import {homes, listingPrice} from './data';
 import {DEMO_MXN_PER_USD, useLanguage} from './i18n';
@@ -12,13 +12,24 @@ import {detailReading} from './moraDetail';
 import {ListingGallery} from './ListingGallery';
 import {Amenities, Description, Host, Location, Specs} from './ListingSections';
 import {ListingReviews} from './ListingReviews';
+import {ListingOffers} from './ListingOffers';
+import {ListingCosts} from './ListingCosts';
+import {offerIdeas} from './offerIdeas';
+import {ListingPriceHistory} from './ListingPriceHistory';
+import {priceHistory} from './priceHistory';
 import {SimilarListings} from './SimilarListings';
+import {HomeInternalLinks} from './HomeInternalLinks';
+import {ListingSimilarPrices} from './ListingSimilarPrices';
 import {ListingContactCard, ListingQuestions} from './ListingContact';
 import {sortSignal} from './resultSort';
 import './property-page.css';
 
+const ListingMap = lazy(() => import('./ListingMap'));
+const MORA_MARK = '/assets/mini-listing/mora.svg';
+
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
 const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>;
+const HideIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2.5 12S6.2 6.5 12 6.5 21.5 12 21.5 12 17.8 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.2"/><path d="M4 20 20 4"/></svg>;
 const NAV_SECTIONS = [
   {id:'pp-photos', pt:'Fotos', es:'Fotos'},
   {id:'pp-amenities', pt:'Comodidades', es:'Comodidades'},
@@ -76,8 +87,8 @@ function ListingNav({intro, card, price, advertiser, onContact, say}) {
 }
 
 /** The full listing: Airbnb-style page built from the catalog plus a stable invented story. Contact grows inside the price card. */
-export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], onLike, onShare, onFavorite, onCompare, onOpenListing, onMore, onClose, profile, onProfile, onReceipt, receipt}) {
-  const {language, money, currency} = useLanguage(), pt = language === 'pt-BR';
+export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], hidden = false, onLike, onShare, onHide, onFavorite, onCompare, onOpenListing, onMore, onSearch, onClose, onAskSection, profile, onProfile, onReceipt, receipt}) {
+  const {language, money, compactMoney, currency} = useLanguage(), pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
   const title = useRef(null), intro = useRef(null), card = useRef(null), openGallery = useRef(null);
@@ -88,6 +99,9 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   const story = useMemo(() => listingStory(home), [home]);
   const advertiser = useMemo(() => advertiserFor(home, agencies.logos), [home]);
   const similar = useMemo(() => similarListings(home, homes), [home]);
+  const linkSearch = useMemo(() => ({...search, mode:home.mode === 'rent' ? 'rent' : 'buy', area:home.area, areas:home.area ? [home.area] : [], address:'', propertyType:'apartment'}), [search, home.mode, home.area]);
+  const offers = useMemo(() => offerIdeas(home), [home]);
+  const history = useMemo(() => priceHistory(home, story.neighborhood?.(language)), [home, story, language]);
   const signal = sortSignal(home, sort, language, {long:true});
   const favoriteIds = favorites.map(item => item.id).join(',');
   const reading = useMemo(() => ({
@@ -127,8 +141,23 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   }
 
   const toReviews = () => document.getElementById('pp-reviews')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches ? 'instant' : 'smooth', block:'start'});
+  const toMap = () => {
+    const el = document.getElementById('pp-location');
+    if (!el) return;
+    const header = document.querySelector('.home-header-bar, .home-header')?.offsetHeight || 0;
+    const top = el.getBoundingClientRect().top + window.scrollY - header - 24;
+    window.scrollTo({top, behavior:reduce ? 'instant' : 'smooth'});
+  };
+  const priceQuestion = say('É um bom preço?', '¿Es un buen precio?');
+  const crumbs = [
+    say(home.mode === 'rent' ? 'Alugar' : 'Venda', home.mode === 'rent' ? 'Renta' : 'Venta'),
+    say('Apartamento', 'Departamento'),
+    say('Cidade do México', 'Ciudad de México'),
+    home.area,
+    home.street,
+    say(`Imóvel ${home.listingId}`, `Inmueble ${home.listingId}`),
+  ];
   const reviewsFromContact = () => { toReviews(); document.getElementById('pp-reviews')?.focus({preventScroll:true}); };
-  const operation = say(home.mode === 'rent' ? 'Alugar · Apartamento' : 'Comprar · Apartamento', home.mode === 'rent' ? 'Renta · Departamento' : 'Venta · Departamento');
 
   async function share() {
     if (onShare) { onShare(home); return; }
@@ -160,18 +189,34 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         <span className="pp-copied" role="status" data-visible={copied || undefined}>{copied ? say('Link copiado', 'Enlace copiado') : ''}</span>
         <button className="compare-back" type="button" onClick={share} aria-label={say('Compartilhar', 'Compartir')}><ShareIcon/></button>
         {onLike && <button className="compare-back pp-save" type="button" aria-pressed={isSaved} onClick={() => onLike(home)} aria-label={isSaved ? say('Salvo nos favoritos', 'Guardado en favoritos') : say('Salvar nos favoritos', 'Guardar en favoritos')}><Heart filled={isSaved}/></button>}
+        <button className="compare-back pp-hide" type="button" aria-pressed={hidden} onClick={() => onHide?.(home)} aria-label={hidden ? say('Mostrar anúncio', 'Mostrar anuncio') : say('Ocultar anúncio', 'Ocultar anuncio')}><HideIcon/></button>
       </div>
     </div>
-    <header className="pp-head">
-      <p className="pp-operation">{operation}</p>
-      <h1 ref={title} tabIndex={-1}>{home.street}, {home.area}</h1>
-    </header>
+    <p className="pp-intro-crumbs">{crumbs.map((item, index) => <span key={`${item}-${index}`}>{index > 0 && <span className="pp-intro-dot" aria-hidden="true">·</span>}{item}</span>)}</p>
     <div id="pp-photos" className="pp-gallery"><ListingGallery home={home} gallery={story.gallery} say={say} language={language} opener={openGallery}/></div>
 
     <div className="pp-layout">
-      <section className="pp-section pp-intro" aria-label={say('Resumo', 'Resumen')}>
-        <h2 className="pp-intro-title">{say(home.mode === 'rent' ? `Apartamento para alugar em ${home.area}` : `Apartamento à venda em ${home.area}`, home.mode === 'rent' ? `Departamento en renta en ${home.area}` : `Departamento en venta en ${home.area}`)}</h2>
-        <p ref={intro} className="pp-intro-facts">{facts.size} m² · {facts.beds} {say(facts.beds === 1 ? 'quarto' : 'quartos', facts.beds === 1 ? 'recámara' : 'recámaras')} · {facts.baths} {say(facts.baths === 1 ? 'banheiro' : 'banheiros', facts.baths === 1 ? 'baño' : 'baños')} · {say(`${facts.floor}º andar`, `piso ${facts.floor}`)}</p>
+      <section ref={intro} className="pp-section pp-intro" aria-label={say('Resumo', 'Resumen')}>
+        <div className="pp-intro-top">
+          <div className="pp-intro-copy">
+            <div className="pp-intro-heading">
+              <h1 ref={title} tabIndex={-1} className="pp-intro-title">{say(home.mode === 'rent' ? `Apartamento para alugar em ${home.area}` : `Apartamento à venda em ${home.area}`, home.mode === 'rent' ? `Departamento en renta en ${home.area}` : `Departamento en venta en ${home.area}`)}</h1>
+              <p className="pp-intro-facts">{facts.size} m² · {facts.beds} {say(facts.beds === 1 ? 'quarto' : 'quartos', facts.beds === 1 ? 'recámara' : 'recámaras')} · {facts.baths} {say(facts.baths === 1 ? 'banheiro' : 'banheiros', facts.baths === 1 ? 'baño' : 'baños')} · {say(`${facts.floor}º andar`, `piso ${facts.floor}`)}</p>
+            </div>
+          </div>
+          <button type="button" className="pp-intro-map" onClick={toMap} aria-label={say(`Ver o mapa de ${home.area}`, `Ver el mapa de ${home.area}`)}>
+            <Suspense fallback={<span className="pp-intro-map-fallback" aria-hidden="true"/>}>
+              <ListingMap center={story.location.center} language={language} say={say} preview/>
+            </Suspense>
+          </button>
+        </div>
+        <div className="pp-intro-offer">
+          <div className="pp-intro-price">
+            <p className="pp-intro-amount">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>
+            <button type="button" className="pp-mora-pill" onClick={event => onAskSection?.({section:'price', question:priceQuestion, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{priceQuestion}</span></button>
+          </div>
+          <p className="pp-intro-fees"><span>{say('Condomínio', 'Mantenimiento')} {money(facts.fee)}</span><span className="pp-intro-fee-dot" aria-hidden="true">·</span><span>{say('IPTU', 'Predial')} {say('a confirmar', 'por confirmar')}</span></p>
+        </div>
         <Host advertiser={advertiser} onReviews={toReviews} say={say}/>
       </section>
 
@@ -194,23 +239,32 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
           fee={<p className="pp-card-fee">{home.mode === 'rent'
             ? say(`+ ${money(facts.fee)} de condomínio · ${money(price + facts.fee)} ${currency} por mês no total`, `+ ${money(facts.fee)} de mantenimiento · ${money(price + facts.fee)} ${currency} al mes en total`)
             : say(`Condomínio de ${money(facts.fee)} ${currency} por mês`, `Mantenimiento de ${money(facts.fee)} ${currency} al mes`)}</p>}/>
-        <AnimatePresence initial={false}>
-          {!contact && <motion.div key="ask" className="pp-ask-wrap" initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} exit={{opacity:0, height:0}}
-            transition={reduce ? {duration:0} : {duration:0.25, ease:[0.2, 0.8, 0.2, 1]}}>
-            <ListingQuestions say={say} onSend={text => openContact('message', text)}/>
-          </motion.div>}
-        </AnimatePresence>
       </aside>
 
       <section className="pp-section" aria-labelledby="pp-about-title">
-        <h2 id="pp-about-title" className="pp-section-title">{say('Sobre este imóvel', 'Acerca de este inmueble')}</h2>
-        <Description paragraphs={story.description(language)} say={say}/>
+        <div className="pp-about-head">
+          <h2 id="pp-about-title" className="pp-section-title">{say('Sobre este imóvel', 'Acerca de este inmueble')}</h2>
+          <button type="button" className="pp-mora-pill" onClick={event => onAskSection?.({section:'description', question:say('O que vale olhar de perto', 'Qué vale mirar de cerca'), source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{say('O que vale olhar de perto', 'Qué vale mirar de cerca')}</span></button>
+        </div>
+        <Description paragraphs={story.description(language)} home={home} advertiser={advertiser} say={say}/>
       </section>
 
       <section id="pp-amenities" className="pp-section" aria-labelledby="pp-amenities-title">
         <h2 id="pp-amenities-title" className="pp-section-title">{say('O que este lugar oferece', 'Lo que ofrece este lugar')}</h2>
-        <Amenities amenities={story.amenities} language={language} say={say}/>
+        <Amenities amenities={story.amenities} gallery={story.gallery} language={language} say={say} onRoom={(index, element) => openGallery.current?.(index, element)}/>
       </section>
+
+      {offers && <section id="pp-offers" className="pp-section" aria-labelledby="pp-offers-title">
+        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={onAskSection}/>
+      </section>}
+
+      {home.mode === 'buy' && price > 0 && <section id="pp-costs" className="pp-section" aria-labelledby="pp-costs-title">
+        <ListingCosts key={home.id} price={price} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
+      </section>}
+
+      {history && <section id="pp-history" className="pp-section" aria-labelledby="pp-history-title">
+        <ListingPriceHistory key={home.id} history={history} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
+      </section>}
     </div>
 
     <div className="pp-rest">
@@ -223,16 +277,24 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         <ListingReviews home={home} advertiser={advertiser} language={language} say={say}/>
       </section>
 
-      {similar.length > 0 && <section className="pp-section is-last" aria-labelledby="pp-similar-title">
-        <div className="pp-section-head">
-          <div>
-            <h2 id="pp-similar-title" className="pp-section-title">{say('Imóveis parecidos', 'Inmuebles parecidos')}</h2>
-            <p className="pp-section-sub">{say(`Para ${home.mode === 'rent' ? 'alugar' : 'comprar'}, perto de ${home.area} e deste preço.`, `En ${home.mode === 'rent' ? 'renta' : 'venta'}, cerca de ${home.area} y de este precio.`)}</p>
+      <section className="pp-section pp-ask-section" aria-labelledby="pp-ask-title">
+        <ListingQuestions say={say} onSend={text => openContact('message', text)}/>
+      </section>
+
+      <ListingSimilarPrices home={home} money={money} compactMoney={compactMoney} currency={currency} say={say} onOpen={item => onOpenListing?.(item)}/>
+
+      {similar.length > 0 && <section className="pp-section" aria-labelledby="pp-similar-title">
+        <div className="pp-similar-head">
+          <div className="pp-similar-copy">
+            <h2 id="pp-similar-title" className="pp-similar-title">{say('Imóveis parecidos', 'Inmuebles parecidos')}</h2>
+            <p className="pp-similar-sub">{say(`Para ${home.mode === 'rent' ? 'alugar' : 'comprar'}, perto de ${home.area} e deste preço`, `En ${home.mode === 'rent' ? 'renta' : 'venta'}, cerca de ${home.area} y de este precio`)}</p>
           </div>
-          {onMore && <button type="button" className="pp-pill" onClick={onMore}>{say('Ver mais imóveis', 'Ver más inmuebles')}</button>}
+          {onMore && <button type="button" className="pp-similar-all" onClick={onMore}><span>{say('Todos os imóveis', 'Todos los inmuebles')}</span><img src="/assets/price-insights/arrow-forward.svg" alt="" width="16" height="16"/></button>}
         </div>
-        <SimilarListings items={similar} saved={saved} receipts={receipts} onLike={onLike} onOpen={item => onOpenListing?.(item)}/>
+        <SimilarListings items={similar} search={search} pref={pref} saved={saved} receipts={receipts} onLike={onLike} onOpen={item => onOpenListing?.(item)}/>
       </section>}
+
+      <HomeInternalLinks variant="results" search={linkSearch} onSearch={onSearch} onOpen={(item, event) => onOpenListing?.(item, event)}/>
     </div>
   </article>;
 }

@@ -8,7 +8,7 @@
 @media(prefers-reduced-motion:reduce){.discovery-tag.is-tour3d::after{animation:none;opacity:0}}
 
 /* "Solo con tour 3D": a switch in Más filtros, a removable chip in the bar. */
-.all-filter-switch{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;border:1px solid #dddddd;border-radius:16px;cursor:pointer}
+.all-filter-switch{display:flex;flex-direction:row;align-items:center;text-align:left;justify-content:space-between;gap:20px;padding:16px 18px;border:1px solid #dddddd;border-radius:16px;cursor:pointer}
 .all-filter-switch>span{display:grid;gap:4px}
 .all-filter-switch strong{font-size:16px;font-weight:600;color:#222}
 .all-filter-switch small{font-size:14px;line-height:1.4;color:#6a6a6a}
@@ -39,6 +39,7 @@ html[data-hero-morph]:has(.recorrido-cover)::view-transition-new(root){animation
 html.is-recorrido-route .home-header{display:none!important}
 html.is-recorrido{height:100%}
 html.is-recorrido body,html.is-recorrido #root{height:100%;overflow:hidden}
+html.is-recorrido .app-shell{min-height:0;height:100%}
 html.is-recorrido::view-transition{overflow:visible}
 
 /* ----- Recorrido page ----------------------------------------------------------------------------------- */

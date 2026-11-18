@@ -52,17 +52,21 @@ export function advertiserFor(home, evidence = []) {
   };
 }
 
-const REVIEWERS = ['Mariana G.', 'Luis R.', 'Sofía M.', 'Andrés T.', 'Paola V.', 'Jorge H.', 'Daniela C.', 'Ricardo L.'];
+const REVIEWERS = [
+  ['Mariana G.', '#0f766e'], ['Luis R.', '#c2410c'], ['Sofía M.', '#6d28d9'], ['Andrés T.', '#be185d'],
+  ['Paola V.', '#1d4ed8'], ['Jorge H.', '#b45309'], ['Daniela C.', '#047857'], ['Ricardo L.', '#7c3aed'],
+  ['Camila S.', '#be123c'], ['Hugo P.', '#0e7490'], ['Elena V.', '#9a3412'], ['Mateo A.', '#4338ca'],
+];
 const REVIEW_AGES = [['há 2 semanas', 'hace 2 semanas'], ['há 1 mês', 'hace 1 mes'], ['há 3 semanas', 'hace 3 semanas'], ['há 2 meses', 'hace 2 meses'], ['há 4 meses', 'hace 4 meses']];
 const CLOSED = {
-  buy:['Comprei meu apartamento com eles e deu tudo certo. Me acompanharam em cada etapa, da primeira visita até a assinatura no cartório.', 'Compré mi departamento con ellos y todo salió bien. Me acompañaron en cada paso, desde la primera visita hasta la firma ante notario.'],
-  rent:['Aluguei meu apartamento com eles e deu tudo certo. Explicaram os requisitos desde o início e a assinatura foi rápida.', 'Renté mi departamento con ellos y todo salió bien. Me explicaron los requisitos desde el inicio y la firma fue rápida.'],
+  buy:['Comprei com eles e deu tudo certo. Me acompanharam da visita até o cartório.', 'Compré con ellos y todo salió bien. Me acompañaron de la visita al notario.'],
+  rent:['Aluguei com eles e deu tudo certo. Explicaram os requisitos e a firma foi rápida.', 'Renté con ellos y salió bien. Me explicaron los requisitos y firmé rápido.'],
 };
 const PRAISE = [
-  ['Atendimento ótimo e serviço impecável. Tiraram todas as minhas dúvidas no mesmo dia pelo WhatsApp.', 'Atención excelente y servicio impecable. Resolvieron todas mis dudas el mismo día por WhatsApp.'],
-  ['Muito profissionais e transparentes. Nunca me pressionaram e me mostraram opções dentro do meu orçamento.', 'Muy profesionales y transparentes. Nunca me presionaron y me mostraron opciones dentro de mi presupuesto.'],
-  ['O corretor foi pontual em todas as visitas e conhecia muito bem o bairro. Recomendo.', 'El asesor fue puntual en todas las visitas y conocía muy bien la colonia. Lo recomiendo.'],
-  ['Processo claro do começo ao fim, sem surpresas nos custos. Voltaria a trabalhar com eles.', 'Todo el proceso fue claro, sin sorpresas en los gastos. Volvería a trabajar con ellos.'],
+  ['Atendimento ótimo. Tiraram minhas dúvidas no mesmo dia pelo WhatsApp.', 'Atención excelente. Resolvieron mis dudas el mismo día por WhatsApp.'],
+  ['Muito profissionais e transparentes. Não me pressionaram e respeitaram meu orçamento.', 'Muy profesionales y transparentes. No me presionaron y respetaron mi presupuesto.'],
+  ['O corretor foi pontual em todas as visitas e conhecia muito bem a colônia.', 'El asesor fue puntual en todas las visitas y conocía muy bien la colonia.'],
+  ['Processo claro do início ao fim, sem surpresas nos custos. Eu voltaria a escolhê-los.', 'Todo el proceso fue claro, sin sorpresas en los gastos. Volvería a elegirlos.'],
 ];
 // What each PRAISE review is about, short enough for a clause in Mora's sentence.
 const PRAISE_TOPICS = [
@@ -72,9 +76,13 @@ const PRAISE_TOPICS = [
   ['não há surpresas nos custos', 'no hay sorpresas en los gastos'],
 ];
 const MORE_PRAISE = [
-  ['Responderam rápido e mandaram vídeos do apartamento antes da visita. Economizei duas viagens.', 'Respondieron rápido y me mandaron videos del departamento antes de la visita. Me ahorré dos vueltas.'],
-  ['Tive um problema com a papelada e resolveram em dois dias. Muito atenciosos.', 'Tuve un problema con el papeleo y lo resolvieron en dos días. Muy atentos.'],
-  ['Demoraram um pouco para confirmar a visita, mas depois foi tudo muito tranquilo.', 'Tardaron un poco en confirmar la visita, pero después todo fue muy tranquilo.'],
+  ['Responderam rápido e mandaram vídeos do imóvel antes da visita.', 'Respondieron rápido y me mandaron videos del inmueble antes de la visita.'],
+  ['Tive um problema com a papelada e resolveram em dois dias. Muito atentos.', 'Tuve un problema con el papeleo y lo resolvieron en dos días. Muy atentos.'],
+  ['Demoraram um pouco para confirmar a visita, mas depois tudo foi tranquilo.', 'Tardaron un poco en confirmar la visita, pero después todo fue tranquilo.'],
+  ['Mostraram a colônia com calma e disseram o que valia a pena perguntar.', 'Me mostraron la colonia con calma y me dijeron qué valía la pena preguntar.'],
+  ['Acompanharam cada mensagem e nada ficou sem resposta durante a busca.', 'Siguieron cada mensaje y nada quedó sin respuesta durante toda la búsqueda.'],
+  ['Foram honestos sobre o que o anúncio não dizia. Isso me deu confiança.', 'Fueron honestos sobre lo que el anuncio no decía. Eso me dio confianza.'],
+  ['Marcaram as visitas no horário combinado e me explicaram cada ambiente.', 'Agendaron las visitas a la hora acordada y me explicaron cada ambiente.'],
 ];
 
 /** What the first service review shown in the panel praises, as `[br, es]`. */
@@ -82,15 +90,20 @@ export function advertiserHighlight(advertiser) {
   return PRAISE_TOPICS[seed(`${advertiser.name.toLowerCase()}:reviews`) % PRAISE.length];
 }
 
-/** Invented Google reviews, stable per advertiser: one closed deal for the listing's operation, then service. The panel shows three; the listing page up to six. */
+/** Invented Google reviews, stable per advertiser: one closed deal for the listing's operation, then service. The panel shows three; the listing page shows six and reveals six more. */
 export function advertiserReviews(advertiser, mode, count = 3) {
   const n = seed(`${advertiser.name.toLowerCase()}:reviews`);
-  const praise = [PRAISE[n % PRAISE.length], PRAISE[(n + 1 + ((n >>> 4) % (PRAISE.length - 1))) % PRAISE.length]];
-  const rest = [...PRAISE.filter(item => !praise.includes(item)), ...MORE_PRAISE];
-  return [CLOSED[mode === 'rent' ? 'rent' : 'buy'], ...praise, ...rest].slice(0, count).map((text, i) => ({
-    name: REVIEWERS[(n + i * 3) % REVIEWERS.length],
-    age: REVIEW_AGES[((n >>> 2) + i) % REVIEW_AGES.length],
-    stars: (i === 2 && n % 3 === 0) || text === MORE_PRAISE[2] ? 4 : 5,
-    text,
-  }));
+  const service = [...PRAISE, ...MORE_PRAISE];
+  const turn = n % service.length;
+  const rest = [...service.slice(turn), ...service.slice(0, turn)];
+  return [CLOSED[mode === 'rent' ? 'rent' : 'buy'], ...rest].slice(0, count).map((text, i) => {
+    const [name, color] = REVIEWERS[(n + i) % REVIEWERS.length];
+    return {
+      name,
+      color,
+      age: REVIEW_AGES[((n >>> 2) + i) % REVIEW_AGES.length],
+      stars: i % 5 === 2 ? 4 : 5,
+      text,
+    };
+  });
 }

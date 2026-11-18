@@ -1,4 +1,4 @@
-.contact-flow-dialog{width:min(680px,calc(100vw - 48px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #00000014;border-radius:24px;background:#fff;color:#111;overflow:auto;overscroll-behavior:contain;box-shadow:0 16px 64px #0003;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.contact-flow-dialog{width:min(680px,calc(100vw - 48px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #00000014;border-radius:24px;background:#fff;color:#111;overflow:auto;overscroll-behavior:contain;box-shadow:0 16px 64px #0003;font-family:var(--app-font)}
 .contact-flow-dialog::backdrop{background:#0005}
 .contact-flow-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 32px 24px;border-bottom:1px solid #00000014}
 .contact-flow-header>div{min-width:0}
@@ -23,7 +23,7 @@
 .contact-flow-options label:has(:checked){border-color:#ff5500;background:#fff1ea}
 .contact-flow-options input{width:16px;height:16px;min-width:16px;padding:0;accent-color:#c64000;margin:0}
 .contact-flow-field{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:590;min-width:0;margin-bottom:20px}
-.contact-flow-field input,.contact-flow-field textarea{width:100%;min-width:0;max-width:100%;border:1px solid #bbb;border-radius:12px;background:white;padding:12px 14px;font:400 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;caret-color:#ff5500;box-sizing:border-box}
+.contact-flow-field input,.contact-flow-field textarea{width:100%;min-width:0;max-width:100%;border:1px solid #bbb;border-radius:12px;background:white;padding:12px 14px;font:400 16px/1.5 var(--app-font);color:#111;caret-color:#ff5500;box-sizing:border-box}
 .contact-flow-field textarea{resize:vertical;min-height:140px;max-height:380px}
 .contact-flow-field input{min-height:48px}
 .contact-flow-field [aria-invalid=true]{border-color:#af2525}

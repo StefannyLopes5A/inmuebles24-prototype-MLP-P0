@@ -214,21 +214,24 @@ export function listingAmenities(home, facts = listingFacts(home)) {
 }
 
 const OPENINGS = [
-  ['La luz entra por la mañana y se queda en la estancia buena parte del día.', 'A luz entra pela manhã e fica na sala boa parte do dia.'],
-  ['La distribución separa bien la zona social de las recámaras.', 'A distribuição separa bem a área social dos quartos.'],
-  ['Es un departamento tranquilo, lejos del ruido de la avenida.', 'É um apartamento tranquilo, longe do barulho da avenida.'],
+  ['la luz entra por la mañana y se queda en la estancia buena parte del día', 'a luz entra pela manhã e fica na sala boa parte do dia'],
+  ['la distribución separa bien la zona social de las recámaras', 'a distribuição separa bem a área social dos quartos'],
+  ['es un departamento tranquilo, lejos del ruido de la avenida', 'é um apartamento tranquilo, longe do barulho da avenida'],
 ];
+// Lead, the detail worth scanning, then the close. The middle run is what the page sets in bold.
 const INTERIOR_LINES = [
-  ['La cocina abre hacia el comedor, así que cocinar no te aísla de la mesa.', 'A cozinha abre para a sala de jantar, então cozinhar não te isola da mesa.'],
-  ['La recámara principal tiene baño propio y espacio para un escritorio pequeño.', 'O quarto principal tem banheiro próprio e espaço para uma escrivaninha pequena.'],
-  ['Los acabados se renovaron hace poco: pisos, baños y la cocina completa.', 'Os acabamentos foram renovados há pouco: pisos, banheiros e a cozinha inteira.'],
+  [['La cocina abre hacia el comedor, así que ', 'cocinar no te aísla de la mesa', '.'], ['A cozinha abre para a sala de jantar, então ', 'cozinhar não te isola da mesa', '.']],
+  [['La recámara principal tiene ', 'baño propio y espacio para un escritorio pequeño', '.'], ['O quarto principal tem ', 'banheiro próprio e espaço para uma escrivaninha pequena', '.']],
+  [['Los acabados se renovaron hace poco: ', 'pisos, baños y la cocina completa', '.'], ['Os acabamentos foram renovados há pouco: ', 'pisos, banheiros e a cozinha inteira', '.']],
 ];
 const TERMS = {
   rent:['El contrato mínimo es de 12 meses. Piden un mes de depósito y aval o póliza jurídica.', 'O contrato mínimo é de 12 meses. Pedem um mês de depósito e fiador ou seguro-fiança.'],
   buy:['Se acepta crédito hipotecario bancario. La escritura está lista para firmar ante notario.', 'Aceita financiamento bancário. A escritura está pronta para assinar no cartório.'],
 };
 
-/** Prose in both languages, built from the facts above so the page never contradicts itself. */
+const text = (value, strong = false) => ({text:value, strong});
+
+/** Prose in both languages, built from the facts above so the page never contradicts itself. Bold runs are the facts worth scanning. */
 export function listingDescription(home, facts = listingFacts(home), places = listingPlaces(home).places) {
   const n = seed(`${home.id}:story`);
   const pt = language => language === 'pt-BR';
@@ -238,16 +241,24 @@ export function listingDescription(home, facts = listingFacts(home), places = li
     const p = pt(language), i = p ? 1 : 0;
     const kind = home.mode === 'rent' ? (p ? 'Apartamento para alugar' : 'Departamento en renta') : (p ? 'Apartamento à venda' : 'Departamento en venta');
     const rooms = p ? `${facts.beds} ${facts.beds === 1 ? 'quarto' : 'quartos'} e ${facts.baths} ${facts.baths === 1 ? 'banheiro' : 'banheiros'}` : `${facts.beds} ${facts.beds === 1 ? 'recámara' : 'recámaras'} y ${facts.baths} ${facts.baths === 1 ? 'baño' : 'baños'}`;
-    const first = p
-      ? `${kind} com ${facts.size} m² no ${facts.floor}º andar de ${home.street}, em ${home.area}. São ${rooms}. ${pick(OPENINGS, n)[i]}`
-      : `${kind} de ${facts.size} m² en el piso ${facts.floor} de ${home.street}, en ${home.area}. Tiene ${rooms}. ${pick(OPENINGS, n)[i]}`;
-    const second = `${pick(INTERIOR_LINES, n >>> 4)[i]} ${p ? `O prédio tem ${facts.years} anos e manutenção em dia.` : `El edificio tiene ${facts.years} años y el mantenimiento al día.`}`;
+    const place = p ? ` no ${facts.floor}º andar de ${home.street}, em ${home.area}. São ` : ` en el piso ${facts.floor} de ${home.street}, en ${home.area}. Tiene `;
+    const opening = pick(OPENINGS, n)[i];
+    const first = [text(`${kind} ${p ? 'com' : 'de'} ${facts.size} m²`, true), text(place), text(`${rooms}. `, true), text(`${opening.charAt(0).toUpperCase()}${opening.slice(1)}.`, true)];
+    const interior = pick(INTERIOR_LINES, n >>> 4)[i];
+    const years = p ? ` O prédio tem ${facts.years} anos e manutenção em dia.` : ` El edificio tiene ${facts.years} años y el mantenimiento al día.`;
+    const second = [text(interior[0]), text(`${interior[1]}${interior[2]}`, true), text(years)];
     const nearby = [metro && (p ? `a estação ${metro.name} fica a ${metro.minutes} min a pé` : `la estación ${metro.name} queda a ${metro.minutes} min a pie`), park && (p ? `${park.name} a ${park.minutes} min` : `${park.name} a ${park.minutes} min`)].filter(Boolean);
+    const terms = TERMS[home.mode === 'rent' ? 'rent' : 'buy'][i];
     const third = nearby.length
-      ? (p ? `Na região, ${nearby.join(' e ')}.` : `En la zona, ${nearby.join(' y ')}.`)
-      : (p ? `${home.area} tem comércio de bairro e transporte por perto.` : `${home.area} tiene comercio de barrio y transporte cerca.`);
-    return [first, second, `${third} ${TERMS[home.mode === 'rent' ? 'rent' : 'buy'][i]}`];
+      ? [text(p ? 'Na região, ' : 'En la zona, '), text(`${nearby.join(p ? ' e ' : ' y ')}. `, true), text(terms)]
+      : [text(p ? `${home.area} tem comércio de bairro e transporte por perto. ${terms}` : `${home.area} tiene comercio de barrio y transporte cerca. ${terms}`)];
+    return [first, second, third];
   };
+}
+
+/** The bold runs of the description, in order, without the trailing period. */
+export function descriptionHighlights(home, language = 'es-MX') {
+  return listingDescription(home)(language).flatMap(parts => parts.filter(part => part.strong).map(part => part.text.replace(/[.\s]+$/, '')));
 }
 
 /** Up to `limit` listings of the same operation, closest first, drawn in a stable order per listing. */

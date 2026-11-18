@@ -12,6 +12,7 @@ import {contactValidation, createContactReceipt, normalizeContactProfile} from '
 import {advertiserFor, advertiserReviews} from './listingAdvertiser';
 import {shortMoney} from './moraAnalysis';
 import {marketQuestion} from './marketAnswers.js';
+import {sectionFollowUps} from './selectionAsk.js';
 import {markVisit} from './seekerSignals.js';
 import {MoraInsight} from './MoraInsight';
 import {GridIcon, TourControls, useTour} from './ListingGallery';
@@ -398,14 +399,14 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
       } finally { pending.current = false; setSending(false); }
     }, SEND_MS);
   }
-  function ask(value, source, kind = 'ask', slot = null) {
-    if (push(value, source, kind, slot)) setDraft('');
+  function ask(value, source, kind = 'ask', slot = null, extra = null) {
+    if (push(value, source, kind, slot, extra)) setDraft('');
   }
-  // A question typed on the listing page arrives as the first turn, flying from the panel's own field.
+  // A question from a listing-page pill arrives as the first turn, tied to the section that asked it.
   useEffect(() => {
     if (!asking || !initialAction.question) return;
     const timer = setTimeout(() => {
-      if (askField.current) ask(initialAction.question, askField.current);
+      if (askField.current) ask(initialAction.question, askField.current, 'ask', null, initialAction.section ? {section:initialAction.section} : null);
     }, 320);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -421,7 +422,11 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
   const usual = home.mode === 'rent'
     ? [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('guarantee', copy.language), say('Tem custos além do aluguel?', '¿Hay gastos además de la renta?')]
     : [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('notary', copy.language), marketQuestion('credit', copy.language)];
-  const quick = gap ? [gap, ...usual.filter(line => line !== gap)].slice(0, 3) : usual;
+  // A pill's chat offers that section's own next questions, and drops the ones already asked.
+  const followUps = initialAction?.section ? sectionFollowUps(initialAction.section, home, copy.language).filter(item => !turns.some(turn => turn.follow === item.id)) : null;
+  const quick = followUps ? followUps.map(item => ({line:item.label, follow:item.id}))
+    : gap ? [gap, ...usual.filter(line => line !== gap)].slice(0, 3) : usual;
+  const showQuick = followUps ? followUps.length > 0 : !turns.length && !asking;
   const talkToMora = () => {
     setGap(verdict?.question?.match(/^[^?]*\?/)?.[0].trim() || null);
     setPhase('question');
@@ -432,7 +437,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
   // Summary and chat share one tree, so the verdict card stays mounted and only travels to the top.
   const flowKey = phase === 'sent' || phase === 'contact' ? 'contact' : phase === 'advertiser' ? 'advertiser' : 'mora';
   const verdictBlock = flowKey === 'mora' && <motion.div className="lp-verdict-slot" layout="position" transition={{layout:reduce ? {duration:0} : SPRING_MORPH}}>
-    <MoraInsight home={home} options={reading.options} signature={reading.signature} short={copy.short} say={say} variant="verdict" folded={phase === 'question' && turns.length > 0} onVerdict={setVerdict}/>
+    <MoraInsight home={home} options={reading.options} signature={reading.signature} short={copy.short} say={say} variant="verdict" folded={phase === 'question' && (turns.length > 0 || asking)} onVerdict={setVerdict}/>
   </motion.div>;
   const toSummary = () => setPhase('summary');
   const fade = {initial:{opacity:0}, animate:{opacity:1}, exit:{opacity:0}, transition:{duration:0.18, ease:EASE_FADE}};
@@ -489,8 +494,8 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
       <button type="button" className="lp-verdict-talk" onClick={talkToMora}><img src="/assets/mini-listing/mora-white.svg" alt=""/><span>{say('Falar deste imóvel com a Mora', 'Hablar de este inmueble con Mora')}</span></button>
       <button type="button" className="lp-verdict-more" onClick={onDetails}>{say('Ver imóvel completo', 'Ver inmueble completo')}</button>
     </div>,
-    question:<MoraComposer id={askId} field={askField} draft={draft} onDraft={setDraft} onAsk={(value, source) => ask(value, source)} hints={hints}
-      quick={quick} showQuick={!turns.length} onBack={toSummary} backLabel={backLabel} reduce={reduce} say={say}/>,
+    question:<MoraComposer id={askId} field={askField} draft={draft} onDraft={setDraft} onAsk={(value, source, extra) => ask(value, source, 'ask', null, extra)} hints={hints}
+      quick={quick} showQuick={showQuick} onBack={toSummary} backLabel={backLabel} reduce={reduce} say={say}/>,
     advertiser:<div className="lp-actions">{primary}{back}</div>,
     contact:<div className="lp-actions">
       <button type="submit" form={formId} className="lp-primary lp-compose-send" aria-disabled={sending || undefined}>
@@ -543,7 +548,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
  * The mini-listing grows out of the clicked card: one spring drives the surface clip and the photo frame,
  * so opening, closing and interruptions share the same motion. Below 768 px it becomes a bottom sheet.
  */
-export function ListingPanel({home, origin, search, pref, hasSearch = true, favorites = [], initialAction, profile, onProfile, onReceipt, onClose, onNavigate, onDetails}) {
+export function ListingPanel({home, origin, search, pref, hasSearch = true, favorites = [], sequence = [], initialAction, profile, onProfile, onReceipt, onClose, onNavigate, onDetails}) {
   const copy = useCopy();
   const reduce = useReducedMotion();
   const [isPresent, safeToRemove] = usePresence();
@@ -568,7 +573,7 @@ export function ListingPanel({home, origin, search, pref, hasSearch = true, favo
     return (scope.current?.isConnected && scope.current.querySelector(selector)) || document.querySelector(selector);
   };
   const halfMap = () => document.documentElement.dataset.mapMode === 'half' ? document.querySelector('.map-shell')?.getBoundingClientRect().right : undefined;
-  const placementFor = () => panelPlacement({card:findCard(firstId.current) || findCard(home.id), container:(origin?.isConnected ? origin : findCard(home.id))?.closest('.flow-grid, .discovery-rail') || (scope.current?.isConnected && scope.current.querySelector('.flow-grid')) || null, reach:halfMap()});
+  const placementFor = () => panelPlacement({card:findCard(firstId.current) || findCard(home.id), container:(origin?.isConnected ? origin : findCard(home.id))?.closest('.flow-grid, .discovery-rail') || (scope.current?.isConnected && scope.current.querySelector('.flow-grid')) || document.querySelector('.property-page') || null, reach:halfMap()});
   const [placement, setPlacement] = useState(placementFor);
   const [contentVisible, setContentVisible] = useState(false);
   const [settled, setSettled] = useState(false);
@@ -785,7 +790,8 @@ export function ListingPanel({home, origin, search, pref, hasSearch = true, favo
 
   function neighbor(step) {
     const root = scope.current?.isConnected ? scope.current : document.querySelector('.flow-listings');
-    const ids = [...new Set([...(root?.querySelectorAll('.discovery-item[data-home-id]') || [])].map(item => item.dataset.homeId))];
+    const cards = [...new Set([...(root?.querySelectorAll('.discovery-item[data-home-id]') || [])].map(item => item.dataset.homeId))];
+    const ids = cards.length ? cards : sequence.map(String);
     const index = ids.indexOf(String(home.id));
     return index < 0 ? null : ids[index + step] || null;
   }

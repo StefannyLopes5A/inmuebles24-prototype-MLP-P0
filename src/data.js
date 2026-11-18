@@ -29,7 +29,7 @@ export const NEIGHBORHOOD_CITIES = [
   'Veracruz',
 ];
 
-const DEMO_CITY_AREAS = {
+export const DEMO_CITY_AREAS = {
   'Edo. de México': ['Interlomas', 'Satélite', 'Naucalpan', 'Toluca Centro', 'Huixquilucan', 'Metepec', 'Lomas Verdes', 'Coacalco'],
   'Nuevo León': ['San Pedro Garza García', 'Centro Monterrey', 'Cumbres', 'Valle Oriente', 'Santa Catarina', 'San Nicolás', 'Carretera Nacional', 'Mitras'],
   'Jalisco': ['Providencia', 'Zapopan Centro', 'Puerta de Hierro', 'Tlaquepaque', 'Chapalita', 'Andares', 'Colinas de San Javier', 'Oblatos'],

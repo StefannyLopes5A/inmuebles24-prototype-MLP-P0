@@ -45,7 +45,7 @@
       "daysListedRatio": 0.4,
       "priceHistory": [
         {
-          "daysAgo": 25,
+          "daysAgo": 12,
           "change": -450000
         }
       ],
@@ -254,7 +254,7 @@
     "insights": [
       {
         "dimension": "market",
-        "text": "Pagas $78.8k/m² contra una mediana de $33.2k/m² en 129 parecidos; bajó $450k hace 25 días.",
+        "text": "Pagas $78.8k/m² contra una mediana de $33.2k/m² en 129 parecidos; bajó $450k hace 12 días.",
         "source": "market_data",
         "confidence": "high",
         "action": {

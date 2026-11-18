@@ -31,7 +31,7 @@ test('prototype suggestions retain exact matches first and remain eligible for d
 test('home details become the same filters in results, including an existing shared link',()=>{
   const note='Precisa ter portaria 24h e ser mobiliado';
   const fromHome=normalizeSearch(updateSearchNote(initial,note));
-  assert.deepEqual(fromHome.criteria,['furnished','security']);
+  assert.deepEqual(fromHome.criteria,['security','furnished']);
   assert.deepEqual(readJourney(journeyUrl({page:'results',search:fromHome})).search,fromHome);
   const legacy=readJourney('/?view=results&mode=buy&areas=&budget=51000000&beds=2&type=apartment&minBudget=5500000&note=Precisa+ter+portaria+24h+e+ser+mobiliado');
   assert.deepEqual(legacy.search.criteria,fromHome.criteria);

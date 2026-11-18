@@ -91,31 +91,26 @@ function createHomeMotion(root) {
     play(card.querySelector('.idea-title'),frames.row(),650,delay+200);
     card.querySelectorAll('.idea-photo img').forEach((img,i) => play(img,[{transform:'scale(1.2)',filter:'brightness(.7)'},{transform:'scale(1)',filter:'brightness(1)'}],950,delay+i*75));
   }
+  const scrollSection = '.idea-section,.discovery-section,.home-blog,.home-brokers,.home-links,.catalog-footer';
+  // The guest promo is tall and already peeks into the first fold, so it waits until it has actually entered.
+  const guestReveal = '.home-guest-promo-reveal';
+  const revealCardSelector = '.idea-card,.discovery-item,.home-city,.neighborhood-item,.home-blog-feature,.home-blog-item,.home-links-cols>div,.home-brokers-fan,.home-brokers>p,.home-brokers-all,.home-guest-promo-join,.home-guest-promo-card,.catalog-footer-top,.catalog-footer-grid>div,.catalog-wordmark,.catalog-legal';
   function showSection(section) {
     if (sections.has(section) || stage < 3) return;
     sections.add(section); delete section.dataset.motionPending;
-    play(section.querySelector('.discovery-heading'),[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(0)'}],550);
-    let index = 0;
-    section.querySelectorAll('.discovery-item').forEach(card => {
-      const bounds = card.getBoundingClientRect();
-      if (bounds.right > 0 && bounds.left < innerWidth) revealCard(card,index++);
-    });
+    const heading = section.querySelector('.discovery-heading, .home-blog-head') || section.querySelector(':scope > h2');
+    play(heading,[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(0)'}],550);
+    // The whole list starts together. Cards past the fold still belong to this entrance.
+    section.querySelectorAll(revealCardSelector).forEach((card,index) => revealCard(card,index));
   }
   function stages() {
     const next = Number(root.dataset.introStage);
     if (next === stage) return;
-    const previous = stage; stage = next;
-    if (stage >= 1 && previous < 1) play(root.querySelector('.idea-section h2'),frames.heading(),660);
-    if (stage >= 2 && previous < 2) {
-      let index = 0;
-      root.querySelectorAll('.idea-card').forEach(card => {
-        const bounds = card.getBoundingClientRect();
-        if (bounds.right > 0 && bounds.left < innerWidth) revealCard(card,index++,true);
-      });
-    }
-    if (stage >= 3) root.querySelectorAll('.discovery-section').forEach(section => {
+    stage = next;
+    if (stage >= 3) document.querySelectorAll(`${scrollSection},${guestReveal}`).forEach(section => {
       const bounds = section.getBoundingClientRect();
-      if (bounds.top < innerHeight && bounds.bottom > 0) showSection(section);
+      const limit = section.matches(guestReveal) ? innerHeight * 0.72 : innerHeight;
+      if (bounds.top < limit && bounds.bottom > 0) showSection(section);
     });
   }
   function inspect(el) {
@@ -143,17 +138,20 @@ function createHomeMotion(root) {
   }
   const nodes = '.home-soft-word,.home-word-control.just-morphed,.detail-token.token-converted,.detail-token.token-selected,.home-choice-label.just-selected,.home-bed-stepper output,.home-start-slot[data-visible="true"]';
   const intersection = new IntersectionObserver(entries => entries.forEach(({target,isIntersecting}) => {if (isIntersecting) showSection(target);}),{threshold:.08});
-  function observeSection(section) {
+  const guestIntersection = new IntersectionObserver(entries => entries.forEach(({target,isIntersecting}) => {if (isIntersecting) showSection(target);}),{threshold:0,rootMargin:'0px 0px -28% 0px'});
+  function observeSection(section, observer = intersection) {
     if (observedSections.has(section)) return;
     observedSections.add(section);
     if (!media.matches) section.dataset.motionPending = 'true';
-    intersection.observe(section);
+    observer.observe(section);
   }
   function visit(node) {
     if (!(node instanceof Element)) return;
     inspect(node); node.querySelectorAll(nodes).forEach(inspect);
-    if (node.matches('.discovery-section')) observeSection(node);
-    node.querySelectorAll('.discovery-section').forEach(observeSection);
+    if (node.matches(scrollSection)) observeSection(node);
+    node.querySelectorAll(scrollSection).forEach(section => observeSection(section));
+    if (node.matches(guestReveal)) observeSection(node, guestIntersection);
+    node.querySelectorAll(guestReveal).forEach(section => observeSection(section, guestIntersection));
   }
   // Expand actual inline space for the chevron; FLIP only line changes.
   const layoutPositions = new Map(), layoutMoves = new Map();
@@ -191,11 +189,13 @@ function createHomeMotion(root) {
     for (const [el,close] of sweeps) if (!el.isConnected) close();
   });
   mutation.observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['class','data-visible','data-intro-stage','disabled']});
-  visit(root); stages(); play(root.querySelector('.home-search h1'),frames.heading(),650);
+  visit(root);
+  document.querySelectorAll('.catalog-footer').forEach(section => observeSection(section));
+  stages(); play(root.querySelector('.home-search h1'),frames.heading(),650);
 
   function resetCardHover(card) {
     delete card.dataset.motionHover;
-    const surface = card.querySelector('.photo-stack,.discovery-media,.neighborhood-card');
+    const surface = card.matches('.photo-stack,.region-fan') ? card : card.querySelector('.photo-stack,.discovery-media,.neighborhood-card');
     if (surface) surface.style.transform = '';
     card.querySelectorAll('.discovery-tags,.discovery-like').forEach(control => {control.style.translate = '';});
   }
@@ -205,15 +205,20 @@ function createHomeMotion(root) {
     for (const animation of animations) animation.cancel();
     animations.clear(); layoutMoves.clear();
     for (const close of [...sweeps.values()]) close();
-    root.querySelectorAll('.idea-card[data-motion-hover],.discovery-item[data-motion-hover],.neighborhood-item[data-motion-hover]').forEach(resetCardHover);
+    root.querySelectorAll('.idea-card[data-motion-hover],.home-guest-promo-fan[data-motion-hover],.region-fan[data-motion-hover],.discovery-item[data-motion-hover],.neighborhood-item[data-motion-hover]').forEach(resetCardHover);
     root.querySelectorAll('[data-next-selecting]').forEach(el => delete el.dataset.nextSelecting);
   }
   function move(event) {
     if (!enabled() || !finePointer.matches) return;
-    const card = event.target.closest('.idea-card,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
+    const card = event.target.closest('.idea-card,.home-guest-promo-fan,.region-fan,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
     if (card && root.contains(card)) {
-      const bounds = card.getBoundingClientRect(), x = (event.clientX-bounds.left)/bounds.width-.5, y = (event.clientY-bounds.top)/bounds.height-.5;
-      if (card.matches('.idea-card')) card.querySelector('.photo-stack').style.transform = `perspective(600px) rotateY(${x*18}deg) rotateX(${-y*12}deg) translateY(-6px) scale(1.06)`;
+      const bounds = card.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      const x = (event.clientX-bounds.left)/bounds.width-.5, y = (event.clientY-bounds.top)/bounds.height-.5;
+      if (card.matches('.idea-card,.home-guest-promo-fan,.region-fan')) {
+        const stack = card.matches('.home-guest-promo-fan,.region-fan') ? card : card.querySelector('.photo-stack');
+        if (stack) stack.style.transform = `perspective(600px) rotateY(${x*18}deg) rotateX(${-y*12}deg) translateY(-6px) scale(1.06)`;
+      }
       else if (card.matches('.neighborhood-item')) {
         const surface = card.querySelector('.neighborhood-card'), dx = x*9, dy = y*6;
         surface.style.transform = `translate(${dx}px,${dy}px) scale(1.05)`;
@@ -224,13 +229,14 @@ function createHomeMotion(root) {
         photo.style.transform = `translate(${dx}px,${dy}px) scale(1.05)`;
         const tags = card.querySelector('.discovery-tags');
         if (tags) tags.style.translate = `${dx-side}px ${dy-top}px`;
-        card.querySelector('.discovery-like').style.translate = `${dx+side}px ${dy-top}px`;
+        const like = card.querySelector('.discovery-like');
+        if (like) like.style.translate = `${dx+side}px ${dy-top}px`;
       }
       card.dataset.motionHover = 'true';
     }
   }
   function leave(event) {
-    const card = event.target.closest('.idea-card,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
+    const card = event.target.closest('.idea-card,.home-guest-promo-fan,.region-fan,.home-evolution .discovery-item,.home-evolution .neighborhood-item');
     if (card && root.contains(card) && !card.contains(event.relatedTarget)) {
       resetCardHover(card);
     }
@@ -249,12 +255,12 @@ function createHomeMotion(root) {
   function keyboard(event) {
     pointer = false;
     if (['Tab','Escape','ArrowDown','ArrowUp','Enter',' '].includes(event.key)) stop();
-    const section = event.target.closest('.discovery-section');
+    const section = event.target.closest(`${scrollSection},${guestReveal}`);
     if (section) {delete section.dataset.motionPending; sections.add(section);}
   }
   const down = () => {pointer = true;};
   const visibility = () => {if (document.hidden) stop();};
-  const reduce = () => {if (media.matches) {stop(); root.querySelectorAll('[data-motion-pending]').forEach(el => delete el.dataset.motionPending);}};
+  const reduce = () => {if (media.matches) {stop(); document.querySelectorAll('[data-motion-pending]').forEach(el => delete el.dataset.motionPending);}};
   const listeners = [['pointermove',move],['pointerout',leave],['pointerdown',down,true],['click',clicked,true],['keydown',keyboard,true],['visibilitychange',visibility]];
   for (const [type,handler,capture] of listeners) document.addEventListener(type,handler,capture);
   window.addEventListener('resize',stop); media.addEventListener('change',reduce);
@@ -299,8 +305,8 @@ function createHomeMotion(root) {
       });
     },
     dispose() {
-      disposed = true; stop(); layout.disconnect(); mutation.disconnect(); intersection.disconnect();
-      root.querySelectorAll('[data-motion-pending]').forEach(el => delete el.dataset.motionPending);
+      disposed = true; stop(); layout.disconnect(); mutation.disconnect(); intersection.disconnect(); guestIntersection.disconnect();
+      document.querySelectorAll('[data-motion-pending]').forEach(el => delete el.dataset.motionPending);
       for (const [type,handler,capture] of listeners) document.removeEventListener(type,handler,capture);
       window.removeEventListener('resize',stop); media.removeEventListener('change',reduce);
     },

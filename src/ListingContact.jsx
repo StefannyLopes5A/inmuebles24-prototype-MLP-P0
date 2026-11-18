@@ -169,16 +169,16 @@ export function ListingQuestions({onSend, say}) {
     return `${current.trim()} ${question}`.trim().slice(0, QUESTION_MAX);
   });
   return <form className="pp-ask" onSubmit={event => { event.preventDefault(); if (text.trim()) { onSend(text.trim()); setText(''); } }}>
-    <h3 id={`${id}-title`}>{say('Perguntas para a imobiliária', 'Preguntas para la inmobiliaria')}</h3>
+    <h2 id="pp-ask-title">{say('Perguntas para a imobiliária', 'Preguntas para la inmobiliaria')}</h2>
     <p>{say('Escolha uma ou mais perguntas, ou escreva a sua.', 'Selecciona una o más preguntas, o escribe tu consulta.')}</p>
-    <div className="pp-chips" role="group" aria-labelledby={`${id}-title`}>
+    <div className="pp-chips" role="group" aria-labelledby="pp-ask-title">
       {QUESTIONS.map(item => { const question = say(...item); return <button key={item[1]} type="button" className="pp-chip" aria-pressed={text.includes(question)} onClick={() => toggle(question)}>{question}</button>; })}
     </div>
     <label className="sr-only" htmlFor={`${id}-text`}>{say('Sua pergunta', 'Tu pregunta')}</label>
-    <textarea id={`${id}-text`} className="pp-ask-input" rows={3} maxLength={QUESTION_MAX} value={text} placeholder={say('Escreva aqui', 'Escríbela aquí')} onChange={event => setText(event.target.value)}/>
+    <textarea id={`${id}-text`} className="pp-ask-input" rows={2} maxLength={QUESTION_MAX} value={text} placeholder={say('Escreva aqui', 'Escríbela aquí')} onChange={event => setText(event.target.value)}/>
     <div className="pp-ask-foot">
       <small aria-live="polite">{text.length}/{QUESTION_MAX}</small>
-      <button type="submit" className="mini-primary" disabled={!text.trim()}>{say('Enviar', 'Enviar')}<Icon name="send" size={16}/></button>
+      <button type="submit" className="pp-ask-send" disabled={!text.trim()}>{say('Enviar pergunta', 'Enviar pregunta')}<img src="/assets/reviews/arrow-forward.svg" alt="" width="16" height="16"/></button>
     </div>
   </form>;
 }

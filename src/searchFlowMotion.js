@@ -3,6 +3,8 @@ import {discoveryEntrance} from './homeMotion';
 const ease = 'cubic-bezier(.22,1,.36,1)';
 const reduced = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
 const collapseDuration = 520, sweepStart = 600, sweepDuration = 1200, itemDuration = 240;
+/** Keep aligned with `home-composer-text-sweep` (750ms) plus a brief hold before Onda. */
+export const HOME_COMPOSER_DEPART_MS = 900;
 let pendingHome = null;
 let activeHome = null;
 
@@ -98,8 +100,13 @@ export function playHomeTransition(root) {
       return Math.max(0,Math.min(1,(bounds.left+bounds.width/2-target.left)/target.width));
     });
     const rail = destination.querySelector('.mora-filter-scroll');
-    rail.parentElement.dataset.scrollEnd = String(rail.scrollWidth-rail.clientWidth-rail.scrollLeft<=1);
-    const firstContent = content.querySelector('.home-search h1').getBoundingClientRect().top-from.rect.top;
+    const region = rail?.closest('.mora-filter-region');
+    if (region) region.dataset.scrollEnd = String(rail.scrollWidth-rail.clientWidth-rail.scrollLeft<=1);
+    const tuckAnchor = content.querySelector('.home-search h1')
+      || content.querySelector('.home-composer-stack')
+      || content.querySelector('.home-search');
+    if (!tuckAnchor) {layer.remove();bar.style.opacity = liveOpacity;return;}
+    const firstContent = tuckAnchor.getBoundingClientRect().top-from.rect.top;
     const tuck = Math.max(0,target.height-firstContent+2);
     play(surface,[{clipPath:'inset(0px 0px 0px)',transform:'translateY(0)'},{clipPath:`inset(0px 0px ${from.rect.height-target.height}px)`,transform:`translateY(${target.top-from.rect.top}px)`}],0,collapseDuration);
     play(divider,[{transform:'translateY(0)'},{transform:`translateY(${target.bottom-from.rect.bottom}px)`}],0,collapseDuration);

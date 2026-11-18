@@ -85,7 +85,7 @@
 
 .lp-mora{display:flex;flex-direction:column}
 .lp-mora-status{display:flex;align-items:center;gap:6px;min-height:18px;font-size:12px;line-height:16px;color:#6a6a6a}
-.lp-mora-status strong{color:#e45244;font-weight:700}
+.lp-mora-status strong{color:#e45244;font-weight:600}
 .lp-mora-mark{width:20px;height:20px;flex:none}
 .lp-mora-mark.is-working{animation:lp-breathe 1.2s ease-in-out infinite}
 @keyframes lp-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
@@ -437,7 +437,9 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 
 /* The grid recedes behind the panel; the source card hides while its copy is open. The transition stays after the shell leaves, so the grid eases back instead of snapping. */
 .discovery-item{transition:opacity 500ms cubic-bezier(.32,.72,0,1),transform 500ms cubic-bezier(.32,.72,0,1)}
+.listing-route{transition:opacity 500ms cubic-bezier(.32,.72,0,1)}
 html[data-listing-panel] .discovery-item:not([data-panel-source]){opacity:.25;transform:scale(.97)}
+html[data-listing-panel] .listing-route{opacity:.25}
 /* After the close morph, the photo is already the card. Price, address and the rest ease in. */
 .discovery-item.is-returning :is(.discovery-copy,.discovery-meta,.discovery-tags,.discovery-like){animation:lp-card-return 380ms cubic-bezier(.32,.72,0,1) both}
 @keyframes lp-card-return{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -455,7 +457,7 @@ html[data-listing-panel] :is(.home-header,.mora-bar)::after{opacity:.75}
 html[data-listing-panel] .toast{z-index:76}
 
 @media(prefers-reduced-motion:reduce){
-  .discovery-item,.home-header::after,.mora-bar::after{transition:opacity 150ms linear}
+  .discovery-item,.listing-route,.home-header::after,.mora-bar::after{transition:opacity 150ms linear}
   .discovery-item.is-returning :is(.discovery-copy,.discovery-meta,.discovery-tags,.discovery-like){animation:none}
   html[data-listing-panel] .discovery-item:not([data-panel-source]){transform:none}
   .lp-track,.lp-photo-step,.lp-shell::after{transition:none}

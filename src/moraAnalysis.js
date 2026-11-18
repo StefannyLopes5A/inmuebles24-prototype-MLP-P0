@@ -2,6 +2,7 @@ import {homes as catalog, listingPrice} from './data.js';
 import {pricePerM2, travelMinutes, zonePricePerM2} from './compareReading.js';
 import {listingDetails} from './listingPresentation.js';
 import {homeCoordinates} from './mapLocations.js';
+import {coloniaVision} from './mapWidgetContent.js';
 import {nearbyPois, poisFor} from './pois.js';
 import {criterionLabel, matchesCriteria} from './searchCriteria.js';
 import {seed} from './listingAdvertiser.js';
@@ -33,16 +34,19 @@ export function marketFacts(home) {
   const step = home.mode === 'rent' ? 1 : 100;
   const median = roundTo(zone * (0.8 + (n % 19) / 100), step);
   const dropped = n % 3 === 0;
+  const days = 6 + (n % 110);
+  const colonia = coloniaVision(home.area);
   return {
     price, ppm2, median,
     p10: roundTo(median * 0.64, step),
     p90: roundTo(median * 1.46, step),
     delta: ppm2 ? ppm2 / median - 1 : null,
-    days: 6 + (n % 110),
+    days,
     drop: dropped ? roundTo(price * (0.03 + (n % 5) / 100), home.mode === 'rent' ? 500 : 50000) : null,
-    dropDays: dropped ? 4 + (n % 24) : null,
+    dropDays: dropped ? Math.min(4 + (n % 24), days - 1) : null,
     comparables: 40 + ((n >>> 4) % 220),
-    trend: Number((((n >>> 8) % 90) / 10 - 1.5).toFixed(1)),
+    // The colonia's 12-month change is the one the location section and the price history draw.
+    trend: colonia?.trend.spoilerPct ?? Number((((n >>> 8) % 90) / 10 - 1.5).toFixed(1)),
   };
 }
 

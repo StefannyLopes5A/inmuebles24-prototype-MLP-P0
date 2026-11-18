@@ -2,6 +2,7 @@ import {homes, listingPrice} from './data.js';
 import {available} from './development/torreOlmo.js';
 import {normalizeCriteria, matchesCriteria, criteriaFromText} from './searchCriteria.js';
 import {PROPERTY_TYPES, OPERATIONS} from './homeSearchModel.js';
+import {addressFromPlaces, areasFromPlaces, placeCovers, resolvePlace} from './locationSearch.js';
 import {isFolderId} from './favoriteLists.js';
 import {isAccountId, isInviteToken} from './collaborativeLists.js';
 
@@ -19,13 +20,50 @@ export const DEFAULT_SEARCH = Object.freeze({
 });
 
 const plainText = (value, limit) => typeof value === 'string'
-  ? value.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, limit) : '';
+  ? value.replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u000c\u000e-\u001f\u007f]/g, ' ').replace(/^[^\S\n]+|[^\S\n]+$/gu, '').replace(/\n{3,}/g, '\n\n').slice(0, limit) : '';
 const fold = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const validNumber = (value, fallback, max) => {
   const parsed = typeof value === 'number' || typeof value === 'string' && value.trim()
     ? Number(value) : NaN;
   return Number.isFinite(parsed) && parsed >= 1 && parsed <= max ? Math.round(parsed) : fallback;
 };
+const optionalCount = (value, max) => {
+  const parsed = typeof value === 'number' || typeof value === 'string' && value.trim() ? Number(value) : NaN;
+  return Number.isFinite(parsed) && parsed >= 1 && parsed <= max ? Math.round(parsed) : 0;
+};
+const optionalSpan = value => {
+  const parsed = typeof value === 'number' || typeof value === 'string' && String(value).trim() ? Number(value) : NaN;
+  return Number.isFinite(parsed) && parsed >= 1 && parsed <= 100_000 ? Math.round(parsed) : 0;
+};
+function sizeFields(source) {
+  let minSize = optionalSpan(source.minSize), maxSize = optionalSpan(source.maxSize);
+  let minLot = optionalSpan(source.minLot), maxLot = optionalSpan(source.maxLot);
+  if (minSize && maxSize && minSize > maxSize) [minSize, maxSize] = [maxSize, minSize];
+  if (minLot && maxLot && minLot > maxLot) [minLot, maxLot] = [maxLot, minLot];
+  return {
+    ...(minSize ? {minSize} : {}), ...(maxSize ? {maxSize} : {}),
+    ...(minLot ? {minLot} : {}), ...(maxLot ? {maxLot} : {}),
+  };
+}
+/** Built area only when the listing publishes m² that is not a lot. */
+export function builtArea(home) {
+  const match = String(home?.features || '').match(/(\d+)\s*m²(?!\s*lote)/);
+  return match ? Number(match[1]) : null;
+}
+/** Total area only when the listing publishes “m² lote”. Missing is not zero. */
+export function lotArea(home) {
+  const match = String(home?.features || '').match(/(\d+)\s*m²\s*lote/);
+  return match ? Number(match[1]) : null;
+}
+export function parkingSpots(home) {
+  const match = String(home?.features || '').match(/(\d+)\s*estac/);
+  return match ? Number(match[1]) : 0;
+}
+function measureFits(value, min, max) {
+  if (!min && !max) return true;
+  if (!Number.isFinite(value)) return false;
+  return (!min || value >= min) && (!max || value <= max);
+}
 
 /** An explicit empty areas array means all catalog areas; omitted areas uses the legacy area field. */
 export function normalizeSearch(input = {}) {
@@ -38,11 +76,17 @@ export function normalizeSearch(input = {}) {
     if (source.areas.length && !selected.length) selected = [...DEFAULT_SEARCH.areas];
   } else if (source.area === ALL_AREAS) selected = [];
   else selected = [knownAreas.has(source.area) ? source.area : DEFAULT_SEARCH.area];
+  const places = Array.isArray(source.places) ? source.places.map(place => resolvePlace(place?.kind, place?.id)).filter(Boolean).filter((place, index, all) => all.findIndex(item => item.key === place.key) === index).slice(0, 12) : undefined;
+  if (places) selected = areasFromPlaces(places);
   return {
     mode, area:selected[0] || ALL_AREAS, areas:selected,
-    address:plainText(source.address, 160),
+    address:places ? addressFromPlaces(places) : plainText(source.address, 160),
+    ...(places?.length ? {places} : {}),
     budget:validNumber(source.budget, mode === 'buy' ? DEFAULT_SEARCH.budget : 28_000, 1_000_000_000),
     beds:validNumber(source.beds, DEFAULT_SEARCH.beds, 10),
+    baths:validNumber(source.baths, 1, 10),
+    ...(optionalCount(source.parking, 10) ? {parking:optionalCount(source.parking, 10)} : {}),
+    ...sizeFields(source),
     note:plainText(source.note, 600), fromIdea:source.fromIdea === true,
     criteria:Array.isArray(source.criteria) ? normalizeCriteria(source.criteria) : criteriaFromText(plainText(source.note, 600)),
     ...(PROPERTY_TYPES.some(([key]) => key === source.propertyType) ? {propertyType:source.propertyType} : {}),
@@ -57,24 +101,38 @@ export const selectedAreas = search => normalizeSearch(search).areas;
 /** A search alert follows the hard filters, not the free text or the order of the grid. */
 export function alertKey(search) {
   const current = normalizeSearch(search);
-  return JSON.stringify([current.mode, current.propertyType || 'apartment', [...current.areas].sort(), current.address, current.beds, current.minBudget || 0, current.budget]);
+  const placeKey = (current.places || []).map(place => place.key).sort();
+  return JSON.stringify([current.mode, current.propertyType || 'apartment', [...current.areas].sort(), current.address, placeKey, current.beds, current.baths, current.parking || 0, current.minSize || 0, current.maxSize || 0, current.minLot || 0, current.maxLot || 0, current.minBudget || 0, current.budget]);
 }
 
-// A development fits when one of its available units fits; its record keeps the smallest unit.
-const developmentFits = (current) => available.some(unit => unit.beds >= current.beds
-  && unit.price <= current.budget && unit.price >= (current.minBudget || 0));
+// A development fits when one of its available units fits. Units publish built area, not lot area.
+const developmentFits = (current) => {
+  if (current.minLot || current.maxLot) return false;
+  return available.some(unit => unit.beds >= current.beds
+    && unit.baths >= current.baths
+    && unit.parking >= (current.parking || 0)
+    && measureFits(unit.size, current.minSize, current.maxSize)
+    && unit.price <= current.budget && unit.price >= (current.minBudget || 0));
+};
 
 export function matchingHomes(search) {
   const current = normalizeSearch(search);
   const address = fold(current.address);
+  const placed = Array.isArray(current.places);
+  const inPlaces = home => !placed || !current.places.length || current.places.some(place => placeCovers(home, place));
   return homes.filter(home => home.mode === current.mode
     && (!current.tour3d || home.development)
-    && (!current.areas.length || current.areas.includes(home.area))
+    && (placed || !current.areas.length || current.areas.includes(home.area))
+    && inPlaces(home)
     && (!current.propertyType || current.propertyType === 'apartment' || current.propertyType === 'any')
     && (home.development ? developmentFits(current) : Number.isFinite(listingPrice(home)) && listingPrice(home) <= current.budget && listingPrice(home) >= (current.minBudget || 0)
-    && home.beds >= current.beds)
+    && home.beds >= current.beds
+    && home.baths >= current.baths
+    && parkingSpots(home) >= (current.parking || 0)
+    && measureFits(builtArea(home), current.minSize, current.maxSize)
+    && measureFits(lotArea(home), current.minLot, current.maxLot))
     && matchesCriteria(home, current.criteria)
-    && (!address || fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address)));
+    && (placed || !address || fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address)));
 }
 
 const developments = homes.filter(home => home.development);
@@ -102,9 +160,16 @@ export function prototypeResults(search) {
   const distance = home => {
     const price = listingPrice(home);
     const priceDistance = Math.max(0, price - current.budget, (current.minBudget || 0) - price) / Math.max(1, current.budget);
-    return (current.areas.length && !current.areas.includes(home.area) ? 60 : 0)
-      + (address && !fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address) ? 80 : 0)
+    const placed = Array.isArray(current.places);
+    const outside = placed
+      ? current.places.length && !current.places.some(place => placeCovers(home, place)) ? 60 : 0
+      : (current.areas.length && !current.areas.includes(home.area) ? 60 : 0) + (address && !fold(`${home.street} ${home.area} ${home.location || ''}`).includes(address) ? 80 : 0);
+    return outside
       + Math.max(0, current.beds - (home.beds ?? 0)) * 8
+      + Math.max(0, current.baths - (home.baths ?? 0)) * 6
+      + Math.max(0, (current.parking || 0) - parkingSpots(home)) * 6
+      + (measureFits(builtArea(home), current.minSize, current.maxSize) ? 0 : 10)
+      + (measureFits(lotArea(home), current.minLot, current.maxLot) ? 0 : 10)
       + current.criteria.filter(id => !matchesCriteria(home, [id])).length * 12
       + Math.min(priceDistance, 10) * 20;
   };
@@ -187,6 +252,7 @@ export function readJourney(locationLike = {}) {
   const page = params.get('view') === 'compare' ? 'compare'
     : params.get('view') === 'folder' ? 'folder'
     : params.get('view') === 'favorites' ? 'favorites'
+    : params.get('view') === 'saved' ? 'saved'
     : params.get('view') === 'listing' ? 'listing'
     : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results'
     : 'home';
@@ -194,7 +260,10 @@ export function readJourney(locationLike = {}) {
   const search = normalizeSearch({
     mode:params.get('mode'), area:params.get('area') || DEFAULT_SEARCH.area,
     ...(rawAreas ? {areas:rawAreas} : {}),
-    budget:params.get('budget'), beds:params.get('beds'), address:params.get('address'),
+    budget:params.get('budget'), beds:params.get('beds'), baths:params.get('baths'), parking:params.get('parking'),
+    minSize:params.get('minSize'), maxSize:params.get('maxSize'), minLot:params.get('minLot'), maxLot:params.get('maxLot'),
+    address:params.get('address'),
+    ...(params.getAll('place').length ? {places:params.getAll('place').map(value => {const cut = value.indexOf('~'); return cut > 0 ? {kind:value.slice(0, cut), id:value.slice(cut + 1)} : null;}).filter(Boolean)} : {}),
     propertyType:params.get('type'), minBudget:params.get('minBudget'),
     criteria:params.has('criterion') ? params.getAll('criterion') : undefined,
     note:params.get('note'), fromIdea:params.get('idea') === '1', ideaLabel:params.get('ideaLabel'),
@@ -224,6 +293,7 @@ export const canonicalMapMode = value => MAP_MODES.includes(value) ? value : 'mi
 export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, listId = null, map = 'mini', sort = 'recommended', invite = null, from = null} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'compare' ? 'compare'
+    : page === 'saved' ? 'saved'
     : page === 'folder' && (listId || isInviteToken(invite)) ? 'folder'
     : page === 'favorites' || page === 'folder' ? 'favorites'
     : page === 'listing' && (knownProperties.has(propertyId) || isInviteToken(invite)) ? 'listing'
@@ -231,9 +301,16 @@ export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none
     : 'home';
   const params = new URLSearchParams({view, mode:current.mode,
     areas:current.areas.join('|'), budget:String(current.budget), beds:String(current.beds)});
+  if (current.baths > 1) params.set('baths', String(current.baths));
+  if (current.parking) params.set('parking', String(current.parking));
+  if (current.minSize) params.set('minSize', String(current.minSize));
+  if (current.maxSize) params.set('maxSize', String(current.maxSize));
+  if (current.minLot) params.set('minLot', String(current.minLot));
+  if (current.maxLot) params.set('maxLot', String(current.maxLot));
   if (current.propertyType) params.set('type', current.propertyType);
   if (current.minBudget) params.set('minBudget', String(current.minBudget));
   if (current.address) params.set('address', current.address);
+  for (const place of current.places || []) params.append('place', place.key);
   if (current.note) params.set('note', current.note);
   for (const criterion of current.criteria || []) params.append('criterion', criterion);
   // An explicit empty selection prevents a removed detail from returning on refresh.

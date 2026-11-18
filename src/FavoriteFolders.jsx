@@ -21,9 +21,9 @@ function useSay() {
   return {language, say:(es, br) => pt ? br : es};
 }
 
-export function FolderCover({ids, collage = false}) {
+export function FolderCover({ids}) {
   const list = homesFor(ids);
-  if (collage && list.length > 1) {
+  if (list.length > 1) {
     return <span className="folder-cover is-collage">
       {[0, 1, 2, 3].map(index => list[index]
         ? <img key={list[index].id} src={propertyPhoto(list[index])} alt="" loading="lazy"/>
@@ -165,27 +165,34 @@ export function FolderToast({home, folder, removed = false, onChange, onView, on
   </div>;
 }
 
-export function FavoritesIndex({folders, recent, shared = {}, meId = null, onOpenFolder, onBack}) {
+export function FavoritesIndex({folders, recent, shared = {}, meId = null, suggestion = '', onOpenFolder, onCreate, onBack}) {
   const {language, say} = useSay();
   const reduce = useReducedMotion();
   const title = useRef(null);
+  const titleId = useId();
+  const [creating, setCreating] = useState(false);
   useLayoutEffect(() => {title.current?.focus({preventScroll:true});}, []);
   const latest = recent[0]?.viewedAt;
   // Faces only on a folder shared with someone else: they are the sign that the folder is collaborative.
   const facesOf = folder => folder.collab && meId && isCollaborative(shared[folder.id]) ? activeMembers(shared[folder.id]) : null;
   const cards = [
-    ...(recent.length ? [{id:RECENT_ID, name:say('Vistos recientemente', 'Vistos recentemente'), ids:recent.map(entry => entry.id), collage:true, meta:viewedLabel(latest, Date.now(), language)}] : []),
-    ...folders.map(folder => ({id:folder.id, name:folder.name, ids:folder.homeIds, collage:false, meta:savedCountLabel(folder.homeIds.length, language), faces:facesOf(folder)})),
+    ...(recent.length ? [{id:RECENT_ID, name:say('Vistos recientemente', 'Vistos recentemente'), ids:recent.map(entry => entry.id), meta:viewedLabel(latest, Date.now(), language)}] : []),
+    ...folders.map(folder => ({id:folder.id, name:folder.name, ids:folder.homeIds, meta:savedCountLabel(folder.homeIds.length, language), faces:facesOf(folder)})),
   ];
   return <article className="favorites-page">
     <header className="favorites-header">
       <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a la búsqueda', 'Voltar à busca')}><Icon name="back" size={20}/></button>
-      <motion.h1 ref={title} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{say('Favoritos', 'Favoritos')}</motion.h1>
+      <div className="favorites-heading">
+        <motion.h1 ref={title} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{say('Favoritos', 'Favoritos')}</motion.h1>
+        <motion.button type="button" className="folder-chip favorites-new" onClick={() => setCreating(true)} {...riseIn(reduce, 1, 6)}>
+          <span aria-hidden="true">+</span>{say('Nueva lista', 'Nova lista')}
+        </motion.button>
+      </div>
     </header>
     {cards.length ? <ul className="favorites-grid">
       {cards.map((card, index) => <motion.li key={card.id} {...riseIn(reduce, index + 1)}>
         <button type="button" className="favorites-card" onClick={() => onOpenFolder(card.id)}>
-          <span className="favorites-card-media"><FolderCover ids={card.ids} collage={card.collage}/>
+          <span className="favorites-card-media"><FolderCover ids={card.ids}/>
             {card.faces && <span className="folder-card-faces"><AvatarStack members={card.faces} size={30} label={`${say('Compartida con', 'Compartilhada com')} ${card.faces.map(member => member.name).join(', ')}`}/></span>}
           </span>
           <span className="folder-card-name">{card.name}</span>
@@ -194,7 +201,12 @@ export function FavoritesIndex({folders, recent, shared = {}, meId = null, onOpe
       </motion.li>)}
     </ul> : <motion.div className="favorites-empty" {...riseIn(reduce, 1)}>
       <h2>{say('Crea tu primera lista', 'Crie sua primeira lista')}</h2>
-      <p>{say('Toca el corazón de un inmueble para guardarlo en una lista. Lo que abras aparece en Vistos recientemente.', 'Toque no coração de um imóvel para salvá-lo em uma lista. O que você abrir aparece em Vistos recentemente.')}</p>
+      <p>{say('Toca el corazón de un inmueble para guardarlo en una lista, o crea una lista vacía con Nueva lista. Lo que abras aparece en Vistos recientemente.', 'Toque no coração de um imóvel para salvá-lo em uma lista, ou crie uma lista vazia com Nova lista. O que você abrir aparece em Vistos recentemente.')}</p>
     </motion.div>}
+    <AnimatePresence>
+      {creating && <ModalShell key="new-list" labelledBy={titleId} onClose={() => setCreating(false)}>{close =>
+        <CreateFolderForm titleId={titleId} suggestion={suggestion} onCreate={name => {onCreate?.(name); close();}} onClose={close}/>
+      }</ModalShell>}
+    </AnimatePresence>
   </article>;
 }

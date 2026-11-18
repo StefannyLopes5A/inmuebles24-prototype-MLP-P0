@@ -64,33 +64,42 @@ function playIntro(map, {host, dot, urls, stand}) {
   return () => { live = false; };
 }
 
-/** Embedded map for the listing page: the approximate position, a soft area around it and the real places within 500 m. */
-export default function ListingMap({center, language, say}) {
+/** Embedded map for the listing page: the approximate position, a soft area around it and the real places within 500 m. `preview` is the small still thumbnail in the intro. */
+export default function ListingMap({center, language, say, preview = false}) {
   const host = useRef(null), mapRef = useRef(null), tip = useRef(null), tipMarker = useRef(null);
 
   useEffect(() => {
     ensureProtocol();
     const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const map = new maplibregl.Map({
-      container:host.current, style:buildMapStyle({lang:language}), center, zoom:15.4,
-      minZoom:12, maxZoom:17, maxBounds:MAP_BOUNDS,
+      container:host.current, style:buildMapStyle({lang:language}), center, zoom:preview ? 13.4 : 15.4,
+      minZoom:12, maxZoom:17, maxBounds:MAP_BOUNDS, interactive:!preview,
       attributionControl:false, dragRotate:false, pitchWithRotate:false, touchPitch:false, renderWorldCopies:false,
     });
-    map.scrollZoom.disable();
-    map.touchZoomRotate.disableRotation();
-    map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
+    if (!preview) {
+      map.scrollZoom.disable();
+      map.touchZoomRotate.disableRotation();
+      map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
+    }
     const home = document.createElement('div');
     home.className = 'pp-map-home';
     home.innerHTML = '<span class="pp-map-home-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.3 2.6a1 1 0 0 1 1.4 0l8.6 7.7a1 1 0 0 1 .3.7V20a1.5 1.5 0 0 1-1.5 1.5H15v-6.2a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v6.2H4.4A1.5 1.5 0 0 1 2.9 20v-9a1 1 0 0 1 .3-.7Z"/></svg></span>';
     const dot = home.firstChild;
-    dot.style.opacity = '0';
+    dot.style.opacity = preview ? '1' : '0';
     new maplibregl.Marker({element:home, anchor:'center'}).setLngLat(center).addTo(map);
-    tip.current = document.createElement('div');
-    tip.current.className = 'pp-map-tip';
-    tip.current.setAttribute('aria-live', 'polite');
-    tipMarker.current = new maplibregl.Marker({element:tip.current, anchor:'bottom', offset:[0, -18]});
+    if (!preview) {
+      tip.current = document.createElement('div');
+      tip.current.className = 'pp-map-tip';
+      tip.current.setAttribute('aria-live', 'polite');
+      tipMarker.current = new maplibregl.Marker({element:tip.current, anchor:'bottom', offset:[0, -18]});
+    }
     let cancelled = false, cancel = () => {};
     const stand = [];
+    if (preview) {
+      map.on('load', () => host.current?.classList.add('is-ready'));
+      mapRef.current = map;
+      return () => { cancelled = true; map.remove(); mapRef.current = null; };
+    }
     map.on('load', async () => {
       map.addSource('approx', {type:'geojson', data:circle(center, APPROX_M)});
       map.addLayer({id:'approx-fill', type:'fill', source:'approx', paint:{'fill-color':'#222222', 'fill-opacity':0.06}});
@@ -134,13 +143,13 @@ export default function ListingMap({center, language, say}) {
     mapRef.current = map;
     return () => { cancelled = true; cancel(); stand.forEach(marker => marker.remove()); tipMarker.current?.remove(); map.remove(); mapRef.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [center[0], center[1], language]);
+  }, [center[0], center[1], language, preview]);
 
-  return <div className="pp-map">
-    <div ref={host} className="pp-map-canvas" role="region" aria-label={say('Mapa com a localização aproximada', 'Mapa con la ubicación aproximada')}/>
-    <div className="pp-map-zoom">
+  return <div className={`pp-map${preview ? ' is-preview' : ''}`}>
+    <div ref={host} className="pp-map-canvas" role={preview ? undefined : 'region'} aria-hidden={preview || undefined} aria-label={preview ? undefined : say('Mapa com a localização aproximada', 'Mapa con la ubicación aproximada')}/>
+    {!preview && <div className="pp-map-zoom">
       <button type="button" aria-label={say('Aproximar', 'Acercar')} onClick={() => mapRef.current?.zoomIn()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>
       <button type="button" aria-label={say('Afastar', 'Alejar')} onClick={() => mapRef.current?.zoomOut()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>
-    </div>
+    </div>}
   </div>;
 }

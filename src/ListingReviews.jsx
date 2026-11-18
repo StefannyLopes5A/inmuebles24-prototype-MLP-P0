@@ -5,7 +5,7 @@ import {EASE_FADE} from './listingPanelMotion';
 import {Expandable, MoreButton} from './ListingSections';
 import {MORA_MARK, MoraWords} from './MoraVoice';
 
-const PREVIEW = 4, TOTAL = 6, TAGS_SHOWN = 5;
+const PREVIEW = 6, TOTAL = 12;
 /** What reviewers keep saying the agency does well; people rate the agency as a whole, so these are mentions, not scores. */
 const TAGS = [
   {id:'care', label:['Atendimento atencioso', 'Atención cercana'], phrase:['atendem de perto', 'atienden de cerca'], d:'M4 5h16v11H8l-4 4zM8 10h8M8 13h5'},
@@ -21,6 +21,7 @@ const SHARE = [[0.75, 'três de cada quatro', 'tres de cada cuatro'], [0.64, 'do
   [0.4, 'quase metade', 'casi la mitad'], [0.3, 'um de cada três', 'uno de cada tres'], [0.2, 'um de cada cinco', 'uno de cada cinco'], [0, 'alguns', 'algunos']];
 const share = (part, total, say) => { const [, br, es] = SHARE.find(([floor]) => part / total >= floor); return say(br, es); };
 const initials = name => name.split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase();
+const STAR = filled => `/assets/reviews/star${filled ? '' : '-empty'}.svg`;
 const decimal = value => value.toFixed(1).replace('.', ',');
 
 const LAUREL_SPRING = {type:'spring', duration:0.7, bounce:0.25};
@@ -97,22 +98,23 @@ function MoraDigest({id, total, summary, shown, say}) {
 
 function Stars({count, say}) {
   return <span className="pp-review-stars" role="img" aria-label={say(`${count} de 5 estrelas`, `${count} de 5 estrellas`)}>
-    {Array.from({length:5}, (_, i) => <svg key={i} width="10" height="10" viewBox="0 0 12 12" aria-hidden="true" className={i < count ? 'is-on' : ''}><path d="M6 .8 7.6 4.2l3.7.4-2.8 2.5.8 3.7L6 8.9 2.7 10.8l.8-3.7L.7 4.6l3.7-.4z"/></svg>)}
+    {Array.from({length:5}, (_, i) => <img key={i} src={STAR(i < count)} alt="" width="10" height="10"/>)}
   </span>;
 }
 
-function Review({review, language, say}) {
+function Review({review, language, say, clip = false}) {
   const [open, setOpen] = useState(false);
   const pt = language === 'pt-BR';
+  const text = pt ? review.text[0] : review.text[1];
   return <article className="pp-review">
     <header>
-      <span className="pp-review-avatar" aria-hidden="true">{initials(review.name)}</span>
+      <span className="pp-review-avatar" style={{background:review.color}} aria-hidden="true">{initials(review.name)}</span>
       <div><strong>{review.name}</strong><small>{review.source === 'mora' ? say('Visitou com a Mora', 'Visitó con Mora') : 'Google'} · {pt ? review.age[0] : review.age[1]}</small></div>
     </header>
     <Stars count={review.stars} say={say}/>
-    <Expandable open={open} collapsed={96} className="pp-review-text" toggle={overflows => (overflows || open) && <MoreButton open={open} onClick={() => setOpen(!open)} more={say('Mostrar mais', 'Mostrar más')} less={say('Mostrar menos', 'Mostrar menos')}/>}>
-      <p>{pt ? review.text[0] : review.text[1]}</p>
-    </Expandable>
+    {clip
+      ? <Expandable open={open} collapsed={96} className="pp-review-text" toggle={overflows => (overflows || open) && <MoreButton open={open} onClick={() => setOpen(!open)} more={say('Mostrar mais', 'Mostrar más')} less={say('Mostrar menos', 'Mostrar menos')}/>}><p>{text}</p></Expandable>
+      : <p className="pp-review-text">{text}</p>}
   </article>;
 }
 
@@ -130,9 +132,10 @@ export function ListingReviews({home, advertiser, language, say, compact = false
     const total = advertiser.reviews + visits;
     const pool = compact ? TAGS : TAGS.slice();
     return pool.map(tag => ({...tag, rank:seed(`${advertiser.name.toLowerCase()}:${tag.id}`)}))
-      .sort((a, b) => a.rank - b.rank).slice(0, compact ? TAGS.length : TAGS_SHOWN)
+      .sort((a, b) => a.rank - b.rank)
       .map((tag, i) => ({...tag, mentions:Math.max(3, Math.round(total * (0.58 - i * 0.09 - (tag.rank % 5) / 100)))}))
-      .sort((a, b) => b.mentions - a.mentions);
+      .sort((a, b) => b.mentions - a.mentions)
+      .map(tag => ({...tag, share:total ? Math.round(tag.mentions / total * 100) : 0}));
   }, [advertiser.name, advertiser.reviews, visits, compact]);
   const spread = useMemo(() => {
     const five = Math.round(100 * Math.min(0.94, 0.62 + (advertiser.rating - 4.6) * 0.9));
@@ -163,7 +166,7 @@ export function ListingReviews({home, advertiser, language, say, compact = false
         {shown.map((review, i) => <motion.div key={review.name + i} className="pp-review-cell"
           initial={reduce ? {opacity:0} : {opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, transition:{duration:0.12}}}
           transition={reduce ? {duration:0.15} : {duration:0.2, ease:EASE_FADE, delay:(i - PREVIEW) * 0.05}}>
-          <Review review={review} language={language} say={say}/>
+          <Review review={review} language={language} say={say} clip={compact}/>
         </motion.div>)}
       </AnimatePresence>
     </div>
@@ -191,7 +194,9 @@ export function ListingReviews({home, advertiser, language, say, compact = false
             <div className="pp-rating-overall">
               <h3>{say('Avaliação geral', 'Calificación general')}</h3>
               <ol aria-label={say('Distribuição das notas', 'Distribución de calificaciones')}>{spread.map((share, i) => <li key={i}>
-                <small>{5 - i}</small><i aria-hidden="true"><b style={{width:`${share}%`}}/></i><span className="sr-only">{share}%</span>
+                <small>{5 - i}</small>
+                <i aria-hidden="true"><b style={{width:`${share}%`}}/></i>
+                <strong>{share}%</strong>
               </li>)}</ol>
             </div>
             <div className="pp-rating-tags">
@@ -205,7 +210,7 @@ export function ListingReviews({home, advertiser, language, say, compact = false
           </div>
           {reviewList}
           <button type="button" className="pp-pill pp-reviews-more" aria-expanded={all} aria-controls="pp-review-list" onClick={() => setAll(!all)}>
-            {all ? say('Mostrar menos avaliações', 'Mostrar menos reseñas') : say(`Mostrar as ${reviews.length} avaliações`, `Mostrar las ${reviews.length} reseñas`)}
+            {all ? say('Mostrar menos avaliações', 'Mostrar menos reseñas') : say(`Mostrar as ${reviews.length - PREVIEW} avaliações`, `Mostrar las ${reviews.length - PREVIEW} reseñas`)}
           </button>
         </>}
   </div>;

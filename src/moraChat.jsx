@@ -4,6 +4,7 @@ import {Icon} from './App';
 import {homes, listingPrice, propertyPhoto} from './data';
 import {similarListings} from './listingStory.js';
 import {MARKET_TOPICS, marketAnswer, marketQuestion, marketTopic} from './marketAnswers.js';
+import {followUpReading, sectionReading} from './selectionAsk.js';
 import {MoraThinking, MoraWords, wordCount} from './MoraVoice';
 import {VISIT_MOMENTS, leadLine, markVisit, readSeeker, visitMomentLabel} from './seekerSignals.js';
 import {SOFT_MOTION} from './homeIntro.js';
@@ -54,6 +55,26 @@ function moraReply(turn, say, advertiser, agency = AGENCY, home = null, language
   if (turn.kind === 'similar' && !similar?.items.length) return {widget:null, text:say('Agora não encontrei parecidos perto deste preço. Posso te ajudar com outra coisa?', 'Por ahora no encontré parecidas cerca de este precio. ¿Te ayudo con algo más?')};
   if (turn.kind === 'similar') return {widget:'similar', text:say(similar.list[0], similar.list[1]), think:say('Buscando parecidos…', 'Buscando parecidas…')};
   if (turn.kind === 'similar-later') return {widget:null, think:say('Pensando…', 'Pensando…'), text:say('Combinado. Quando quiser, eu te mostro. Posso te ajudar com outra coisa?', 'Va. Cuando quieras, te las muestro. ¿Te ayudo con algo más?')};
+  // A pill on the listing page names the section it sits in, so the answer stays about that section.
+  // A quick question under a section pill is answered from that section's own numbers.
+  if (turn.kind === 'ask' && turn.follow && home) {
+    const reading = followUpReading(turn.follow, home, language);
+    if (reading) return {
+      widget:reading.ask ? 'card' : null,
+      text:reading.text,
+      note:reading.note,
+      think:say('Comparando com a região…', 'Comparando con la zona…'),
+    };
+  }
+  if (turn.kind === 'ask' && turn.section && home) {
+    const reading = sectionReading(turn.section, home, language);
+    if (reading) return {
+      widget:reading.ask ? 'card' : null,
+      text:reading.text,
+      note:reading.note,
+      think:say('Comparando com a região…', 'Comparando con la zona…'),
+    };
+  }
   const topic = turn.kind === 'ask' ? marketTopic(turn.text) : null;
   if (topic && home) {
     const answer = marketAnswer(topic, {mode:home.mode, price:listingPrice(home), language, listing:true});
@@ -413,7 +434,10 @@ export function MoraComposer({id, field, draft, onDraft, onAsk, hints, quick, sh
   return <div className="lp-ask">
     <AnimatePresence initial={false}>{showQuick && <motion.div key="quick" className="lp-ask-suggest" role="group" aria-label={say('Sugestões de pergunta', 'Preguntas sugeridas')}
       exit={reduce ? {opacity:0} : {opacity:0, height:0}} transition={{height:SPRING_SIZE, opacity:{duration:0.15, ease:EASE_FADE}}}>
-      <div className="lp-ask-suggest-row">{quick.map(line => <button key={line} type="button" onClick={event => { onAsk(line, event.currentTarget); field.current?.focus({preventScroll:true}); }}>{line}</button>)}</div>
+      <div className="lp-ask-suggest-row">{quick.map(item => {
+        const {line, follow} = typeof item === 'string' ? {line:item} : item;
+        return <button key={line} type="button" onClick={event => { onAsk(line, event.currentTarget, follow ? {follow} : null); field.current?.focus({preventScroll:true}); }}>{line}</button>;
+      })}</div>
     </motion.div>}</AnimatePresence>
     <form className="lp-ask-bar" onSubmit={event => { event.preventDefault(); send(field.current); }}>
       <button type="button" className="lp-ask-back" onClick={onBack} aria-label={backLabel} title={backLabel}><Icon name="arrow" size={16}/></button>

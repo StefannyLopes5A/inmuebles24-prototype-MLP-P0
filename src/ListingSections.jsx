@@ -1,8 +1,11 @@
 import React, {Suspense, lazy, useLayoutEffect, useRef, useState} from 'react';
 import {motion, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
+import {seed} from './listingAdvertiser';
 import {SPRING_SIZE} from './listingPanelMotion';
 import {poiIconUrl} from './pois';
+import {travelMinutes} from './compareReading';
+import {ListingPlaces} from './ListingPlaces';
 
 const ListingMap = lazy(() => import('./ListingMap'));
 const asset = name => `/assets/mini-listing/${name}.svg`;
@@ -30,23 +33,25 @@ export function Expandable({open = true, collapsed, className = '', children, to
   </>;
 }
 
-export function MoreButton({open, onClick, more, less, controls}) {
-  return <button type="button" className="pp-more" aria-expanded={open} aria-controls={controls} onClick={onClick}>
+export function MoreButton({open, onClick, more, less, controls, plain = false}) {
+  return <button type="button" className={`pp-more${plain ? ' is-plain' : ''}`} aria-expanded={open} aria-controls={controls} onClick={onClick}>
     <span>{open ? less : more}</span><Icon name="chevron" size={16} className="pp-more-chevron"/>
   </button>;
 }
 
 export function Host({advertiser, onReviews, say}) {
   const developer = advertiser.service === 'developer';
+  const reply = advertiser.domi ? say('Responde em minutos pelo WhatsApp', 'Responde en minutos por WhatsApp') : say(`Costuma responder em ${advertiser.replyHours} h`, `Suele responder en ${advertiser.replyHours} h`);
   return <div className="pp-host">
-    {advertiser.logo ? <img className="pp-host-logo" src={advertiser.logo} alt=""/> : <span className="pp-host-logo is-initials" aria-hidden="true">{advertiser.initials}</span>}
-    <div className="pp-host-copy">
-      <p className="pp-host-name">{developer ? say('Empreendimento de', 'Desarrollo de') : say('Anunciado por', 'Publicado por')} <strong>{advertiser.name}</strong>{advertiser.verified && <span className="pp-host-verified" aria-label={developer ? say('Incorporadora verificada', 'Desarrolladora verificada') : say('Imobiliária verificada', 'Inmobiliaria verificada')}><Icon name="check" size={12}/></span>}</p>
-      <p className="pp-host-meta">
-        <button type="button" className="pp-host-rating" onClick={onReviews}>★ {advertiser.rating.toFixed(1).replace('.', ',')} · {advertiser.reviews} {say('avaliações no Google', 'reseñas en Google')}</button>
-        <span aria-hidden="true"> · </span>
-        <span>{advertiser.domi ? say('Responde em minutos pelo WhatsApp', 'Responde en minutos por WhatsApp') : say(`Costuma responder em ${advertiser.replyHours} h`, `Suele responder en ${advertiser.replyHours} h`)}</span>
-      </p>
+    <div className="pp-host-main">
+      {advertiser.logo ? <img className="pp-host-logo" src={advertiser.logo} alt=""/> : <span className="pp-host-logo is-initials" aria-hidden="true">{advertiser.initials}</span>}
+      <div className="pp-host-copy">
+        <p className="pp-host-name">{developer ? say('Empreendimento de', 'Desarrollo de') : say('Anunciado por', 'Publicado por')} <span className="pp-host-who"><strong>{advertiser.name}</strong>{advertiser.verified && <span className="pp-host-verified" aria-label={developer ? say('Incorporadora verificada', 'Desarrolladora verificada') : say('Imobiliária verificada', 'Inmobiliaria verificada')}><Icon name="check" size={12}/></span>}</span></p>
+        <p className="pp-host-meta">
+          <button type="button" className="pp-host-rating" onClick={onReviews}>★ {advertiser.rating.toFixed(1).replace('.', ',')} · {advertiser.reviews} {say('avaliações no Google', 'reseñas en Google')}</button>
+          <span className="pp-host-reply"> · {reply}</span>
+        </p>
+      </div>
     </div>
   </div>;
 }
@@ -68,12 +73,27 @@ export function Specs({facts, money, currency, say}) {
   </li>)}</ul>;
 }
 
-export function Description({paragraphs, say}) {
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+/** A stable advertiser reference, derived from the invented agency, never a person's name. */
+function advertiserCode(advertiser) {
+  const n = seed(advertiser.name.toLowerCase());
+  const token = [0, 1, 2, 3, 4].map(shift => CODE_ALPHABET[(n >>> (shift * 3)) % CODE_ALPHABET.length]).join('');
+  return `${advertiser.handle.replace(/^@/, '').slice(0, 14)}#${token}`;
+}
+
+export function Description({paragraphs, home, advertiser, say}) {
   const [open, setOpen] = useState(false);
+  const codes = [
+    [say('Código do anunciante', 'Código del anunciante'), advertiserCode(advertiser)],
+    [say('Cód. Imovelweb', 'Cód. Inmuebles24'), String(home.listingId)],
+    [say('CRECI', 'Registro'), say('por confirmar', 'por confirmar')],
+  ];
   return <>
-    <Expandable open={open} collapsed={144} className="pp-description" toggle={overflows => (overflows || open) && <MoreButton open={open} onClick={() => setOpen(!open)} controls="pp-description" more={say('Mostrar mais', 'Mostrar más')} less={say('Mostrar menos', 'Mostrar menos')}/>}>
-      <div id="pp-description">{paragraphs.map(text => <p key={text}>{text}</p>)}</div>
+    <Expandable open={open} collapsed={144} className="pp-description" toggle={overflows => (overflows || open) && <MoreButton plain open={open} onClick={() => setOpen(!open)} controls="pp-description" more={say('Mostrar mais', 'Mostrar más')} less={say('Mostrar menos', 'Mostrar menos')}/>}>
+      <div id="pp-description">{paragraphs.map((parts, index) => <p key={index}>{parts.map((part, i) => part.strong ? <strong key={i}>{part.text}</strong> : part.text)}</p>)}</div>
     </Expandable>
+    <ul className="pp-codes">{codes.map(([label, value]) => <li key={label} className="pp-code">{label}: {value}</li>)}</ul>
   </>;
 }
 
@@ -107,9 +127,32 @@ const GROUPS = [
   ['interior', 'No apartamento', 'En el departamento'],
   ['building', 'No prédio', 'En el edificio'],
 ];
-export function Amenities({amenities, language, say}) {
+const ROOM_IDS = ['living', 'bedrooms', 'kitchen', 'bath', 'outdoor'];
+
+/** The rooms the gallery can show, in the order of the page: one cover and the photos that belong to it. */
+function roomSpaces(gallery) {
+  const byId = new Map((gallery?.categories || []).map(category => [category.id, category]));
+  return ROOM_IDS.map(id => byId.get(id)).filter(room => room?.photos.length);
+}
+
+export function Amenities({amenities, gallery, language, say, onRoom}) {
   const pt = language === 'pt-BR';
+  const rooms = roomSpaces(gallery);
+  const countLabel = count => count === 1 ? say('1 foto', '1 foto') : say(`${count} fotos`, `${count} fotos`);
   return <div className="pp-amenities">
+    {rooms.length > 0 && <ul className="pp-rooms" aria-label={say('Explorar por espaço', 'Explorar por espacio')}>
+      {rooms.map(room => {
+        const name = pt ? room.pt : room.es;
+        const count = countLabel(room.photos.length);
+        return <li key={room.id}>
+          <button type="button" className="pp-room" onClick={event => onRoom?.(room.photos[0].index, event.currentTarget)}>
+            <span className="pp-room-photo" data-photo-index={room.photos[0].index}><img src={room.photos[0].src} alt=""/></span>
+            <span className="pp-room-name">{name}</span>
+            <span className="pp-room-count">{count}</span>
+          </button>
+        </li>;
+      })}
+    </ul>}
     {GROUPS.map(([group, br, es]) => {
       const items = amenities.filter(item => item.group === group);
       if (!items.length) return null;
@@ -133,18 +176,22 @@ function aroundList(counts, pt) {
   return Object.keys(NOUNS).filter(key => counts[key] > 0).slice(0, 3).map(key => `${counts[key]} ${NOUNS[key][pt ? 0 : 1][counts[key] === 1 ? 0 : 1]}`);
 }
 
-function Spark({values, direction, reduce}) {
-  const min = Math.min(...values), span = Math.max(1, Math.max(...values) - min);
-  const points = values.map((value, i) => `${(i / (values.length - 1)) * 96},${16 - ((value - min) / span) * 14}`).join(' ');
-  return <svg className={`pp-spark is-${direction}`} width="96" height="18" viewBox="0 0 96 18" aria-hidden="true">
-    <motion.polyline points={points} fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      variants={reduce ? undefined : {hidden:{pathLength:0}, show:{pathLength:1, transition:{duration:0.6, ease:[0.77, 0, 0.175, 1], delay:0.2}}}}/>
-  </svg>;
-}
+const HOOD_ICON = name => `/assets/hood/${name}.svg`;
+const NEARBY_KINDS = [
+  ['metro', 'Transportes', 'Transportes'],
+  ['escola', 'Escolas', 'Escuelas'],
+  ['supermercado', 'Mercados', 'Mercados'],
+  ['comercio', 'Shoppings', 'Shoppings'],
+  ['parque', 'Parques', 'Parques'],
+];
+const PLACE_LIMIT = 10;
 
-const HoodMark = ({plus}) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-  <path d={plus ? 'M5 12.5l4.5 4.5L19 7.5' : 'M6 12h12'}/>
-</svg>;
+function carMinutes(place) {
+  const meters = Math.max(80, place.minutes * 80);
+  let value = 2166136261;
+  for (const char of place.name) value = Math.imul(value ^ char.codePointAt(0), 16777619);
+  return travelMinutes(meters, 'car', (value >>> 0) % 1000 / 1000);
+}
 
 const STAT_EASE = [0.23, 1, 0.32, 1];
 const statsList = reduce => ({hidden:{}, show:{transition:{staggerChildren:reduce ? 0 : 0.06}}});
@@ -164,7 +211,6 @@ export function Location({home, location, neighborhood, language, money, currenc
       <motion.li variants={statItem(reduce)}>
         <span>{say('Valorização em 12 meses', 'Plusvalía en 12 meses')}</span>
         <strong>{trend}</strong>
-        <Spark values={hood.trend.spark} direction={hood.trend.direction} reduce={reduce}/>
       </motion.li>
       <motion.li variants={statItem(reduce)}>
         <span>{say(`Preço de venda em ${hood.name}`, `Precio de venta en ${hood.name}`)}</span>
@@ -186,36 +232,44 @@ export function Location({home, location, neighborhood, language, money, currenc
       <ListingMap center={location.center} language={language} say={say}/>
     </Suspense>
     <p className="pp-map-note">{say('Localização aproximada: o endereço exato é compartilhado quando a visita é confirmada.', 'Ubicación aproximada: la dirección exacta se comparte al confirmar la visita.')}</p>
+    <ListingPlaces center={location.center} language={language} say={say}/>
 
     <div className="pp-hood">
-      {hood && <>
-        <h3>{say(`Como é viver em ${hood.name}`, `Así se vive en ${hood.name}`)}</h3>
-        <p className="pp-hood-reading">{hood.reading}</p>
-        <ul className="pp-hood-chips" aria-label={say('O que os vizinhos dizem', 'Lo que dicen los vecinos')}>
-          {hood.plus.map(label => <li key={label} className="is-plus"><HoodMark plus/><span className="sr-only">{say('A favor: ', 'A favor: ')}</span>{label}</li>)}
-          {hood.minus.map(label => <li key={label} className="is-minus"><HoodMark/><span className="sr-only">{say('Contra: ', 'En contra: ')}</span>{label}</li>)}
-        </ul>
-      </>}
-      <div className={`pp-hood-grid${hood ? '' : ' is-places-only'}`}>
-        {hood && <div className="pp-hood-col">
-          <h4>{say('O que os vizinhos avaliam', 'Lo que valoran los vecinos')}</h4>
+      <div className="pp-hood-top">
+        {hood && <div className="pp-hood-intro">
+          <h3>{say(`Como é viver em ${hood.name}`, `Así se vive en ${hood.name}`)}</h3>
+          <p className="pp-hood-reading">{hood.reading}</p>
+        </div>}
+        {NEARBY_KINDS.some(([id]) => location.counts?.[id] > 0) && <ul className="pp-hood-chips" aria-label={say('O que há por perto', 'Qué hay cerca')}>
+          {NEARBY_KINDS.filter(([id]) => location.counts?.[id] > 0).map(([id, br, es]) => <li key={id}>
+            <img src={HOOD_ICON('check')} alt="" width="16" height="16"/>{say(br, es)}
+          </li>)}
+        </ul>}
+      </div>
+      <div className={`pp-hood-grid${location.places.length ? '' : ' is-card-only'}`}>
+        {location.places.length > 0 && <div className={`pp-hood-places${location.places.length > 5 ? '' : ' is-single'}`}>
+          {(location.places.length > 5 ? [location.places.slice(0, 5), location.places.slice(5, PLACE_LIMIT)] : [location.places.slice(0, PLACE_LIMIT)]).map(column => <ul key={column[0].name} className="pp-places">{column.map(place => <li key={place.categoria + place.name}>
+            <img src={poiIconUrl(place.categoria)} alt="" width="20" height="20"/>
+            <span className="pp-place-copy"><b title={place.name}>{place.name}</b><small>{pt ? place.kind[0] : place.kind[1]}</small></span>
+            <span className="pp-place-times">
+              <span><img src={HOOD_ICON('walk')} alt="" width="16" height="16"/>{place.minutes} min<span className="sr-only"> {say('a pé', 'a pie')}</span></span>
+              <span><img src={HOOD_ICON('car')} alt="" width="16" height="16"/>{carMinutes(place)} min<span className="sr-only"> {say('de carro', 'en auto')}</span></span>
+            </span>
+          </li>)}</ul>)}
+        </div>}
+        {hood && <div className="pp-hood-card-slot"><div className="pp-hood-card">
+          <div className="pp-hood-card-head">
+            <p className="pp-hood-mora"><img src={HOOD_ICON('mora')} alt="" width="20" height="20"/>Mora</p>
+            <h4>{say('O que os vizinhos valorizam', 'Lo que valoran los vecinos')}</h4>
+          </div>
           <motion.ul className="pp-hood-bars" initial="hidden" whileInView="show" viewport={{once:true, amount:0.6}}
             variants={{hidden:{}, show:{transition:{staggerChildren:reduce ? 0 : 0.06}}}}>{hood.bars.map(bar => <li key={bar.id}>
             <span>{bar.label}</span><strong>{bar.value}%</strong>
             <i aria-hidden="true"><motion.b style={{width:`${bar.value}%`}}
               variants={reduce ? undefined : {hidden:{scaleX:0}, show:{scaleX:1, transition:{duration:0.6, ease:STAT_EASE}}}}/></i>
           </li>)}</motion.ul>
-        </div>}
-        {location.places.length > 0 && <div className="pp-hood-col is-places">
-          <h4>{say('A pé daqui', 'A pie de aquí')}</h4>
-          <ul className="pp-places">{location.places.map(place => <li key={place.categoria + place.name}>
-            <img src={poiIconUrl(place.categoria)} alt=""/>
-            <span><b title={place.name}>{place.name}</b><small>{pt ? place.kind[0] : place.kind[1]}</small></span>
-            <strong>{place.minutes} min</strong>
-          </li>)}</ul>
-        </div>}
+        </div></div>}
       </div>
-      {hood && <p className="pp-hood-source">{say(`Com base em ${hood.reviews} avaliações de vizinhos, fóruns públicos e anúncios.`, `Con base en ${hood.reviews} reseñas de vecinos, foros públicos y anuncios.`)}</p>}
     </div>
   </>;
 }

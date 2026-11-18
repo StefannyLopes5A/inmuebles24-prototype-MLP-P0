@@ -4,16 +4,19 @@ import {Icon} from './App';
 import {InlineLogin} from './Account';
 import {MemberAvatar, MembersChip, reactionLabel, useSay} from './Collaboration';
 import {HouseCard} from './Home';
+import {FolderBoard} from './FolderBoard.jsx';
 import {ModalShell} from './ModalShell';
 import {ReactionButtons} from './InviteLayer';
 import {FOLDER_NAME_MAX, cleanFolderName, savedCountLabel} from './favoriteLists';
+import {BOARD_STAGES, cleanGuestEmail, stageName} from './boardModel';
 import {NOTE_MAX, activeMembers, can, isCollaborative, notesFor, reactionsFor} from './collaborativeLists';
 import {EASE_OUT, riseIn} from './favoriteMotion';
 
 const MoreIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>;
+const ShareIcon = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>;
 
 /** Menu button with arrow keys and Escape, the account menu's behavior. */
-function FolderMenu({items}) {
+function FolderMenu({items, menuClass = ''}) {
   const {say} = useSay();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -42,7 +45,7 @@ function FolderMenu({items}) {
     <button ref={trigger} type="button" className="compare-back folder-menu-trigger" aria-haspopup="menu" aria-expanded={open} aria-controls={open ? menuId : undefined}
       aria-label={say('Opciones de la lista', 'Opções da lista')} onClick={() => setOpen(value => !value)}><MoreIcon/></button>
     <AnimatePresence>
-      {open && <motion.div ref={menu} id={menuId} role="menu" className="account-menu folder-menu" onKeyDown={onKeyDown}
+      {open && <motion.div ref={menu} id={menuId} role="menu" className={`account-menu folder-menu${menuClass ? ` ${menuClass}` : ''}`} onKeyDown={onKeyDown}
         initial={hidden} animate={{opacity:1, transform:'scale(1)'}} exit={hidden} transition={{duration:reduce ? 0.15 : 0.18, ease:EASE_OUT}}>
         {items.map(item => <button key={item.id} type="button" role="menuitem" tabIndex={-1} className="account-menu-item" data-danger={item.danger || undefined}
           onClick={() => {dismiss(false); item.run();}}>{item.label}</button>)}
@@ -169,8 +172,79 @@ function CollabStrip({home, record, meId, onReact, onNote}) {
  * the list menu under the title, and the listings with the same card as the results. In a shared list each card
  * carries reactions and one note per member. The invite preview shows the listings behind "Unirme a la lista".
  */
-export function FolderPage({mode, name, homes, record, meId, me, sender, search, saved = [], receipts = [], onLike, onBack, onOpen, onCompare, onExplore, onInvite, onReact, onNote,
-  onRename, onLeave, onRemoveMember, onRevoke, onDelete, onCopy, onDismiss, onJoin, onLogin}) {
+function BoardMembersDialog({name, guests, onAdd, onRemove, onClose}) {
+  const {say} = useSay();
+  const titleId = useId();
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const clean = cleanGuestEmail(email);
+  function submit(event) {
+    event.preventDefault();
+    if (!clean) return;
+    const added = onAdd(clean);
+    if (!added) {setError(say('Esa persona ya está en la lista.', 'Essa pessoa já está na lista.')); return;}
+    setEmail('');
+    setError('');
+  }
+  return <ModalShell labelledBy={titleId} onClose={onClose}>{close =>
+    <form onSubmit={submit}>
+      <header className="folder-panel-header">
+        <span aria-hidden="true"/>
+        <h2 id={titleId}>{name}</h2>
+        <button type="button" className="folder-icon-button" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
+      </header>
+      <div className="board-members">
+        <div className="board-member">
+          <MemberAvatar name="Tú" self size={48}/>
+          <span><b>{say('Tú', 'Você')}</b><small>{say('Propietario de la lista', 'Proprietário da lista')}</small></span>
+        </div>
+        {guests.map(guest => <div className="board-member" key={guest.email}>
+          <MemberAvatar name={guest.email.split('@')[0]} size={48}/>
+          <span><b>{guest.email}</b><small>{say('Invitado', 'Convidado')}</small></span>
+          <button type="button" className="folder-text-button" onClick={() => onRemove(guest.email)}>{say('Quitar', 'Remover')}</button>
+        </div>)}
+        <label className="board-email">
+          <span>{say('Correo electrónico', 'E-mail')}</span>
+          <input type="email" inputMode="email" autoComplete="off" maxLength={80} placeholder="correo@ejemplo.com" value={email}
+            onChange={event => {setEmail(event.target.value); setError('');}} autoFocus data-autofocus/>
+        </label>
+        <p className="board-note">{error || say('Solo en esta sesión. No se envía ninguna invitación.', 'Só nesta sessão. Nenhum convite é enviado.')}</p>
+      </div>
+      <footer className="folder-panel-footer is-split">
+        <button type="button" className="folder-text-button" onClick={close}>{say('Cerrar', 'Fechar')}</button>
+        <button type="submit" className="folder-primary board-add" disabled={!clean}>{say('Agregar', 'Adicionar')}</button>
+      </footer>
+    </form>}
+  </ModalShell>;
+}
+
+function StagesDialog({labels, onSave, onClose}) {
+  const {say} = useSay();
+  const titleId = useId();
+  const [values, setValues] = useState(() => Object.fromEntries(BOARD_STAGES.map(stage => [stage.id, labels[stage.id] || say(stage.es, stage.br)])));
+  const ready = BOARD_STAGES.every(stage => values[stage.id].trim());
+  return <ModalShell labelledBy={titleId} onClose={onClose}>{close =>
+    <form onSubmit={event => {event.preventDefault(); if (ready) {onSave(values); close();}}}>
+      <header className="folder-panel-header">
+        <span aria-hidden="true"/>
+        <h2 id={titleId}>{say('Editar etapas', 'Editar etapas')}</h2>
+        <button type="button" className="folder-icon-button" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
+      </header>
+      <div className="folder-create-body board-stages">
+        {BOARD_STAGES.map(stage => <label key={stage.id}>{stageName(stage, {}, say)}
+          <input value={values[stage.id]} maxLength={28} onChange={event => setValues(current => ({...current, [stage.id]:event.target.value}))}/>
+        </label>)}
+      </div>
+      <footer className="folder-panel-footer is-split">
+        <button type="button" className="folder-text-button" onClick={close}>{say('Cancelar', 'Cancelar')}</button>
+        <button type="submit" className="folder-primary" disabled={!ready}>{say('Guardar', 'Salvar')}</button>
+      </footer>
+    </form>}
+  </ModalShell>;
+}
+
+export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, guests:[]}, record, meId, me, sender, search, saved = [], receipts = [], onLike, onBack, onOpen, onCompare, onExplore, onInvite, onReact, onNote,
+  onRename, onLeave, onRemoveMember, onRevoke, onDelete, onCopy, onDismiss, onJoin, onLogin, onMove, onStages, onAddGuest, onRemoveGuest, onShare, onDuplicate}) {
   const {language, say} = useSay();
   const reduce = useReducedMotion();
   const heading = useRef(null);
@@ -185,13 +259,42 @@ export function FolderPage({mode, name, homes, record, meId, me, sender, search,
     : say('Invitar a esta lista', 'Convidar para esta lista');
 
   const items = mode !== 'member' ? [] : [
-    ...(owner ? [{id:'rename', label:say('Renombrar', 'Renomear'), run:() => setDialog('rename')}] : []),
+    {id:'people', label:say('Ver miembros', 'Ver membros'), run:() => setDialog('members')},
+    ...(owner ? [
+      {id:'stages', label:say('Editar etapas', 'Editar etapas'), run:() => setDialog('stages')},
+      {id:'rename', label:say('Editar nombre', 'Editar nome'), run:() => setDialog('rename')},
+      {id:'duplicate', label:say('Duplicar lista', 'Duplicar lista'), run:onDuplicate},
+    ] : []),
     ...(record?.inviteToken && owner ? [{id:'revoke', label:say('Desactivar enlace de invitación', 'Desativar link de convite'), run:onRevoke}] : []),
     ...(record && can(record, meId, 'leave') ? [{id:'leave', label:say('Salir de la lista', 'Sair da lista'), run:onLeave, danger:true}] : []),
     ...(owner ? [{id:'delete', label:say('Eliminar lista', 'Excluir lista'), run:onDelete, danger:true}] : []),
   ];
+  const guestCount = board.guests.length;
+  const peopleLabel = guestCount
+    ? say(`Ver miembros, ${guestCount} ${guestCount === 1 ? 'invitado' : 'invitados'}`, `Ver membros, ${guestCount} ${guestCount === 1 ? 'convidado' : 'convidados'}`)
+    : say('Agregar o ver miembros', 'Adicionar ou ver membros');
 
-  const header = <header className="favorites-header folder-page-header">
+  const header = mode === 'member'
+    ? <header className="favorites-header folder-page-header board-header">
+      <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a favoritos', 'Voltar para favoritos')}><Icon name="back" size={20}/></button>
+      <div className="board-title-row">
+        <motion.h1 ref={heading} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{name || say('Lista de favoritos', 'Lista de favoritos')}</motion.h1>
+        <div className="board-views" role="group" aria-label={say('Vista de la lista', 'Visualização da lista')}>
+          <button type="button" aria-pressed="true">{say('Tablero', 'Quadro')}</button>
+          <button type="button" aria-pressed="false" onClick={onCompare}>{say('Comparar', 'Comparar')}</button>
+        </div>
+      </div>
+      <div className="board-tools">
+        <button type="button" className="board-people" onClick={() => setDialog('members')} aria-label={peopleLabel}>
+          <MemberAvatar name={me?.name || 'Tú'} self size={36}/>
+          {board.guests.slice(0, 2).map(guest => <MemberAvatar key={guest.email} name={guest.email.split('@')[0]} size={36}/>)}
+          <span className="board-people-plus" aria-hidden="true">+</span>
+        </button>
+        <button type="button" className="board-icon compare-back" onClick={onShare} aria-label={say('Compartir enlace de la vista', 'Compartilhar link da visualização')}><ShareIcon/></button>
+        <FolderMenu items={items} menuClass="board-menu"/>
+      </div>
+    </header>
+    : <header className="favorites-header folder-page-header">
     <div className="folder-page-top">
       <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a favoritos', 'Voltar para favoritos')}><Icon name="back" size={20}/></button>
       {mode === 'member' && <FolderMenu items={items}/>}
@@ -216,6 +319,7 @@ export function FolderPage({mode, name, homes, record, meId, me, sender, search,
     <h2>{say('Esta invitación ya no está activa', 'Este convite não está mais ativo')}</h2>
     <p>{say('Quien te invitó desactivó el enlace o eliminó la lista. Pídele uno nuevo.', 'Quem te convidou desativou o link ou excluiu a lista. Peça um novo.')}</p>
   </div>;
+  else if (mode === 'member') body = <FolderBoard homes={homes} board={board} receipts={receipts} search={search} saved={saved} onLike={onLike} onOpen={onOpen} onMove={onMove}/>;
   else if (mode === 'deleted') body = <div className="favorites-empty folder-page-notice">
     <h2>{say('Esta lista fue eliminada', 'Esta lista foi excluída')}</h2>
     <p>{say('Su dueño la eliminó. Puedes guardar una copia con los inmuebles para seguir viéndolos.', 'O dono a excluiu. Você pode guardar uma cópia com os imóveis para continuar vendo.')}</p>
@@ -245,7 +349,9 @@ export function FolderPage({mode, name, homes, record, meId, me, sender, search,
     </div>}
     <AnimatePresence>
       {dialog === 'rename' && <RenameDialog key="rename" name={name} onSave={onRename} onClose={() => setDialog(null)}/>}
-      {dialog === 'members' && <MembersDialog key="members" name={name} members={members} meId={meId} canRemove={!!record && can(record, meId, 'removeMember')}
+      {dialog === 'stages' && <StagesDialog key="stages" labels={board.labels} onSave={onStages} onClose={() => setDialog(null)}/>}
+      {dialog === 'members' && mode === 'member' && <BoardMembersDialog key="board-members" name={name} guests={board.guests} onAdd={onAddGuest} onRemove={onRemoveGuest} onClose={() => setDialog(null)}/>}
+      {dialog === 'members' && mode !== 'member' && <MembersDialog key="members" name={name} members={members} meId={meId} canRemove={!!record && can(record, meId, 'removeMember')}
         onRemove={onRemoveMember} onInvite={onInvite} onClose={() => setDialog(null)}/>}
     </AnimatePresence>
   </article>;

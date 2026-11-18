@@ -1,0 +1,125 @@
+/** Stages of a favorites folder board. A home with no saved stage starts in the first column. */
+
+export const BOARD_STAGES = Object.freeze([
+  {id:'interest', es:'Favoritadas', br:'Me interessam'},
+  {id:'contacted', es:'Contactadas', br:'Contactadas'},
+  {id:'visit', es:'Visita solicitada', br:'Visita solicitada'},
+  {id:'visited', es:'Visitadas', br:'Visitadas'},
+  {id:'offer', es:'Oferta enviada', br:'Proposta enviada'},
+]);
+
+const STAGE_IDS = new Set(BOARD_STAGES.map(stage => stage.id));
+const LATER = new Set(['visit', 'visited', 'offer']);
+const LABEL_MAX = 28;
+const EMAIL_MAX = 80;
+const GUEST_MAX = 12;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export const cleanStageLabel = value => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, LABEL_MAX);
+
+export const cleanGuestEmail = value => {
+  const email = String(value ?? '').trim().toLowerCase().slice(0, EMAIL_MAX);
+  return EMAIL.test(email) ? email : '';
+};
+
+/** Session data is untrusted: unknown stages, labels and emails are dropped. */
+export function normalizeBoard(raw, homeIds = []) {
+  const allowed = new Set(homeIds);
+  const stages = {};
+  if (raw?.stages && typeof raw.stages === 'object') {
+    for (const [id, stage] of Object.entries(raw.stages)) {
+      if (allowed.has(id) && STAGE_IDS.has(stage)) stages[id] = stage;
+    }
+  }
+  const labels = {};
+  if (raw?.labels && typeof raw.labels === 'object') {
+    for (const stage of BOARD_STAGES) {
+      const label = cleanStageLabel(raw.labels[stage.id]);
+      if (label) labels[stage.id] = label;
+    }
+  }
+  const seen = new Set();
+  const guests = [];
+  if (Array.isArray(raw?.guests)) {
+    for (const guest of raw.guests) {
+      const email = cleanGuestEmail(guest?.email);
+      if (!email || seen.has(email)) continue;
+      seen.add(email);
+      guests.push({email});
+      if (guests.length >= GUEST_MAX) break;
+    }
+  }
+  if (!Object.keys(stages).length && !Object.keys(labels).length && !guests.length) return undefined;
+  return {
+    ...(Object.keys(stages).length ? {stages} : {}),
+    ...(Object.keys(labels).length ? {labels} : {}),
+    ...(guests.length ? {guests} : {}),
+  };
+}
+
+export function readBoard(folder) {
+  const board = normalizeBoard(folder?.board, folder?.homeIds || []) || {};
+  return {stages:board.stages || {}, labels:board.labels || {}, guests:board.guests || []};
+}
+
+export function writeBoard(folder, board) {
+  const next = normalizeBoard(board, folder.homeIds || []);
+  const copy = {...folder};
+  if (next) copy.board = next;
+  else delete copy.board;
+  return copy;
+}
+
+/** Saved stage wins. Without one, a contacted home sits in Contactadas and every other home in Favoritadas. */
+export function stageFor(homeId, board, contacted = false) {
+  const explicit = board?.stages?.[homeId];
+  if (STAGE_IDS.has(explicit)) return explicit;
+  return contacted ? 'contacted' : 'interest';
+}
+
+/**
+ * Places a home. A contact does not pull a card back from Visita solicitada, Visitadas or Oferta enviada.
+ * Any other column, including the first, moves to Contactadas when `keepLater` is set.
+ */
+export function withStage(folder, homeId, stage, {keepLater = false} = {}) {
+  if (!STAGE_IDS.has(stage) || !folder?.homeIds?.includes(homeId)) return folder;
+  const board = readBoard(folder);
+  const current = board.stages[homeId];
+  if (keepLater && LATER.has(current)) return folder;
+  if (current === stage) return folder;
+  return writeBoard(folder, {...board, stages:{...board.stages, [homeId]:stage}});
+}
+
+export function withLabels(folder, labels) {
+  const board = readBoard(folder);
+  const next = {};
+  for (const stage of BOARD_STAGES) {
+    const label = cleanStageLabel(labels?.[stage.id]);
+    if (label) next[stage.id] = label;
+  }
+  return writeBoard(folder, {...board, labels:next});
+}
+
+export function withGuest(folder, email) {
+  const clean = cleanGuestEmail(email);
+  const board = readBoard(folder);
+  if (!clean || board.guests.some(guest => guest.email === clean)) return {folder, added:false};
+  return {folder:writeBoard(folder, {...board, guests:[...board.guests, {email:clean}]}), added:true};
+}
+
+export function withoutGuest(folder, email) {
+  const board = readBoard(folder);
+  return writeBoard(folder, {...board, guests:board.guests.filter(guest => guest.email !== email)});
+}
+
+export function stageName(stage, labels, say) {
+  return labels?.[stage.id] || say(stage.es, stage.br);
+}
+
+/** Next column in either direction. The last column wraps back to the first. */
+export function adjacentStage(stageId, direction) {
+  const index = BOARD_STAGES.findIndex(stage => stage.id === stageId);
+  if (index < 0) return '';
+  const step = direction < 0 ? -1 : 1;
+  return BOARD_STAGES[(index + step + BOARD_STAGES.length) % BOARD_STAGES.length].id;
+}

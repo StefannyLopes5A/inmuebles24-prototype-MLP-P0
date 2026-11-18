@@ -1,9 +1,11 @@
-.compare-page{--compare-col:calc((100% - 80px) / 6);padding:24px 0 0;max-width:none;margin:0;overflow:visible}
+.compare-page{--compare-col:calc((100% - 64px) / 5);padding:24px 0 0;max-width:none;margin:0;overflow:visible}
 .compare-page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:0 0 32px;padding-inline:var(--home-page-gutter,48px);width:100%;box-sizing:border-box}
 .compare-page-heading{min-width:0;flex:1}
 .compare-back{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line,#00000014);background:#0000000f;margin:0 0 20px;color:#111}
 .compare-back:focus-visible,.compare-more:focus-visible,.compare-cta:focus-visible,.compare-remove:focus-visible,.compare-composer-close:focus-visible,.compare-chips button:focus-visible,.compare-composer-send:focus-visible{outline:2px solid #b43c00;outline-offset:4px}
 @media(hover:hover) and (pointer:fine){.compare-back:hover{background:#00000014}}
+.compare-title-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
+.compare-title-row .board-views{align-self:flex-start}
 .compare-page-header h1{font-size:32px;line-height:1.2;font-weight:600;outline:none;margin:0}
 .compare-folder-meta{font-size:16px;line-height:1.4;color:#000000b8;margin:8px 0 0}
 .compare-empty-copy{font-size:15px;line-height:1.45;color:#555;margin:12px 0 0}
@@ -22,7 +24,8 @@
 .compare-cell-card{padding:0 0 16px}
 .compare-row-label{display:flex;align-items:center;gap:6px;margin:0 0 8px;font-size:13px;line-height:1.4;font-weight:600;color:#000000b8;cursor:default}
 .compare-row-label>img{flex:none}
-.compare-column:not(:first-child) .compare-cell[data-row=highlight] .compare-row-label{opacity:0;pointer-events:none}
+.compare-column:not(:first-child) .compare-cell[data-row=highlight] .compare-row-label,
+.compare-column:not(:first-child) .compare-cell[data-row=nearby] .compare-row-label{opacity:0;pointer-events:none}
 
 .compare-card{width:100%;flex:none}
 .compare-card .discovery-meta-copy>b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -75,28 +78,11 @@
 .compare-bar [data-band=p90-100]>.compare-bar-fill,.compare-bar-dot[data-band=p90-100]{background:#b23f19}
 .compare-price-note{margin:8px 0 0;font-size:13px;line-height:18.2px;color:#000000b8;text-wrap:pretty}
 
-.compare-nearby-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin:0 0 12px}
-.compare-nearby-head .compare-row-label{margin:0}
-.compare-nearby-head[data-repeat] .compare-row-label{visibility:hidden}
-.compare-modes{display:inline-flex;flex:none;padding:2px;border-radius:999px;background:#f2f2f2;transition:opacity 150ms cubic-bezier(.23,1,.32,1)}
-.compare-nearby-head[data-repeat] .compare-modes{opacity:0;pointer-events:none}
-@media(hover:hover) and (pointer:fine) and (min-width:701px){
-  .compare-column:hover .compare-nearby-head .compare-modes{opacity:1;pointer-events:auto}
-  .compare-rail:has(.compare-column:not(:first-child):hover) .compare-column:first-child .compare-modes{opacity:0;pointer-events:none}
-}
-.compare-modes button{position:relative;min-height:32px;padding:0 12px;border:0;border-radius:999px;background:transparent;font-size:13px;line-height:16px;font-weight:500;color:#000000b8;cursor:pointer;transition:color 150ms ease}
-.compare-modes button[aria-pressed=true]{color:#111;font-weight:600}
-.compare-modes button:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
-.compare-modes-pill{position:absolute;inset:0;border-radius:inherit;background:#fff;box-shadow:0 1px 3px #0000001f}
-.compare-modes-label{position:relative}
-@media(hover:hover) and (pointer:fine){.compare-modes button[aria-pressed=false]:hover{color:#111}}
 .compare-places{display:flex;flex-direction:column;gap:2px;margin:0 -8px;padding:0;list-style:none}
-.compare-place{display:flex;align-items:center;gap:12px;min-width:0;min-height:40px;padding:0 8px;border-radius:12px;background:transparent;box-sizing:border-box;transition:background-color 150ms ease}
+.compare-place{display:flex;align-items:center;gap:12px;min-width:0;min-height:40px;padding:0 8px;border-radius:12px;box-sizing:border-box}
 .compare-place>.poi-glyph{width:20px;height:20px;flex:none;color:#111}
 .compare-place-name{flex:1;min-width:0;overflow:hidden;font-size:14px;line-height:20px;color:#222;white-space:nowrap;text-overflow:ellipsis}
 .compare-place>strong{display:grid;flex:none;justify-items:end;font-size:14px;line-height:20px;font-weight:600;color:#111;font-variant-numeric:tabular-nums;white-space:nowrap}
-.compare-place[data-best]{background:#f2f2f2}
-.compare-place[data-best] .compare-place-name{color:#111;font-weight:600}
 
 .compare-stack{display:inline-grid;min-width:0}
 .compare-stack>.compare-stack-layer{grid-area:1/1;display:inline-flex;align-items:center;justify-content:inherit;min-width:0}
@@ -152,13 +138,12 @@
   .compare-page-header{flex-direction:column;align-items:stretch;gap:16px;margin-bottom:24px;padding-inline:var(--home-page-gutter,24px)}
   .compare-back{width:44px;height:44px;margin-bottom:16px}
   .compare-page-header h1{font-size:26px}
+  .compare-title-row .board-views button{min-width:0}
   .compare-header-actions{justify-content:space-between}
   .compare-more{min-height:44px;font-size:13px}
   .compare-rail{--compare-rail-pad:var(--home-page-gutter,24px);column-gap:16px;padding-bottom:calc(var(--compare-bar-height,64px) + 48px)}
-  .compare-column:not(:first-child) .compare-row-label{opacity:1}
-  .compare-nearby-head[data-repeat] .compare-row-label{visibility:visible}
-  .compare-rail .compare-column .compare-nearby-head .compare-modes{opacity:1;pointer-events:auto}
-  .compare-modes button{min-height:36px}
+  .compare-column:not(:first-child) .compare-row-label,
+  .compare-column:not(:first-child) .compare-cell[data-row=nearby] .compare-row-label{opacity:1;pointer-events:auto}
   .compare-dock{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
   .compare-dock[data-open]{bottom:0;width:auto;z-index:81}
   .compare-dock[data-open] .compare-action-bar{width:100%;box-shadow:0 -6px 20px #0000002e}

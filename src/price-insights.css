@@ -1,0 +1,275 @@
+/* Results price insights, Figma 12899:44837 (Rediseño del listado 2025). */
+.price-insights{container-type:inline-size;align-self:stretch;width:100%;max-width:100%;min-width:0;box-sizing:border-box;padding:48px var(--home-page-gutter)}
+.price-insights-layout{display:flex;align-items:stretch;gap:40px;width:100%;min-width:0}
+
+.price-insights-range{flex:0 1 480px;width:min(480px,100%);display:flex;flex-direction:column;align-items:flex-start;gap:32px;padding:24px;border:1px solid #0000000f;border-radius:24px;background:#fff;box-sizing:border-box}
+.price-insights-lead{display:flex;flex-direction:column;gap:16px;width:100%}
+.price-insights-lead p{margin:0;font-size:16px;line-height:22.4px;letter-spacing:-.3125px;color:#666}
+.price-insights-chart{display:flex;flex-direction:column;gap:36px;width:100%}
+.price-insights .price-histogram{flex:none;width:100%;height:114px;padding-inline:22px;box-sizing:border-box}
+.price-insights .price-histogram-bars{gap:3px}
+.price-insights .price-histogram-bar{border-radius:2px;background-image:linear-gradient(color-mix(in srgb,#919191 calc(var(--h,.5) * 100%),#d1d1d1),#ebebeb);background-size:100% 100%;background-position:bottom}
+.price-insights .price-histogram-bar.in-range{background-image:linear-gradient(color-mix(in srgb,#ff5000 calc(var(--h,.5) * 100%),#ffdbce),#ffe3d9)}
+.price-insights-fields{display:flex;justify-content:space-between;gap:16px}
+.price-insights-fields label{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:16px;font-size:13px;line-height:normal;font-weight:600;color:#5a5a66}
+.price-insights-fields input{width:min(144px,100%);height:56px;box-sizing:border-box;padding:0 12px;border:1px solid #e5e5e5;border-radius:20px;background:#fff;font:inherit;font-size:20px;font-weight:600;color:#121212;text-align:center}
+.price-insights-fields input:focus-visible{outline:2px solid #222;outline-offset:0;border-color:#222}
+.price-insights-fields input[aria-invalid=true]{border-color:#b12b1e;background:#fff8f6}
+.price-insights-error{margin:-20px 0 0;font-size:13px;color:#b12b1e;text-align:center}
+.price-insights-summary{margin:0;font-size:24px;line-height:normal;font-weight:600;letter-spacing:.0703px;color:#111;text-wrap:balance}
+.price-insights-summary em{font-style:normal;color:#f50}
+.price-insights-amount{white-space:nowrap}
+.price-insights-apply{align-self:flex-start;max-width:100%;min-height:56px;padding:14px 0;border:0;background:none;font:inherit;font-size:15px;line-height:1.6;font-weight:600;color:#000;text-align:left;text-wrap:balance;cursor:pointer}
+.price-insights-apply img{display:inline-block;width:16px;height:16px;margin-left:12px;vertical-align:-3px;transition:transform 200ms var(--flow-motion,ease)}
+.price-insights-apply:hover img{transform:translateX(3px)}
+.price-insights-apply:focus-visible{outline:2px solid #222;outline-offset:2px;border-radius:4px}
+
+.price-insights-nearby{container-type:inline-size;flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:36px;padding:24px;border-radius:32px;background:#fff;box-sizing:border-box}
+.price-insights-nearby-top{display:flex;align-items:center;justify-content:space-between;gap:32px;width:100%}
+.price-insights-nearby h2{margin:0;min-width:0;font-size:24px;line-height:normal;font-weight:600;letter-spacing:.0703px;color:#111;text-wrap:balance}
+.price-insights-metric{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:48px;padding:0 20px;border:1px solid #222;border-radius:999px;background:#fff;font:inherit;font-size:16px;line-height:20px;font-weight:600;letter-spacing:-.3125px;color:#222;white-space:nowrap;cursor:pointer;transition:transform 120ms ease}
+.price-insights-metric:active{transform:scale(.96)}
+.price-insights-metric:focus-visible{outline:2px solid #222;outline-offset:2px}
+.price-insights-areas{display:grid;grid-template-columns:minmax(104px,max-content) minmax(40px,1fr) auto;column-gap:16px;row-gap:36px;align-items:center;width:100%;margin:0;padding:0;list-style:none}
+.price-insights-area{display:grid;grid-column:1/-1;grid-template-columns:subgrid;align-items:center}
+.price-insights-area-name{min-width:0;padding:0;border:0;background:none;font:inherit;font-size:16px;line-height:1.3;font-weight:400;color:#000;text-align:left;text-decoration:underline;text-decoration-thickness:from-font;text-underline-position:from-font}
+button.price-insights-area-name{cursor:pointer}
+button.price-insights-area-name:hover{color:#f50}
+.price-insights-area-name:focus-visible{outline:2px solid #222;outline-offset:2px;border-radius:4px}
+.price-insights-bar{position:relative;display:block;height:8px;overflow:hidden;border-radius:4px;background:#ebebeb}
+.price-insights-bar>span{display:block;height:8px;width:0;border-radius:4px;background:#1f1f1f;transition:width 600ms linear(0,.1472,.4201,.672,.8519,.9585,1.0099,1.0271,1.0268,1.0199,1.0122,1.0062,1.0023,1.0002,.9994,.9992,.9993)}
+.price-insights-areas[data-revealed] .price-insights-bar>span{width:calc(var(--fill,0)*100%)}
+.price-insights-area-price{min-width:92px;padding:2px 0;box-sizing:border-box;font-size:16px;line-height:normal;font-weight:600;color:#000;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+@container (max-width:900px){
+  .price-insights-layout{flex-direction:column;align-items:stretch;gap:24px}
+  .price-insights-range,.price-insights-nearby{flex:none;width:100%}
+  .price-insights-nearby{padding:24px 0}
+}
+@container (max-width:420px){
+  .price-insights-range{padding:24px}
+  .price-insights-chart{gap:28px}
+  .price-insights .price-histogram{padding-inline:0}
+  .price-insights .price-histogram-bars{gap:1.5px}
+  .price-insights-fields{gap:12px}
+  .price-insights-fields input{padding:0 4px;font-size:16px}
+  .price-insights-nearby h2{font-size:22px}
+  .price-insights-summary{font-size:18px;line-height:26px}
+  .price-insights-areas{display:flex;flex-direction:column;gap:24px}
+  .price-insights-area{grid-template-columns:minmax(0,1fr) auto;row-gap:8px;column-gap:16px}
+  .price-insights-area-price{min-width:0;padding:0}
+  .price-insights-bar{grid-column:1/-1;grid-row:2}
+}
+@container (max-width:560px){
+  .price-insights-nearby-top{flex-direction:column;align-items:flex-start;gap:16px}
+  .price-insights-areas{gap:24px}
+}
+@media(max-width:1100px){.price-insights{max-width:100vw}}
+@media(max-width:700px){.price-insights{padding-block:32px}}
+@media(prefers-reduced-motion:reduce){.price-insights-bar>span,.price-insights-apply img,.price-insights-metric{transition:none}}
+@media(forced-colors:active){.price-insights-bar{background:Canvas;outline:1px solid GrayText}.price-insights-bar>span{background:Highlight}.price-insights-summary em{color:Highlight}.price-insights .price-histogram-bar.in-range{background:Highlight}}
+
+/* About the region, Figma 12900:13949. Photos are catalog listings, never the Figma stock images. */
+.region-insights{container-type:inline-size;align-self:stretch;width:100%;max-width:100%;min-width:0;box-sizing:border-box;padding:0 var(--home-page-gutter) 48px}
+.region-layout{display:flex;align-items:stretch;gap:16px;width:100%;min-width:0}
+.region-card{position:relative;overflow:hidden;border-radius:24px;background:#f5f5f5;color:#000}
+.region-copy{display:flex;flex-direction:column;gap:8px;min-width:0}
+.region-copy p,.region-copy h2{margin:0}
+.region-muted{font-size:14px;line-height:24px;color:#727272}
+.region-price-lead{display:flex;flex-direction:column;align-items:flex-start;gap:16px;max-width:367px}
+.region-featured-price,.region-stat-price{margin:0;font-size:20px;line-height:normal;font-weight:600}
+
+.region-about{flex:0 1 480px;width:min(480px,100%);max-width:100%;min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:40px;box-sizing:border-box;overflow:visible}
+.region-about-body{display:flex;flex-direction:column;align-items:center;gap:40px}
+.region-about .region-copy{align-self:stretch;gap:16px;width:100%}
+.region-about h2{font-size:20px;line-height:normal;font-weight:600;text-wrap:balance}
+.region-about .region-copy p{font-size:14px;line-height:normal}
+.region-fan{position:relative;width:min(365px,100%);height:120px}
+.region-fan-photo{position:absolute;top:3px;width:calc(var(--size)*1px);height:calc(var(--size)*1px);padding:0;border:5px solid #fff;border-radius:21px;background:#fff;box-shadow:0 4px 14px #00000021;overflow:hidden;cursor:pointer;transition:transform 240ms var(--flow-motion,ease)}
+.region-fan-photo img{display:block;width:100%;height:100%;object-fit:cover;border-radius:16px}
+.region-fan-photo[data-index="0"]{left:0;transform:rotate(-2deg)}
+.region-fan-photo[data-index="1"]{left:26.8%;top:10px;border-radius:18px;transform:rotate(2deg)}
+.region-fan-photo[data-index="1"] img{border-radius:13px}
+.region-fan-photo[data-index="2"]{left:47.2%;transform:rotate(-3deg)}
+.region-fan-photo[data-index="3"]{right:0;transform:rotate(-3deg)}
+.region-fan-photo:hover,.region-fan-photo:focus-visible{z-index:1;transform:rotate(0) translateY(-4px)}
+.region-fan-photo:focus-visible{outline:2px solid #222;outline-offset:2px}
+.region-guide{align-self:flex-start;min-height:48px;padding:0 20px;border:1px solid #000;border-radius:999px;background:transparent;font:inherit;font-size:16px;line-height:20px;font-weight:600;letter-spacing:-.3125px;color:#000;cursor:pointer;transition:transform 120ms ease}
+.region-guide:active,.region-open:active{transform:scale(.96)}
+.region-guide:focus-visible,.region-link:focus-visible{outline:2px solid #222;outline-offset:2px}
+
+.region-prices{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px}
+.region-featured{flex:1 0 auto;display:flex;gap:32px;padding:24px}
+.region-featured-body{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding-top:24px}
+.region-featured .region-copy{gap:8px}
+.region-featured .region-copy p:first-child,.region-stat .region-copy p:first-child{font-size:16px;line-height:normal}
+.region-link{align-self:flex-start;max-width:100%;min-height:48px;padding:12px 0;box-sizing:border-box;border:0;background:none;font:inherit;font-size:14px;line-height:24px;font-weight:600;color:#000;text-align:left;text-wrap:balance;cursor:pointer}
+.region-link img{display:inline-block;width:16px;height:16px;margin-left:4px;vertical-align:-3px}
+.region-link:hover{text-decoration:underline}
+.region-featured-photo{position:relative;flex:0 1 353px;width:353px;min-width:180px;align-self:stretch;min-height:211px;padding:0;border:0;border-radius:16px;overflow:hidden;background:#e8e8e8;cursor:pointer}
+.region-featured-photo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 400ms var(--flow-motion,ease)}
+.region-featured-photo:hover>img{transform:scale(1.04)}
+.region-featured-photo:focus-visible{outline:2px solid #222;outline-offset:2px}
+.region-quality,.region-open{border:1px solid #0000000f;background:#ffffffb3;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 #fffc,0 1px 2px #0000000d,0 6px 16px #00000012}
+.region-quality{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:calc(100% - 32px);box-sizing:border-box;padding:12px 16px;border-radius:99px;font-size:11px;line-height:14.3px;font-weight:600;letter-spacing:.0645px;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.region-stats{flex:1 0 auto;display:flex;gap:21px;min-width:0}
+.region-stat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:32px 24px}
+.region-stat .region-copy{gap:16px}
+.region-open{position:absolute;top:16px;right:16px;display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:22px;cursor:pointer;transition:transform 120ms ease}
+.region-open img{width:20px;height:20px;transform:rotate(-45deg)}
+.region-open:focus-visible{outline:2px solid #222;outline-offset:2px}
+
+@container (max-width:1000px){
+  .region-layout{flex-direction:column}
+  .region-about{flex:none;width:100%}
+}
+@container (max-width:640px){
+  .region-featured{flex-direction:column-reverse}
+  .region-featured-body{padding-top:0}
+  .region-featured-photo{flex:none;width:100%;height:200px;min-height:0}
+  .region-stats{flex-direction:column}
+  .region-stat{flex:none}
+  .region-about{padding:24px}
+  .region-fan{height:calc(min(100cqw - 48px,365px)*120/365)}
+  .region-fan-photo{width:calc(var(--size)*min(100cqw - 48px,365px)/365);height:calc(var(--size)*min(100cqw - 48px,365px)/365);border-width:4px}
+}
+@media(max-width:1100px){.region-insights{max-width:100vw}}
+@media(prefers-reduced-motion:reduce){.region-fan-photo,.region-featured-photo>img,.region-guide,.region-open{transition:none}.region-fan-photo:hover,.region-fan-photo:focus-visible{transform:none}}
+@media(forced-colors:active){.region-card{outline:1px solid CanvasText}}
+
+/* Points of interest near the searched colonia, Figma 12883:42934. Places come from the catalog's POI data. */
+.nearby-places{container-type:inline-size;padding:0 var(--home-page-gutter) 48px}
+.price-insights:focus{outline:none}
+.nearby-places-head{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:56px}
+.nearby-places-heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nearby-places-heading h2{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:.07px;color:#111;text-wrap:balance}
+.nearby-places-heading p{margin:0;font-size:16px;line-height:22.4px;letter-spacing:-.3125px;color:#666}
+.nearby-places-cta{flex:none;display:block;min-height:56px;padding:14px 0;border:0;background:none;font:inherit;font-size:15px;line-height:1.6;font-weight:600;color:#000;text-align:left;cursor:pointer}
+.nearby-places-cta img{display:inline-block;margin-left:12px;vertical-align:-3px;transition:transform 200ms var(--flow-motion,ease)}
+.nearby-places-cta:hover img{transform:translateX(3px)}
+.nearby-places-filters{display:flex;flex-wrap:wrap;gap:8px;padding-top:20px}
+.nearby-places-chip{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px 0 12px;border:1px solid #ddd;border-radius:999px;background:#fff;font:inherit;font-size:14px;line-height:18px;font-weight:600;letter-spacing:-.15px;color:#666;cursor:pointer;transition:border-color 160ms ease,color 160ms ease,transform 160ms var(--flow-motion,ease)}
+.nearby-places-chip img{display:none}
+.nearby-places-chip[aria-pressed=true]{color:#222}
+.nearby-places-chip[aria-pressed=true] img{display:block}
+.nearby-places-chip:hover{border-color:#222}
+.nearby-places-chip:active{transform:scale(.96)}
+.nearby-places-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 64px;margin:0;padding:40px 0 0;list-style:none}
+.nearby-place{position:relative;isolation:isolate;display:flex;align-items:center;gap:12px;min-width:0;padding:16px 0;border-bottom:1px solid #ededed}
+.nearby-place::before{content:"";position:absolute;z-index:-1;inset:4px -12px;border-radius:12px;background:#f2f2f2;opacity:0;transition:opacity 160ms ease;pointer-events:none}
+.nearby-place:focus-within::before{opacity:1}
+.nearby-place-icon{flex:none}
+.nearby-place-text{flex:1 1 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;padding-right:12px}
+.nearby-place-name{max-width:100%;overflow:hidden;padding:0;border:0;background:none;font:inherit;font-size:14px;line-height:20px;font-weight:600;letter-spacing:-.15px;color:#222;text-align:left;text-decoration:underline;text-decoration-thickness:from-font;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.nearby-place-name:hover{text-decoration-thickness:2px}
+.nearby-place-kind{font-size:13px;line-height:16px;letter-spacing:-.08px;color:#6a6a6a}
+.nearby-place-times{flex:none;display:flex;gap:24px;margin:0;font-size:14px;line-height:24px;font-weight:600;color:#727272;white-space:nowrap}
+.nearby-place-times>span{display:flex;align-items:center;gap:4px}
+.nearby-places-empty{margin:0;padding-top:40px;font-size:16px;line-height:24px;color:#666}
+.nearby-places-cta:focus-visible,.nearby-places-chip:focus-visible,.nearby-place-name:focus-visible{outline:2px solid #222;outline-offset:2px;border-radius:4px}
+.nearby-places-chip:focus-visible{border-radius:999px}
+@container (max-width:1100px){.nearby-places-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}}
+@container (max-width:640px){
+  .nearby-places-head{flex-direction:column;align-items:flex-start;gap:8px}
+  .nearby-places-filters{flex-wrap:nowrap;overflow-x:auto;margin-inline:calc(var(--home-page-gutter)*-1);padding:16px var(--home-page-gutter) 4px;scroll-padding-inline:var(--home-page-gutter);scrollbar-width:none}
+  .nearby-places-filters::-webkit-scrollbar{display:none}
+  .nearby-places-chip{flex:none}
+  .nearby-places-list{grid-template-columns:minmax(0,1fr);padding-top:20px}
+  .nearby-place-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal}
+  .nearby-place-times{gap:12px}
+}
+@container (max-width:400px){
+  .nearby-place{flex-wrap:wrap;row-gap:4px}
+  .nearby-place-text{flex-basis:calc(100% - 32px);padding-right:0}
+  .nearby-place-times{padding-left:32px}
+}
+@media(hover:hover) and (pointer:fine){.nearby-place:hover::before{opacity:1}}
+@media(prefers-reduced-motion:reduce){.nearby-places-chip,.nearby-places-cta img,.nearby-place::before{transition:none}.nearby-places-chip:active{transform:none}}
+@media(forced-colors:active){.nearby-places-chip[aria-pressed=true]{outline:2px solid Highlight}.nearby-place::before{background:Highlight}}
+
+/* Cost of living, Figma 12900:13506. Maintenance is the catalog's published fee; every other figure is an illustrative estimate. */
+.cost-of-living{container-type:inline-size;align-self:stretch;width:100%;max-width:100%;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;gap:20px;padding:0 var(--home-page-gutter) 48px}
+.cost-of-living:focus{outline:none}
+.cost-of-living-head{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:56px}
+.cost-of-living-heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.cost-of-living-heading h2{margin:0;font-size:24px;line-height:normal;font-weight:600;letter-spacing:.0703px;color:#111;text-wrap:balance}
+.cost-of-living-heading p{margin:0;font-size:16px;line-height:22.4px;letter-spacing:-.3125px;color:#666}
+.cost-of-living-cta{flex:none;display:inline-flex;align-items:center;gap:12px;min-height:56px;padding:14px 0;border:0;background:none;font:inherit;font-size:15px;line-height:1.6;font-weight:600;color:#000;text-align:left;cursor:pointer}
+.cost-of-living-cta img{display:block;width:16px;height:16px;transition:transform 200ms var(--flow-motion,ease)}
+.cost-of-living-cta:hover img{transform:translateX(3px)}
+.cost-of-living-cta:focus-visible{outline:2px solid #222;outline-offset:2px;border-radius:4px}
+.cost-of-living-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:0;padding:0;list-style:none}
+.cost-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:40px;min-width:0;padding:24px;border:2px solid #ededed;border-radius:24px;background:#fff;transition:transform 220ms var(--flow-motion,ease)}
+.cost-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;width:100%}
+.cost-card-top img{flex:none;width:24px;height:24px;transform-origin:center}
+.cost-card-amount{margin:0;font-size:20px;line-height:normal;font-weight:600;letter-spacing:-.2344px;color:#222;text-align:right;white-space:nowrap}
+.cost-card-amount span{font-weight:400;color:#727272}
+.cost-card-amount.is-unknown{font-size:18px;color:#727272}
+.cost-card-copy{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;max-width:100%}
+.cost-card-copy h3{margin:0;font-size:16px;line-height:22px;font-weight:600;letter-spacing:-.3125px;color:#222}
+.cost-card-copy p{margin:0;font-size:14px;line-height:20px;letter-spacing:-.1504px;color:#6a6a6a;text-wrap:pretty}
+.cost-of-living-note{margin:0;font-size:13px;line-height:18px;letter-spacing:-.0762px;color:#6a6a6a}
+@container (max-width:1100px){.cost-of-living-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container (max-width:640px){
+  .cost-of-living-head{flex-direction:column;align-items:flex-start;gap:8px}
+  .cost-of-living-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+}
+@media(hover:hover) and (pointer:fine){
+  .cost-card:hover{z-index:1;transform:scale(1.04);border-color:transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(100deg,#8fb0e8,#ff925c) border-box}
+  .cost-card:hover .cost-card-top img{animation:cost-icon-rock 700ms var(--flow-motion,ease)}
+  .cost-card[data-item=electricity]:hover .cost-card-top img{animation-name:cost-icon-zap}
+  .cost-card[data-item=gas]:hover .cost-card-top img{animation-name:cost-icon-flame}
+  .cost-card[data-item=transport]:hover .cost-card-top img{animation-name:cost-icon-go}
+  .cost-card[data-item=water]:hover .cost-card-top img{animation-name:cost-icon-drip}
+  .cost-card[data-item=internet]:hover .cost-card-top img{animation-name:cost-icon-signal}
+  .cost-card[data-item=maintenance]:hover .cost-card-top img{animation-name:cost-icon-turn}
+  .cost-card[data-item=insurance]:hover .cost-card-top img{animation-name:cost-icon-shield}
+}
+@keyframes cost-icon-rock{0%,100%{transform:rotate(0)}35%{transform:rotate(-12deg)}65%{transform:rotate(8deg)}}
+@keyframes cost-icon-zap{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.24) rotate(-8deg)}55%{transform:scale(.9) rotate(6deg)}}
+@keyframes cost-icon-flame{0%,100%{transform:scale(1) translateY(0)}40%{transform:scale(1.14) translateY(-2px)}70%{transform:scale(.94) translateY(1px)}}
+@keyframes cost-icon-go{0%,100%{transform:translateX(0)}45%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+@keyframes cost-icon-drip{0%,100%{transform:translateY(0)}40%{transform:translateY(6px)}70%{transform:translateY(-3px)}}
+@keyframes cost-icon-signal{0%,100%{transform:scale(1)}35%{transform:scale(1.18)}65%{transform:scale(.92)}}
+@keyframes cost-icon-turn{0%,100%{transform:rotate(0)}40%{transform:rotate(-28deg)}72%{transform:rotate(12deg)}}
+@keyframes cost-icon-shield{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-5px) scale(1.12)}}
+@media(prefers-reduced-motion:reduce){.cost-of-living-cta img,.cost-card{transition:none}.cost-card:hover{transform:none}.cost-card:hover .cost-card-top img{animation:none}}
+@media(max-width:1100px){.cost-of-living{max-width:100vw}}
+@media(forced-colors:active){.cost-card,.cost-card:hover{border:2px solid CanvasText;background:Canvas;transform:none}}
+
+/* Search FAQ, Figma 12908:21304. Cards grow on hover and flip to the answer; under 700px they fan into a swipeable deck. */
+.search-faq{container-type:inline-size;display:flex;flex-direction:column;gap:40px;padding:0 var(--home-page-gutter) 48px}
+.search-faq-head{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:56px}
+.search-faq-heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.search-faq-heading h2{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:.07px;color:#111;text-wrap:balance}
+.search-faq-heading p{margin:0;font-size:16px;line-height:22.4px;letter-spacing:-.3125px;color:#727272}
+.search-faq-cta{flex:none;display:block;min-height:56px;padding:14px 0;border:0;background:none;font:inherit;font-size:15px;line-height:1.6;font-weight:600;color:#000;text-align:left;cursor:pointer}
+.search-faq-cta img{display:inline-block;margin-left:12px;vertical-align:-3px;transition:transform 200ms var(--flow-motion,ease)}
+.search-faq-cta:hover img{transform:translateX(3px)}
+.search-faq-stage{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.search-faq-slot{height:380px;min-width:0}
+.search-faq-card{position:relative;display:block;width:100%;height:100%;padding:0;border:0;background:none;perspective:1200px;font:inherit;color:inherit;text-align:left;cursor:pointer;transition:transform 200ms var(--flow-motion,ease)}
+.search-faq-card:hover{transform:scale(1.04)}
+.search-faq-card:focus-visible{outline:2px solid #222;outline-offset:4px;border-radius:28px}
+.search-faq-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 680ms cubic-bezier(.45,.05,.2,1)}
+.search-faq-card.is-flipped .search-faq-inner{transform:rotateY(180deg)}
+.search-faq-face{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(#f5f5f5,#f5f5f5) padding-box,linear-gradient(160deg,#8fb0e8,#ff925c) border-box;box-shadow:0 4px 16px #334d991f;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.search-faq-back{transform:rotateY(180deg)}
+.search-faq-copy{display:flex;flex-direction:column;gap:16px;min-height:0;overflow:auto}
+.search-faq-question{font-size:20px;line-height:normal;font-weight:600;color:#000;text-wrap:balance}
+.search-faq-teaser,.search-faq-answer{font-size:14px;line-height:24px;color:#000}
+.search-faq-note{font-size:13px;line-height:18px;color:#6a6a6a}
+.search-faq-pill{align-self:flex-start;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:1px solid #000;border-radius:999px;font-size:16px;line-height:20px;font-weight:600;letter-spacing:-.31px;color:#000;white-space:nowrap}
+.search-faq-count{margin:-16px 0 0;font-size:13px;line-height:18px;color:#727272;text-align:center}
+.search-faq.is-deck .search-faq-stage{position:relative;display:block;height:420px;touch-action:pan-y}
+.search-faq.is-deck .search-faq-slot{position:absolute;top:8px;left:50%;width:min(300px,78cqw);height:380px;transform:translateX(calc(-50% + var(--x))) rotate(var(--rot)) scale(var(--s));z-index:var(--z);transition:transform 520ms cubic-bezier(.2,.7,.2,1)}
+.search-faq.is-deck .search-faq-slot:not([data-front]){opacity:.96}
+.search-faq.is-deck .search-faq-card:hover{transform:none}
+.search-faq.is-deck .search-faq-slot[data-front] .search-faq-card:hover{transform:scale(1.04)}
+@container (max-width:1100px){
+  .search-faq:not(.is-deck) .search-faq-stage{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (max-width:700px){.search-faq-head{flex-direction:column;align-items:flex-start;gap:8px}}
+@media(prefers-reduced-motion:reduce){.search-faq-card,.search-faq-inner,.search-faq-slot,.search-faq-cta img{transition:none}.search-faq-card:hover{transform:none}}
+@media(forced-colors:active){.search-faq-face{border:2px solid CanvasText;background:Canvas}.search-faq-pill{border-color:CanvasText}}

@@ -230,9 +230,9 @@ export function ListingGallery({home, gallery, say, language, opener}) {
   const [open, setOpen] = useState(null);
   const trigger = useRef(null);
   function show(photo, element) {
-    trigger.current = element || document.activeElement;
+    trigger.current = element?.closest?.('button') || element || document.activeElement;
     const from = photo ?? 0;
-    const source = element?.closest?.('.pp-tile, .pp-strip-photo') || (photo == null ? document.querySelector('.pp-mosaic .pp-tile:first-child') : null);
+    const source = element?.closest?.('.pp-tile, .pp-strip-photo, .pp-room-photo') || element?.querySelector?.('.pp-room-photo') || (photo == null ? document.querySelector('.pp-mosaic .pp-tile:first-child') : null);
     const morph = canMorph() && visible(source);
     const update = () => flushSync(() => setOpen({focus:photo, from, morph}));
     if (!morph) { update(); return; }

@@ -337,7 +337,7 @@ export function MoraInsight({home, options, signature, short, say, onFavorite, o
                   : <Words key="synthesis" text={verdict ? analysis.verdict.sentence : analysis.synthesis} instant={instant}/>}
               </AnimatePresence>
             </div>
-            {note && <p className="lp-mora-note">{note}</p>}
+            {note && !page && <p className="lp-mora-note">{note}</p>}
           </div>
           {/* Folded, the verdict keeps only its sentence; the card's height spring closes and reopens the space. */}
           <AnimatePresence initial={false}>{facts && ready && !folded && <motion.div key="facts" initial={{opacity:0}} animate={{opacity:1}}
@@ -345,6 +345,7 @@ export function MoraInsight({home, options, signature, short, say, onFavorite, o
             <VerdictFacts facts={analysis.verdict.facts} delay={MORA_LINE_SWAP.duration * 0.6} reduce={instant}/>
           </motion.div>}</AnimatePresence>
           {reading && <PageReading reading={reading} delay={MORA_LINE_SWAP.duration * 0.6} reduce={instant} short={short} say={say} onAsk={onAsk} onPhoto={onPhoto}/>}
+          {page && note && <p className="lp-mora-note">{note}</p>}
         </div>
       </motion.div>
       {slots.length > 0 && <ul className="lp-modules" aria-hidden={ready ? undefined : true}>

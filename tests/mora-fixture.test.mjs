@@ -22,7 +22,7 @@ test('the fixture replaces only the description and the price widget', () => {
   const price = read.modules.find(module => module.kind === 'opportunity');
   assert.equal(price.support, fixture.output.insights.find(item => item.dimension === 'market').text);
   assert.deepEqual([price.ruler.p10, price.ruler.median, price.ruler.p90, price.ruler.value], [31100, 48600, 71000, 38000]);
-  assert.deepEqual(price.metric, {value:'−22%', unit:'vs. parecidos'});
+  assert.deepEqual(price.metric, {value:'Bajó $350,000', unit:'hace 15 días'});
   assert.equal(read.workingLines, base.workingLines);
 });
 

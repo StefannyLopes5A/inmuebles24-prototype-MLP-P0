@@ -116,20 +116,13 @@ export function ListingPriceHistory({history, money, currency, language, say, on
   const monthName = (date, withYear) => capital(new Intl.DateTimeFormat(locale, withYear ? {month:'long', year:'numeric'} : {month:'short'}).format(date).replace(/\.$/, '').replace(' de ', ' '));
   const day = date => new Intl.DateTimeFormat(locale, {day:'numeric', month:'short'}).format(date).replace(/\.$/, '');
   const perM2 = value => `${money(value)} ${currency}/m²`;
-  const percent = share => Math.abs(share * 100).toLocaleString(locale, {maximumFractionDigits:1});
   const area = history.area;
   const question = say('O que se espera para o preço?', '¿Qué se espera para el precio?');
 
   const row = item => {
-    if (item.kind === 'listed') return {title:say('Anunciado no Inmuebles24', 'Publicado en Inmuebles24'), sub:day(item.date), value:`${money(item.value)} ${currency}`};
-    if (item.kind === 'drop') return {title:say('Baixou o preço anunciado', 'Bajó el precio publicado'), sub:say(`${day(item.date)} · ${money(item.drop)} a menos`, `${day(item.date)} · ${money(item.drop)} menos`), value:`${money(item.value)} ${currency}`};
-    const month = capital(new Intl.DateTimeFormat(locale, {month:'long'}).format(item.date));
-    const sub = item === history.rows.find(entry => entry.kind === 'month') ? say(`${month}, até hoje`, `${month}, hasta hoy`) : month;
-    const title = item.change == null ? say(`m² em ${area}`, `m² en ${area}`)
-      : Math.abs(item.change) < 0.0005 ? say(`O m² ficou estável em ${area}`, `El m² se mantuvo en ${area}`)
-      : item.change > 0 ? say(`O m² subiu ${percent(item.change)}% em ${area}`, `El m² subió ${percent(item.change)}% en ${area}`)
-      : say(`O m² baixou ${percent(item.change)}% em ${area}`, `El m² bajó ${percent(item.change)}% en ${area}`);
-    return {title, sub, value:perM2(item.value)};
+    if (item.kind === 'listed') return {title:say('Anunciado para venda no Inmuebles24', 'Publicado para venta en Inmuebles24'), sub:day(item.date), value:`${money(item.value)} ${currency}`};
+    if (item.kind === 'republished') return {title:say('Republicado no Inmuebles24', 'Republicado en Inmuebles24'), sub:day(item.date), value:`${money(item.value)} ${currency}`};
+    return {title:say('Mudança de preço', 'Cambio de precio'), sub:say(`${day(item.date)} · ${money(item.drop)} a menos`, `${day(item.date)} · ${money(item.drop)} menos`), value:`${money(item.value)} ${currency}`};
   };
   const years = (open ? history.rows : []).reduce((groups, item) => {
     const year = item.date.getFullYear();

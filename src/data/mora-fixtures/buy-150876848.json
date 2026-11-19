@@ -42,7 +42,12 @@
       "daysListed": 59,
       "zoneMedianDaysToSell": 37,
       "daysListedRatio": 1.6,
-      "priceHistory": [],
+      "priceHistory": [
+        {
+          "daysAgo": 9,
+          "change": -850000
+        }
+      ],
       "rankInSearchByPricePerM2": 19,
       "searchResultsCount": 40
     },

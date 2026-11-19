@@ -38,11 +38,16 @@
       "comparablesP10PerM2": 25900,
       "comparablesP90PerM2": 59100,
       "diffVsMedianPct": 45,
-      "classification": "above_market",
+      "classification": "negotiable",
       "daysListed": 31,
       "zoneMedianDaysToSell": 37,
       "daysListedRatio": 0.8,
-      "priceHistory": [],
+      "priceHistory": [
+        {
+          "daysAgo": 11,
+          "change": -250000
+        }
+      ],
       "rankInSearchByPricePerM2": 28,
       "searchResultsCount": 40
     },

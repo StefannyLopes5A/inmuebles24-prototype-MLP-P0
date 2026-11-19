@@ -33,7 +33,7 @@ export function marketFacts(home) {
   const zone = zonePricePerM2(home) ?? roundTo(low + n % (high - low), home.mode === 'rent' ? 10 : 500);
   const step = home.mode === 'rent' ? 1 : 100;
   const median = roundTo(zone * (0.8 + (n % 19) / 100), step);
-  const dropped = n % 3 === 0;
+  const dropped = true;
   const days = 6 + (n % 110);
   const colonia = coloniaVision(home.area);
   return {

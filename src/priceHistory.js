@@ -10,6 +10,9 @@ const MONTHS = 12;
 const DAY = 86400000;
 const step = value => Math.round(value / 100) * 100;
 
+/** Simulated and stable per listing: roughly one in four was taken down and published again. */
+const republished = home => [...String(home.id)].reduce((sum, char) => (sum * 31 + char.charCodeAt(0)) >>> 0, 7) % 4 === 0;
+
 export function priceHistory(home, hood, now = new Date()) {
   if (!home || home.development || home.mode !== 'buy' || !hood?.medianPerM2 || hood.trend?.spark?.length !== MONTHS) return null;
   const price = listingPrice(home);
@@ -25,13 +28,13 @@ export function priceHistory(home, hood, now = new Date()) {
 
   const facts = marketFacts(home);
   const daysAgo = days => new Date(now.getTime() - days * DAY);
-  const events = [{kind:'listed', date:daysAgo(facts.days), value:price + (facts.drop || 0)}];
+  // The event list is this listing's own story: publication, republication and price changes. The colonia's m² stays in the chart.
+  const before = price + (facts.drop || 0);
+  const events = [{kind:'listed', date:daysAgo(facts.days), value:before}];
+  const earliest = facts.drop ? facts.dropDays : 0;
+  if (republished(home) && facts.days - earliest > 6) events.push({kind:'republished', date:daysAgo(Math.round((facts.days + earliest) / 2)), value:before});
   if (facts.drop) events.push({kind:'drop', date:daysAgo(facts.dropDays), value:price, drop:facts.drop});
-
-  // A month's reading closes at the end of the month; the current one closes today.
-  const monthRows = months.map((month, index) => ({kind:'month', ...month,
-    date:index === MONTHS - 1 ? now : new Date(month.date.getFullYear(), month.date.getMonth() + 1, 0)}));
-  const rows = [...events, ...monthRows].sort((a, b) => b.date - a.date);
+  const rows = events.sort((a, b) => b.date - a.date);
 
   return {
     area:hood.name, price, months, rows, direction,

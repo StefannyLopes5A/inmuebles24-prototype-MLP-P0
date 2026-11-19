@@ -61,7 +61,7 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 @media(hover:hover) and (pointer:fine){.mora-pill:hover{background:#ffe5d6;transform:translateY(-2px)}.mora-pill-quiet:hover{background:#eee}.mora-close:hover{background:#00000014}.mora-more:hover{color:#b43c00}}
 .mora-filter:focus-visible,.mora-smart-trigger:focus-visible,.mora-more:focus-visible{outline:2px solid #b43c00;outline-offset:-5px}
 .mora-expanded{position:relative;padding:48px var(--home-page-gutter);color:var(--ink);min-height:221px}
-.mora-close{position:absolute;right:var(--home-page-gutter);top:48px;z-index:4;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:#0000000f}
+.mora-close{position:absolute;right:var(--home-page-gutter);top:48px;z-index:4;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:#0000000f}
 .mora-close img{width:24px;height:24px;filter:brightness(0)}
 .mora-close:focus-visible,.mora-pill:focus-visible{outline:2px solid var(--v2-action-orange);outline-offset:4px}
 .mora-editor{min-height:377px;padding:0}

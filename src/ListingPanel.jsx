@@ -16,6 +16,7 @@ import {sectionFollowUps} from './selectionAsk.js';
 import {markVisit} from './seekerSignals.js';
 import {MoraInsight} from './MoraInsight';
 import {GridIcon, TourControls, useTour} from './ListingGallery';
+import {PanelContext, hasContext} from './PanelContext';
 import {CHECK_PATH, ChatTurn, MoraComposer, crossfade, placeOf, replyLine, typing, useMoraThread} from './moraChat';
 import {developmentFacts, developmentKind} from './development/listingFacts';
 import {UNITS, available} from './development/torreOlmo';
@@ -894,14 +895,17 @@ export function ListingPanel({home, origin, search, pref, hasSearch = true, favo
   const layout = sheet ? 'sheet' : placement.stacked ? 'stacked' : 'side';
   const photoCount = listingDetails(home).gallery.length;
   const mediaWidth = placement.width - Math.min(placement.width * 0.52, 624);
-  const mosaic = layout !== 'side' || photoCount < MOSAIC_MIN ? 'single' : mediaWidth / placement.height >= 1.15 ? 'wide' : 'tall';
+  // A pill's question brings a picture of what it asks about, in place of the photos.
+  const askSection = initialAction?.type === 'ask' && home.id === firstId.current && hasContext(initialAction.section, home) ? initialAction.section : null;
+  const mosaic = askSection || layout !== 'side' || photoCount < MOSAIC_MIN ? 'single' : mediaWidth / placement.height >= 1.15 ? 'wide' : 'tall';
   return createPortal(<>
     <div ref={shell} className={`lp-shell${settled ? ' is-settled' : ''}`} data-layout={layout} data-mosaic={mosaic} data-ready={contentVisible ? '' : undefined}
       role="dialog" aria-modal="true" aria-labelledby={titleId} style={style}>
       <div ref={media} className="lp-media">
         <AnimatePresence initial={false}>
           <motion.div key={home.id} className="lp-media-layer" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:reduce ? 0 : 0.4, ease:EASE_FADE}}>
-            <Carousel home={home} copy={copy} onOpen={toDetails} tour={mosaic !== 'single'} tagOptions={tagOptions}/>
+            {askSection ? <PanelContext section={askSection} home={home} copy={copy}/>
+              : <Carousel home={home} copy={copy} onOpen={toDetails} tour={mosaic !== 'single'} tagOptions={tagOptions}/>}
           </motion.div>
         </AnimatePresence>
       </div>

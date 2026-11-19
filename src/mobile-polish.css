@@ -6,7 +6,7 @@
   .home-header nav.figma-header-links{flex-wrap:wrap}
   .home-header .figma-header-links a.figma-login{position:absolute;right:var(--home-page-gutter);top:18px;min-height:44px}
   .footer-controls .footer-language{font-size:16px;min-height:44px}
-  .mora-close{width:48px;height:48px}
+  .mora-close{width:40px;height:40px}
   .mora-editor,.mora-conversation{overscroll-behavior:contain;scroll-padding-block:24px}
   .mora-editor .home-word-control,.home-evolution .home-word-control{min-height:44px}
   .all-filters-dialog>footer{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}

@@ -33,6 +33,7 @@ function trip(feature) {
     id: feature.properties.id,
     name: feature.properties.name,
     categoria: feature.properties.categoria,
+    coordinates: feature.geometry.coordinates,
     meters,
     minutes: {
       walk: travelMinutes(meters, 'walk', route),
@@ -41,6 +42,15 @@ function trip(feature) {
       transit: transitMinutes(meters, route),
     },
   };
+}
+
+const toMeters = ([lng1, lat1], [lng2, lat2]) => Math.hypot((lat1 - lat2) * 111320,
+  (lng1 - lng2) * 111320 * Math.cos(((lat1 + lat2) / 2) * Math.PI / 180));
+
+/** A place tapped on the map instead of searched: the same card, measured from the home. */
+export function placeFromPoint(center, {id, name, categoria}, coordinates) {
+  if (!center || !coordinates || !POI_CATEGORY[categoria]) return null;
+  return trip({properties: {id, name, categoria, meters: Math.max(1, Math.round(toMeters(center, coordinates)))}, geometry: {coordinates}});
 }
 
 const blob = feature => {

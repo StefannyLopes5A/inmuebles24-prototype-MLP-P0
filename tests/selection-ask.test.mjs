@@ -160,12 +160,35 @@ test('the price history ends at the colonia median and keeps the listing events 
   assert.equal(history.months[0].date.getMonth(), 11);
   assert.ok(Math.abs(history.months.at(-1).value / history.months[0].value - 1 - hood.trend.spoilerPct / 100) < 0.01);
   const listed = history.rows.find(row => row.kind === 'listed');
-  assert.equal(Math.round((now - listed.date) / 86400000), history.days);
+  const republished = history.rows.find(row => row.kind === 'republished');
+  assert.equal(Math.round((now - republished.date) / 86400000), history.days);
+  assert.ok(listed.date < republished.date);
   const drop = history.rows.find(row => row.kind === 'drop');
-  if (drop) assert.ok(drop.date > listed.date);
+  if (drop) assert.ok(drop.date > republished.date);
   assert.deepEqual([...history.rows].sort((a, b) => b.date - a.date), history.rows);
   const reading = sectionReading('history', buy, 'es-MX');
   assert.match(reading.text, /en 12 meses/);
   assert.match(reading.text, /no una promesa/);
   assert.equal(priceHistory(rent, hood, now), null);
+});
+
+test('every sale starts its price history with the chart and has at least five price changes since it was published', () => {
+  const now = new Date(2026, 10, 17);
+  let checked = 0;
+  for (const home of homes.filter(item => item.mode === 'buy' && !item.development)) {
+    const hood = listingNeighborhood(home)('es-MX');
+    const history = priceHistory(home, hood, now);
+    if (!history) continue;
+    checked += 1;
+    const changes = history.rows.filter(row => row.kind === 'change' || row.kind === 'drop');
+    assert.ok(changes.length >= 5, `${home.id}: ${changes.length} changes`);
+    assert.equal(history.priceChanges, changes.length);
+    const listed = history.rows.find(row => row.kind === 'listed');
+    assert.ok(listed.date < changes.reduce((first, row) => (row.date < first ? row.date : first), now), home.id);
+    assert.equal(history.rows.filter(row => row.kind === 'listed').length, 1);
+    assert.ok(history.listing.every(point => point && point.value > 0), `${home.id}: the listing line spans every month`);
+    assert.equal(new Set(history.rows.map(row => row.date.getTime())).size, history.rows.length, `${home.id}: distinct dates`);
+    assert.ok(changes.every(row => row.kind === 'drop' ? row.drop > 0 : row.delta !== 0), home.id);
+  }
+  assert.ok(checked > 20);
 });

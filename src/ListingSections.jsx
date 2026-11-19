@@ -5,7 +5,6 @@ import {seed} from './listingAdvertiser';
 import {SPRING_SIZE} from './listingPanelMotion';
 import {poiIconUrl} from './pois';
 import {travelMinutes} from './compareReading';
-import {ListingPlaces} from './ListingPlaces';
 
 const ListingMap = lazy(() => import('./ListingMap'));
 const asset = name => `/assets/mini-listing/${name}.svg`;
@@ -232,7 +231,6 @@ export function Location({home, location, neighborhood, language, money, currenc
       <ListingMap center={location.center} language={language} say={say}/>
     </Suspense>
     <p className="pp-map-note">{say('Localização aproximada: o endereço exato é compartilhado quando a visita é confirmada.', 'Ubicación aproximada: la dirección exacta se comparte al confirmar la visita.')}</p>
-    <ListingPlaces center={location.center} language={language} say={say}/>
 
     <div className="pp-hood">
       <div className="pp-hood-top">

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
@@ -6,6 +6,9 @@ import {Protocol} from 'pmtiles';
 import {buildMapStyle, MAP_BOUNDS} from './mapStyle';
 import {POI_CATEGORIES, NEARBY_RADIUS_M, poiCollection, poisNear} from './pois';
 import {ensurePoiLayers, PIN_BOX, POI_NEAR_SOURCE, pinUrls, revealNear} from './poiLayers';
+import {MapPlaceSearch, TRIP_MODES, modeIcon} from './MapPlaceSearch';
+import {poiIconUrl} from './pois';
+import {placeFromPoint} from './placeTrips';
 
 let protocolReady = false;
 function ensureProtocol() {
@@ -25,6 +28,7 @@ function circle([lng, lat], meters, steps = 64) {
 }
 
 const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
+const HOME_ZOOM = 15.4, PLACE_ZOOM = 16.5, SAME_KIND_RADIUS_M = 2500;
 const PIN_AT = 250, WAVE_AT = 520, WAVE_SPREAD = 560, POP = 320;
 
 /**
@@ -67,17 +71,25 @@ function playIntro(map, {host, dot, urls, stand}) {
 /** Embedded map for the listing page: the approximate position, a soft area around it and the real places within 500 m. `preview` is the small still thumbnail in the intro. */
 export default function ListingMap({center, language, say, preview = false}) {
   const host = useRef(null), mapRef = useRef(null), tip = useRef(null), tipMarker = useRef(null);
+  const [place, setPlace] = useState(null);
+  const [mode, setMode] = useState('walk');
+  const [resetKey, setResetKey] = useState(0);
+  const trip = useRef({pin: null, chip: null});
+  useEffect(() => { setPlace(null); }, [center[0], center[1]]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     ensureProtocol();
     const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const map = new maplibregl.Map({
-      container:host.current, style:buildMapStyle({lang:language}), center, zoom:preview ? 13.4 : 15.4,
+      container:host.current, style:buildMapStyle({lang:language}), center, zoom:preview ? 13.4 : HOME_ZOOM,
       minZoom:12, maxZoom:17, maxBounds:MAP_BOUNDS, interactive:!preview,
       attributionControl:false, dragRotate:false, pitchWithRotate:false, touchPitch:false, renderWorldCopies:false,
+      cooperativeGestures:!preview,
+      locale:language === 'pt-BR'
+        ? {'CooperativeGesturesHandler.WindowsHelpText':'Use Ctrl + rolagem para aproximar o mapa', 'CooperativeGesturesHandler.MacHelpText':'Use ⌘ + rolagem para aproximar o mapa', 'CooperativeGesturesHandler.MobileHelpText':'Use dois dedos para mover o mapa'}
+        : {'CooperativeGesturesHandler.WindowsHelpText':'Usa Ctrl + scroll para acercar el mapa', 'CooperativeGesturesHandler.MacHelpText':'Usa ⌘ + scroll para acercar el mapa', 'CooperativeGesturesHandler.MobileHelpText':'Usa dos dedos para mover el mapa'},
     });
     if (!preview) {
-      map.scrollZoom.disable();
       map.touchZoomRotate.disableRotation();
       map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-left');
     }
@@ -126,13 +138,12 @@ export default function ListingMap({center, language, say, preview = false}) {
         cancel = () => observer.disconnect();
       });
     });
+    // Tapping a place opens the same card as searching for it, and the map keeps only places of its kind.
     map.on('click', 'poi-near', event => {
       const feature = event.features?.[0];
       if (!feature) return;
-      tip.current.textContent = feature.properties.name;
-      tip.current.classList.remove('is-visible');
-      tipMarker.current.setLngLat(feature.geometry.coordinates).addTo(map);
-      requestAnimationFrame(() => tip.current?.classList.add('is-visible'));
+      const next = placeFromPoint(center, feature.properties, feature.geometry.coordinates);
+      if (next) { tip.current?.classList.remove('is-visible'); setPlace(next); }
     });
     map.on('click', event => {
       if (!map.getLayer('poi-near') || map.queryRenderedFeatures(event.point, {layers:['poi-near']}).length) return;
@@ -145,8 +156,79 @@ export default function ListingMap({center, language, say, preview = false}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center[0], center[1], language, preview]);
 
-  return <div className={`pp-map${preview ? ' is-preview' : ''}`}>
+  // The place picked in the search: a pin, a dotted line from the home and the minutes for the chosen mode.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (preview || !map) return undefined;
+    let off = false;
+    const apply = () => {
+      if (off) return;
+      const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+      const state = trip.current;
+      state.pin?.remove(); state.chip?.remove(); state.pin = state.chip = null;
+      if (!map.getSource('trip')) {
+        map.addSource('trip', {type:'geojson', data:{type:'FeatureCollection', features:[]}});
+        map.addLayer({id:'trip-line', type:'line', source:'trip', layout:{'line-cap':'round'}, paint:{'line-color':'#222222', 'line-width':3, 'line-dasharray':[0.1, 2]}});
+      }
+      // With a place picked the map keeps only places of its kind around it; cleared, it shows everything around the home again.
+      const kind = place ? poiCollection(poisNear(place.coordinates, [place.categoria], {radius:SAME_KIND_RADIUS_M}))
+        : poiCollection(poisNear(center, POI_CATEGORIES.map(category => category.id), {radius:NEARBY_RADIUS_M}));
+      map.getSource(POI_NEAR_SOURCE)?.setData(kind);
+      if (!place) {
+        map.getSource('trip').setData({type:'FeatureCollection', features:[]});
+        return;
+      }
+      const target = place.coordinates;
+      map.getSource('trip').setData({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:[center, target]}});
+      const pin = document.createElement('div');
+      pin.className = 'pp-map-place';
+      const icon = document.createElement('img');
+      icon.src = poiIconUrl(place.categoria); icon.alt = ''; icon.width = icon.height = 22;
+      pin.append(icon);
+      state.pin = new maplibregl.Marker({element:pin, anchor:'bottom'}).setLngLat(target).addTo(map);
+      const [, modeIconName, , ] = TRIP_MODES.find(item => item[0] === mode) || TRIP_MODES[0];
+      const chip = document.createElement('div');
+      chip.className = 'pp-map-chip';
+      chip.setAttribute('aria-hidden', 'true');
+      const glyph = document.createElement('img');
+      glyph.src = modeIcon(modeIconName); glyph.alt = ''; glyph.width = glyph.height = 16;
+      const text = document.createElement('span');
+      text.textContent = `${place.minutes[mode]} min`;
+      chip.append(glyph, text);
+      state.chip = new maplibregl.Marker({element:chip, anchor:'bottom', offset:[0, -50]}).setLngLat(target).addTo(map);
+      // The place always lands in the middle of the map, close up, wherever it is in the catalog.
+      map.easeTo({center:target, zoom:PLACE_ZOOM, duration:reduce ? 0 : 700, essential:true});
+    };
+    if (map.isStyleLoaded()) apply(); else map.once("load", apply);
+    return () => { off = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [place, mode, language, center[0], center[1], preview]);
+
+  // Back to the listing view when the search is cleared or reset.
+  const hadPlace = useRef(false);
+  useEffect(() => {
+    const map = mapRef.current;
+    const wasPlace = hadPlace.current;
+    hadPlace.current = !!place;
+    if (preview || !map || place || !wasPlace) return;
+    map.easeTo({center, zoom:HOME_ZOOM, duration:matchMedia('(prefers-reduced-motion:reduce)').matches ? 0 : 500});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [place]);
+
+  function reset() {
+    setPlace(null);
+    setMode('walk');
+    setResetKey(key => key + 1);
+    tip.current?.classList.remove('is-visible');
+    mapRef.current?.easeTo({center, zoom:HOME_ZOOM, duration:matchMedia('(prefers-reduced-motion:reduce)').matches ? 0 : 500});
+  }
+
+  return <div className={`pp-map${preview ? ' is-preview' : ''}${place ? ' has-place' : ''}`}>
     <div ref={host} className="pp-map-canvas" role={preview ? undefined : 'region'} aria-hidden={preview || undefined} aria-label={preview ? undefined : say('Mapa com a localização aproximada', 'Mapa con la ubicación aproximada')}/>
+    {!preview && <MapPlaceSearch center={center} language={language} say={say} place={place} mode={mode} resetKey={resetKey} onPlace={next => { setPlace(next); }} onMode={setMode} onClose={reset}/>}
+    {!preview && <button type="button" className="pp-map-reset" aria-label={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} title={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} onClick={reset}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M4 4.5v4.4h4.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </button>}
     {!preview && <div className="pp-map-zoom">
       <button type="button" aria-label={say('Aproximar', 'Acercar')} onClick={() => mapRef.current?.zoomIn()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>
       <button type="button" aria-label={say('Afastar', 'Alejar')} onClick={() => mapRef.current?.zoomOut()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>

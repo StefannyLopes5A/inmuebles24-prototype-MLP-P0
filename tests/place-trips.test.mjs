@@ -11,6 +11,7 @@ test('an empty query suggests the closest places, one of each kind first', () =>
   assert.equal(places.length, 8);
   assert.equal(new Set(places.slice(0, 7).map(place => place.categoria)).size, 7);
   assert.ok(places.every(place => place.meters > 0 && place.minutes.walk >= 1 && place.minutes.transit >= 1));
+  assert.ok(places.every(place => Array.isArray(place.coordinates) && place.coordinates.length === 2));
   const [near, far] = [...places].sort((a, b) => a.meters - b.meters);
   assert.ok(far.minutes.walk >= near.minutes.walk);
 });

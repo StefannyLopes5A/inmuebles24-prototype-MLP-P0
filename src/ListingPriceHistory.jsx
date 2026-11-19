@@ -2,7 +2,6 @@ import React, {useId, useLayoutEffect, useRef, useState} from 'react';
 import {motion, useReducedMotion} from 'motion/react';
 
 const MORA_MARK = '/assets/mini-listing/mora.svg';
-const ARROW = '/assets/price-history/arrow-up-right.svg';
 const CHEVRON = '/assets/price-insights/chevron-down.svg';
 
 // Frame 12942:14173 at 851px wide: peak 12px from the top, trough at 232, baseline at 266, labels 24px under it.
@@ -24,28 +23,34 @@ function useWidth(ref, fallback) {
   return width;
 }
 
-function Chart({months, selected, onSelect, label, monthName, valueText, say, reduce}) {
+function Chart({months, listing, selected, onSelect, label, monthName, valueText, say, reduce}) {
   const box = useRef(null);
   const width = useWidth(box, 851);
   const height = Math.max(168, Math.round(width * PLOT));
   const gradient = useId();
   const [hover, setHover] = useState(null);
+  const [series, setSeries] = useState('region');
   const [keyboard, setKeyboard] = useState(false);
   const left = Math.max(14, width * 0.033), right = Math.max(14, width * 0.061);
   const sparse = width < 560;
-  const values = months.map(month => month.value);
+  const values = [...months.map(month => month.value), ...listing.filter(Boolean).map(item => item.value)];
   const min = Math.min(...values), max = Math.max(...values);
   const x = index => left + (width - left - right) * index / (months.length - 1);
   const y = value => max === min ? height * (PEAK + TROUGH) / 2 : height * (TROUGH - (TROUGH - PEAK) * (value - min) / (max - min));
   const points = months.map((month, index) => [x(index), y(month.value)]);
+  const own = listing.map((item, index) => item ? [x(index), y(item.value)] : null);
+  const ownPoints = own.filter(Boolean);
   const gap = (width - left - right) / (months.length - 1);
   const hit = Math.max(8, Math.min(16, gap / 2 - 1));
-  const line = points.map(([px, py], index) => `${index ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join('');
-  const area = `${line}L${points.at(-1)[0].toFixed(1)} ${height}L${points[0][0].toFixed(1)} ${height}Z`;
+  const path = list => list.map(([px, py], index) => `${index ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join('');
+  const line = path(points), ownLine = path(ownPoints);
+  const area = ownPoints.length > 1 ? `${ownLine}L${ownPoints.at(-1)[0].toFixed(1)} ${height}L${ownPoints[0][0].toFixed(1)} ${height}Z` : null;
   const shown = hover ?? (keyboard ? selected : null);
   const marked = shown ?? months.length - 1;
   const current = shown == null ? null : months[shown];
+  const currentOwn = shown == null ? null : listing[shown];
   const announced = months[selected];
+  const announcedOwn = listing[selected];
 
   const keys = event => {
     const move = {ArrowLeft:index => index - 1, ArrowDown:index => index - 1, ArrowRight:index => index + 1, ArrowUp:index => index + 1, Home:() => 0, End:() => months.length - 1}[event.key];
@@ -54,23 +59,20 @@ function Chart({months, selected, onSelect, label, monthName, valueText, say, re
     setKeyboard(true);
     onSelect(index => Math.max(0, Math.min(months.length - 1, move(index))));
   };
-  const turn = !current || current.change == null || Math.abs(current.change) < 0.0005 ? 'flat' : current.change > 0 ? 'up' : 'down';
-  const point = shown == null ? null : points[shown];
-  const inset = Math.min(88, width / 2);
+  const point = shown == null ? null : (series === 'own' && own[shown]) || points[shown];
+  const inset = Math.min(112, width / 2);
   const tipLeft = point ? Math.min(Math.max(point[0], inset), width - inset) : 0;
 
   return <div className="pp-history-chart">
     <div ref={box} className="pp-history-plot" style={{height:height + 42}} tabIndex={0} role="slider"
       aria-label={label} aria-valuemin={0} aria-valuemax={months.length - 1} aria-valuenow={selected}
-      aria-valuetext={`${monthName(announced.date, true)}: ${valueText(announced.value)}`}
+      aria-valuetext={`${monthName(announced.date, true)}: ${announcedOwn ? `${say('este anúncio', 'este anuncio')} ${valueText(announcedOwn.value)}, ` : ''}${say('média da região', 'promedio de la región')} ${valueText(announced.value)}`}
       onBlur={() => setKeyboard(false)}
       onKeyDown={keys} onPointerDown={event => { setKeyboard(false); if (!event.target.closest('[data-dot]')) setHover(null); }}>
       {current && <div className="pp-history-tip" style={{left:tipLeft, top:point[1]}} aria-hidden="true">
-        <span className="pp-history-tip-text">
-          <span>{monthName(current.date, true)}</span>
-          <strong>{valueText(current.value)}</strong>
-        </span>
-        {current.change != null && <img className={`pp-history-turn is-${turn}`} src={ARROW} alt="" width="16" height="16"/>}
+        <strong className="pp-history-tip-month">{monthName(current.date, true)}</strong>
+        {currentOwn && <p className="pp-history-tip-row is-own"><i/><span>{say('Este anúncio', 'Este anuncio')}</span><b>{valueText(currentOwn.value)}</b></p>}
+        <p className="pp-history-tip-row is-region"><i/><span>{say('Média da região', 'Promedio de la región')}</span><b>{valueText(current.value)}</b></p>
       </div>}
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
         <defs>
@@ -80,17 +82,21 @@ function Chart({months, selected, onSelect, label, monthName, valueText, say, re
         </defs>
         {GRID.map(share => <line key={share} x1="0" x2={width} y1={height * share} y2={height * share} stroke="#E6E8EC" strokeWidth="2"/>)}
         <line x1="0" x2={width} y1={height - 1.5} y2={height - 1.5} stroke="#E6E8EC" strokeWidth="3"/>
-        <motion.path d={area} fill={`url(#${gradient})`} initial={reduce ? false : {opacity:0}} whileInView={{opacity:1}} viewport={{once:true, amount:0.4}}
-          transition={{duration:0.6, delay:reduce ? 0 : 0.5}}/>
-        <motion.path d={line} fill="none" stroke="#FF6A13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        {area && <motion.path d={area} fill={`url(#${gradient})`} initial={reduce ? false : {opacity:0}} whileInView={{opacity:1}} viewport={{once:true, amount:0.4}}
+          transition={{duration:0.6, delay:reduce ? 0 : 0.5}}/>}
+        <motion.path d={line} fill="none" stroke="#2F6BFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           initial={reduce ? false : {pathLength:0}} whileInView={{pathLength:1}} viewport={{once:true, amount:0.4}} transition={{duration:0.9, ease:[0.2, 0.8, 0.2, 1]}}/>
+        {ownPoints.length > 1 && <motion.path d={ownLine} fill="none" stroke="#FF6A13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          initial={reduce ? false : {pathLength:0}} whileInView={{pathLength:1}} viewport={{once:true, amount:0.4}} transition={{duration:0.9, delay:reduce ? 0 : 0.2, ease:[0.2, 0.8, 0.2, 1]}}/>}
         {points.map(([px, py], index) => <g key={index}>
-          {index === marked && <circle cx={px} cy={py} r="12" fill="#FF6A13" fillOpacity=".18"/>}
-          <circle cx={px} cy={py} r="6" fill="#E64D00"/>
-          <circle data-dot="" cx={px} cy={py} r={hit} fill="transparent" className="pp-history-dot"
-            onPointerEnter={event => { if (event.pointerType !== 'touch') { setKeyboard(false); setHover(index); onSelect(index); } }}
+          {index === marked && <circle cx={px} cy={py} r="12" fill="#2F6BFF" fillOpacity=".16"/>}
+          {index === marked && own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="12" fill="#FF6A13" fillOpacity=".18"/>}
+          <circle cx={px} cy={py} r="5" fill="#1F55E0"/>
+          {own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="5" fill="#E64D00"/>}
+          {[['region', [px, py]], ['own', own[index]]].filter(([, at]) => at).map(([kind, [dx, dy]]) => <circle key={kind} data-dot="" cx={dx} cy={dy} r={hit} fill="transparent" className="pp-history-dot"
+            onPointerEnter={event => { if (event.pointerType !== 'touch') { setKeyboard(false); setSeries(kind); setHover(index); onSelect(index); } }}
             onPointerLeave={event => { if (event.pointerType !== 'touch') setHover(currentIndex => currentIndex === index ? null : currentIndex); }}
-            onPointerDown={event => { setHover(index); onSelect(index); event.stopPropagation(); }}/>
+            onPointerDown={event => { setSeries(kind); setHover(index); onSelect(index); event.stopPropagation(); }}/>)}
         </g>)}
       </svg>
       <ol className="pp-history-axis" aria-hidden="true">
@@ -122,7 +128,10 @@ export function ListingPriceHistory({history, money, currency, language, say, on
   const row = item => {
     if (item.kind === 'listed') return {title:say('Anunciado para venda no Inmuebles24', 'Publicado para venta en Inmuebles24'), sub:day(item.date), value:`${money(item.value)} ${currency}`};
     if (item.kind === 'republished') return {title:say('Republicado no Inmuebles24', 'Republicado en Inmuebles24'), sub:day(item.date), value:`${money(item.value)} ${currency}`};
-    return {title:say('Mudança de preço', 'Cambio de precio'), sub:say(`${day(item.date)} · ${money(item.drop)} a menos`, `${day(item.date)} · ${money(item.drop)} menos`), value:`${money(item.value)} ${currency}`};
+    const amount = item.kind === 'change' ? item.delta : -item.drop;
+    return {title:say('Mudança de preço', 'Cambio de precio'), sub:amount < 0
+      ? say(`${day(item.date)} · ${money(-amount)} a menos`, `${day(item.date)} · ${money(-amount)} menos`)
+      : say(`${day(item.date)} · ${money(amount)} a mais`, `${day(item.date)} · ${money(amount)} más`), value:`${money(item.value)} ${currency}`};
   };
   const years = (open ? history.rows : []).reduce((groups, item) => {
     const year = item.date.getFullYear();
@@ -139,8 +148,13 @@ export function ListingPriceHistory({history, money, currency, language, say, on
       </div>
     </div>
 
-    <Chart months={history.months} selected={selected} onSelect={setSelected} reduce={reduce} say={say} monthName={monthName} valueText={perM2}
-      label={say(`Preço do m² em ${area}, mês a mês`, `Precio del m² en ${area}, mes a mes`)}/>
+    <ul className="pp-history-legend" aria-label={say('Legenda do gráfico', 'Leyenda del gráfico')}>
+      <li><i className="is-own" aria-hidden="true"/>{say('Este anúncio', 'Este anuncio')}</li>
+      <li><i className="is-region" aria-hidden="true"/>{say(`Média em ${area}`, `Promedio en ${area}`)}</li>
+    </ul>
+
+    <Chart months={history.months} listing={history.listing} selected={selected} onSelect={setSelected} reduce={reduce} say={say} monthName={monthName} valueText={perM2}
+      label={say(`Preço do m² deste anúncio e média em ${area}, mês a mês`, `Precio del m² de este anuncio y promedio en ${area}, mes a mes`)}/>
 
     <div className="pp-history-events">
       {open && <div id={listId} className="pp-history-years">

@@ -1,6 +1,6 @@
 /* Full listing page (`PropertyDetail`). Airbnb listing language: white surface, photos first, black text, thin dividers. */
 /* One 4-column grid with a single gutter for every section, except the similar listings. The 4th column keeps the contact card readable on narrow desktops. */
-.pp{--pp-ink:#222;--pp-muted:#6a6a6a;--pp-line:#ebebeb;--pp-ease:cubic-bezier(.22,1,.36,1);--pp-gutter:32px;--pp-cols:repeat(3,minmax(0,1fr)) minmax(272px,1fr);display:flex;flex-direction:column;max-width:calc(1120px + 2 * var(--home-page-gutter));padding:32px var(--home-page-gutter) 72px;color:var(--pp-ink)}
+.pp{--pp-ink:#222;--pp-muted:#6a6a6a;--pp-line:#ebebeb;--pp-ease:cubic-bezier(.22,1,.36,1);--pp-gutter:32px;--pp-cols:repeat(3,minmax(0,1fr)) minmax(300px,1fr);display:flex;flex-direction:column;max-width:calc(1120px + 2 * var(--home-page-gutter));padding:32px var(--home-page-gutter) 72px;color:var(--pp-ink)}
 .pp :focus-visible{outline:2px solid var(--pp-ink);outline-offset:2px}
 
 /* Back on the left, share, save and hide on the right: the favorites page's round buttons. */
@@ -205,11 +205,11 @@
 
 /* Ideas para ofertar: the chosen strength drives the highlighted card; the facts beside it follow. */
 .pp-offers{display:flex;flex-direction:column;gap:24px;container-type:inline-size}
-.pp-offers-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px;min-height:56px}
-.pp-offers-title{display:flex;flex-wrap:wrap;align-items:center;gap:16px;min-width:0}
+.pp-offers-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 16px;min-height:56px}
+.pp-offers-title{display:flex;flex-wrap:wrap;align-items:center;gap:12px;min-width:0}
 .pp-offers-title .pp-section-title{margin:0;color:#111;font-size:24px;line-height:normal;letter-spacing:.07px}
-.pp-offer-levels{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.pp-offer-level{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 16px;border:1px solid #ddd;border-radius:999px;background:#fff;color:#222;font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms var(--pp-ease)}
+.pp-offer-levels{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.pp-offer-level{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 14px;border:1px solid #ddd;border-radius:999px;background:#fff;color:#222;font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms var(--pp-ease)}
 .pp-offer-level[aria-pressed=true]{border-color:#222;background:#f7f7f7;box-shadow:inset 0 0 0 1px #222}
 .pp-offer-level:active{transform:scale(.96)}
 .pp-offer-grid{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:16px;min-height:393px;margin:0;padding:0;list-style:none}
@@ -304,7 +304,7 @@
 .pp-cost-input.is-income input::placeholder{color:#9a9a9a;font-weight:400}
 .pp-cost-fit{margin:0;color:#222;font-size:14px;line-height:20px}
 .pp-cost-source{grid-column:1/-1;margin:0;color:#6a6a6a;font-size:13px;line-height:18px}
-@container (max-width:720px){
+@container (max-width:560px){
   .pp-cost-fields{grid-template-columns:minmax(0,1fr)}
   .pp-cost-field:nth-child(n+2){border-left:0;border-top:1px solid #222}
   .pp-cost-field:first-child{border-radius:13px 13px 0 0}

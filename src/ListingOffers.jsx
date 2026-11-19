@@ -122,8 +122,8 @@ function Gauge({bounds, level, levels, label, names, onPick, onDrag, onRelease, 
   </svg>;
 }
 
-function Fact({title, label, note, swap = false}) {
-  return <li className={`pp-offer-card${swap ? ' pp-offer-swap' : ''}`}>
+function Fact({title, label, note}) {
+  return <li className="pp-offer-card">
     <div className="pp-offer-card-head"><h3>{title}</h3><p>{label}</p></div>
     <p className="pp-offer-note">{note}</p>
   </li>;
@@ -203,9 +203,9 @@ export function ListingOffers({ideas, money, language, say, onAsk}) {
       </li>
       <Fact title={say(`${ideas.days} dias`, `${ideas.days} días`)} label={say('Dias no ar', 'Días publicado')}
         note={say(`Na região, um imóvel leva ${ideas.zoneDays} dias para vender, em média.`, `En la zona, un inmueble tarda ${ideas.zoneDays} días en venderse en promedio.`)}/>
-      <Fact key={`${level}-time`} swap title={pick([copy.time[0], copy.time[1]])} label={say('Tempo de resposta', 'Tiempo de respuesta')} note={pick([copy.time[2], copy.time[3]])}/>
-      <Fact key={`${level}-reply`} swap title={pick([copy.reply[0], copy.reply[1]])} label={say('Resposta esperada', 'Respuesta esperada')} note={pick([copy.reply[2], copy.reply[3]])}/>
-      <Fact key={`${level}-when`} swap title={pick([copy.when[0], copy.when[1]])} label={say('Quando convém', 'Cuándo conviene')} note={pick([copy.when[2], copy.when[3]])}/>
+      <Fact title={pick([copy.time[0], copy.time[1]])} label={say('Tempo de resposta', 'Tiempo de respuesta')} note={pick([copy.time[2], copy.time[3]])}/>
+      <Fact title={pick([copy.reply[0], copy.reply[1]])} label={say('Resposta esperada', 'Respuesta esperada')} note={pick([copy.reply[2], copy.reply[3]])}/>
+      <Fact title={pick([copy.when[0], copy.when[1]])} label={say('Quando convém', 'Cuándo conviene')} note={pick([copy.when[2], copy.when[3]])}/>
     </ul>
   </div>;
 }

@@ -6,17 +6,17 @@
   .home-header nav.figma-header-links{flex-wrap:wrap}
   .home-header .figma-header-links a.figma-login{position:absolute;right:var(--home-page-gutter);top:18px;min-height:44px}
   .footer-controls .footer-language{font-size:16px;min-height:44px}
-  .mora-close{width:40px;height:40px}
+  .mora-close{width:var(--icon-action);height:var(--icon-action)}
   .mora-editor,.mora-conversation{overscroll-behavior:contain;scroll-padding-block:24px}
   .mora-editor .home-word-control,.home-evolution .home-word-control{min-height:44px}
   .all-filters-dialog>footer{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
-  .all-filters-dialog .home-step{width:44px;height:44px}
+  .all-filters-dialog .home-step{width:var(--icon-action);height:var(--icon-action)}
   .all-filter-address input,.home-address-field input{font-size:16px}
   .site-footer{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   .toast{max-width:calc(100% - 32px);bottom:calc(16px + env(safe-area-inset-bottom,0px));overflow-wrap:anywhere}
 }
 @media(pointer:coarse){
-  .mini-question-send{width:44px;height:44px}
+  .mini-question-send{width:var(--icon-action);height:var(--icon-action)}
   .mini-contact-channels button{min-height:44px}
   .mini-field input,.mini-question textarea{font-size:16px}
 }

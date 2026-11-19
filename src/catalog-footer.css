@@ -5,7 +5,7 @@
 .catalog-pills{display:flex;flex-wrap:wrap;gap:24px}
 .catalog-pills button{padding:8px 16px;border:1px solid #000;border-radius:60px;background:transparent;color:#000;box-shadow:none;font-size:14px;font-weight:400;line-height:23.8px;cursor:pointer;transition:background-color 140ms ease}
 .catalog-social{display:flex;gap:16px;flex:none}
-.catalog-social button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:#fff;color:#000;box-shadow:0 1px 45px #5f63781a,0 8px 20px #5f63781a;cursor:pointer;line-height:0}
+.catalog-social button{display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);padding:0;border:0;border-radius:50%;background:#fff;color:#000;box-shadow:0 1px 45px #5f63781a,0 8px 20px #5f63781a;cursor:pointer;line-height:0}
 .catalog-social img{display:block;width:40px;height:40px}
 .catalog-footer-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;padding:48px 0}
 .catalog-footer-grid h2{margin:0 0 24px;font-size:16px;font-weight:600;line-height:18.4px;color:#000}

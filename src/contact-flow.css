@@ -4,7 +4,7 @@
 .contact-flow-header>div{min-width:0}
 .contact-flow-header p{font-size:13px;color:#666;margin:0 0 8px}
 .contact-flow-header h2{font-size:26px;font-weight:590;line-height:1.2;letter-spacing:0;margin:0;outline:none}
-.contact-flow-close{flex:none;width:40px;height:40px;display:grid;place-items:center;border:1px solid #00000014;background:#fff;border-radius:50%;cursor:pointer}
+.contact-flow-close{flex:none;width:var(--icon-action);height:var(--icon-action);display:grid;place-items:center;border:1px solid #00000014;background:#fff;border-radius:50%;cursor:pointer}
 .contact-flow-body{padding:24px 32px 32px}
 .contact-flow-property{display:flex;gap:16px;align-items:center;padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid #00000014}
 .contact-flow-property>img{width:88px;height:88px;object-fit:cover;border-radius:12px;flex:none}
@@ -56,5 +56,5 @@
 .contact-flow-error{font-size:13px;font-weight:400;color:#af2525;line-height:1.4}
 .property-contacted{display:flex;gap:6px;align-items:center;color:#256346;font-size:13px;line-height:1.4;margin:12px 0;background:#edf5ef;border-radius:8px;padding:8px 10px}
 .property-broker .property-recipient-unknown{font-size:12px;line-height:1.5}
-@media(max-width:700px){.contact-flow-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);border-radius:20px}.contact-flow-header{padding:20px;gap:8px}.contact-flow-header h2{font-size:22px}.contact-flow-body{padding:20px}.contact-flow-property{gap:12px}.contact-flow-property>img{width:72px;height:84px}.contact-flow-property strong{font-size:15px}.contact-flow-fields{grid-template-columns:1fr;gap:0}.contact-flow-options{gap:8px}.contact-flow-options label{padding:10px;font-size:13px}.contact-flow-summary>div{grid-template-columns:1fr;gap:4px}.contact-flow-actions{flex-direction:column-reverse;align-items:stretch}.contact-flow-actions button{width:100%}.contact-flow-next{padding:16px}.contact-flow-header .contact-flow-close{width:40px;height:40px}.contact-flow-message{padding:12px}}
+@media(max-width:700px){.contact-flow-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);border-radius:20px}.contact-flow-header{padding:20px;gap:8px}.contact-flow-header h2{font-size:22px}.contact-flow-body{padding:20px}.contact-flow-property{gap:12px}.contact-flow-property>img{width:72px;height:84px}.contact-flow-property strong{font-size:15px}.contact-flow-fields{grid-template-columns:1fr;gap:0}.contact-flow-options{gap:8px}.contact-flow-options label{padding:10px;font-size:13px}.contact-flow-summary>div{grid-template-columns:1fr;gap:4px}.contact-flow-actions{flex-direction:column-reverse;align-items:stretch}.contact-flow-actions button{width:100%}.contact-flow-next{padding:16px}.contact-flow-header .contact-flow-close{width:var(--icon-action);height:var(--icon-action)}.contact-flow-message{padding:12px}}
 @media(prefers-reduced-motion:reduce){.contact-flow-dialog *{scroll-behavior:auto;transition:none}}

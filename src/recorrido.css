@@ -79,7 +79,7 @@ html.is-recorrido::view-transition{overflow:visible}
 .recorrido-modes button span{position:relative;z-index:1}
 html .recorrido-modes button[aria-checked=true]{background:#222;color:#fff}
 html .recorrido-modes button[aria-checked=true] span{color:#fff}
-.recorrido-round{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:99px;cursor:pointer;flex:none}
+.recorrido-round{display:flex;align-items:center;justify-content:center;width:var(--icon-action);height:var(--icon-action);padding:0;border:0;border-radius:99px;cursor:pointer;flex:none}
 .recorrido-time{display:grid;gap:10px;min-width:0;padding:12px 14px 14px;border-radius:22px}
 .recorrido-time-head{display:flex;align-items:center;gap:6px;min-width:0}
 .recorrido-clock{flex:none;font-size:14px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -130,7 +130,7 @@ html .recorrido-modes button[aria-checked=true] span{color:#fff}
 .rp-chrome{position:absolute;top:12px;left:12px;right:12px;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:none}
 .rp-chrome::before{content:'';position:absolute;inset:-12px -12px auto;height:72px;background:linear-gradient(#fff 55%,#fff0);border-radius:20px 20px 0 0;pointer-events:none}
 .rp-chrome>*{position:relative;pointer-events:auto}
-.rp-chrome .compare-back{width:40px;height:40px;margin:0;flex:none}
+.rp-chrome .compare-back{width:var(--icon-action);height:var(--icon-action);margin:0;flex:none}
 .rp-toolbar-actions{display:flex;gap:8px;flex:none}
 .rp-chrome .compare-back[aria-pressed=true]{color:#e32636}
 .rp-chrome .compare-back[aria-pressed=true] svg{fill:currentColor}

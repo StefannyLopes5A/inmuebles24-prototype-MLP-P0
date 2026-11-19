@@ -200,7 +200,7 @@ button.map-widget-bar:active,.map-widget-tile:active{transform:scale(0.97)}
   overflow:auto;border-radius:var(--i24-radius-large);background:transparent;
 }
 .map-widget-panel-head{display:flex;align-items:center;gap:8px;padding:24px 24px 0}
-.map-widget-panel-head button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:#0000000a}
+.map-widget-panel-head button{display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);padding:0;border:0;border-radius:50%;background:#0000000a}
 .map-widget-panel-body{padding:16px 24px 24px;display:flex;flex-direction:column;gap:24px}
 .map-widget-panel-more{overflow:hidden;margin-top:-24px}
 .map-widget-panel-rest{display:flex;flex-direction:column;gap:24px;padding-top:24px}

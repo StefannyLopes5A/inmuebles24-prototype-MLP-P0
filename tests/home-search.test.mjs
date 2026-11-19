@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {canStartSearch, canStartHomeSearch, hasChosenLocation, detailTokens, foldSearchText, priceDistribution, parseBudgetAmount} from '../src/homeSearchModel.js';
 import {homeQuerySuggestions} from '../src/homeQuerySuggest.js';
 import {IDEA_RECENT_CARD_LIMIT, demoRecentIdeaCards, ideaSuggestionCards, recordSearchHistory, shouldRecordSearch} from '../src/searchHistory.js';
-import {CITY_EXPLORE_LINKS, POPULAR_HOME_CITIES, cityLinkBudget} from '../src/popularHomeCities.js';
+import {CITY_EXPLORE_LINKS, POPULAR_HOME_CITIES, cityLinkBudget, cityLinkImage} from '../src/popularHomeCities.js';
 import {patchHomeQueryForChip, patchHomeQueryForCriterion, patchHomeQueryForPlace} from '../src/homeQuerySync.js';
 import {composeHomeDraft, describeHomeQuery, homePhraseItems, homePhraseSegments, homeTypedArticle, releaseHomeTokenBefore, releaseLastHomeToken, replaceHomePhraseItem, replaceHomeQueryTail, spliceHomeQuery, splitHomeQuery} from '../src/searchCriteria.js';
 import {areas} from '../src/data.js';
@@ -98,10 +98,15 @@ test('home composer unlocks search when the description names a location', () =>
 
 test('popular home cities expose explore links with localized budgets', () => {
   assert.ok(POPULAR_HOME_CITIES.length >= 4);
-  assert.equal(CITY_EXPLORE_LINKS.length, 5);
+  assert.equal(CITY_EXPLORE_LINKS.length, 8);
   assert.equal(cityLinkBudget('rent'), 28_000);
   assert.equal(cityLinkBudget('buy'), 7_500_000);
   assert.ok(POPULAR_HOME_CITIES.every(city => city.sampleArea && city.image));
+  for (const city of POPULAR_HOME_CITIES) {
+    const images = CITY_EXPLORE_LINKS.map(link => cityLinkImage(city, link));
+    assert.ok(images.every(src => typeof src === 'string' && src.startsWith('/assets/')), city.id);
+    assert.ok(new Set(images).size >= 6, `${city.id}: the eight links should not all repeat one photo`);
+  }
 });
 
 test('idea suggestion cards run a search payload; history records signed-in searches', () => {

@@ -21,7 +21,7 @@
 .map-mini-trigger:focus-visible{outline:3px solid #242b29;outline-offset:-3px}
 .map-mini-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0000006b 0%,#00000014 48%,#0000 70%)}
 .map-mini-title{position:absolute;top:16px;left:16px;right:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:16px;line-height:22px;font-weight:600;letter-spacing:-.01em;text-shadow:0 1px 2px #0000003d}
-.map-mini-expand{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;color:#111;box-shadow:0 2px 8px #0000001f;transition:transform 160ms var(--map-ease-out)}
+.map-mini-expand{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);border-radius:50%;background:#fff;color:#111;box-shadow:0 2px 8px #0000001f;transition:transform 160ms var(--map-ease-out)}
 .map-shell[data-mode=mini]{transition:transform 200ms var(--map-ease-out),box-shadow 200ms var(--map-ease-out),opacity 180ms ease,visibility 0s}
 .map-shell[data-tuck=true]{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 180ms ease,visibility 0s 180ms,transform 200ms var(--map-ease-out),box-shadow 200ms var(--map-ease-out)}
 @media(hover:hover) and (pointer:fine){
@@ -36,7 +36,7 @@
 .map-shell:not([data-mode=mini]) .map-controls{opacity:1;visibility:visible;transition:opacity 160ms var(--map-ease-out) 200ms,visibility 0s 200ms}
 .map-controls-end{position:absolute;top:0;right:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .map-control,.map-zoom{pointer-events:auto;box-shadow:0 2px 6px #00000026,0 0 0 1px #0000000d}
-.map-control{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:#fff;color:#222}
+.map-control{display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);padding:0;border:0;border-radius:50%;background:#fff;color:#222}
 .map-control svg{width:20px;height:20px}
 .map-zoom{display:flex;flex-direction:column;overflow:hidden;border-radius:20px;background:#fff}
 .map-zoom button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;background:#fff;color:#222}

@@ -32,7 +32,7 @@
 .lp-photo-open:active{transform:none}
 .lp-photo-open:focus-visible{outline-offset:-6px;outline-color:#fff;box-shadow:inset 0 0 0 9px #0000004d}
 .lp-photo-chrome{position:absolute;left:16px;right:16px;top:50%;display:flex;justify-content:space-between;pointer-events:none;transform:translateY(-50%);transition:opacity 200ms ease-out}
-.lp-photo-step{pointer-events:auto;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#ffffffeb;color:#000;box-shadow:0 1px 4px #0000002e;opacity:0;transition:opacity 160ms ease-out,transform 160ms ease-out}
+.lp-photo-step{pointer-events:auto;width:var(--icon-action);height:var(--icon-action);border-radius:50%;display:grid;place-items:center;background:#ffffffeb;color:#000;box-shadow:0 1px 4px #0000002e;opacity:0;transition:opacity 160ms ease-out,transform 160ms ease-out}
 .lp-photo-step:focus-visible{opacity:1}
 .lp-photo-step:disabled{visibility:hidden}
 .lp-photo-step.is-prev svg,.lp-control.is-prev svg,.lp-gallery-step.is-prev svg{transform:rotate(180deg)}
@@ -52,7 +52,7 @@
 .lp-footer{flex:none;padding:12px var(--lp-pad) 24px;background:#fff;border-radius:0 0 20px 0}
 
 .lp-controls{position:absolute;top:24px;right:24px;z-index:4;display:flex;gap:8px;transition:opacity 200ms ease-out}
-.lp-control{position:relative;width:40px;height:40px;padding:0;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid #dddddd;color:#000}
+.lp-control{position:relative;width:var(--icon-action);height:var(--icon-action);padding:0;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid #dddddd;color:#000}
 .lp-control::before{content:'';position:absolute;inset:-2px;border-radius:inherit}
 .lp-control img{width:16px;height:16px}
 .lp-control:disabled{background:#fff!important;color:#000!important;opacity:.35;cursor:default}
@@ -262,7 +262,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-ask-suggest-row{display:flex;flex-wrap:nowrap;gap:8px;padding:2px var(--lp-pad);overflow-x:auto;overscroll-behavior-x:contain;scroll-padding-inline:var(--lp-pad);-webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--lp-pad),#000 calc(100% - var(--lp-pad)),transparent);mask-image:linear-gradient(90deg,transparent,#000 var(--lp-pad),#000 calc(100% - var(--lp-pad)),transparent)}
 .lp-ask-suggest-row button{flex:none;min-height:36px;padding:6px 14px;border:1px solid #0000001f;border-radius:99px;background:#fff;font-size:14px;line-height:20px;font-weight:500;color:#111;white-space:nowrap}
 .lp-ask-bar{display:flex;align-items:flex-end;gap:12px}
-.lp-ask-back{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%}
+.lp-ask-back{flex:none;display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);border-radius:50%}
 .lp-ask-back svg{transform:rotate(180deg)}
 .lp-ask-field{position:relative;flex:1;min-width:0;display:grid;--ask-line:28px}
 .lp-ask-field>*{grid-area:1/1}
@@ -277,7 +277,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-ask-field textarea{display:block;width:100%;min-height:44px;max-height:128px;margin:0;border:0;border-radius:0;background:transparent;color:#111;caret-color:transparent;resize:none;overflow-y:auto}
 .lp-ask-field textarea:focus-visible{outline:none}
 .lp-ask-field textarea::selection{background:#ffe0cf}
-.lp-ask-send{flex:none;display:grid;place-items:center;width:40px;height:40px;margin-bottom:2px;border-radius:50%;background:#fe6439;color:#fff;transition:background-color 150ms ease}
+.lp-ask-send{flex:none;display:grid;place-items:center;width:var(--icon-action);height:var(--icon-action);margin-bottom:2px;border-radius:50%;background:#fe6439;color:#fff;transition:background-color 150ms ease}
 .lp-ask-send svg{margin:1px 1px 0 0}
 /* Contact and sent share one stage, centered like the login nudge; the form below borrows Airbnb's fields. */
 .lp-stage{display:flex;flex-direction:column;align-items:center;padding-top:4px;text-align:center}
@@ -422,7 +422,7 @@ button.lp-photos:focus-visible{outline:2px solid #222;outline-offset:2px}
 .lp-grab{position:absolute;top:0;left:0;right:0;height:32px;z-index:3;display:flex;justify-content:center;padding-top:8px;touch-action:none;cursor:grab}
 .lp-grab span{width:36px;height:5px;border-radius:99px;background:#ffffffd9;box-shadow:0 0 0 1px #0000001f}
 @media(max-width:359px){.lp-secondary{flex:1 1 auto}.lp-actions.is-summary .lp-secondary{flex-basis:100%}.lp-specs{gap:6px 14px;font-size:13px}.lp-proof-head>img{width:56px;height:56px}.lp-ask-field{--ask-line:26px}.lp-ask-hint,.lp-ask-mirror,.lp-ask-field textarea{font-size:18px}.lp-ask-bar{gap:8px}}
-@media(pointer:coarse){.lp-chat-action,.lp-moment,.lp-toggle,.lp-ask-suggest-row button{min-height:44px}.lp-ask-send{width:44px;height:44px;margin-bottom:0}}
+@media(pointer:coarse){.lp-chat-action,.lp-moment,.lp-toggle,.lp-ask-suggest-row button{min-height:44px}.lp-ask-send{width:var(--icon-action);height:var(--icon-action);margin-bottom:0}}
 .lp-gallery{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:#0b0b0bf2}
 .lp-gallery>img{max-width:min(1200px,calc(100vw - 32px));max-height:calc(100dvh - 128px);object-fit:contain;border-radius:12px}
 .lp-gallery-close,.lp-gallery-step{position:absolute;display:grid;place-items:center;border-radius:50%;background:#ffffff1f;color:#fff}

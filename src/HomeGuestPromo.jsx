@@ -24,18 +24,6 @@ export function HomeGuestPromo({onLogin, saved = [], onLike, onOpen}) {
   if (!fan.length) return null;
 
   return <section className="home-guest-promo" aria-labelledby="home-guest-promo-title">
-    <ul className="home-guest-features">
-      {PERKS.map(([title, text, photo, wide], index) => <li key={photo} className={`home-guest-feature${index % 2 ? ' is-tilt-right' : ''}${wide ? ' is-wide-only' : ''}`} onClick={() => onLogin?.()}>
-        <div className="home-guest-feature-media">
-          <div className="home-guest-feature-photo"><img src={`/assets/home-evolution/guest-promo/${photo}.jpg`} alt="" loading="lazy"/></div>
-        </div>
-        <div className="home-guest-feature-copy">
-          <h3>{t(title)}</h3>
-          <p>{t(text)}</p>
-        </div>
-        <button type="button" className="home-guest-feature-pill">{t('¡Crea tu cuenta!')}</button>
-      </li>)}
-    </ul>
     <div className="home-guest-promo-join">
       <div className="home-guest-promo-text">
         <div className="home-guest-promo-fan photo-stack">
@@ -50,6 +38,18 @@ export function HomeGuestPromo({onLogin, saved = [], onLike, onOpen}) {
         {t('Iniciar sesión o crear cuenta')}<img src={homeAsset('arrow')} alt=""/>
       </button>
     </div>
+    <ul className="home-guest-features">
+      {PERKS.map(([title, text, photo, wide], index) => <li key={photo} className={`home-guest-feature${index % 2 ? ' is-tilt-right' : ''}${wide ? ' is-wide-only' : ''}`} onClick={() => onLogin?.()}>
+        <div className="home-guest-feature-media">
+          <div className="home-guest-feature-photo"><img src={`/assets/home-evolution/guest-promo/${photo}.jpg`} alt="" loading="lazy"/></div>
+        </div>
+        <div className="home-guest-feature-copy">
+          <h3>{t(title)}</h3>
+          <p>{t(text)}</p>
+        </div>
+        <button type="button" className="home-guest-feature-pill">{t('¡Crea tu cuenta!')}</button>
+      </li>)}
+    </ul>
     <PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/>
   </section>;
 }

@@ -77,22 +77,22 @@ function Chart({months, listing, selected, onSelect, label, monthName, valueText
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
         <defs>
           <linearGradient id={gradient} x1="0" y1={height * PEAK} x2="0" y2={height} gradientUnits="userSpaceOnUse">
-            <stop stopColor="#FF6A13" stopOpacity=".22"/><stop offset="1" stopColor="#FF6A13" stopOpacity="0"/>
+            <stop stopColor="#FF553B" stopOpacity=".22"/><stop offset="1" stopColor="#FF553B" stopOpacity="0"/>
           </linearGradient>
         </defs>
         {GRID.map(share => <line key={share} x1="0" x2={width} y1={height * share} y2={height * share} stroke="#E6E8EC" strokeWidth="2"/>)}
         <line x1="0" x2={width} y1={height - 1.5} y2={height - 1.5} stroke="#E6E8EC" strokeWidth="3"/>
         {area && <motion.path d={area} fill={`url(#${gradient})`} initial={reduce ? false : {opacity:0}} whileInView={{opacity:1}} viewport={{once:true, amount:0.4}}
           transition={{duration:0.6, delay:reduce ? 0 : 0.5}}/>}
-        <motion.path d={line} fill="none" stroke="#2F6BFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        <motion.path d={line} fill="none" stroke="#07358F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           initial={reduce ? false : {pathLength:0}} whileInView={{pathLength:1}} viewport={{once:true, amount:0.4}} transition={{duration:0.9, ease:[0.2, 0.8, 0.2, 1]}}/>
-        {ownPoints.length > 1 && <motion.path d={ownLine} fill="none" stroke="#FF6A13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        {ownPoints.length > 1 && <motion.path d={ownLine} fill="none" stroke="#FF553B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           initial={reduce ? false : {pathLength:0}} whileInView={{pathLength:1}} viewport={{once:true, amount:0.4}} transition={{duration:0.9, delay:reduce ? 0 : 0.2, ease:[0.2, 0.8, 0.2, 1]}}/>}
         {points.map(([px, py], index) => <g key={index}>
-          {index === marked && <circle cx={px} cy={py} r="12" fill="#2F6BFF" fillOpacity=".16"/>}
-          {index === marked && own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="12" fill="#FF6A13" fillOpacity=".18"/>}
-          <circle cx={px} cy={py} r="5" fill="#1F55E0"/>
-          {own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="5" fill="#E64D00"/>}
+          {index === marked && <circle cx={px} cy={py} r="12" fill="#07358F" fillOpacity=".16"/>}
+          {index === marked && own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="12" fill="#FF553B" fillOpacity=".18"/>}
+          <circle cx={px} cy={py} r="5" fill="#07358F"/>
+          {own[index] && <circle cx={own[index][0]} cy={own[index][1]} r="5" fill="#FF553B"/>}
           {[['region', [px, py]], ['own', own[index]]].filter(([, at]) => at).map(([kind, [dx, dy]]) => <circle key={kind} data-dot="" cx={dx} cy={dy} r={hit} fill="transparent" className="pp-history-dot"
             onPointerEnter={event => { if (event.pointerType !== 'touch') { setKeyboard(false); setSeries(kind); setHover(index); onSelect(index); } }}
             onPointerLeave={event => { if (event.pointerType !== 'touch') setHover(currentIndex => currentIndex === index ? null : currentIndex); }}
@@ -112,7 +112,7 @@ function Chart({months, listing, selected, onSelect, label, monthName, valueText
 }
 
 /** Historial de precio: the colonia's m² month by month, and this listing's own events in the same timeline. */
-export function ListingPriceHistory({history, money, currency, language, say, onAsk}) {
+export function ListingPriceHistory({history, money, currency, language, say, onAsk, expanded = false, insight = null}) {
   const [selected, setSelected] = useState(history.months.length - 1);
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
@@ -140,39 +140,42 @@ export function ListingPriceHistory({history, money, currency, language, say, on
     return groups;
   }, []);
 
-  return <div className="pp-history">
+  return <div className="pp-block">
     <div className="pp-history-head">
       <div className="pp-history-title">
         <h2 id="pp-history-title" className="pp-section-title">{say('Histórico de preço', 'Historial de precio')}</h2>
-        <button type="button" className="pp-mora-pill" onClick={event => onAsk?.({section:'history', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
+        <button type="button" className="pp-mora-pill" aria-expanded={expanded} onClick={event => onAsk?.({section:'history', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
       </div>
     </div>
+    {insight}
+    <div className="pp-history">
 
-    <ul className="pp-history-legend" aria-label={say('Legenda do gráfico', 'Leyenda del gráfico')}>
-      <li><i className="is-own" aria-hidden="true"/>{say('Este anúncio', 'Este anuncio')}</li>
-      <li><i className="is-region" aria-hidden="true"/>{say(`Média em ${area}`, `Promedio en ${area}`)}</li>
-    </ul>
+      <ul className="pp-history-legend" aria-label={say('Legenda do gráfico', 'Leyenda del gráfico')}>
+        <li><i className="is-own" aria-hidden="true"/>{say('Este anúncio', 'Este anuncio')}</li>
+        <li><i className="is-region" aria-hidden="true"/>{say(`Média em ${area}`, `Promedio en ${area}`)}</li>
+      </ul>
 
-    <Chart months={history.months} listing={history.listing} selected={selected} onSelect={setSelected} reduce={reduce} say={say} monthName={monthName} valueText={perM2}
-      label={say(`Preço do m² deste anúncio e média em ${area}, mês a mês`, `Precio del m² de este anuncio y promedio en ${area}, mes a mes`)}/>
+      <Chart months={history.months} listing={history.listing} selected={selected} onSelect={setSelected} reduce={reduce} say={say} monthName={monthName} valueText={perM2}
+        label={say(`Preço do m² deste anúncio e média em ${area}, mês a mês`, `Precio del m² de este anuncio y promedio en ${area}, mes a mes`)}/>
 
-    <div className="pp-history-events">
-      {open && <div id={listId} className="pp-history-years">
-        {years.map(group => <div key={group.year} className="pp-history-year">
-          <span className="pp-history-chip">{group.year}</span>
-          <ul>{group.items.map(item => {
-            const {title, sub, value} = row(item);
-            return <li key={`${item.kind}-${item.date.getTime()}`} className="pp-history-row">
-              <div><strong>{title}</strong><span>{sub}</span></div>
-              <p>{value}</p>
-            </li>;
-          })}</ul>
-        </div>)}
-      </div>}
-      {history.rows.length > 0 && <button type="button" className="pp-history-more" aria-expanded={open} aria-controls={open ? listId : undefined} onClick={() => setOpen(value => !value)}>
-        <span>{open ? say('Mostrar menos', 'Mostrar menos') : say('Explorar o histórico completo', 'Explorar el historial completo')}</span>
-        <img src={CHEVRON} alt="" width="16" height="16"/>
-      </button>}
+      <div className="pp-history-events">
+        {open && <div id={listId} className="pp-history-years">
+          {years.map(group => <div key={group.year} className="pp-history-year">
+            <span className="pp-history-chip">{group.year}</span>
+            <ul>{group.items.map(item => {
+              const {title, sub, value} = row(item);
+              return <li key={`${item.kind}-${item.date.getTime()}`} className="pp-history-row">
+                <div><strong>{title}</strong><span>{sub}</span></div>
+                <p>{value}</p>
+              </li>;
+            })}</ul>
+          </div>)}
+        </div>}
+        {history.rows.length > 0 && <button type="button" className="pp-history-more" aria-expanded={open} aria-controls={open ? listId : undefined} onClick={() => setOpen(value => !value)}>
+          <span>{open ? say('Mostrar menos', 'Mostrar menos') : say('Explorar o histórico completo', 'Explorar el historial completo')}</span>
+          <img src={CHEVRON} alt="" width="16" height="16"/>
+        </button>}
+      </div>
     </div>
   </div>;
 }

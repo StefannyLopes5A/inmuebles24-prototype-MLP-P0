@@ -1,5 +1,6 @@
 import React, {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
+import {SectionInsight} from './SectionInsight.jsx';
 import {Icon} from './App';
 import {homes, listingPrice} from './data';
 import {DEMO_MXN_PER_USD, useLanguage} from './i18n';
@@ -113,6 +114,10 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [home, search, story, language, currency]);
   const {facts} = story;
+  const [openInsights, setOpenInsights] = useState(() => new Set());
+  const toggleInsight = section => setOpenInsights(current => { const next = new Set(current); if (!next.delete(section)) next.add(section); return next; });
+  useEffect(() => { setOpenInsights(new Set()); }, [home.id]);
+  const insightFor = section => openInsights.has(section) ? <SectionInsight section={section} home={home} language={language}/> : null;
   const price = listingPrice(home);
   const isSaved = saved.includes(home.id);
 
@@ -214,8 +219,9 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         <div className="pp-intro-offer">
           <div className="pp-intro-price">
             <p className="pp-intro-amount">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>
-            <button type="button" className="pp-mora-pill" onClick={event => onAskSection?.({section:'price', question:priceQuestion, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{priceQuestion}</span></button>
+            <button type="button" className="pp-mora-pill" aria-expanded={openInsights.has('price')} onClick={event => toggleInsight('price')}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{priceQuestion}</span></button>
           </div>
+          {insightFor('price')}
           <p className="pp-intro-fees"><span>{say('Condomínio', 'Mantenimiento')} {money(facts.fee)}</span><span className="pp-intro-fee-dot" aria-hidden="true">·</span><span>{say('IPTU', 'Predial')} {say('a confirmar', 'por confirmar')}</span></p>
         </div>
         <Host advertiser={advertiser} onReviews={toReviews} say={say}/>
@@ -245,8 +251,9 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       <section className="pp-section" aria-labelledby="pp-about-title">
         <div className="pp-about-head">
           <h2 id="pp-about-title" className="pp-section-title">{say('Sobre este imóvel', 'Acerca de este inmueble')}</h2>
-          <button type="button" className="pp-mora-pill" onClick={event => onAskSection?.({section:'description', question:say('O que vale olhar de perto', 'Qué vale mirar de cerca'), source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{say('O que vale olhar de perto', 'Qué vale mirar de cerca')}</span></button>
+          <button type="button" className="pp-mora-pill" aria-expanded={openInsights.has('description')} onClick={() => toggleInsight('description')}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{say('O que vale olhar de perto', 'Qué vale mirar de cerca')}</span></button>
         </div>
+        {insightFor('description')}
         <Description paragraphs={story.description(language)} home={home} advertiser={advertiser} say={say}/>
       </section>
 
@@ -256,15 +263,15 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       </section>
 
       {home.mode === 'buy' && price > 0 && <section id="pp-costs" className="pp-section" aria-labelledby="pp-costs-title">
-        <ListingCosts key={home.id} price={price} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
+        <ListingCosts key={home.id} price={price} money={money} currency={currency} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('costs')} insight={insightFor('costs')}/>
       </section>}
 
       {history && <section id="pp-history" className="pp-section" aria-labelledby="pp-history-title">
-        <ListingPriceHistory key={home.id} history={history} money={money} currency={currency} language={language} say={say} onAsk={onAskSection}/>
+        <ListingPriceHistory key={home.id} history={history} money={money} currency={currency} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('history')} insight={insightFor('history')}/>
       </section>}
 
       {offers && <section id="pp-offers" className="pp-section" aria-labelledby="pp-offers-title">
-        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={onAskSection}/>
+        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('offer')} insight={insightFor('offer')}/>
       </section>}
     </div>
 

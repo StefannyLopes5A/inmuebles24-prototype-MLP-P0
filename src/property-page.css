@@ -129,7 +129,8 @@
 .lp-mora.is-page .lp-mora-lead{gap:0}
 .lp-mora.is-page .lp-read,.lp-mora.is-page>.lp-mora-card .lp-mora-note{margin-top:16px}
 .lp-mora.is-page :is(.lp-mora-synthesis,.lp-mora-working){font-size:18px;line-height:20px;font-weight:600;letter-spacing:-.44px;text-wrap:pretty}
-.lp-mora.is-page .lp-mora-synthesis[data-shine]{background-image:linear-gradient(90deg,#222 30%,var(--motion-orange) 42%,var(--motion-blue) 58%,#222 70%);background-size:100% 100%;background-position:0 50%;animation:none}
+.lp-mora.is-page .lp-mora-synthesis,.lp-mora.is-page .lp-mora-synthesis[data-shine]{background:none;background-image:none;animation:none;color:#222;-webkit-text-fill-color:currentColor}
+.lp-mora.is-page .lp-mora-working{font-size:18px;line-height:20px;font-weight:600;letter-spacing:-.44px}
 .lp-mora.is-page .lp-mora-note{margin:0;font-size:13px;line-height:18px;letter-spacing:-.08px;color:#6a6a6a}
 .lp-read{display:grid;gap:24px}
 .lp-read:has(.lp-read-group:nth-child(2)){grid-template-columns:1fr 1fr}
@@ -204,17 +205,17 @@
 .pp-amenity-group li>img,.pp-amenity-group li>svg{flex:none;width:24px;height:24px}
 
 /* Ideas para ofertar: the chosen strength drives the highlighted card; the facts beside it follow. */
-.pp-offers{display:flex;flex-direction:column;gap:24px;container-type:inline-size}
+.pp-offers{display:flex;flex-direction:column;gap:40px;container-type:inline-size}
 .pp-offers-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 16px;min-height:56px}
 .pp-offers-title{display:flex;flex-wrap:wrap;align-items:center;gap:12px;min-width:0}
 .pp-offers-title .pp-section-title{margin:0;color:#111;font-size:24px;line-height:normal;letter-spacing:.07px}
-.pp-offer-levels{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.pp-offer-levels{display:flex;flex:1 0 100%;flex-wrap:wrap;align-items:center;gap:6px}
 .pp-offer-level{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 14px;border:1px solid #ddd;border-radius:999px;background:#fff;color:#222;font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms var(--pp-ease)}
 .pp-offer-level[aria-pressed=true]{border-color:#222;background:#f7f7f7;box-shadow:inset 0 0 0 1px #222}
 .pp-offer-level:active{transform:scale(.96)}
 .pp-offer-grid{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:16px;min-height:393px;margin:0;padding:0;list-style:none}
 .pp-offer-main,.pp-offer-card{display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0;border-radius:24px;background:#fff}
-.pp-offer-main{grid-row:span 2;padding:24px;border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(160deg,#8fb0e8,#c8a3d6 55%,#ff925c) border-box;container-type:inline-size}
+.pp-offer-main{grid-row:span 2;padding:24px;border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--mora-gradient) border-box;container-type:inline-size}
 .pp-offer-card{padding:24px;border:1px solid #ededed}
 /* The four fact cards live in their own list so a phone can swipe them; on wider screens the wrappers vanish and the cards join the grid. */
 .pp-offer-facts,.pp-offer-facts>ul{display:contents;list-style:none;margin:0;padding:0}
@@ -343,13 +344,13 @@
 .pp-history-legend{display:flex;flex-wrap:wrap;gap:8px 24px;margin:-8px 0 0;padding:0;list-style:none;color:#484848;font-size:14px;line-height:20px}
 .pp-history-legend li{display:inline-flex;align-items:center;gap:8px}
 .pp-history-legend i{width:16px;height:4px;border-radius:2px}
-.pp-history-legend i.is-own{background:#ff6a13}
-.pp-history-legend i.is-region{background:#2f6bff}
+.pp-history-legend i.is-own{background:#ff553b}
+.pp-history-legend i.is-region{background:#07358f}
 .pp-history-tip-month{color:#222;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.15px}
 .pp-history-tip-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:8px;margin:0;color:#6a6a6a;font-size:13px;line-height:16px;white-space:nowrap}
 .pp-history-tip-row i{width:10px;height:10px;border-radius:50%}
-.pp-history-tip-row.is-own i{background:#e64d00}
-.pp-history-tip-row.is-region i{background:#1f55e0}
+.pp-history-tip-row.is-own i{background:#ff553b}
+.pp-history-tip-row.is-region i{background:#07358f}
 .pp-history-tip-row b{color:#222;font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums}
 .pp-history-turn{flex:none;transition:transform 200ms var(--pp-ease)}
 .pp-history-turn.is-down{transform:scaleY(-1)}
@@ -526,7 +527,7 @@
 .pp-place-times img{flex:none}
 .pp-hood-card-slot{display:flex;min-width:0}
 .pp-hood-card-slot>.pp-hood-card{flex:1}
-.pp-hood-card{display:flex;flex-direction:column;gap:24px;min-width:0;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(160deg,#8fb0e8 0%,#ff925c 100%) border-box}
+.pp-hood-card{display:flex;flex-direction:column;gap:24px;min-width:0;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(#fff,#fff) padding-box,var(--mora-gradient) border-box}
 .pp-hood-card-head{display:grid;gap:8px}
 .pp-hood-mora{display:flex;align-items:center;gap:6px;margin:0;color:#e45244;font-size:12px;line-height:16px;font-weight:600}
 .pp-hood-mora img{flex:none}
@@ -818,3 +819,20 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
   .pp-places li::before{transition:none}
 }
 @media(forced-colors:active){.pp-places li::before{background:Highlight}}
+
+/* A section pill opens Mora's reading right under that section's title, in the same voice as the page verdict. */
+.pp-insight{margin-top:16px}
+.pp-insight .lp-mora-card{animation:pp-insight-in 320ms var(--pp-ease) both}
+.pp-intro-offer>.pp-insight{margin-top:0}
+.pp-mora-pill[aria-expanded=true]{border-color:#222}
+@keyframes pp-insight-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pp-insight .lp-mora-card{animation:none}}
+/* Costs and price history keep their title and Mora's reading above the card, not inside it. */
+.pp-block{display:flex;flex-direction:column;gap:24px}
+.pp-block>.pp-insight{margin-top:-8px}
+/* The thinking line keeps its weight (600); the sentence it becomes is lighter (500). Same specificity as the page verdict rule above. */
+.lp-mora.is-page .lp-mora-working{font-weight:600}
+.lp-mora.is-page .lp-mora-synthesis,.lp-mora.is-page .lp-mora-synthesis[data-shine]{font-weight:500}
+.pp-about-head~.pp-insight{margin-bottom:24px}
+.pp-section.pp-mora-section{padding-top:0}
+.lp-mora.is-page .lp-mora-synthesis .lp-word.is-key{font-weight:600}

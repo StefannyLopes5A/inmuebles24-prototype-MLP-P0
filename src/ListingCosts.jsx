@@ -71,7 +71,7 @@ function YearMenu({id, choices, value, say, reduce, onChoose, onClose}) {
 }
 
 /** Calculadora de costos: what this sale asks on signing day, and, if the person wants, the monthly payment. */
-export function ListingCosts({price, money, currency, language, say, onAsk}) {
+export function ListingCosts({price, money, currency, language, say, onAsk, expanded = false, insight = null}) {
   const defaults = {offer:price, ...COST_DEFAULTS};
   const [values, setValues] = useState(defaults);
   const [editing, setEditing] = useState(null), [draft, setDraft] = useState({});
@@ -120,72 +120,75 @@ export function ListingCosts({price, money, currency, language, say, onAsk}) {
     : say(`Não cabe: a parcela seria ${pct(share)}% da sua renda. Com esta oferta, os bancos costumam pedir uma renda de ${money(costs.income)} por mês.`, `No cabe: la mensualidad sería el ${pct(share)}% de tu ingreso. Con esta oferta, los bancos suelen pedir un ingreso de ${money(costs.income)} al mes.`);
   const question = say('O que muda com a entrada', 'Qué cambia con el enganche');
 
-  return <div className="pp-costs">
+  return <div className="pp-block">
     <div className="pp-costs-head">
       <div className="pp-costs-title">
         <h2 id="pp-costs-title" className="pp-section-title">{say('Calculadora de custos', 'Calculadora de costos')}</h2>
-        <button type="button" className="pp-mora-pill" onClick={event => onAsk?.({section:'costs', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
+        <button type="button" className="pp-mora-pill" aria-expanded={expanded} onClick={event => onAsk?.({section:'costs', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
       </div>
     </div>
+    {insight}
+    <div className="pp-costs">
 
-    <div className="pp-cost-fields">
-      <Field label={say('Valor da oferta', 'Valor de la oferta')} value={`${money(values.offer)} ${currency}`} editing={editing === 'offer'} onEdit={() => edit('offer')} onDone={done}>
-        <Input label={say('Valor da oferta em MXN', 'Valor de la oferta en MXN')} mode="numeric" value={draft.offer ?? ''} onChange={set('offer')}/>
-      </Field>
-      <Field label={say('Entrada', 'Entrada')} value={`${pct(values.down)}% · ${money(costs.enganche)}`} editing={editing === 'down'} onEdit={() => edit('down')} onDone={done}>
-        <Input label={say('Entrada em porcentagem', 'Enganche en porcentaje')} value={draft.down ?? ''} onChange={set('down')} width="6ch"/>
-      </Field>
-      <div className="pp-cost-field pp-cost-term" ref={yearsRoot}>
-        <button ref={yearsButton} type="button" className="pp-cost-show" aria-haspopup="menu" aria-expanded={yearsOpen} aria-controls={yearsOpen ? yearsId : undefined}
-          onClick={() => { setEditing(null); setYearsOpen(open => !open); }}
-          onKeyDown={event => { if (event.key === 'ArrowDown' && !yearsOpen) { event.preventDefault(); setEditing(null); setYearsOpen(true); } }}>
-          <span className="pp-cost-label">{say('Prazo em anos', 'Plazo en años')}</span>
-          <strong className="pp-cost-value">{say(`${values.years} anos · ${pct(values.rate)}% fixa`, `${values.years} años · ${pct(values.rate)}% fija`)}</strong>
-        </button>
-        <AnimatePresence>
-          {yearsOpen && <YearMenu key="years" id={yearsId} choices={yearChoices} value={values.years} say={say} reduce={reduce} onChoose={chooseYears} onClose={() => { setYearsOpen(false); yearsButton.current?.focus(); }}/>}
-        </AnimatePresence>
-      </div>
-    </div>
-
-    <div className="pp-cost-summary" aria-live="polite">
-      <p className="pp-cost-total"><strong>{money(costs.upfront)} {currency}</strong><span>{say('Valor efetivo total', 'Valor efectivo total')}</span></p>
-      <dl className="pp-cost-list">
-        <div><dt>{say('Entrada', 'Enganche')}</dt><dd>{money(costs.enganche)}</dd></div>
-        <div><dt>{say('Imposto de aquisição (ISAI)', 'Impuesto de adquisición (ISAI)')}</dt><dd>{money(costs.isai)}</dd></div>
-        <div><dt>{say('Cartório, escritura e avaliação', 'Notaría, escrituración y avalúo')}</dt><dd>{money(costs.closing)}</dd></div>
-      </dl>
-    </div>
-
-    <div className="pp-cost-foot">
-      <div className="pp-cost-foot-copy">
-        <p>{say('Quer saber se cabe na sua renda?', '¿Quieres saber si cabe en tus ingresos?')}</p>
-        <p>{say('Exercício local, sem consulta ao Buró de Crédito.', 'Ejercicio local, sin impacto en Buró de Crédito.')}</p>
-      </div>
-      <button type="button" className="mini-primary pp-cost-simulate" aria-expanded={simulate} aria-controls={simId} onClick={() => setSimulate(open => !open)}>
-        <span>{say('Simular financiamento', 'Simular financiamiento')}</span><img src={ICON('arrow-forward-light')} alt="" width="16" height="16"/>
-      </button>
-    </div>
-    <AnimatePresence initial={false}>
-      {simulate && <motion.div key="sim" id={simId} className="pp-cost-sim" initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} exit={{opacity:0, height:0}}
-        transition={reduce ? {duration:0} : {duration:0.25, ease:[0.2, 0.8, 0.2, 1]}}>
-        <div className="pp-cost-sim-inner">
-          <dl className="pp-cost-sim-facts">
-            <div><dt>{say('Parcela estimada', 'Mensualidad estimada')}</dt><dd>{money(costs.monthly)}<small> / {say('mês', 'mes')}</small></dd></div>
-            <div><dt>{say('Valor financiado', 'Monto del crédito')}</dt><dd>{money(costs.principal)}</dd></div>
-            <div><dt>{say(`Juros em ${values.years} anos`, `Intereses en ${values.years} años`)}</dt><dd>{money(costs.interest)}</dd></div>
-          </dl>
-          <div className="pp-cost-income">
-            <label htmlFor={incomeId}>{say('Sua renda mensal', 'Tu ingreso mensual')}</label>
-            <div className="pp-cost-input is-income">
-              <input id={incomeId} type="text" inputMode="numeric" autoComplete="off" placeholder={say(`Por exemplo, ${money(costs.income)}`, `Por ejemplo, ${money(costs.income)}`)} value={income} onChange={event => setIncome(event.target.value)}/>
-              <span aria-hidden="true">{currency}</span>
-            </div>
-            <p className="pp-cost-fit" aria-live="polite">{fit || say(`Para a parcela não passar de ${pct(INCOME_SHARE)}% da renda, os bancos costumam pedir uns ${money(costs.income)} por mês.`, `Para que la mensualidad no pase del ${pct(INCOME_SHARE)}% del ingreso, los bancos suelen pedir unos ${money(costs.income)} al mes.`)}</p>
-          </div>
-          <p className="pp-cost-source">{say('Taxas ilustrativas da CDMX. O cartório e o banco fecham os números; nada sai daqui.', 'Tasas ilustrativas de CDMX. El notario y el banco cierran los números; nada sale de aquí.')}</p>
+      <div className="pp-cost-fields">
+        <Field label={say('Valor da oferta', 'Valor de la oferta')} value={`${money(values.offer)} ${currency}`} editing={editing === 'offer'} onEdit={() => edit('offer')} onDone={done}>
+          <Input label={say('Valor da oferta em MXN', 'Valor de la oferta en MXN')} mode="numeric" value={draft.offer ?? ''} onChange={set('offer')}/>
+        </Field>
+        <Field label={say('Entrada', 'Entrada')} value={`${pct(values.down)}% · ${money(costs.enganche)}`} editing={editing === 'down'} onEdit={() => edit('down')} onDone={done}>
+          <Input label={say('Entrada em porcentagem', 'Enganche en porcentaje')} value={draft.down ?? ''} onChange={set('down')} width="6ch"/>
+        </Field>
+        <div className="pp-cost-field pp-cost-term" ref={yearsRoot}>
+          <button ref={yearsButton} type="button" className="pp-cost-show" aria-haspopup="menu" aria-expanded={yearsOpen} aria-controls={yearsOpen ? yearsId : undefined}
+            onClick={() => { setEditing(null); setYearsOpen(open => !open); }}
+            onKeyDown={event => { if (event.key === 'ArrowDown' && !yearsOpen) { event.preventDefault(); setEditing(null); setYearsOpen(true); } }}>
+            <span className="pp-cost-label">{say('Prazo em anos', 'Plazo en años')}</span>
+            <strong className="pp-cost-value">{say(`${values.years} anos · ${pct(values.rate)}% fixa`, `${values.years} años · ${pct(values.rate)}% fija`)}</strong>
+          </button>
+          <AnimatePresence>
+            {yearsOpen && <YearMenu key="years" id={yearsId} choices={yearChoices} value={values.years} say={say} reduce={reduce} onChoose={chooseYears} onClose={() => { setYearsOpen(false); yearsButton.current?.focus(); }}/>}
+          </AnimatePresence>
         </div>
-      </motion.div>}
-    </AnimatePresence>
+      </div>
+
+      <div className="pp-cost-summary" aria-live="polite">
+        <p className="pp-cost-total"><strong>{money(costs.upfront)} {currency}</strong><span>{say('Valor efetivo total', 'Valor efectivo total')}</span></p>
+        <dl className="pp-cost-list">
+          <div><dt>{say('Entrada', 'Enganche')}</dt><dd>{money(costs.enganche)}</dd></div>
+          <div><dt>{say('Imposto de aquisição (ISAI)', 'Impuesto de adquisición (ISAI)')}</dt><dd>{money(costs.isai)}</dd></div>
+          <div><dt>{say('Cartório, escritura e avaliação', 'Notaría, escrituración y avalúo')}</dt><dd>{money(costs.closing)}</dd></div>
+        </dl>
+      </div>
+
+      <div className="pp-cost-foot">
+        <div className="pp-cost-foot-copy">
+          <p>{say('Quer saber se cabe na sua renda?', '¿Quieres saber si cabe en tus ingresos?')}</p>
+          <p>{say('Exercício local, sem consulta ao Buró de Crédito.', 'Ejercicio local, sin impacto en Buró de Crédito.')}</p>
+        </div>
+        <button type="button" className="mini-primary pp-cost-simulate" aria-expanded={simulate} aria-controls={simId} onClick={() => setSimulate(open => !open)}>
+          <span>{say('Simular financiamento', 'Simular financiamiento')}</span><img src={ICON('arrow-forward-light')} alt="" width="16" height="16"/>
+        </button>
+      </div>
+      <AnimatePresence initial={false}>
+        {simulate && <motion.div key="sim" id={simId} className="pp-cost-sim" initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} exit={{opacity:0, height:0}}
+          transition={reduce ? {duration:0} : {duration:0.25, ease:[0.2, 0.8, 0.2, 1]}}>
+          <div className="pp-cost-sim-inner">
+            <dl className="pp-cost-sim-facts">
+              <div><dt>{say('Parcela estimada', 'Mensualidad estimada')}</dt><dd>{money(costs.monthly)}<small> / {say('mês', 'mes')}</small></dd></div>
+              <div><dt>{say('Valor financiado', 'Monto del crédito')}</dt><dd>{money(costs.principal)}</dd></div>
+              <div><dt>{say(`Juros em ${values.years} anos`, `Intereses en ${values.years} años`)}</dt><dd>{money(costs.interest)}</dd></div>
+            </dl>
+            <div className="pp-cost-income">
+              <label htmlFor={incomeId}>{say('Sua renda mensal', 'Tu ingreso mensual')}</label>
+              <div className="pp-cost-input is-income">
+                <input id={incomeId} type="text" inputMode="numeric" autoComplete="off" placeholder={say(`Por exemplo, ${money(costs.income)}`, `Por ejemplo, ${money(costs.income)}`)} value={income} onChange={event => setIncome(event.target.value)}/>
+                <span aria-hidden="true">{currency}</span>
+              </div>
+              <p className="pp-cost-fit" aria-live="polite">{fit || say(`Para a parcela não passar de ${pct(INCOME_SHARE)}% da renda, os bancos costumam pedir uns ${money(costs.income)} por mês.`, `Para que la mensualidad no pase del ${pct(INCOME_SHARE)}% del ingreso, los bancos suelen pedir unos ${money(costs.income)} al mes.`)}</p>
+            </div>
+            <p className="pp-cost-source">{say('Taxas ilustrativas da CDMX. O cartório e o banco fecham os números; nada sai daqui.', 'Tasas ilustrativas de CDMX. El notario y el banco cierran los números; nada sale de aquí.')}</p>
+          </div>
+        </motion.div>}
+      </AnimatePresence>
+    </div>
   </div>;
 }

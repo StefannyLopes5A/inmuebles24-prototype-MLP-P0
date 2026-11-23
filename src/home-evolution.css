@@ -1,4 +1,4 @@
-:root{--motion-orange:#ff553b;--motion-blue:#07358f}
+:root{--motion-orange:#ff553b;--motion-blue:#07358f;--mora-gradient:linear-gradient(270deg,var(--Colors-Bright-Orange-400,#FF553B) 0%,var(--Colors-Blue-600,#07358F) 100%)}
 /* Home flow 363:133179. Scope keeps result controls and listing rails unchanged. */
 .home-evolution{--home-query-size:40px;--home-query-line:1.2;--home-suggested:#ddd;--home-motion:cubic-bezier(.16,1,.3,1)}
 .home-search,.home-evolution .idea-section{font-family:var(--app-font);font-variation-settings:'wdth' 100}
@@ -300,11 +300,9 @@ body[data-home-motion=holofote] .discovery-home.home-evolution .neighborhood-ite
 .home-evolution[data-intro-stage='0'] .home-ideas-reveal,.home-evolution[data-intro-stage='0'] .home-discovery-reveal,.home-evolution[data-intro-stage='1'] .home-discovery-reveal,.home-evolution[data-intro-stage='2'] .home-discovery-reveal{visibility:hidden}
 .home-evolution[data-intro-stage='1'] .idea-rail{visibility:hidden}
 .home-evolution[data-intro-animate=true]:not([data-intro-stage='0']) .idea-section h2{animation:home-heading-enter 500ms var(--home-motion) both}
-.home-evolution[data-intro-animate=true]:is([data-intro-stage='2'],[data-intro-stage='3']) .idea-card{animation:home-template-enter 620ms var(--home-motion) both;animation-delay:var(--intro-card-delay,0ms);transform-origin:center bottom}
 .home-evolution .idea-photo{--deal-x:18px;--deal-angle:6deg;--deal-delay:0ms}
 .home-evolution .idea-photo:nth-child(2){--deal-x:0px;--deal-angle:-4deg;--deal-delay:45ms}
 .home-evolution .idea-photo:last-child{--deal-x:-18px;--deal-angle:-6deg;--deal-delay:90ms}
-.home-evolution[data-intro-animate=true]:is([data-intro-stage='2'],[data-intro-stage='3']) .idea-photo{animation:home-photo-deal 560ms var(--home-motion) both;animation-delay:calc(var(--intro-card-delay,0ms) + var(--deal-delay) + 80ms)}
 .home-evolution[data-intro-animate=true][data-intro-stage='3'] .home-discovery-reveal>:is(.discovery-section,.home-blog,.home-brokers,.home-links){animation:home-discovery-enter 600ms var(--home-motion) both}
 @keyframes home-caret-blink{50%{opacity:0}}
 @keyframes home-caret-wake{0%{opacity:0;transform:scaleY(.3)}55%{opacity:1;transform:scaleY(1.08)}100%{opacity:1;transform:scaleY(1)}}

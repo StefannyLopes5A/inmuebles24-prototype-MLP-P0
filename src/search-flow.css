@@ -176,3 +176,5 @@ body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-i
 @media(max-width:700px){.mora-editor .home-detail-row{flex-direction:row;align-items:center}.mora-editor .home-details{flex:1;min-width:0;width:auto}}
 
 @media(max-width:700px){.mora-editor .home-details-editor[data-empty=true]::before{content:attr(data-mobile-placeholder)}}
+
+@media(max-width:700px){.flow-results-crumbs{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.flow-results-crumbs>span{display:inline}.flow-results-crumb-sep{margin-inline:6px}}

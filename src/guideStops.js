@@ -8,10 +8,9 @@ export const GUIDE_STOPS = [
     title:'Mora, deterministic and not',
     body:'Home builds the search as a sentence. In results, Mora also answers questions and can step in on her own.',
     actions:[
-      {id:'home', label:'Home', target:'.home-search'},
-      {id:'hybrid-search', label:'Hybrid search', target:'.home-search'},
-      {id:'inline-search', label:'Default search', target:'.home-search'},
-      {id:'original-search', label:'Original search', target:'.home-search'},
+      {id:'hybrid-search', label:'Home hybrid search', layout:'hybrid', target:'.home-search'},
+      {id:'inline-search', label:'Home default search', layout:'inline', target:'.home-search'},
+      {id:'original-search', label:'Home original search', layout:'original', target:'.home-search'},
       {id:'mora-answer', label:'Search conversation', target:'.mora-bar'},
       {id:'mora-suggest', label:'Neighborhood suggestion', target:'.mora-bar'},
     ],

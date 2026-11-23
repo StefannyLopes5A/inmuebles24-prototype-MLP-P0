@@ -144,18 +144,13 @@ export function ProjectGuide({onAction, searchLayout='inline'}) {
               <div className="pg-detail-inner">
                 <p className="pg-body">{stop.body}</p>
                 <div className="pg-actions">
-                  {stop.actions.map((action,actionIndex)=><button type="button" key={action.id} className="pg-pill" data-primary={actionIndex===0||undefined} onClick={()=>act(action)}>{action.label}</button>)}
+                  {stop.actions.map((action,actionIndex)=><button type="button" key={action.id} className="pg-pill" data-primary={(action.layout?searchLayout===action.layout:actionIndex===0)||undefined} onClick={()=>act(action)}>{action.label}</button>)}
                 </div>
               </div>
             </div>
           </li>;
         })}
       </ol>
-      <div className="pg-try" style={{'--i':GUIDE_STOPS.length + 1}}>
-        <div className="pg-layouts" role="group" aria-label="Search version">
-          {[['hybrid','hybrid-search','Hybrid search'],['inline','inline-search','Default search'],['original','original-search','Original search']].map(([layout,id,label])=><button type="button" key={id} className="pg-pill" data-primary={searchLayout===layout||undefined} aria-pressed={searchLayout===layout} onClick={()=>act({id, target:'.home-search'})}>{label}</button>)}
-        </div>
-      </div>
     </section>
     {ring&&<Ring key={ring.key} target={ring.target} onDone={()=>setRing(null)}/>}
   </div>;

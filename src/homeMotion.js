@@ -106,8 +106,11 @@ function createHomeMotion(root) {
   const guestReveal = '.home-guest-promo-reveal';
   const revealCardSelector = '.idea-card,.discovery-item,.home-city,.home-city-links>li,.neighborhood-item,.home-blog-feature,.home-blog-item,.home-links-cols>div,.home-brokers-fan,.home-brokers>p,.home-brokers-all,.home-guest-features>li,.home-guest-promo-join,.catalog-footer-top,.catalog-footer-grid>div,.catalog-wordmark,.catalog-legal';
   function showSection(section) {
-    if (sections.has(section) || stage < 3) return;
+    // The data attribute is the live stage; `stage` can lag behind it while the sentence intro restarts.
+    if (sections.has(section) || stage < 3 || Number(root.dataset.introStage) < 3) return;
     sections.add(section); delete section.dataset.motionPending;
+    // The original sentence plays the idea cards' own CSS entrance; a second one here would restart it midway.
+    if (section.matches('.idea-section') && root.dataset.introAnimate === 'true') return;
     const heading = section.querySelector('.discovery-heading, .home-blog-head') || section.querySelector(':scope > h2');
     play(heading,[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(0)'}],550);
     // The whole list starts together. Cards past the fold still belong to this entrance.
@@ -116,6 +119,15 @@ function createHomeMotion(root) {
   function stages() {
     const next = Number(root.dataset.introStage);
     if (next === stage) return;
+    // The sentence intro restarted (for example after switching to the original search). Sections that were shown
+    // while the page still read as finished go back to waiting, so their entrance plays in the new sequence.
+    if (next < stage && stage >= 3) {
+      for (const animation of [...animations]) if (animation.effect?.target?.closest?.(scrollSection)) animation.cancel();
+      sections.forEach(section => {
+        sections.delete(section);
+        if (!media.matches) section.dataset.motionPending = 'true';
+      });
+    }
     stage = next;
     if (stage >= 3) document.querySelectorAll(`${scrollSection},${guestReveal}`).forEach(section => {
       const bounds = section.getBoundingClientRect();

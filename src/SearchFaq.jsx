@@ -4,7 +4,7 @@ import {normalizeSearch} from './journey';
 import {searchFaq} from './searchFaq.js';
 
 /** Wide screens fit a fifth card. */
-const WIDE = '(min-width:1500px)';
+const WIDE = '(min-width:1920px)';
 
 const FAN = {
   '0': {x: 0, rot: 0, s: 1, z: 5},

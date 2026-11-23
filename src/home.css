@@ -263,3 +263,38 @@
 
 /* The listing page sets its header off from the content with a light gray rule. */
 html.is-listing-route .home-header.site-header{border-bottom:1px solid #e0e0e0}
+
+/* Phone header: Entrar and Anunciar share a row and a size; the other links wait inside a burger menu once signed in. */
+.header-burger,.header-mobile-menu{display:none}
+@media(max-width:700px){
+  .home-header-bar{flex-wrap:nowrap;align-items:center;gap:8px}
+  .home-header .brand{min-width:0;flex:0 1 163px}
+  .home-header .brand img{width:100%;max-width:163px;height:auto}
+  .home-header nav.figma-header-links{flex:none;width:auto;flex-wrap:nowrap;margin:0 0 0 auto}
+  .home-header .figma-header-nav{display:none}
+  .home-header .figma-header-actions{flex-wrap:nowrap;gap:8px}
+  .home-header .figma-header-links a.figma-login,.home-header .figma-header-links a.figma-publish{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;flex:none;width:84px;min-width:84px;height:44px;min-height:44px;padding:0;font-size:13px;line-height:1}
+  .home-header .header-burger{display:inline-grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid #ededed;border-radius:50%;background:#fff;cursor:pointer}
+  .home-header .header-burger span,.home-header .header-burger span::before,.home-header .header-burger span::after{display:block;width:18px;height:2px;border-radius:2px;background:#000;content:'';transition:transform 200ms ease,background-color 200ms ease}
+  .home-header .header-burger span{position:relative}
+  .home-header .header-burger span::before{position:absolute;top:-6px}
+  .home-header .header-burger span::after{position:absolute;top:6px}
+  .home-header .header-burger[aria-expanded=true] span{background:transparent}
+  .home-header .header-burger[aria-expanded=true] span::before{transform:translateY(6px) rotate(45deg)}
+  .home-header .header-burger[aria-expanded=true] span::after{transform:translateY(-6px) rotate(-45deg)}
+  .home-header .header-mobile-menu{display:block;max-height:calc(100dvh - 72px);overflow-y:auto;padding:4px var(--home-page-gutter) 20px;background:#fff;border-top:1px solid #ededed;box-shadow:0 12px 24px #0000001a}
+  .header-mobile-menu ul{list-style:none;margin:0;padding:0}
+  .header-mobile-menu>ul>li{border-bottom:1px solid #f0f0f0}
+  .header-mobile-trigger,.header-mobile-link{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:52px;padding:0;border:0;background:none;color:#000;font:inherit;font-size:16px;font-weight:600;text-align:left;text-decoration:none;cursor:pointer}
+  .header-mobile-trigger[aria-expanded=true] .header-menu-chevron{transform:rotate(180deg)}
+  .header-mobile-columns{display:grid;gap:16px;padding:0 0 16px}
+  .header-mobile-columns p{margin:0 0 8px;font-size:14px;font-weight:600;color:#111}
+  .header-mobile-columns li a{display:block;padding:6px 0;color:#555;font-size:14px;text-decoration:none}
+}
+@media(max-width:360px){
+  .home-header-bar{flex-wrap:wrap}
+  .home-header nav.figma-header-links{flex:1 1 100%;width:100%}
+  .home-header .figma-header-actions{width:100%}
+  .home-header .figma-header-links a.figma-login,.home-header .figma-header-links a.figma-publish{flex:1 1 0;width:auto;min-width:0}
+  .home-header .figma-header-actions.is-signed-in{justify-content:flex-end}
+}

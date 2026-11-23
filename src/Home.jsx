@@ -33,6 +33,8 @@ const asset = name => `/assets/figma-home/${name}`;
 export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,inert=false,results=false}) {
   const [currencyInfo,setCurrencyInfo]=useState(false);
   const [openMenu,setOpenMenu]=useState(null);
+  const [mobileOpen,setMobileOpen]=useState(false);
+  const [mobileSection,setMobileSection]=useState(null);
   const [headerHidden,setHeaderHidden]=useState(false);
   const currencyControl=useRef(null);
   const headerRef=useRef(null);
@@ -59,6 +61,7 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
       }else if(delta>6){
         setHeaderHidden(true);
         setOpenMenu(null);
+        setMobileOpen(false);
         setCurrencyInfo(false);
       }else if(delta<-2){
         setHeaderHidden(false);
@@ -75,6 +78,21 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
     document.addEventListener('pointerdown',close);document.addEventListener('focusin',close);document.addEventListener('keydown',close);
     return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('focusin',close);document.removeEventListener('keydown',close)};
   },[currencyInfo]);
+
+  useEffect(()=>{
+    if(!signedIn)setMobileOpen(false);
+  },[signedIn]);
+
+  useEffect(()=>{
+    if(!mobileOpen)return;
+    const close=e=>{
+      if(e.type==='keydown'){if(e.key==='Escape'){setMobileOpen(false);headerRef.current?.querySelector('.header-burger')?.focus();}return;}
+      if(headerRef.current&&!headerRef.current.contains(e.target))setMobileOpen(false);
+    };
+    document.addEventListener('pointerdown',close);
+    document.addEventListener('keydown',close);
+    return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',close)};
+  },[mobileOpen]);
 
   useEffect(()=>{
     if(!openMenu)return;
@@ -156,9 +174,30 @@ export function HomeHeader({onHome,onAction,onLogin,onAccount,signedIn=false,ine
           {signedIn
             ? <AccountMenu onSelect={action=>onAccount?.(action)}/>
             : <a className="figma-login" href="#entrar" onClick={event=>{event.preventDefault();onLogin?.();}}>{t('Entrar')}</a>}
+          {signedIn && <button type="button" className="header-burger" aria-expanded={mobileOpen} aria-controls={`${panelId}-mobile`} aria-label={t('Menú')} onClick={()=>setMobileOpen(!mobileOpen)}><span aria-hidden="true"/></button>}
         </div>
       </nav>
     </div>
+    {signedIn&&mobileOpen&&<div className="header-mobile-menu" id={`${panelId}-mobile`} role="region" aria-label={t('Navegación principal')}>
+      <ul>
+        {headerMenus.map(menu=>{
+          const expanded=mobileSection===menu.id;
+          return <li key={menu.id}>
+            <button type="button" className="header-mobile-trigger" aria-expanded={expanded} onClick={()=>setMobileSection(expanded?null:menu.id)}>
+              <span>{t(menu.labelKey)}</span>
+              <img className="header-menu-chevron" src="/assets/figma-results/currency-chevron.svg" alt=""/>
+            </button>
+            {expanded&&<div className="header-mobile-columns">
+              {menu.columns.map(column=><div key={column.titleKey}>
+                <p>{t(column.titleKey)}</p>
+                <ul>{column.items.map(item=><li key={item}><a href="#seo" onClick={ignoreSeoLink}>{t(item)}</a></li>)}</ul>
+              </div>)}
+            </div>}
+          </li>;
+        })}
+        <li><a className="header-mobile-link" href="#imobiliarias" onClick={event=>{event.preventDefault();setMobileOpen(false);onAction?.('agencies');}}>{t('Buscar imobiliárias')}</a></li>
+      </ul>
+    </div>}
     {activeMenu&&<div className="header-mega" id={panelId} role="region" aria-label={t(activeMenu.labelKey)} onMouseEnter={()=>openFromHover(activeMenu.id)} onMouseLeave={leaveMenuZone}>
       <div className="header-mega-grid">
         {padMenuColumns(activeMenu.columns).map((column,index)=>column

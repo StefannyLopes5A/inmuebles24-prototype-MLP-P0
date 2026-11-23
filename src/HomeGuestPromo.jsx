@@ -8,13 +8,13 @@ const FAN_IDS = ['buy-150907005', 'buy-150135691', 'buy-150851727', 'buy-1501597
 const byId = id => homes.find(home => home.id === id);
 
 const PERKS = [
-  ['Explora recomendaciones exclusivas', 'Inicia sesión o crea tu cuenta para organizar', 'explore'],
-  ['Descubre propiedades recién publicadas', 'Inicia sesión o crea tu cuenta para organizar', 'discover'],
+  ['Ideas exclusivas', 'Inicia sesión o crea tu cuenta para organizar', 'explore'],
+  ['Novedades al instante', 'Inicia sesión o crea tu cuenta para organizar', 'discover'],
   ['Guarda y comparte favoritos', 'Inicia sesión o crea tu cuenta para organizar', 'favorites'],
-  ['Recibe alertas de precios y ofertas', 'Inicia sesión o crea tu cuenta para organizar', 'alerts'],
+  ['Alertas de precio', 'Inicia sesión o crea tu cuenta para organizar', 'alerts'],
   // Shown only on wide screens, where the grid has room for a third column.
-  ['Descubre opciones alineadas con lo que buscas', 'Recibe sugerencias según tu presupuesto, tu zona y tu estilo de vida.', 'matches', true],
-  ['Tu experiencia personalizada', 'Guarda tus preferencias y retoma tu búsqueda en cualquier momento.', 'personal', true],
+  ['Opciones a tu medida', 'Según tu presupuesto y zona', 'matches', true],
+  ['Tu experiencia personalizada', 'Retoma tu búsqueda siempre', 'personal', true],
 ];
 
 export function HomeGuestPromo({onLogin, saved = [], onLike, onOpen}) {

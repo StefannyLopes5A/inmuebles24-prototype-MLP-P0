@@ -430,11 +430,11 @@ body[data-home-motion=holofote] .home-evolution .home-city-guide .discovery-item
 @media(max-width:480px){.home-blog-item{gap:16px;padding:12px}.home-blog-thumb{width:72px;height:72px}.home-blog-head h2{font-size:20px}.home-blog-more{font-size:14px}}
 
 /* Internal links, after the Figma "internal links" section: arrows, group pills and a six-column grid of two-line links */
-.home-links{padding:0 var(--home-page-gutter) 8px}
+.home-links{container-type:inline-size;padding:0 var(--home-page-gutter) 8px}
 .flow-listings .home-links.is-results{padding-block:var(--results-section-pad)}
 .home-links .discovery-heading{padding:0;margin-bottom:0}
 .home-links-tabs{display:flex;gap:12px;padding:24px 0 16px;overflow-x:auto;scrollbar-width:none}
-.home-links-grid{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px 16px;margin:0;padding:8px 0 0;animation:home-city-links-in 320ms var(--home-motion) backwards}
+.home-links-grid{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;margin:0;padding:8px 0 0;animation:home-city-links-in 320ms var(--home-motion) backwards}
 .home-links-grid li{min-width:0}
 .home-links-grid button{display:flex;flex-direction:column;gap:2px;width:100%;min-height:44px;padding:4px 0;border:0;background:none;font:inherit;font-size:13px;line-height:18px;text-align:left;cursor:pointer}
 .home-links-grid strong{font-weight:600;color:#121212;text-underline-offset:3px}
@@ -442,8 +442,11 @@ body[data-home-motion=holofote] .home-evolution .home-city-guide .discovery-item
 .home-links-grid span{color:#5a5a66}
 .home-links-grid button:focus-visible{outline:2px solid #f50;outline-offset:3px;border-radius:4px}
 @media(hover:hover) and (pointer:fine){.home-links-grid button:hover strong{text-decoration:underline}.home-links-grid button:hover span{color:#000}}
-@media(max-width:1100px){.home-links-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:700px){.home-links-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* The grid follows the width of its own section, so a narrower page (the listing page) gets fewer columns than the results page. */
+@container (min-width:520px){.home-links-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:760px){.home-links-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@container (min-width:960px){.home-links-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@container (min-width:1200px){.home-links-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.home-links-grid{animation:none}}
 
 /* Wide screens: two more advantages and a third column of features */

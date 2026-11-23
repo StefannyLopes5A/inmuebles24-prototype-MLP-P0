@@ -180,7 +180,8 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
     window.scrollTo({top, behavior:'smooth'});
   }
 
-  return <article className="property-page pp" data-arrival={arrival}>
+  return <>
+  <article className="property-page pp" data-arrival={arrival}>
     <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav}
       price={<>{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</>}/>
     <div className="pp-top">
@@ -293,8 +294,11 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         </div>
         <SimilarListings items={similar} search={search} pref={pref} saved={saved} receipts={receipts} onLike={onLike} onOpen={item => onOpenListing?.(item)}/>
       </section>}
-
-      <HomeInternalLinks variant="results" search={linkSearch} onSearch={onSearch} onOpen={(item, event) => onOpenListing?.(item, event)}/>
     </div>
-  </article>;
+  </article>
+  {/* Outside the centered column, so the related searches span the page like the results page does. */}
+  <div className="pp-links-bleed">
+    <HomeInternalLinks variant="results" search={linkSearch} onSearch={onSearch} onOpen={(item, event) => onOpenListing?.(item, event)}/>
+  </div>
+  </>;
 }

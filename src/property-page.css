@@ -66,7 +66,7 @@
 /* Reading column and contact card */
 .pp-layout{display:grid;grid-template-columns:var(--pp-cols);column-gap:var(--pp-gutter);align-items:start;margin-top:32px}
 .pp-layout>.pp-section{grid-column:1/4}
-.pp-section{min-width:0;padding-bottom:48px;margin-bottom:48px;border-bottom:1px solid var(--pp-line)}
+.pp-section{min-width:0;padding-bottom:48px;margin-bottom:0;border-bottom:0}
 .pp-layout>.pp-section:not(:last-child){padding-bottom:0;border-bottom:0}
 .pp-rest{display:flex;flex-direction:column}
 .pp-section.is-last{padding-bottom:0;margin-bottom:0;border-bottom:0}
@@ -650,7 +650,8 @@
 .pp-similar-all img{display:block;width:16px;height:16px;flex:none}
 .pp-similar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:32px 16px}
 .pp-similar .discovery-copy strong{font-size:20px;line-height:normal;letter-spacing:-.26px}
-.pp .home-links{padding:0}
+.pp-links-bleed{width:100%}
+.pp-links-bleed .home-links.is-results{padding-block:var(--results-section-pad);border-top:1px solid #ebebeb}
 .listing-route .pp .pp-similar .discovery-item{width:auto;min-width:0}
 
 /* Gallery index: every photo by room, then the dark viewer for one photo. */
@@ -726,7 +727,7 @@
   .pp-nav-cta{display:none}
   .pp-mosaic{display:none}
   .pp-strip{display:block}
-  .pp-section{padding-bottom:32px;margin-bottom:32px}
+  .pp-section{padding-bottom:32px;margin-bottom:0}
   .pp-aside{margin-bottom:32px}
   .pp-section-title,.pp-intro-title{font-size:18px;line-height:22px}
   .pp-intro-top{gap:16px}

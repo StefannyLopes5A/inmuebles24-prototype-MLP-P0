@@ -2,22 +2,26 @@ import React from 'react';
 import {Icon} from './App.jsx';
 import {useLanguage} from './i18n.jsx';
 
-/** Editorial block from the logged-out home. Photos are catalog covers; the prototype has no lifestyle set and no blog destination. */
+/** Editorial block from the logged-out home. Photos come from the Figma redesign; the prototype has no blog destination. */
+const IMAGES = '/assets/home-evolution/blog/';
 const FEATURE = {
-  image: '/assets/listings/sets/148353811/01.jpg',
+  image: `${IMAGES}feature.jpg`,
   kicker: 'Blog',
-  title: 'Todo lo que debes de saber antes de poner en renta un departamento',
+  title: 'Todo lo que debes de saber antes de poner en renta un departament',
   date: 'Agosto, 2026',
 };
 
 const STORIES = [
-  {id: 'taxes', image: '/assets/listings/sets/149919919/01.jpg', title: '¿Qué impuestos debo pagar al comprar o vender una casa?'},
-  {id: 'guadalajara', image: '/assets/listings/sets/150280233/01.jpg', title: '¿Cuánto cuesta vivir en el centro de Guadalajara?'},
-  {id: 'black-1', image: '/assets/listings/sets/150073890/01.jpg', title: 'Consejos para decorar con color negro tu casa'},
-  {id: 'black-2', image: '/assets/listings/sets/150073890/01.jpg', title: 'Consejos para decorar con color negro tu casa'},
+  {id: 'taxes', image: `${IMAGES}taxes.jpg`, title: '¿Qué impuestos debo pagar al comprar o vender una casa?'},
+  {id: 'guadalajara', image: `${IMAGES}guadalajara.jpg`, title: '¿Cuánto cuesta vivir en el centro de Guadalajara?'},
+  {id: 'decor-desk', image: `${IMAGES}decor-desk.jpg`, title: 'Consejos para decorar con color negro tu casa'},
+  // Three stories per column: wide screens add a second column (two columns of three); the Figma set has four stories, so two repeat.
+  {id: 'decor-wall', image: `${IMAGES}decor-wall.jpg`, title: 'Consejos para decorar con color negro tu casa', wide: true},
+  {id: 'taxes-2', image: `${IMAGES}taxes.jpg`, title: '¿Qué impuestos debo pagar al comprar o vender una casa?', wide: true},
+  {id: 'guadalajara-2', image: `${IMAGES}guadalajara.jpg`, title: '¿Cuánto cuesta vivir en el centro de Guadalajara?', wide: true},
 ];
 
-const META = 'Agosto de 2026 · 10 min de lectura';
+const META = 'Agosto de 2026 · 10min leitura';
 
 export function HomeBlog() {
   const {t} = useLanguage();
@@ -36,9 +40,9 @@ export function HomeBlog() {
         <button type="button" className="home-blog-more">{t('Explorar más noticias')}<Icon name="arrow" size={16}/></button>
       </div>
       <ul className="home-blog-list">
-        {STORIES.map(story => <li key={story.id}>
+        {STORIES.map(story => <li key={story.id} className={story.wide ? 'is-wide-only' : undefined}>
           <article className="home-blog-item">
-            <img src={story.image} alt="" loading="lazy"/>
+            <span className="home-blog-thumb"><img src={story.image} alt="" loading="lazy"/></span>
             <div>
               <h3>{t(story.title)}</h3>
               <p>{t(META)}</p>

@@ -110,6 +110,6 @@ export function HomeBrokers({search, onSearch, onIntroDone, onChoose, onSelect})
       </div>)}
     </div>
     <p>{t(CAPTION)}</p>
-    <button type="button" className="home-brokers-all" onClick={() => handleSelect({name: 'inmobiliaria'})}>{t('Explorar todas las inmobiliarias')}</button>
+    <button type="button" className="btn-secondary home-brokers-all" onClick={() => handleSelect({name: 'inmobiliaria'})}>{t('Explorar todas las inmobiliarias')}</button>
   </section>;
 }

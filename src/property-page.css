@@ -651,11 +651,6 @@
 .pp-similar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:32px 16px}
 .pp-similar .discovery-copy strong{font-size:20px;line-height:normal;letter-spacing:-.26px}
 .pp .home-links{padding:0}
-.pp .home-links.is-results>p{margin:4px 0 24px}
-.pp .home-links.is-results .home-links-grid{grid-template-columns:318px minmax(0,1fr);align-items:stretch}
-.pp .home-links.is-results .discovery-item{width:318px;min-width:0;max-width:100%;align-self:stretch}
-.pp .home-links.is-results .discovery-card,.pp .home-links.is-results .discovery-open,.pp .home-links.is-results .discovery-media{height:100%}
-.pp .home-links.is-results .discovery-media{aspect-ratio:auto;min-height:320px}
 .listing-route .pp .pp-similar .discovery-item{width:auto;min-width:0}
 
 /* Gallery index: every photo by room, then the dark viewer for one photo. */
@@ -707,10 +702,6 @@
   .pp-rating-row{flex-direction:column;align-items:stretch}
   .pp-rating-overall{width:100%}
   .pp-reviews{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .pp .home-links.is-results .home-links-grid{grid-template-columns:minmax(0,1fr)}
-  .pp .home-links.is-results .discovery-item{width:min(318px,100%)}
-  .pp .home-links.is-results .discovery-card,.pp .home-links.is-results .discovery-open,.pp .home-links.is-results .discovery-media{height:auto}
-  .pp .home-links.is-results .discovery-media{aspect-ratio:1;min-height:0}
 }
 @media(max-width:950px){
   .pp-layout{grid-template-columns:minmax(0,1fr)}

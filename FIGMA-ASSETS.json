@@ -138,6 +138,103 @@
       "node": "79:5482",
       "name": "imgHeartDetail",
       "path": "public/assets/figma-home/d9746.svg"
+    },
+    {
+      "node": "13033:9127",
+      "name": "imgPropertyImage-explore",
+      "path": "public/assets/home-evolution/guest-promo/explore.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13033:8865",
+      "downloaded": "2026-11-23",
+      "note": "Resized to 1000px and re-encoded as JPEG"
+    },
+    {
+      "node": "13033:9250",
+      "name": "imgPropertyImage-discover",
+      "path": "public/assets/home-evolution/guest-promo/discover.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13033:8865",
+      "downloaded": "2026-11-23",
+      "note": "Resized to 1000px and re-encoded as JPEG"
+    },
+    {
+      "node": "13033:9286",
+      "name": "imgPropertyImage-favorites",
+      "path": "public/assets/home-evolution/guest-promo/favorites.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13033:8865",
+      "downloaded": "2026-11-23",
+      "note": "Resized to 1000px and re-encoded as JPEG"
+    },
+    {
+      "node": "13033:9297",
+      "name": "imgPropertyImage-alerts",
+      "path": "public/assets/home-evolution/guest-promo/alerts.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13033:8865",
+      "downloaded": "2026-11-23",
+      "note": "Resized to 1000px and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10829",
+      "name": "blog-feature",
+      "path": "public/assets/home-evolution/blog/feature.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13038:10825",
+      "downloaded": "2026-11-23",
+      "note": "Resized and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10847",
+      "name": "blog-taxes",
+      "path": "public/assets/home-evolution/blog/taxes.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13038:10825",
+      "downloaded": "2026-11-23",
+      "note": "Resized and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10854",
+      "name": "blog-guadalajara",
+      "path": "public/assets/home-evolution/blog/guadalajara.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13038:10825",
+      "downloaded": "2026-11-23",
+      "note": "Resized and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10861",
+      "name": "blog-decor-desk",
+      "path": "public/assets/home-evolution/blog/decor-desk.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13038:10825",
+      "downloaded": "2026-11-23",
+      "note": "Resized and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10868",
+      "name": "blog-decor-wall",
+      "path": "public/assets/home-evolution/blog/decor-wall.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "frame": "13038:10825",
+      "downloaded": "2026-11-23",
+      "note": "Resized and re-encoded as JPEG"
+    },
+    {
+      "node": "13038:10854",
+      "name": "guest-promo-matches",
+      "path": "public/assets/home-evolution/guest-promo/matches.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "downloaded": "2026-11-23",
+      "note": "Copy of public/assets/home-evolution/blog/guadalajara.jpg (Figma blog thumbnail), reused for a wide-screen advantage; not generated"
+    },
+    {
+      "node": "13038:10861",
+      "name": "guest-promo-personal",
+      "path": "public/assets/home-evolution/guest-promo/personal.jpg",
+      "file": "HlKZ4g9qwJr5cgqLSyXP8g",
+      "downloaded": "2026-11-23",
+      "note": "Copy of public/assets/home-evolution/blog/decor-desk.jpg (Figma blog thumbnail), reused for a wide-screen advantage; not generated"
     }
   ]
 }

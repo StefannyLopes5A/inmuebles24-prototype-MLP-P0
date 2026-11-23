@@ -3,8 +3,8 @@ import {matchingHomes, normalizeSearch, parkingSpots} from './journey.js';
 import {CRITERIA, matchesCriteria} from './searchCriteria.js';
 import {homes as catalog, listingPrice} from './data.js';
 
-/** Each related-search column shows this many links, the same count as the home columns. */
-export const MIN_RELATED_LINKS = 7;
+/** Each related-search column shows this many links, the same count as the home columns: six columns of three rows. */
+export const MIN_RELATED_LINKS = 18;
 
 const publishedCounts = (listings, key, minimum = 1) => [...new Set(listings.map(home => home[key]).filter(count => count >= minimum))].sort((a, b) => a - b);
 const publishedParking = listings => [...new Set(listings.map(parkingSpots).filter(count => count > 0))].sort((a, b) => a - b);
@@ -13,7 +13,7 @@ const publishedCriteria = listings => CRITERIA.filter(item => listings.some(home
 /**
  * Related searches for the results page (Figma 12874:36444), on the same block as the home links.
  * Bedrooms, parking and nearby colonias come from the catalog. A short colonia borrows the same
- * kind of published fact from the nearest colonias so every column has seven links.
+ * kind of published fact from the nearest colonias so every column has eighteen links.
  */
 export function relatedSearches(search, inventory = catalog) {
   const area = regionArea(search, inventory);
@@ -23,7 +23,7 @@ export function relatedSearches(search, inventory = catalog) {
   const current = normalizeSearch(search);
   const beds = publishedCounts(listings, 'beds').slice(0, MIN_RELATED_LINKS);
   const parking = publishedParking(listings);
-  const neighbors = nearbyAreaPrices({...search, areas: [area]}, {limit: 16, inventory}).filter(row => !row.current);
+  const neighbors = nearbyAreaPrices({...search, areas: [area]}, {limit: 24, inventory}).filter(row => !row.current);
   const nearby = neighbors.slice(0, MIN_RELATED_LINKS).map(row => row.area);
   const traits = fillTraits(area, listings, neighbors, search, inventory);
   const amenities = fillAmenities(area, listings, neighbors, search, inventory);

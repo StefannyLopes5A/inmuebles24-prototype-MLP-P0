@@ -108,7 +108,7 @@ export function PriceInsights({search, onChange}) {
     <article className="price-insights-nearby" aria-labelledby={nearbyId}>
       <header className="price-insights-nearby-top">
         <h2 id={nearbyId}>{current.areas.length ? say('Preços médios em bairros próximos', 'Precios medios en barrios cercanos') : say('Preços médios por bairro', 'Precios medios por barrio')}</h2>
-        <button type="button" className="price-insights-metric" aria-label={metric === 'total' ? say('Mostrando preço total. Mudar para preço por m²', 'Mostrando precio total. Cambiar a precio por m²') : say('Mostrando preço por m². Mudar para preço total', 'Mostrando precio por m². Cambiar a precio total')} onClick={() => setMetric(value => value === 'total' ? 'm2' : 'total')}>
+        <button type="button" className="btn-secondary price-insights-metric" aria-label={metric === 'total' ? say('Mostrando preço total. Mudar para preço por m²', 'Mostrando precio total. Cambiar a precio por m²') : say('Mostrando preço por m². Mudar para preço total', 'Mostrando precio por m². Cambiar a precio total')} onClick={() => setMetric(value => value === 'total' ? 'm2' : 'total')}>
           <img src={asset('sort.svg')} width="16" height="16" alt=""/>
           <span>{metric === 'total' ? say('Preço por /m²', 'Precio por /m²') : say('Preço total', 'Precio total')}</span>
         </button>

@@ -1,4 +1,5 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
+import {RailHeading} from './DiscoveryRail.jsx';
 import {useLanguage} from './i18n.jsx';
 import {normalizeSearch} from './journey.js';
 import {relatedLinkChanges, relatedSearches} from './relatedSearches.js';
@@ -6,51 +7,29 @@ import {criterionLabel} from './searchCriteria.js';
 
 const TITLE = 'Búsquedas en alza';
 const SUBTITLE = 'Diferentes distribuciones para una nueva rutina.';
-const CARD_NOTE = 'Más de 100,000 propiedades disponibles';
-const CARD_CITY = 'Ciudad de México';
-const CARD_IMAGE = '/assets/developments/torre-olmo/render-fachada.jpg';
 
-const GROUPS = [
-  {
-    id: 'rent',
-    title: 'Para rentar',
-    links: [
-      {label: 'Casas en renta en {city}', city: 'Guadalajara', area: 'Providencia', mode: 'rent', propertyType: 'house'},
-      {label: 'Departamentos en renta en {city}', city: 'Monterrey', area: 'San Pedro Garza García', mode: 'rent', propertyType: 'apartment'},
-      {label: 'Casas en renta en {city}', city: 'Puebla', area: 'Angelópolis', mode: 'rent', propertyType: 'house'},
-      {label: 'Departamentos en renta en {city}', city: 'Querétaro', area: 'Juriquilla', mode: 'rent', propertyType: 'apartment'},
-      {label: 'Casas en renta en {city}', city: 'Toluca', area: 'Toluca Centro', mode: 'rent', propertyType: 'house'},
-      {label: 'Departamentos en renta en {city}', city: 'Ciudad de México', area: 'Roma Norte', mode: 'rent', propertyType: 'apartment'},
-      {label: 'Casas en renta en {city}', city: 'Mérida', area: 'Centro Mérida', mode: 'rent', propertyType: 'house'},
-    ],
-  },
-  {
-    id: 'buy',
-    title: 'Para comprar',
-    links: [
-      {label: 'Departamentos en venta en {city}', city: 'Ciudad de México', area: 'Roma Norte', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Guadalajara', area: 'Providencia', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Monterrey', area: 'San Pedro Garza García', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Puebla', area: 'Angelópolis', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Querétaro', area: 'Juriquilla', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Toluca', area: 'Toluca Centro', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Mérida', area: 'Centro Mérida', mode: 'buy', propertyType: 'apartment'},
-    ],
-  },
-  {
-    id: 'invest',
-    title: 'Para invertir',
-    links: [
-      {label: 'Casas en venta en {city}', city: 'Monterrey', area: 'San Pedro Garza García', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Guadalajara', area: 'Providencia', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Querétaro', area: 'Juriquilla', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Puebla', area: 'Angelópolis', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Ciudad de México', area: 'Roma Norte', mode: 'buy', propertyType: 'house'},
-      {label: 'Departamentos en venta en {city}', city: 'Toluca', area: 'Toluca Centro', mode: 'buy', propertyType: 'apartment'},
-      {label: 'Casas en venta en {city}', city: 'Cancún', area: 'Centro Cancún', mode: 'buy', propertyType: 'house'},
-    ],
-  },
+const CITIES = [
+  ['Ciudad de México', 'Roma Norte'], ['Guadalajara', 'Providencia'], ['Monterrey', 'San Pedro Garza García'], ['Puebla', 'Angelópolis'],
+  ['Querétaro', 'Juriquilla'], ['Toluca', 'Toluca Centro'], ['Mérida', 'Centro Mérida'], ['Cancún', 'Centro Cancún'],
+  ['Cuernavaca', 'Centro Cuernavaca'], ['Veracruz', 'Boca del Río'],
 ];
+const NOUNS = {house: {rent: 'Casas en renta en {city}', buy: 'Casas en venta en {city}'}, apartment: {rent: 'Departamentos en renta en {city}', buy: 'Departamentos en venta en {city}'}};
+/** Every city with both kinds of home, starting with `first` and rotated by `shift` so the three groups do not repeat each other. */
+const group = (id, title, mode, first, shift = 0) => {
+  const second = first === 'house' ? 'apartment' : 'house';
+  const links = [first, second].flatMap(propertyType => CITIES.map(([city, area], index) => ({
+    label: NOUNS[propertyType][mode], city: CITIES[(index + shift) % CITIES.length][0], area: CITIES[(index + shift) % CITIES.length][1], mode, propertyType,
+  })));
+  return {id, title, links};
+};
+// Six columns of three rows per group.
+const GROUPS = [
+  group('rent', 'Para rentar', 'rent', 'apartment'),
+  group('buy', 'Para comprar', 'buy', 'house', 2),
+  group('invest', 'Para invertir', 'buy', 'apartment', 5),
+];
+
+const LINKS_PER_GROUP = 18;
 
 export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOpen, variant = 'home'}) {
   const {language, t} = useLanguage();
@@ -79,31 +58,16 @@ export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOp
 
   if (variant === 'results') return <ResultsLinks related={related} search={search} onSearch={onSearch} onOpen={onOpen} say={say} pt={pt}/>;
 
-  return <section className="home-links" aria-labelledby="home-links-title">
-    <h2 id="home-links-title">{t(TITLE)}</h2>
-    <p>{t(SUBTITLE)}</p>
-    <div className="home-links-grid">
-      <article className="discovery-item">
-        <div className="discovery-card">
-          <button type="button" className="discovery-open" onClick={() => open({mode: 'buy', propertyType: 'apartment', area: 'Roma Norte'})}>
-            <span className="discovery-media">
-              <img src={CARD_IMAGE} alt="" loading="lazy"/>
-              <span className="discovery-copy"><span>{t(CARD_NOTE)}</span><strong>{t(CARD_CITY)}</strong></span>
-            </span>
-          </button>
-        </div>
-      </article>
-      <LinkColumns groups={evenColumns(GROUPS).map(group => ({
-        id: group.id,
-        title: t(group.title),
-        items: group.links.map(link => ({
-          id: link.label + link.city,
-          label: t(link.label, {city: t(link.city)}),
-          onClick: () => open(link),
-        })),
-      }))}/>
-    </div>
-  </section>;
+  return <LinkTabs id="home-links-title" title={t(TITLE)} subtitle={t(SUBTITLE)} groups={evenColumns(GROUPS, LINKS_PER_GROUP).map(group => ({
+    id: group.id,
+    title: t(group.title),
+    items: group.links.map(link => ({
+      id: link.label + link.city,
+      label: t(link.label.replace(' en {city}', '')),
+      sub: t(link.city),
+      onClick: () => open(link),
+    })),
+  }))}/>;
 }
 
 function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
@@ -124,8 +88,9 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
     {id: 'traits', title: say('Por características', 'Por características'), items: traits.map(item => ({
       id: item.id,
       label: item.kind === 'baths'
-        ? say(`${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'banheiros' : 'banheiro'} ${operation} em ${item.area}`, `${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'baños' : 'baño'} ${operation} en ${item.area}`)
-        : say(`${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'quartos' : 'quarto'} ${operation} em ${item.area}`, `${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'recámaras' : 'recámara'} ${operation} en ${item.area}`),
+        ? say(`${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'banheiros' : 'banheiro'}`, `${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'baños' : 'baño'}`)
+        : say(`${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'quartos' : 'quarto'}`, `${cap(linkNoun)} de ${item.count} ${item.count > 1 ? 'recámaras' : 'recámara'}`),
+      sub: item.area,
       changes: item.changes,
     }))},
     {id: 'amenities', title: say('Por comodidades', 'Por amenidades'), items: amenities.map(item => {
@@ -133,60 +98,58 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
       return {
         id: item.id,
         label: item.kind === 'parking'
-          ? say(`${cap(linkNoun)} com ${item.count} vaga${item.count > 1 ? 's' : ''} ${operation} em ${item.area}`, `${cap(linkNoun)} con ${item.count} estacionamiento${item.count > 1 ? 's' : ''} ${operation} en ${item.area}`)
-          : say(`${cap(linkNoun)} com ${amenity} ${operation} em ${item.area}`, `${cap(linkNoun)} con ${amenity} ${operation} en ${item.area}`),
+          ? say(`${cap(linkNoun)} com ${item.count} vaga${item.count > 1 ? 's' : ''}`, `${cap(linkNoun)} con ${item.count} estacionamiento${item.count > 1 ? 's' : ''}`)
+          : say(`${cap(linkNoun)} com ${amenity}`, `${cap(linkNoun)} con ${amenity}`),
+        sub: item.area,
         changes: item.changes,
       };
     })},
     {id: 'nearby', title: say('Colônias próximas', 'Colonias próximas'), items: nearby.map(name => ({
       id: name,
-      label: say(`${cap(linkNoun)} ${operation} em ${name}`, `${cap(linkNoun)} ${operation} en ${name}`),
+      label: say(`${cap(linkNoun)} ${operation}`, `${cap(linkNoun)} ${operation}`),
+      sub: name,
       changes: {area: name, areas: [name]},
     }))},
   ].filter(group => group.items.length);
   const columns = evenColumns(groups);
 
-  return <section className="home-links is-results" aria-labelledby="results-links-title">
-    <h2 id="results-links-title">{say('Buscas relacionadas', 'Búsquedas relacionadas')}</h2>
-    <p>{say(`Encontre ${noun} ${operation} por categorias`, `Encuentra ${noun} ${operation} por categorías`)}</p>
-    <div className="home-links-grid">
-      <article className="discovery-item">
-        <div className="discovery-card">
-          <button type="button" className="discovery-open" aria-label={say(`Ver ${card.title}`, `Ver ${card.title}`)} onClick={event => onOpen ? onOpen(card, event) : apply({area, areas: [area]})}>
-            <span className="discovery-media">
-              <img src={card.image} alt="" loading="lazy"/>
-              <span className="discovery-copy"><span>{`${count} ${place} ${operation}`}</span><strong>{area}</strong></span>
-            </span>
-          </button>
-        </div>
-      </article>
-      <LinkColumns groups={columns.map(group => ({
-        ...group,
-        items: group.items.map(item => ({...item, onClick: () => apply(item.changes)})),
-      }))}/>
-    </div>
-  </section>;
+  return <LinkTabs id="results-links-title" className="is-results" title={say('Buscas relacionadas', 'Búsquedas relacionadas')}
+    subtitle={say(`Encontre ${noun} ${operation} por categorias`, `Encuentra ${noun} ${operation} por categorías`)}
+    groups={columns.map(group => ({...group, items: group.items.map(item => ({...item, onClick: () => apply(item.changes)}))}))}/>;
 }
 
-function LinkColumns({groups}) {
-  return <div className="home-links-cols">
-    {groups.map(group => <div key={group.id}>
-      <h3>{group.title}</h3>
-      <ul>
-        {group.items.map(item => <li key={item.id}>
-          <button type="button" onClick={item.onClick}>{item.label}</button>
-        </li>)}
-      </ul>
-    </div>)}
-  </div>;
+/** Section from Figma 13043:12944: heading with arrows, one pill per group, and the selected group's links in a grid. */
+function LinkTabs({id, className = '', title, subtitle, groups}) {
+  const {t} = useLanguage();
+  const [index, setIndex] = useState(0);
+  const signature = groups.map(group => group.id).join('|');
+  useEffect(() => setIndex(0), [signature]);
+  if (!groups.length) return null;
+  const at = Math.min(index, groups.length - 1);
+  const group = groups[at];
+  return <section className={`home-links ${className}`.trim()} aria-labelledby={id}>
+    <RailHeading titleId={id} title={title} subtitle={subtitle}
+      prevLabel={t('Anterior: ') + title} nextLabel={t('Siguiente: ') + title}
+      position={{start: at === 0, end: at === groups.length - 1}}
+      onMove={direction => setIndex(Math.max(0, Math.min(groups.length - 1, at + direction)))}/>
+    <div className="home-links-tabs" role="group" aria-label={title}>
+      {groups.map((item, position) => <button key={item.id} type="button" className="home-pill home-city-tab"
+        aria-pressed={position === at} onClick={() => setIndex(position)}>{item.title}</button>)}
+    </div>
+    <ul className="home-links-grid" key={group.id}>
+      {group.items.map(item => <li key={item.id}>
+        <button type="button" onClick={item.onClick}><strong>{item.label}</strong><span>{item.sub}</span></button>
+      </li>)}
+    </ul>
+  </section>;
 }
 
 const cap = text => text ? text[0].toLocaleUpperCase('es-MX') + text.slice(1) : text;
 
-/** Every column shows the same number of links: the shortest list sets the length. */
-function evenColumns(groups) {
+/** Every column shows the same number of links: the shortest list sets the length, up to `limit`. */
+function evenColumns(groups, limit) {
   const itemsOf = group => group.links || group.items;
   if (!groups.length) return groups;
-  const count = Math.min(...groups.map(group => itemsOf(group).length));
+  const count = Math.min(...groups.map(group => itemsOf(group).length), limit ?? Infinity);
   return groups.map(group => group.links ? {...group, links: group.links.slice(0, count)} : {...group, items: group.items.slice(0, count)});
 }

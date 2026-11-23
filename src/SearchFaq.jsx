@@ -3,6 +3,9 @@ import {useLanguage} from './i18n';
 import {normalizeSearch} from './journey';
 import {searchFaq} from './searchFaq.js';
 
+/** Wide screens fit a fifth card. */
+const WIDE = '(min-width:1500px)';
+
 const FAN = {
   '0': {x: 0, rot: 0, s: 1, z: 5},
   '-1': {x: -46, rot: -10, s: 0.94, z: 4},
@@ -28,9 +31,16 @@ export function SearchFaq({search}) {
   const [flipped, setFlipped] = useState(() => new Set());
   const [active, setActive] = useState(0);
   const [deck, setDeck] = useState(false);
+  const [wide, setWide] = useState(() => typeof matchMedia === 'function' && matchMedia(WIDE).matches);
   const root = useRef(null), gesture = useRef(null), swiped = useRef(false);
   const titleId = useId();
   useEffect(() => {setFlipped(new Set()); setActive(0);}, [key]);
+  useEffect(() => {
+    if (typeof matchMedia !== 'function') return undefined;
+    const query = matchMedia(WIDE), update = () => setWide(query.matches);
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
   useEffect(() => {
     const node = root.current;
     if (!node || typeof ResizeObserver === 'undefined') return undefined;
@@ -43,6 +53,7 @@ export function SearchFaq({search}) {
   const {area, mode, items} = faq;
   const buying = mode !== 'rent';
   const cards = items.map(item => item.id === 'maintenance' ? maintenanceCard(item, area, money, say) : item);
+  if (wide && faq.living) cards.push(livingCard(faq.living, area, money, say));
 
   function toggle(id) {
     setFlipped(previous => {
@@ -104,7 +115,10 @@ export function SearchFaq({search}) {
                   <span className="search-faq-question">{card.question}</span>
                   <span className="search-faq-teaser">{card.teaser}</span>
                 </span>
-                <span className="search-faq-pill">{say('Ver detalhes', 'Explorar detalles')}</span>
+                <span className="search-faq-actions">
+                  <span className="search-faq-link">{say('Explorar detalhes', 'Explorar detalles')}<img src="/assets/price-insights/chevron-down.svg" width="16" height="16" alt=""/></span>
+                  <span className="search-faq-go"><img src="/assets/price-insights/arrow-up.svg" width="20" height="20" alt=""/></span>
+                </span>
               </span>
               <span className="search-faq-face search-faq-back" aria-hidden={!open || undefined}>
                 <span className="search-faq-copy">
@@ -112,7 +126,10 @@ export function SearchFaq({search}) {
                   <span className="search-faq-answer">{card.answer}</span>
                   {card.note && <span className="search-faq-note">{card.note}</span>}
                 </span>
-                <span className="search-faq-pill">{say('Voltar', 'Volver')}</span>
+                <span className="search-faq-actions">
+                  <span className="search-faq-link">{say('Voltar', 'Volver')}<img src="/assets/price-insights/chevron-down.svg" width="16" height="16" alt=""/></span>
+                  <span className="search-faq-go is-back"><img src="/assets/price-insights/arrow-up.svg" width="20" height="20" alt=""/></span>
+                </span>
               </span>
             </span>
           </button>
@@ -139,5 +156,19 @@ function maintenanceCard(item, area, money, say) {
     id: item.id, question, teaser,
     answer: say(`${teaser} O condomínio muda de prédio para prédio e o anúncio diz o que está incluído.`, `${teaser} El mantenimiento cambia de edificio a edificio y el anuncio dice qué incluye.`),
     note: say('Sai dos anúncios do catálogo, não de uma tabela da colônia.', 'Sale de los anuncios del catálogo, no de una tabla de la colonia.'),
+  };
+}
+
+function livingCard({total, people, withFee}, area, money, say) {
+  const amount = money(total);
+  const household = say(`${people} ${people > 1 ? 'pessoas' : 'pessoa'}`, `${people} ${people > 1 ? 'personas' : 'persona'}`);
+  return {
+    id: 'living',
+    question: say(`Quanto custa viver em ${area}?`, `¿Cuánto cuesta vivir en ${area}?`),
+    teaser: say(`Uns ${amount} por mês em contas e gastos da casa.`, `Unos ${amount} al mes en cuentas y gastos del hogar.`),
+    answer: say(
+      `Para ${household}: mercado, luz, gás, transporte, água, internet e seguro somam uns ${amount} por mês.${withFee ? ' Inclui o condomínio publicado nos anúncios.' : ' O condomínio fica de fora: nenhum anúncio publica o valor.'}`,
+      `Para ${household}: súper, luz, gas, transporte, agua, internet y seguro suman unos ${amount} al mes.${withFee ? ' Incluye el mantenimiento publicado en los anuncios.' : ' El mantenimiento queda fuera: ningún anuncio publica el monto.'}`),
+    note: say('Estimativa ilustrativa, não uma medição.', 'Estimación ilustrativa, no una medición.'),
   };
 }

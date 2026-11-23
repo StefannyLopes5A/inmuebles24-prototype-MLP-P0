@@ -7,3 +7,9 @@
 /* Readability and observed mobile interaction corrections. */
 .property-address{font-size:14px;min-height:42px}.attributes{font-size:13px}.fit{font-size:13px}.broker-name{font-size:12px}.assistant-step>p,.assistant-intro{font-size:14px}.choice{font-size:14px}.assistant-title>strong{font-size:15px}.search-context{font-size:12px;color:var(--muted);padding:0 16px 10px}.plan-unavailable{height:100%;padding:40px 28px 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}.plan-unavailable h3{font-size:18px}.plan-unavailable p{font-size:13px;max-width:300px}.header-actions .reset-button,.header-actions .header-saved{min-width:44px;justify-content:center}
 @media(max-width:899px){.assistant-step .assistant-note{display:none}.assistant-step h3{font-size:17px}.assistant-step>p{font-size:13px}.assistant-title>strong{font-size:14px}.assistant-input input{font-size:16px}.assistant .assistant-reply{font-size:13px}.property-address{min-height:0}.detail-top{flex-shrink:0}.site-header .header-actions{gap:8px}}
+
+/* Secondary button: outlined black pill on white. Add it to any secondary action; layout (alignment, margins) stays with the component. */
+.btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;min-height:48px;padding:0 20px;border:1px solid #000;border-radius:999px;background:#fff;color:#000;font:inherit;font-size:16px;font-weight:600;line-height:20px;letter-spacing:-.3125px;white-space:nowrap;cursor:pointer;transition:transform 120ms ease,background-color 160ms ease}
+.btn-secondary:active{transform:scale(.96)}
+.btn-secondary:focus-visible{outline:2px solid #222;outline-offset:3px}
+@media(hover:hover) and (pointer:fine){.btn-secondary:hover{background:#fafafa}}

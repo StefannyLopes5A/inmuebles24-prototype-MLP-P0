@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useRef, useState} from 'react';
+import {playCards} from './homeMotion.js';
 import {useLanguage} from './i18n.jsx';
 import {CITY_EXPLORE_LINKS, POPULAR_HOME_CITIES, cityLinkBudget, cityLinkImage} from './popularHomeCities.js';
-import {RailHeading, useRailScroll} from './DiscoveryRail.jsx';
+import {RailHeading} from './DiscoveryRail.jsx';
 
 const TITLE = 'Propiedades en las ciudades populares';
 const SUBTITLE = 'Diez lugares para empezar a imaginar tu vida en CDMX';
@@ -19,10 +20,25 @@ const LINK_LABELS = {
 
 export function HomePopularCities({search, onSearch, onIntroDone, onChoose}) {
   const {t} = useLanguage();
-  const {rail, position, measure, move} = useRailScroll();
+  const tabs = useRef(null), list = useRef(null), first = useRef(true);
   const [cityId, setCityId] = useState(POPULAR_HOME_CITIES[0].id);
   const current = POPULAR_HOME_CITIES.find(city => city.id === cityId) || POPULAR_HOME_CITIES[0];
   const title = t(TITLE);
+  const at = POPULAR_HOME_CITIES.indexOf(current);
+
+  // A new tab brings its links in with the same entrance as the house cards; the first render keeps the section's own reveal.
+  useLayoutEffect(() => {
+    if (first.current) {first.current = false; return;}
+    playCards(list.current?.children);
+  }, [cityId]);
+
+  /** The arrows step through the city pills, like the internal links; the chosen pill scrolls into view on a narrow page. */
+  function step(direction) {
+    const next = POPULAR_HOME_CITIES[Math.max(0, Math.min(POPULAR_HOME_CITIES.length - 1, at + direction))];
+    setCityId(next.id);
+    const pill = tabs.current?.children[POPULAR_HOME_CITIES.indexOf(next)];
+    pill?.scrollIntoView({block: 'nearest', inline: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
 
   function run(city, link) {
     onIntroDone?.();
@@ -53,13 +69,13 @@ export function HomePopularCities({search, onSearch, onIntroDone, onChoose}) {
       subtitle={t(SUBTITLE)}
       prevLabel={t('Anterior: ') + title}
       nextLabel={t('Siguiente: ') + title}
-      position={position}
-      onMove={move}/>
-    <div className="home-city-tabs" ref={rail} onScroll={measure} role="group" aria-label={t('Ciudades')}>
+      position={{start: at <= 0, end: at >= POPULAR_HOME_CITIES.length - 1}}
+      onMove={step}/>
+    <div className="home-city-tabs" ref={tabs} role="group" aria-label={t('Ciudades')}>
       {POPULAR_HOME_CITIES.map(city => <button key={city.id} type="button" className="home-pill home-city-tab"
         aria-pressed={city.id === current.id} onClick={() => setCityId(city.id)}>{t(city.label)}</button>)}
     </div>
-    <ul className="home-city-links" key={current.id}>
+    <ul className="home-city-links" ref={list} key={current.id}>
       {CITY_EXPLORE_LINKS.map(link => {
         const name = t(current.label);
         return <li key={link.id}>

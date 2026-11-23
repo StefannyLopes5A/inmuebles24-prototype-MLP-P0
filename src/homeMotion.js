@@ -21,6 +21,8 @@ const frames = {
 let activeController = null;
 export const playMenu = (...args) => activeController?.menu(...args);
 export const playSelection = (...args) => activeController?.selection(...args);
+/** Replays the discovery entrance on a fresh set of cards (for example a tab change), staggered like the section entrance. */
+export const playCards = (...args) => activeController?.cards(...args);
 export const playIdeaPreview = (...args) => activeController?.preview(...args) ?? null;
 
 export function installHomeMotion(root) {
@@ -102,7 +104,7 @@ function createHomeMotion(root) {
   const scrollSection = '.idea-section,.discovery-section,.home-blog,.home-brokers,.home-links,.catalog-footer';
   // The guest promo is tall and already peeks into the first fold, so it waits until it has actually entered.
   const guestReveal = '.home-guest-promo-reveal';
-  const revealCardSelector = '.idea-card,.discovery-item,.home-city,.neighborhood-item,.home-blog-feature,.home-blog-item,.home-links-cols>div,.home-brokers-fan,.home-brokers>p,.home-brokers-all,.home-guest-promo-join,.home-guest-promo-card,.catalog-footer-top,.catalog-footer-grid>div,.catalog-wordmark,.catalog-legal';
+  const revealCardSelector = '.idea-card,.discovery-item,.home-city,.home-city-links>li,.neighborhood-item,.home-blog-feature,.home-blog-item,.home-links-cols>div,.home-brokers-fan,.home-brokers>p,.home-brokers-all,.home-guest-features>li,.home-guest-promo-join,.catalog-footer-top,.catalog-footer-grid>div,.catalog-wordmark,.catalog-legal';
   function showSection(section) {
     if (sections.has(section) || stage < 3) return;
     sections.add(section); delete section.dataset.motionPending;
@@ -311,6 +313,9 @@ function createHomeMotion(root) {
         if (el?.isConnected) {seen.add(el); sweepText(el,fromColor);}
         delete anchor.dataset.nextSelecting;
       });
+    },
+    cards(list) {
+      [...(list || [])].forEach((card,index) => revealCard(card,index));
     },
     dispose() {
       disposed = true; stop(); layout.disconnect(); mutation.disconnect(); intersection.disconnect(); guestIntersection.disconnect();

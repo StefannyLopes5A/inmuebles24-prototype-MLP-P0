@@ -41,14 +41,16 @@ export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], o
 
   const actionNoun = noun.charAt(0).toUpperCase() + noun.slice(1);
   const action = `${actionNoun} ${operation} ${say('até', 'hasta')} ${money(median)} ${say('em', 'en')} ${area}`;
+  const statAction = home => `${actionNoun} ${operation} ${say('até', 'hasta')} ${money(listingPrice(home))}`;
   const stat = (home, label, labelId) => <article className="region-card region-stat" aria-labelledby={labelId}>
     <h3 className="region-stat-price">{money(listingPrice(home))}</h3>
     <div className="region-copy">
       <p id={labelId}>{label}</p>
       <p className="region-muted">{perM2(pricePerM2(home))}</p>
     </div>
-    <button type="button" className="region-open" aria-label={`Ver ${home.title}`} onClick={event => onOpen(home, event)}>
-      <img src={asset('arrow-up.svg')} width="20" height="20" alt=""/>
+    <button type="button" className="region-link" onClick={() => applySearch({budget:listingPrice(home), minBudget:0})}>
+      {statAction(home)}
+      <img src={asset('chevron-down.svg')} width="16" height="16" alt=""/>
     </button>
   </article>;
 
@@ -66,7 +68,7 @@ export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], o
           {reading && <p>{reading}</p>}
         </div>
       </div>
-      <button type="button" className="region-guide" onClick={onGuide}>{say('Mostrar guia do bairro', 'Mostrar guía del barrio')}</button>
+      <button type="button" className="btn-secondary region-guide" onClick={onGuide}>{say('Mostrar guia do bairro', 'Mostrar guía del barrio')}</button>
     </article>
     <div className="region-prices">
       <article className="region-card region-featured" aria-labelledby={`${id}-median`}>

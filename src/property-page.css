@@ -66,8 +66,8 @@
 /* Reading column and contact card */
 .pp-layout{display:grid;grid-template-columns:var(--pp-cols);column-gap:var(--pp-gutter);align-items:start;margin-top:32px}
 .pp-layout>.pp-section{grid-column:1/4}
-.pp-section{min-width:0;padding-bottom:48px;margin-bottom:0;border-bottom:0}
-.pp-layout>.pp-section:not(:last-child){padding-bottom:0;border-bottom:0}
+.pp-section{min-width:0;padding-block:25px;margin-bottom:0;border-bottom:0}
+.pp-layout>.pp-section:first-child{padding-top:0}
 .pp-rest{display:flex;flex-direction:column}
 .pp-section.is-last{padding-bottom:0;margin-bottom:0;border-bottom:0}
 .pp-section-title{margin:0 0 24px;font-size:22px;line-height:26px;font-weight:600;text-wrap:balance}
@@ -727,7 +727,7 @@
   .pp-nav-cta{display:none}
   .pp-mosaic{display:none}
   .pp-strip{display:block}
-  .pp-section{padding-bottom:32px;margin-bottom:0}
+  .pp-section{padding-block:25px;margin-bottom:0}
   .pp-aside{margin-bottom:32px}
   .pp-section-title,.pp-intro-title{font-size:18px;line-height:22px}
   .pp-intro-top{gap:16px}

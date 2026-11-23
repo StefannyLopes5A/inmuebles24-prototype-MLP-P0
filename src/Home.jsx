@@ -283,7 +283,7 @@ function InspirationRail({title,subtitle,titleValues,items,saved,onLike,onOpen,r
 
 function IdeaCards({cards,heading,onRunSearch,onOpen,saved,onLike,variant='suggestions',infiniteLoop=false}) {
   const {t}=useLanguage();
-  const rail=useRef(null);
+  const {rail,position,measure,move}=useRailScroll([cards.length,variant]);
   const previewApi=usePropertyPreview();
   const {preview,dismissPreview}=previewApi;
   function cycleWidth(){const el=rail.current;return el?.children[cards.length]?.offsetLeft-el?.children[0]?.offsetLeft||0;}
@@ -302,7 +302,7 @@ function IdeaCards({cards,heading,onRunSearch,onOpen,saved,onLike,variant='sugge
     return()=>observer.disconnect();
   },[cards.length,infiniteLoop]);
   const railCards=infiniteLoop?[0,1,2].flatMap(copy=>cards.map(card=>({card,key:`${copy}-${card.id}`}))):cards.map(card=>({card,key:card.id}));
-  return <section className="idea-section" data-idea-variant={variant} aria-label={heading}><h2>{heading}</h2><div className={`idea-rail${infiniteLoop?'':' idea-rail--scroll'}`} ref={rail} tabIndex={0} aria-label={heading} onScroll={infiniteLoop?loopScroll:undefined}>{railCards.map(({card,key})=><article className="idea-card" data-clickable key={key} tabIndex={0} aria-label={t(card.queryLead)} onClick={event=>cardActivate(event,card)} onKeyDown={event=>{if(event.target.closest('.idea-photo'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();runCard(card);}}}>{card.recent&&<span className="idea-recent-mark" aria-hidden="true"><Icon name="history" size={18}/></span>}<div className="idea-bottom"><div className="photo-stack">{card.previewItems.map(h=><button type="button" className="idea-photo" key={h.id} aria-label={t('Vista previa de ')+h.street} {...previewPhotoProps(h,previewApi)}><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/></button>)}</div></div><span className="idea-title">{t(card.queryLead)}</span></article>)}</div><PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/></section>;
+  return <section className="idea-section" data-idea-variant={variant} aria-label={heading}><div className="idea-heading"><h2>{heading}</h2>{variant==='suggestions'&&<div className="rail-controls"><button type="button" className="icon-button" aria-label={t('Anterior: ')+heading} disabled={position.start} onClick={()=>move(-1)}><Icon name="back"/></button><button type="button" className="icon-button" aria-label={t('Siguiente: ')+heading} disabled={position.end||cards.length<2} onClick={()=>move(1)}><Icon name="arrow"/></button></div>}</div><div className={`idea-rail${variant==='recent'?' idea-rail--static':infiniteLoop?'':' idea-rail--scroll'}`} ref={rail} tabIndex={variant==='recent'?undefined:0} aria-label={heading} onScroll={infiniteLoop?loopScroll:variant==='recent'?undefined:measure}>{railCards.map(({card,key})=><article className="idea-card" data-clickable key={key} tabIndex={0} aria-label={t(card.queryLead)} onClick={event=>cardActivate(event,card)} onKeyDown={event=>{if(event.target.closest('.idea-photo'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();runCard(card);}}}>{card.recent&&<span className="idea-recent-mark" aria-hidden="true"><Icon name="history" size={18}/></span>}<div className="idea-bottom"><div className="photo-stack">{card.previewItems.map(h=><button type="button" className="idea-photo" key={h.id} aria-label={t('Vista previa de ')+h.street} {...previewPhotoProps(h,previewApi)}><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/></button>)}</div></div><span className="idea-title">{t(card.queryLead)}</span></article>)}</div><PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/></section>;
 }
 
 export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],choices,onChoose,skipIntro,onIntroDone,signedIn=false,searchHistory=[],recent=[],onLogin,searchLayout='inline'}) {
@@ -359,7 +359,7 @@ export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],
     <div className="home-ideas-reveal" inert={stage<1}>
       <IdeaCards key={`${search.mode}-${signedIn}-${ideaCards[0]?.id||'ideas'}`} cards={ideaCards} heading={ideaHeading} variant={signedIn?'recent':'suggestions'} infiniteLoop={false} saved={saved} onLike={onLike} onOpen={onOpen} onRunSearch={runIdeaSearch}/>
     </div>
-    {!signedIn && <div className="home-guest-promo-reveal" inert={stage<1}><HomeGuestPromo onLogin={onLogin} saved={saved} onLike={onLike} onOpen={onOpen}/></div>}
+    {!signedIn && <div className="home-guest-promo-reveal" inert={stage<1}><HomeGuestPromo onLogin={onLogin}/></div>}
     </div>
     <div className="home-discovery-reveal" inert={stage<3}>
       {signedIn

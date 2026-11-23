@@ -109,7 +109,7 @@ function createHomeMotion(root) {
     // The data attribute is the live stage; `stage` can lag behind it while the sentence intro restarts.
     if (sections.has(section) || stage < 3 || Number(root.dataset.introStage) < 3) return;
     sections.add(section); delete section.dataset.motionPending;
-    const heading = section.querySelector('.discovery-heading, .home-blog-head') || section.querySelector(':scope > h2');
+    const heading = section.querySelector('.discovery-heading, .home-blog-head, .idea-heading') || section.querySelector(':scope > h2');
     play(heading,[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(0)'}],550);
     // The whole list starts together. Cards past the fold still belong to this entrance.
     section.querySelectorAll(revealCardSelector).forEach((card,index) => revealCard(card,index));

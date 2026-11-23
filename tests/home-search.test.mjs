@@ -111,7 +111,12 @@ test('popular home cities expose explore links with localized budgets', () => {
 
 test('idea suggestion cards run a search payload; history records signed-in searches', () => {
   const cards = ideaSuggestionCards('buy', value => value);
-  assert.equal(cards.length, 5);
+  assert.ok(cards.length > 5, 'amenity variations join the five area suggestions');
+  assert.equal(new Set(cards.map(card => card.id)).size, cards.length);
+  assert.ok(cards.some(card => /pet friendly/i.test(card.queryLead)) && cards.some(card => card.search.criteria.includes('pool')));
+  for (const mode of ['buy', 'rent']) {
+    for (const card of ideaSuggestionCards(mode, value => value)) assert.ok(card.previewItems.length > 0 && matchingHomes(card.search).length > 0, `${card.queryLead} must lead to results`);
+  }
   assert.equal(cards[0].recent, false);
   const demo = demoRecentIdeaCards('buy');
   assert.equal(demo.length, IDEA_RECENT_CARD_LIMIT);

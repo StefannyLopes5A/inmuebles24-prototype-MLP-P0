@@ -1,36 +1,24 @@
-import React, {useMemo} from 'react';
-import {homes, propertyPhoto} from './data.js';
+import React from 'react';
 import {useLanguage} from './i18n.jsx';
 import {homeAsset} from './HomeSearch.jsx';
-import {PropertyPreview, previewPhotoProps, usePropertyPreview} from './ideaPreview.jsx';
 
-const FAN_IDS = ['buy-150907005', 'buy-150135691', 'buy-150851727', 'buy-150159787'];
-const byId = id => homes.find(home => home.id === id);
 
 const PERKS = [
-  ['Ideas exclusivas', 'Inicia sesión o crea tu cuenta para organizar', 'explore'],
-  ['Novedades al instante', 'Inicia sesión o crea tu cuenta para organizar', 'discover'],
+  ['Explora recomendaciones exclusivas', 'Inicia sesión o crea tu cuenta para organizar', 'explore'],
+  ['Descubre propiedades recién publicadas', 'Inicia sesión o crea tu cuenta para organizar', 'discover'],
   ['Guarda y comparte favoritos', 'Inicia sesión o crea tu cuenta para organizar', 'favorites'],
-  ['Alertas de precio', 'Inicia sesión o crea tu cuenta para organizar', 'alerts'],
+  ['Recibe alertas de precios y ofertas', 'Inicia sesión o crea tu cuenta para organizar', 'alerts'],
   // Shown only on wide screens, where the grid has room for a third column.
   ['Opciones a tu medida', 'Según tu presupuesto y zona', 'matches', true],
   ['Tu experiencia personalizada', 'Retoma tu búsqueda siempre', 'personal', true],
 ];
 
-export function HomeGuestPromo({onLogin, saved = [], onLike, onOpen}) {
+export function HomeGuestPromo({onLogin}) {
   const {t} = useLanguage();
-  const fan = useMemo(() => FAN_IDS.map(byId).filter(Boolean), []);
-  const previewApi = usePropertyPreview('guest-property-preview');
-  if (!fan.length) return null;
 
   return <section className="home-guest-promo" aria-labelledby="home-guest-promo-title">
     <div className="home-guest-promo-join">
       <div className="home-guest-promo-text">
-        <div className="home-guest-promo-fan photo-stack">
-          {fan.map(home => <button type="button" className="idea-photo" key={home.id} aria-label={t('Vista previa de ') + home.street} {...previewPhotoProps(home, previewApi)}>
-            <img src={propertyPhoto(home)} alt="" loading="lazy"/>
-          </button>)}
-        </div>
         <h2 id="home-guest-promo-title">{t('Tu próximo hogar comienza con una cuenta')}</h2>
         <p>{t('Inicia sesión o crea tu cuenta para organizar tu búsqueda y seguir los inmuebles que te gustan.')}</p>
       </div>
@@ -50,6 +38,5 @@ export function HomeGuestPromo({onLogin, saved = [], onLike, onOpen}) {
         <button type="button" className="home-guest-feature-pill">{t('¡Crea tu cuenta!')}</button>
       </li>)}
     </ul>
-    <PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/>
   </section>;
 }

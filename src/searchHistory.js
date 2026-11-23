@@ -1,4 +1,5 @@
-import {homes, inspirationCollections} from './data.js';
+import {homes, inspirationCollections, listingPrice} from './data.js';
+import {matchesCriteria} from './searchCriteria.js';
 import {alertKey, matchingHomes, normalizeSearch} from './journey.js';
 
 export const IDEA_RECENT_CARD_LIMIT = 4;
@@ -115,7 +116,68 @@ export function demoRecentIdeaCards(mode = 'buy') {
   }));
 }
 
+/**
+ * Amenity variations of the suggestions. A criterion is only applied when the catalog's own text confirms it for the
+ * area, so the results are never empty; `pets` has no evidence in the catalog, so it stays a preference in the note
+ * and the listings keep their "confirm with the agency" caveat.
+ */
+const AMENITY_SPECS = {
+  buy: [
+    {lead:'Departamento pet friendly en Roma Norte, CDMX', area:'Roma Norte', beds:2, budget:9_000_000, preference:true},
+    {lead:'Departamento con alberca en Xoco', area:'Xoco', criteria:['pool']},
+    {lead:'Departamento con gimnasio en Xoco', area:'Xoco', criteria:['gym']},
+    {lead:'Departamento con jardín en Jardines del Pedregal', area:'Jardines del Pedregal', criteria:['garden']},
+    {lead:'Departamento con balcón en Del Valle Norte', area:'Del Valle Norte', criteria:['balcony']},
+    {lead:'Departamento con terraza en Polanco', area:'Polanco', criteria:['terrace']},
+  ],
+  rent: [
+    {lead:'Departamento pet friendly en Nápoles', area:'Nápoles', beds:1, budget:30_000, preference:true},
+    {lead:'Departamento amueblado en Ampliación Granada', area:'Ampliación Granada', criteria:['furnished']},
+    {lead:'Departamento con roof garden en Polanco', area:'Polanco', criteria:['roof']},
+    {lead:'Departamento con terraza en Polanco', area:'Polanco', criteria:['terrace']},
+    {lead:'Departamento con balcón en Del Valle Sur', area:'Del Valle Sur', criteria:['balcony']},
+  ],
+};
+
+function amenitySuggestionCards(mode) {
+  return AMENITY_SPECS[mode].flatMap(spec => {
+    const inArea = homes.filter(home => home.mode === mode && home.area === spec.area);
+    const matched = spec.criteria ? inArea.filter(home => matchesCriteria(home, spec.criteria)) : inArea;
+    if (!matched.length) return [];
+    const beds = spec.beds ?? Math.max(1, Math.min(...matched.map(home => home.beds || 1)));
+    const priciest = Math.max(...matched.map(home => listingPrice(home)));
+    const step = mode === 'buy' ? 100_000 : 1_000;
+    return [{
+      id: `suggest-amenity-${spec.area}-${(spec.criteria || ['pets'])[0]}`.replace(/\s+/g, '-').toLowerCase(),
+      queryLead: spec.lead,
+      recent: false,
+      previewItems: matched.slice(0, 3),
+      search: normalizeSearch({
+        mode,
+        propertyType: 'apartment',
+        criteria: spec.criteria || [],
+        minBudget: 0,
+        area: spec.area,
+        areas: [spec.area],
+        address: '',
+        beds,
+        budget: spec.budget ?? Math.ceil(priciest / step) * step,
+        note: spec.lead,
+        ideaLabel: spec.lead,
+        fromIdea: true,
+      }),
+    }];
+  });
+}
+
 export function ideaSuggestionCards(mode, translate = value => value) {
+  const areaCards = ideaAreaSuggestionCards(mode, translate);
+  const amenityCards = amenitySuggestionCards(mode).map(card => ({...card, search:{...card.search, note:translate(card.search.note)}}));
+  // One amenity card after each area card, so the rail alternates between places and wishes.
+  return areaCards.flatMap((card, index) => amenityCards[index] ? [card, amenityCards[index]] : [card]).concat(amenityCards.slice(areaCards.length));
+}
+
+function ideaAreaSuggestionCards(mode, translate) {
   return inspirationCollections(mode).map(idea => ({
     id: `suggest-${idea.id}`,
     queryLead: idea.queryLead,

@@ -384,7 +384,7 @@ body[data-home-motion=holofote] .home-evolution .home-city-guide .discovery-item
 .home-guest-feature-copy{display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding:24px}
 .home-guest-feature-copy h3{margin:0;font-size:16px;font-weight:600;line-height:1.3;letter-spacing:-.02em;color:#111}
 .home-guest-feature-copy p{margin:0;font-size:14px;line-height:1.4;color:#727272}
-.home-guest-promo-join{display:flex;flex-direction:column;justify-content:space-between;gap:32px;min-height:400px;padding:0 24px;border-radius:24px;background:#fff}
+.home-guest-promo-join{display:flex;flex-direction:column;justify-content:center;gap:48px;min-height:400px;padding:0 24px;border-radius:24px;background:#fff}
 .home-guest-promo-text h2{margin:0;font-size:24px;font-weight:600;line-height:1.25;letter-spacing:-.01em;color:#111}
 .home-guest-promo-text p{margin:8px 0 0;font-size:14px;line-height:1.4;color:#727272}
 .home-evolution .home-guest-promo-fan.photo-stack{height:124px;width:100%;margin:0 0 24px}
@@ -469,3 +469,11 @@ body[data-home-motion=holofote] .home-evolution .home-city-guide .discovery-item
 .home-guest-features .home-guest-feature:focus-within .home-guest-feature-photo{transform:rotate(0deg)}
 .home-guest-feature:focus-within .home-guest-feature-pill{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
 @media(hover:hover) and (pointer:fine){.home-guest-features .home-guest-feature:hover .home-guest-feature-photo{transform:rotate(0deg)}.home-guest-feature:hover .home-guest-feature-pill{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}}
+
+/* Sugerencia de búsquedas: the heading row carries the rail controls; the signed-in recent searches sit in a plain grid, without a carousel. */
+.home-evolution .idea-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 var(--home-page-gutter) 24px}
+.home-evolution .idea-section .idea-heading h2{margin:0}
+.home-evolution .idea-section[data-idea-variant=recent] .idea-rail.idea-rail--static{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;overflow:visible;padding-inline:var(--home-page-gutter)}
+.home-evolution .idea-section[data-idea-variant=recent] .idea-card{width:auto;min-width:0;flex-basis:auto}
+@media(max-width:1100px){.home-evolution .idea-section[data-idea-variant=recent] .idea-rail.idea-rail--static{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.home-evolution .idea-section[data-idea-variant=recent] .idea-rail.idea-rail--static{grid-template-columns:minmax(0,1fr)}}

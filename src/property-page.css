@@ -857,3 +857,8 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 @media(prefers-reduced-transparency:reduce){.pp-ask-mora-chip{background:#fff;box-shadow:none}}
 
 .pp-section.pp-ask-section{margin-top:32px;margin-bottom:32px}
+
+/* The Mora pill stands 24px from the group of offer levels (the row's 6px gap plus 18px). */
+@media(min-width:701px){
+  .pp-offer-levels .pp-mora-pill{margin-left:18px}
+}

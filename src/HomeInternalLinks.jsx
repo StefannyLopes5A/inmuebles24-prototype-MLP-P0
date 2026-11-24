@@ -38,7 +38,8 @@ export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOp
   const pt = language === 'pt-BR', say = (br, es) => pt ? br : es;
   const current = normalizeSearch(search);
   const key = JSON.stringify([current.mode, current.areas, current.propertyType]);
-  const related = useMemo(() => variant === 'results' ? relatedSearches(search) : null, [variant, key]);
+  // The home reuses the results page's related searches (same groups, same 3D pills), seeded by the home search.
+  const related = useMemo(() => relatedSearches(search), [key]);
 
   function open(link) {
     onIntroDone?.();
@@ -59,6 +60,8 @@ export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOp
   }
 
   if (variant === 'results') return <ResultsLinks related={related} search={search} onSearch={onSearch} onOpen={onOpen} say={say} pt={pt}/>;
+  if (related) return <ResultsLinks related={related} search={search} onSearch={onSearch} say={say} pt={pt} id="home-links-title" className="" title={t(TITLE)}
+    subtitle={t(SUBTITLE)} onBefore={() => {onIntroDone?.(); onChoose?.('template');}}/>;
 
   return <LinkTabs id="home-links-title" title={t(TITLE)} subtitle={t(SUBTITLE)} groups={evenColumns(GROUPS, LINKS_PER_GROUP).map(group => ({
     id: group.id,
@@ -72,7 +75,7 @@ export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOp
   }))}/>;
 }
 
-function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
+function ResultsLinks({related, search, onSearch, onOpen, say, pt, id = 'results-links-title', className = 'is-results', title, subtitle, onBefore}) {
   if (!related) return null;
   const {area, mode, house, count, card, traits, amenities, nearby} = related;
   const rent = mode === 'rent';
@@ -83,6 +86,7 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
   const language = pt ? 'pt-BR' : 'es';
   const linkNoun = say('apartamentos', 'departamentos');
   function apply(changes) {
+    onBefore?.();
     onSearch?.(relatedLinkChanges(search, changes));
     window.scrollTo({top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
   }
@@ -115,8 +119,8 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
   ].filter(group => group.items.length);
   const columns = evenColumns(groups);
 
-  return <LinkTabs id="results-links-title" className="is-results" title={say('Buscas relacionadas', 'Búsquedas relacionadas')}
-    subtitle={say(`Encontre ${noun} ${operation} por categorias`, `Encuentra ${noun} ${operation} por categorías`)}
+  return <LinkTabs id={id} className={className} title={title ?? say('Buscas relacionadas', 'Búsquedas relacionadas')}
+    subtitle={subtitle ?? say(`Encontre ${noun} ${operation} por categorias`, `Encuentra ${noun} ${operation} por categorías`)}
     groups={columns.map(group => ({...group, image: PILL_IMAGE[group.id], items: group.items.map(item => ({...item, onClick: () => apply(item.changes)}))}))}/>;
 }
 

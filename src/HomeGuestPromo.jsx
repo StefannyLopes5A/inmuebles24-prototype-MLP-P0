@@ -22,12 +22,12 @@ export function HomeGuestPromo({onLogin}) {
         <h2 id="home-guest-promo-title">{t('Tu próximo hogar comienza con una cuenta')}</h2>
         <p>{t('Inicia sesión o crea tu cuenta para organizar tu búsqueda y seguir los inmuebles que te gustan.')}</p>
       </div>
-      <button type="button" className="home-start home-guest-promo-cta" onClick={() => onLogin?.()}>
+      <button type="button" className="home-start home-guest-promo-cta" onClick={() => onLogin?.('personalize')}>
         {t('Iniciar sesión o crear cuenta')}<img src={homeAsset('arrow')} alt=""/>
       </button>
     </div>
     <ul className="home-guest-features">
-      {PERKS.map(([title, text, photo, wide], index) => <li key={photo} className={`home-guest-feature${index % 2 ? ' is-tilt-right' : ''}${wide ? ' is-wide-only' : ''}`} onClick={() => onLogin?.()}>
+      {PERKS.map(([title, text, photo, wide], index) => <li key={photo} className={`home-guest-feature${index % 2 ? ' is-tilt-right' : ''}${wide ? ' is-wide-only' : ''}`} onClick={() => onLogin?.('personalize')}>
         <div className="home-guest-feature-media">
           <div className="home-guest-feature-photo"><img src={`/assets/home-evolution/guest-promo/${photo}.jpg`} alt="" loading="lazy"/></div>
         </div>

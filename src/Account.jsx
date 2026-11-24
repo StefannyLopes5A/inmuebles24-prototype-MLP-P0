@@ -103,8 +103,14 @@ export function InlineLogin({titleId, homes = [], title, text, cancelLabel, onSi
 }
 
 /** Simulated sign-in: every action signs in and nothing typed is kept or sent. */
-export function LoginDialog({onSignIn, onClose}) {
+export function LoginDialog({onSignIn, onClose, reason = null}) {
   const say = useSay();
+  const heading = {
+    favorite: say('Para seguir guardando tus favoritos, inicia sesión o crea tu cuenta', 'Para continuar salvando seus favoritos, entre ou crie sua conta'),
+    search: say('Para guardar esta búsqueda, inicia sesión o crea tu cuenta', 'Para salvar esta busca, entre ou crie sua conta'),
+    personalize: say('Para personalizar tu experiencia, inicia sesión o crea tu cuenta', 'Para personalizar sua experiência, entre ou crie sua conta'),
+    share: say('Para compartir tu lista, inicia sesión o crea tu cuenta', 'Para compartilhar sua lista, entre ou crie sua conta'),
+  }[reason] || say('Inicia sesión o regístrate', 'Entrar ou cadastrar-se');
   const titleId = useId();
   const present = useIsPresent();
   const signIn = () => {if (present) onSignIn();};
@@ -113,7 +119,7 @@ export function LoginDialog({onSignIn, onClose}) {
     <form className="account-login" onSubmit={event => {event.preventDefault(); signIn();}}>
       <button type="button" className="folder-icon-button account-close" onClick={close} aria-label={say('Cerrar', 'Fechar')}><Icon name="close" size={16}/></button>
       <BrandMark className="account-logo"/>
-      <h2 id={titleId}>{say('Inicia sesión o regístrate', 'Entrar ou cadastrar-se')}</h2>
+      <h2 id={titleId}>{heading}</h2>
       <label className="account-field">
         <span className="sr-only">{say('Teléfono o correo electrónico', 'Telefone ou e-mail')}</span>
         <input type="text" inputMode="email" autoComplete="off" spellCheck={false} placeholder={say('Teléfono o correo electrónico', 'Telefone ou e-mail')} autoFocus data-autofocus/>

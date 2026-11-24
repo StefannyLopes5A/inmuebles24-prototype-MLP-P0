@@ -62,7 +62,7 @@ export function App(){
  const [alerts,setAlerts]=useState(()=>readSavedSearches(stored().alerts));
  const [searchHistory,setSearchHistory]=useState(()=>normalizeSearchHistory(stored().searchHistory));
  const [shared,setShared]=useState(()=>readSharedFolders(storedShared(),KNOWN_HOMES));
- const afterLogin=useRef(null);
+ const afterLogin=useRef(null),[loginReason,setLoginReason]=useState(null);
  const [askPrompt,setAskPrompt]=useState(null);
  const [listingAsk,setListingAsk]=useState(null);
  const [hiddenListings,setHiddenListings]=useState([]);
@@ -178,7 +178,7 @@ export function App(){
  function hideFromCompare(folderId,homeId){setCompareView(current=>({...current,hidden:{...current.hidden,[folderId]:[...new Set([...(current.hidden[folderId]||[]),homeId])]}}))}
  function showAllInCompare(folderId){setCompareView(current=>{const hidden={...current.hidden};delete hidden[folderId];return {...current,hidden}})}
  function markCompareSeen(folderId){setCompareView(current=>current.seen.includes(folderId)?current:{...current,seen:[...current.seen,folderId]})}
- function openLogin(){hideToasts();setLoginOpen(true)}
+ function openLogin(reason=null){hideToasts();setLoginReason(typeof reason==='string'?reason:null);setLoginOpen(true)}
  function headerAction(action){announce(action==='agencies'?say('Abre un inmueble para conocer a su anunciante y simular un contacto.','Abra um imóvel para conhecer seu anunciante e simular um contato.'):say('Este prototipo demuestra la búsqueda de inmuebles. La publicación no forma parte de este recorrido.','Este protótipo demonstra a busca de imóveis. A publicação não faz parte deste percurso.'));}
  /** Others in the folder lose the listing too, so taking it out of a shared folder asks first. */
  const sharedWithOthers=folder=>!!folder&&!!meId&&isCollaborative(shared[folder.id])&&!!memberOf(shared[folder.id],meId);
@@ -192,6 +192,7 @@ export function App(){
  function requestSave(home){
    const current=folderOf(folders,home.id);
    if(current){requestUnsave(home,current);return;}
+   if(!account.signedIn){afterLogin.current=()=>{setFolderToast(null);setPicker({home})};openLogin('favorite');return;}
    setFolderToast(null);setPicker({home});
  }
  function selectFolder(folderId){
@@ -237,11 +238,11 @@ export function App(){
  function signIn(){setLoginOpen(false);const who=startSession();setSearchHistory(current=>current.length?current:demoSearchHistory(routeRef.current.search?.mode==='rent'?'rent':'buy'));const next=afterLogin.current;afterLogin.current=null;if(next){next(who);return;}showAccountToast(say('Sesión iniciada · tus favoritos quedan guardados','Login feito · seus favoritos ficam salvos'))}
  function closeLogin(){afterLogin.current=null;setLoginOpen(false)}
  /** Alert and folder sharing ask for the simulated login first, then finish what was asked. */
- function withAccount(run){if(account.signedIn){run(account);return;}afterLogin.current=run;openLogin()}
+ function withAccount(run,reason){if(account.signedIn){run(account);return;}afterLogin.current=run;openLogin(reason)}
  const searchAlertKey=alertKey(search),alertOn=alerts.some(item=>savedKey(item)===searchAlertKey);
  function toggleAlert(){
    if(alertOn){setAlerts(current=>current.filter(item=>savedKey(item)!==searchAlertKey));showAccountToast(say('Búsqueda eliminada','Busca removida'));return;}
-   withAccount(()=>{setAlerts(current=>[{key:searchAlertKey,savedAt:Date.now(),search:normalizeSearch(search)},...current.filter(item=>savedKey(item)!==searchAlertKey)].slice(0,20));showAccountToast(say('Búsqueda guardada','Busca salva'))});
+   withAccount(()=>{setAlerts(current=>[{key:searchAlertKey,savedAt:Date.now(),search:normalizeSearch(search)},...current.filter(item=>savedKey(item)!==searchAlertKey)].slice(0,20));showAccountToast(say('Búsqueda guardada','Busca salva'))},'search');
  }
  const absolute=path=>new URL(path,window.location.origin).href;
  const writeShared=next=>setShared(readSharedFolders(next,KNOWN_HOMES));
@@ -275,7 +276,7 @@ export function App(){
      const created=shareFolder(shared,folder,Date.now(),who);writeShared(created);
      const record=created[folder.id];
      setInviteDialog({folderName:folder.name,cover,count:record.homeIds.length,url:absolute(journeyUrl({page:'folder',search,invite:record.inviteToken,from:who.id}))});
-   });
+   },'share');
  }
  function reactInFolder(folderId,homeId,kind){if(meId)updateRecord(folderId,record=>react(record,meId,homeId,kind))}
  function noteInFolder(folderId,homeId,text){if(meId)updateRecord(folderId,record=>setNote(record,meId,homeId,text))}
@@ -482,7 +483,7 @@ export function App(){
  <AnimatePresence>{inviteDialog&&<InviteDialog key="invite-dialog" folderName={inviteDialog.folderName} cover={inviteDialog.cover} count={inviteDialog.count} url={inviteDialog.url} onSent={()=>{setInviteDialog(null);announce(say('Invitación lista. Te avisamos cuando se unan.','Convite pronto. Avisamos quando entrarem.'))}} onClose={()=>setInviteDialog(null)}/>}</AnimatePresence>
  <AnimatePresence>{joinPrompt&&<JoinDialog key="join" reason={joinPrompt.reason} record={joinPrompt.record} sender={inviteSender} onSignIn={signInToJoin} onClose={()=>setJoinPrompt(null)}/>}</AnimatePresence>
  <AnimatePresence>{confirm&&<ConfirmDialog key="confirm" {...confirm} onConfirm={()=>{const run=confirm.run;setConfirm(null);run()}} onClose={()=>setConfirm(null)}/>}</AnimatePresence>
- <AnimatePresence>{loginOpen&&<LoginDialog key="login" onSignIn={signIn} onClose={closeLogin}/>}</AnimatePresence>
+ <AnimatePresence>{loginOpen&&<LoginDialog key="login" reason={loginReason} onSignIn={signIn} onClose={closeLogin}/>}</AnimatePresence>
  <SelectionMora contextHome={selected} routeKey={`${page}|${propertyId||''}|${listId||''}`}/>
  {guideOn&&<ProjectGuide onAction={guideAction} searchLayout={searchLayout}/>}
  </div>;

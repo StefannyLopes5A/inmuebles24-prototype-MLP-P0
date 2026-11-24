@@ -34,7 +34,7 @@ export function similarPriceRows(home, pool = catalog) {
   if (!homes.length) return [];
   const origin = homeCoordinates(home);
   const reading = compareReading(homes, 'es-MX', pool);
-  return reading.cards.map(card => {
+  const rows = reading.cards.map(card => {
     const meters = card.home.id === home.id ? 0 : Math.max(10, Math.round(walkDistance(origin, homeCoordinates(card.home)) / 10) * 10);
     return {
       home: card.home,
@@ -53,4 +53,6 @@ export function similarPriceRows(home, pool = catalog) {
       area: card.home.area || null,
     };
   });
+  // The best price leads the table; the other columns keep their order (this listing, then the closest ads).
+  return [...rows.filter(row => row.best), ...rows.filter(row => !row.best)];
 }

@@ -33,3 +33,6 @@
 :root{--v2-action-orange:#c94200;--v2-action-orange-hover:#ac3900}
 .flow-primary,.guide-panel .choice,.property-questions button,.results-guide-chips button,.modal .primary,.sentence-input-row .sentence-submit,.figma-header-links a.figma-login{background:var(--v2-action-orange);border-color:var(--v2-action-orange);color:#fff}
 @media(hover:hover){.flow-primary:hover,.guide-panel .choice:hover,.property-questions button:hover,.results-guide-chips button:hover,.modal .primary:hover,.sentence-input-row .sentence-submit:hover,.figma-header-links a.figma-login:hover{background:var(--v2-action-orange-hover)}}
+
+/* Price-drop tag (Figma 13117-21323): gradient pill, white 11px/600 label. */
+.discovery-tag[data-tag="price"]{background:linear-gradient(210.54deg,#07358f 34.3%,#804566 73.2%,#ff553b 108.1%);border-color:transparent;color:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}

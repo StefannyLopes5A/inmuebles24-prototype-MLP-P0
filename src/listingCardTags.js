@@ -2,6 +2,7 @@ import {marketFacts, searchFit} from './moraAnalysis.js';
 import {seed} from './listingAdvertiser.js';
 import {listingText} from './listingText.js';
 import {photoReading} from './moraInsights.js';
+import {listingHighlights} from './listingHighlights.js';
 export {DEMAND_CONTACTS} from './listingHighlights.js';
 
 export const LISTING_TAG_LIMIT = 2;
@@ -54,7 +55,8 @@ export function listingCardTags(home, {search, pref = 'none', language = 'es-MX'
     candidates.push({id:'match', priority:100, label:say('Match perfeito', 'Match perfecto')});
   }
   if (signal) candidates.push({id:'signal', priority:95, label:signal});
-  // Price drop and high demand have their own pills on the card (price row and below the details).
+  // The drop percentage and high demand keep their own pills on the card; a listing with a drop also earns this tag.
+  if (listingHighlights(home).drop) candidates.push({id:'price', priority:90, label:say('Melhor preço', 'Mejor precio')});
   const market = marketFacts(home);
 
   const isNew = market.days <= NEW_LISTING_DAYS;

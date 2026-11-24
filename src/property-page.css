@@ -619,9 +619,9 @@
 .pp-peers-cell.is-last{border-bottom:0}
 .pp-peers-price{display:flex;flex-direction:column;gap:8px;min-height:176px;padding:16px 12px;border-bottom:1px solid #eee}
 .pp-peers-price-kicker{margin:0;color:#000000b8;font-size:13px;line-height:18px;font-weight:600;letter-spacing:-.47px}
-.pp-peers-price-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px}
+.pp-peers-price-row{display:flex;align-items:center;justify-content:flex-start;gap:16px;min-height:28px}
 .pp-peers-price-row strong{color:#111;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.26px;font-variant-numeric:tabular-nums}
-.pp-peers-best{display:inline-flex;align-items:center;height:24px;padding:0 12px;border:1px solid #0000000f;border-radius:99px;background:#ffffffb3;box-shadow:inset 0 1px 0 #ffffffcc,0 1px 2px #0000000d,0 6px 16px #00000012;color:#111;font-size:11px;line-height:14px;font-weight:600;letter-spacing:.06px;white-space:nowrap;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.pp-peers-best{display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:99px;background:linear-gradient(210.54deg,#07358f 34.3%,#804566 73.2%,#ff553b 108.1%);color:#fff;font-size:11px;line-height:14px;font-weight:600;white-space:nowrap}
 .pp-peers-delta{margin:0;color:#1d7256;font-size:13px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums}
 .pp-peers-delta.is-above{color:#b1411b}
 .pp-peers-bar{position:relative;display:block;height:12px}

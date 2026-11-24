@@ -232,10 +232,22 @@ export function Location({home, location, neighborhood, language, money, currenc
     </Suspense>
     <p className="pp-map-note">{say('Localização aproximada: o endereço exato é compartilhado quando a visita é confirmada.', 'Ubicación aproximada: la dirección exacta se comparte al confirmar la visita.')}</p>
 
+  </>;
+}
+
+/** "Así se vive en…": its own section after the map, with the neighborhood's reading, what is nearby and what neighbors value. */
+export function Neighborhood({home, location, neighborhood, language, say}) {
+  const pt = language === 'pt-BR';
+  const hood = neighborhood?.(language);
+  const reduce = useReducedMotion();
+  const hasNearby = NEARBY_KINDS.some(([id]) => location.counts?.[id] > 0);
+  if (!hood && !location.places.length && !hasNearby) return null;
+  const name = hood?.name || home.area;
+  return <section id="pp-neighborhood" className="pp-section" aria-labelledby="pp-neighborhood-title">
+    <h2 id="pp-neighborhood-title" className="pp-section-title">{say(`Como é viver em ${name}`, `Así se vive en ${name}`)}</h2>
     <div className="pp-hood">
       <div className="pp-hood-top">
         {hood && <div className="pp-hood-intro">
-          <h3>{say(`Como é viver em ${hood.name}`, `Así se vive en ${hood.name}`)}</h3>
           <p className="pp-hood-reading">{hood.reading}</p>
         </div>}
         {NEARBY_KINDS.some(([id]) => location.counts?.[id] > 0) && <ul className="pp-hood-chips" aria-label={say('O que há por perto', 'Qué hay cerca')}>
@@ -269,5 +281,5 @@ export function Location({home, location, neighborhood, language, money, currenc
         </div></div>}
       </div>
     </div>
-  </>;
+  </section>;
 }

@@ -11,7 +11,7 @@ import {shortMoney} from './moraAnalysis';
 import {MoraOpening} from './MoraInsight';
 import {detailReading} from './moraDetail';
 import {ListingGallery} from './ListingGallery';
-import {Amenities, Description, Host, Location, Specs} from './ListingSections';
+import {Amenities, Description, Host, Location, Neighborhood, Specs} from './ListingSections';
 import {ListingReviews} from './ListingReviews';
 import {ListingOffers} from './ListingOffers';
 import {ListingCosts} from './ListingCosts';
@@ -282,6 +282,8 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
         <h2 id="pp-location-title" className="pp-section-title">{say('Onde você vai morar', 'Dónde vas a vivir')}</h2>
         <Location home={home} location={story.location} neighborhood={story.neighborhood} language={language} money={money} currency={currency} say={say}/>
       </section>
+
+      <Neighborhood home={home} location={story.location} neighborhood={story.neighborhood} language={language} say={say}/>
 
       <section id="pp-reviews" className="pp-section" tabIndex={-1} aria-label={say('Avaliações da imobiliária', 'Reseñas de la inmobiliaria')}>
         <ListingReviews home={home} advertiser={advertiser} language={language} say={say}/>

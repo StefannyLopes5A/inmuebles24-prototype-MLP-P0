@@ -224,13 +224,13 @@ function ListingPhotos({home}) {
   return <span className="discovery-slides">{photos.map((src, index) => <img className="discovery-slide" key={src} src={src} alt={index ? '' : home.imageAlt} loading="lazy"/>)}</span>;
 }
 
-export function RailListingCopy({home:h, videoRef, detailed=false}) {
+export function RailListingCopy({home:h, videoRef, detailed=false, pills=true}) {
   const {t,language,money,currency}=useLanguage();
   const say=(br,es)=>language==='pt-BR'?br:es;
   const advertiser=advertiserFor(h);
   const kind=h.development?[developmentKind(language)]:[t(h.mode==='buy'?'Venta':'Renta'),t('Departamento')];
   const facts=h.development?developmentFacts(language):[t(areaLabel(h)),roomCount(h.beds,language),bathCount(h.baths,language)];
-  const copy=detailed?highlightCopy(listingHighlights(h),{say,money}):{};
+  const copy=detailed&&pills?highlightCopy(listingHighlights(h),{say,money}):{};
   const dotted=items=>items.flatMap((item,index)=>index?[<span key={`dot-${index}`} className="discovery-separator" aria-hidden="true">•</span>,<span key={item}>{item}</span>]:[<span key={item}>{item}</span>]);
   return <>
     <span className={"discovery-media"+(h.video?" has-video":"")+(h.development?" is-development":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><span className="discovery-price-row"><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong>{copy.drop&&<HighlightPill kind="drop" copy={copy.drop}/>}</span></span></span>
@@ -240,11 +240,11 @@ export function RailListingCopy({home:h, videoRef, detailed=false}) {
   </>;
 }
 
-export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none', signal=null}) {
+export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none', signal=null, pills=true}) {
   const {t,language,money}=useLanguage();
   const videoRef=useRef(null);
   const tags=useMemo(()=>listingCardTags(home,{search,pref,language,contacted,signal}),[home,search,pref,language,contacted,signal]);
-  const highlights=useMemo(()=>highlightCopy(listingHighlights(home),{say:(br,es)=>language==='pt-BR'?br:es,money}),[home,language,money]);
+  const highlights=useMemo(()=>pills?highlightCopy(listingHighlights(home),{say:(br,es)=>language==='pt-BR'?br:es,money}):{},[home,language,money,pills]);
   const intent=useHoverIntent(home);
   const videoDelay=useRef(null);
   useEffect(()=>()=>clearTimeout(videoDelay.current),[]);
@@ -264,7 +264,7 @@ export function HouseCard({home, saved, onLike, onOpen, contacted=false, search,
   }
   return <article className="discovery-item" data-listing-id={home.listingId} data-home-id={home.id}>
     <div className="discovery-card" onPointerEnter={event=>{playVideo(event);intent.onPointerEnter(event);}} onPointerLeave={event=>{intent.onPointerLeave();if (event.pointerType!=='touch') stopVideo();}} onFocus={()=>{playVideo();intent.onFocus();}} onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) stopVideo();}}>
-      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef} detailed/></button>
+      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef} detailed pills={pills}/></button>
       {(highlights.drop||highlights.demand)&&<>
         {highlights.drop&&<span className="discovery-tips" aria-hidden="true"><HighlightTip kind="drop" copy={highlights.drop}/></span>}
         {highlights.demand&&<HighlightTip kind="demand" copy={highlights.demand}/>}

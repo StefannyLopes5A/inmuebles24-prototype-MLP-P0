@@ -1,7 +1,7 @@
 /* Result card highlights: price-drop and high-demand pills, Mora's tooltips and the SEO line (Figma 13106:21120, 13106:20661, 13099:643053). */
 .discovery-open{text-align:left}
 .discovery-price-row{display:flex;align-items:center;gap:8px;min-width:0}
-.discovery-seo{display:block;padding-top:16px;color:#575763;font-size:12px;line-height:16.8px;text-align:left;text-transform:none;white-space:normal}
+.discovery-seo{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;padding-top:16px;color:#575763;font-size:12px;line-height:16.8px;text-align:left;text-transform:none;white-space:normal;overflow-wrap:anywhere}
 .discovery-seo+.discovery-meta{padding-top:8px}
 .discovery-pill{position:relative;display:inline-flex;align-items:center;gap:4px;flex:none;box-sizing:border-box;padding:4px 12px;overflow:hidden;border:1px solid transparent;border-radius:24px;color:#111;font-size:12px;line-height:14px;font-weight:600;letter-spacing:.06px;text-shadow:none;white-space:nowrap}
 /* The photo's copy block ignores the pointer, so the pill opts back in to be hoverable. */

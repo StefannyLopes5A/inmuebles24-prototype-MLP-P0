@@ -181,10 +181,10 @@ export function ListingOffers({ideas, money, language, say, onAsk, expanded = fa
     <div className="pp-offers-top">
       <div className="pp-offers-title">
         <h2 id="pp-offers-title" className="pp-section-title">{say('Ideias para fazer uma oferta', 'Ideas para ofertar')}</h2>
-        <button type="button" className="pp-mora-pill" aria-expanded={expanded} onClick={event => onAsk?.({section:'offer', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
       </div>
       <div className="pp-offer-levels" role="group" aria-label={say('Força da oferta', 'Fuerza de la oferta')}>
         {ideas.levels.map(item => <button key={item.id} type="button" className="pp-offer-level" aria-pressed={item.id === level} onClick={() => setLevel(item.id)}>{pick(COPY[item.id].chip)}</button>)}
+        <button type="button" className="pp-mora-pill" aria-expanded={expanded} onClick={event => onAsk?.({section:'offer', question, source:event.currentTarget})}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{question}</span></button>
       </div>
     </div>
     {insight}

@@ -63,7 +63,7 @@
 .mini-contact-form{min-height:396px}
 .mini-phase-contact .mini-property-presentation{justify-content:flex-start}
 .mini-phase-contact:has(.mini-reuse) .mini-contact-form{min-height:333px}
-.property-page{padding:32px var(--home-page-gutter) 72px;max-width:1300px;margin-inline:auto}
+.property-page{padding:32px var(--home-page-gutter) 72px;max-width:1320px;margin-inline:auto}
 .property-return{min-height:44px;display:inline-flex;align-items:center;gap:8px;font-size:14px;margin-bottom:24px}
 .property-page-title{margin-bottom:32px}
 .property-page-title h1{font-size:32px;line-height:1.2;margin:8px 0 12px;font-weight:600;outline:none;text-wrap:balance}

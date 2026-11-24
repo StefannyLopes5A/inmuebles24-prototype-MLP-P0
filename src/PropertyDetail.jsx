@@ -36,13 +36,14 @@ const HideIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="non
 const NAV_SECTIONS = [
   {id:'pp-photos', pt:'Fotos', es:'Fotos'},
   {id:'pp-amenities', pt:'Comodidades', es:'Comodidades'},
+  {id:'pp-costs', pt:'Custos', es:'Costos', buyOnly:true},
   {id:'pp-location', pt:'Localização', es:'Ubicación'},
   {id:'pp-reviews', pt:'Avaliações', es:'Reseñas'},
 ];
 const headerHeight = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--flow-header-height')) || 0;
 
 /** Sticky anchors once the intro scrolls away; price and the main contact join them once the card is gone too. */
-function ListingNav({intro, card, price, advertiser, onContact, say}) {
+function ListingNav({intro, card, price, advertiser, onContact, say, hasCosts, fee, money, currency}) {
   const nav = useRef(null);
   const [state, setState] = useState({show:false, compact:false});
   useEffect(() => {
@@ -76,12 +77,12 @@ function ListingNav({intro, card, price, advertiser, onContact, say}) {
   return <div ref={nav} className={`pp-nav${state.show ? ' is-visible' : ''}`} inert={!state.show}>
     <div className="pp-nav-inner">
       <nav className="pp-nav-links" aria-label={say('Seções do anúncio', 'Secciones del anuncio')}>
-        {NAV_SECTIONS.map(section => <a key={section.id} href={`#${section.id}`} onClick={event => { event.preventDefault(); jump(section.id); }}>{say(section.pt, section.es)}</a>)}
+        {NAV_SECTIONS.filter(section => hasCosts || !section.buyOnly).map(section => <a key={section.id} href={`#${section.id}`} onClick={event => { event.preventDefault(); jump(section.id); }}>{say(section.pt, section.es)}</a>)}
       </nav>
       <div className={`pp-nav-cta${state.compact ? ' is-visible' : ''}`} inert={!state.compact}>
         <div className="pp-nav-price">
           <strong>{price}</strong>
-          <small>★ {advertiser.rating.toFixed(1).replace('.', ',')} · {advertiser.reviews} {say('avaliações', 'reseñas')}</small>
+          {fee > 0 && <small>{say('Condomínio de', 'Mantenimiento de')} {money(fee)} {currency} / {say('mês', 'mes')}</small>}
         </div>
         <button type="button" className="mini-primary" onClick={onContact}>{say('Falar com imobiliária', 'Hablar con inmobiliaria')}</button>
       </div>
@@ -189,7 +190,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
 
   return <>
   <article className="property-page pp" data-arrival={arrival}>
-    <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav}
+    <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav} hasCosts={home.mode === 'buy' && price > 0} fee={facts.fee} money={money} currency={currency}
       price={<>{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</>}/>
     <div className="pp-top">
       <IconButton icon="back" className="compare-back" onClick={onClose} label={say('Voltar à busca', 'Volver a la búsqueda')}/>
@@ -247,7 +248,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
           price={<><p className="pp-card-price">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>{signal && <p className="pp-card-signal">{signal}</p>}</>}
           fee={<p className="pp-card-fee">{home.mode === 'rent'
             ? say(`+ ${money(facts.fee)} de condomínio · ${money(price + facts.fee)} ${currency} por mês no total`, `+ ${money(facts.fee)} de mantenimiento · ${money(price + facts.fee)} ${currency} al mes en total`)
-            : say(`Condomínio de ${money(facts.fee)} ${currency} por mês`, `Mantenimiento de ${money(facts.fee)} ${currency} al mes`)}</p>}/>
+            : say(`Condomínio de ${money(facts.fee)} ${currency} / mês`, `Mantenimiento de ${money(facts.fee)} ${currency} / mes`)}</p>}/>
       </aside>
 
       <section className="pp-section" aria-labelledby="pp-about-title">

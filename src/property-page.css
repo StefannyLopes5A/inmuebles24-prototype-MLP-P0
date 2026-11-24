@@ -1,6 +1,6 @@
 /* Full listing page (`PropertyDetail`). Airbnb listing language: white surface, photos first, black text, thin dividers. */
 /* One 4-column grid with a single gutter for every section, except the similar listings. The 4th column keeps the contact card readable on narrow desktops. */
-.pp{--pp-ink:#222;--pp-muted:#6a6a6a;--pp-line:#ebebeb;--pp-ease:cubic-bezier(.22,1,.36,1);--pp-gutter:32px;--pp-cols:repeat(3,minmax(0,1fr)) minmax(300px,1fr);display:flex;flex-direction:column;max-width:calc(1120px + 2 * var(--home-page-gutter));padding:32px var(--home-page-gutter) 72px;color:var(--pp-ink)}
+.pp{--pp-ink:#222;--pp-muted:#6a6a6a;--pp-line:#ebebeb;--pp-ease:cubic-bezier(.22,1,.36,1);--pp-gutter:32px;--pp-cols:repeat(3,minmax(0,1fr)) 320px;display:flex;flex-direction:column;max-width:1320px;padding:32px var(--home-page-gutter) 72px;color:var(--pp-ink)}
 .pp :focus-visible{outline:2px solid var(--pp-ink);outline-offset:2px}
 
 /* Back on the left, share, save and hide on the right: the favorites page's round buttons. */

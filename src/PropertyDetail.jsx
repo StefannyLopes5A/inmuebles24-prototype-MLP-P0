@@ -21,9 +21,11 @@ import {priceHistory} from './priceHistory';
 import {SimilarListings} from './SimilarListings';
 import {HomeInternalLinks} from './HomeInternalLinks';
 import {ListingSimilarPrices} from './ListingSimilarPrices';
-import {ListingContactCard, ListingQuestions} from './ListingContact';
+import {ListingContactCard} from './ListingContact';
+import {ListingAskMora} from './ListingAskMora.jsx';
 import {sortSignal} from './resultSort';
 import './property-page.css';
+import {IconButton} from './IconButton.jsx';
 
 const ListingMap = lazy(() => import('./ListingMap'));
 const MORA_MARK = '/assets/mini-listing/mora.svg';
@@ -190,12 +192,12 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
     <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav}
       price={<>{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</>}/>
     <div className="pp-top">
-      <button className="compare-back" type="button" onClick={onClose} aria-label={say('Voltar à busca', 'Volver a la búsqueda')}><Icon name="back" size={20}/></button>
+      <IconButton icon="back" className="compare-back" onClick={onClose} label={say('Voltar à busca', 'Volver a la búsqueda')}/>
       <div className="pp-top-actions">
         <span className="pp-copied" role="status" data-visible={copied || undefined}>{copied ? say('Link copiado', 'Enlace copiado') : ''}</span>
-        <button className="compare-back" type="button" onClick={share} aria-label={say('Compartilhar', 'Compartir')}><ShareIcon/></button>
-        {onLike && <button className="compare-back pp-save" type="button" aria-pressed={isSaved} onClick={() => onLike(home)} aria-label={isSaved ? say('Salvo nos favoritos', 'Guardado en favoritos') : say('Salvar nos favoritos', 'Guardar en favoritos')}><Heart filled={isSaved}/></button>}
-        <button className="compare-back pp-hide" type="button" aria-pressed={hidden} onClick={() => onHide?.(home)} aria-label={hidden ? say('Mostrar anúncio', 'Mostrar anuncio') : say('Ocultar anúncio', 'Ocultar anuncio')}><HideIcon/></button>
+        <IconButton className="compare-back" onClick={share} label={say('Compartilhar', 'Compartir')}><ShareIcon/></IconButton>
+        {onLike && <IconButton className="compare-back pp-save" aria-pressed={isSaved} onClick={() => onLike(home)} label={isSaved ? say('Salvo nos favoritos', 'Guardado en favoritos') : say('Salvar nos favoritos', 'Guardar en favoritos')}><Heart filled={isSaved}/></IconButton>}
+        <IconButton className="compare-back pp-hide" aria-pressed={hidden} onClick={() => onHide?.(home)} label={hidden ? say('Mostrar anúncio', 'Mostrar anuncio') : say('Ocultar anúncio', 'Ocultar anuncio')}><HideIcon/></IconButton>
       </div>
     </div>
     <p className="pp-intro-crumbs">{crumbs.map((item, index) => <span key={`${item}-${index}`}>{index > 0 && <span className="pp-intro-dot" aria-hidden="true">·</span>}{item}</span>)}</p>
@@ -286,7 +288,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       </section>
 
       <section className="pp-section pp-ask-section" aria-labelledby="pp-ask-title">
-        <ListingQuestions say={say} onSend={text => openContact('message', text)}/>
+        <ListingAskMora home={home} language={language} say={say}/>
       </section>
 
       <ListingSimilarPrices home={home} money={money} compactMoney={compactMoney} currency={currency} say={say} onOpen={item => onOpenListing?.(item)}/>

@@ -2,7 +2,7 @@ import {homes, listingPrice} from './data.js';
 import {available} from './development/torreOlmo.js';
 import {normalizeCriteria, matchesCriteria, criteriaFromText} from './searchCriteria.js';
 import {PROPERTY_TYPES, OPERATIONS} from './homeSearchModel.js';
-import {addressFromPlaces, areasFromPlaces, placeCovers, resolvePlace} from './locationSearch.js';
+import {addressFromPlaces, areasFromPlaces, MAX_PLACES, placeCovers, resolvePlace} from './locationSearch.js';
 import {isFolderId} from './favoriteLists.js';
 import {isAccountId, isInviteToken} from './collaborativeLists.js';
 
@@ -76,7 +76,7 @@ export function normalizeSearch(input = {}) {
     if (source.areas.length && !selected.length) selected = [...DEFAULT_SEARCH.areas];
   } else if (source.area === ALL_AREAS) selected = [];
   else selected = [knownAreas.has(source.area) ? source.area : DEFAULT_SEARCH.area];
-  const places = Array.isArray(source.places) ? source.places.map(place => resolvePlace(place?.kind, place?.id)).filter(Boolean).filter((place, index, all) => all.findIndex(item => item.key === place.key) === index).slice(0, 12) : undefined;
+  const places = Array.isArray(source.places) ? source.places.map(place => resolvePlace(place?.kind, place?.id)).filter(Boolean).filter((place, index, all) => all.findIndex(item => item.key === place.key) === index).slice(0, MAX_PLACES) : undefined;
   if (places) selected = areasFromPlaces(places);
   return {
     mode, area:selected[0] || ALL_AREAS, areas:selected,

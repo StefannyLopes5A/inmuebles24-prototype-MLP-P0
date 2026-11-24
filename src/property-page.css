@@ -574,8 +574,8 @@
 .pp-rating-tags svg{flex:none}
 .pp-rating-tags li>span{font-size:14px;line-height:18px;font-weight:600;letter-spacing:-.15px}
 .pp-rating-tags small{color:#6a6a6a;font-size:13px;line-height:18px;letter-spacing:-.08px}
-.pp-reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.pp-review{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:24px;border-radius:24px;background:#f5f5f5}
+.pp-reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px 40px}
+.pp-review{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:0}
 .pp-review header{display:flex;align-items:center;gap:12px;min-width:0}
 .pp-review-avatar{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;background:#519451;color:#fff;font-size:14px;font-weight:600;letter-spacing:-.15px}
 .pp-review header strong{display:block;color:#222;font-size:16px;line-height:20px;font-weight:600;letter-spacing:-.31px}
@@ -711,7 +711,7 @@
 @media(max-width:900px){
   .pp-rating-row{flex-direction:column;align-items:stretch}
   .pp-rating-overall{width:100%}
-  .pp-reviews{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pp-reviews{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
 }
 @media(max-width:950px){
   .pp-layout{grid-template-columns:minmax(0,1fr)}
@@ -765,7 +765,7 @@
   .pp-hood h3{font-size:20px;line-height:24px}
   .pp-rating-score{font-size:72px;gap:8px}
   .pp-laurel{height:84px}
-  .pp-reviews{grid-template-columns:minmax(0,1fr);gap:16px}
+  .pp-reviews{grid-template-columns:minmax(0,1fr);gap:32px}
   .pp-rating-row{gap:16px}
   .pp-ask h2{font-size:18px;line-height:22px}
   .pp-ask-send{width:100%;padding-inline:16px}
@@ -836,3 +836,24 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 .pp-about-head~.pp-insight{margin-bottom:24px}
 .pp-section.pp-mora-section{padding-top:0}
 .lp-mora.is-page .lp-mora-synthesis .lp-word.is-key{font-weight:600}
+/* Questions for Mora under the listing */
+.pp-ask-mora{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:24px;align-items:start;padding:32px;border:2px solid transparent;border-radius:24px;background:linear-gradient(135deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,var(--mora-gradient) border-box}
+.pp-ask-mora-mark{display:block;margin-top:6px}
+.pp-ask-mora-main{display:flex;flex-direction:column;gap:24px;min-width:0}
+.pp-ask-mora h2{margin:0;padding-top:6px;color:#222;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.92px;text-wrap:balance}
+.pp-ask-mora-chips{display:flex;flex-wrap:wrap;gap:12px}
+.pp-ask-mora-chip{min-height:48px;padding:12px 24px;border:1px solid rgba(0,0,0,.06);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 2px 12px rgba(0,0,0,.04);color:#222;font-size:16px;line-height:24px;font-weight:600;letter-spacing:-.31px;cursor:pointer;transition:background-color 150ms ease,transform 120ms ease}
+.pp-ask-mora-chip:hover{background:rgba(255,255,255,.95)}
+.pp-ask-mora-chip:active{transform:scale(.98)}
+.pp-ask-mora-chip[aria-pressed=true]{border-color:#222}
+.pp-ask-mora-chip:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
+.pp-ask-mora-answer:empty{display:none}
+.pp-ask-mora-answer p{margin:0;color:#222;font-size:16px;line-height:24px;letter-spacing:-.31px}
+@media(max-width:700px){
+  .pp-ask-mora{grid-template-columns:1fr;row-gap:16px;padding:24px 20px}
+  .pp-ask-mora h2{padding-top:0;font-size:18px;line-height:22px}
+  .pp-ask-mora-chip{min-height:44px;padding:10px 18px;font-size:14px}
+}
+@media(prefers-reduced-transparency:reduce){.pp-ask-mora-chip{background:#fff;box-shadow:none}}
+
+.pp-section.pp-ask-section{margin-top:32px;margin-bottom:32px}

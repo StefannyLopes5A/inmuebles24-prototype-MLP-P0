@@ -61,7 +61,7 @@ function fitRows(home, match, search, say) {
   return rows;
 }
 
-const PLUS_ORDER = ['outdoor', 'remodeled', 'furnished', 'commute', 'metro', 'price', 'view', 'light', 'penthouse', 'levels', 'loft'];
+const PLUS_ORDER = ['drop', 'demand', 'outdoor', 'remodeled', 'furnished', 'commute', 'metro', 'price', 'view', 'light', 'penthouse', 'levels', 'loft'];
 const MINUS_ORDER = ['budget', 'price', 'beds', 'zone', 'unfurnished', 'work', 'missing', 'gap'];
 const MAX_ROWS = 4;
 

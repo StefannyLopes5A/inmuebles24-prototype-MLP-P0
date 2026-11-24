@@ -11,6 +11,7 @@ import {FOLDER_NAME_MAX, RECENT_ID, savedCountLabel, viewedLabel} from './favori
 import {activeMembers, isCollaborative} from './collaborativeLists';
 import {AvatarStack} from './Collaboration';
 import {EASE, EASE_OUT, riseIn} from './favoriteMotion';
+import {IconButton} from './IconButton.jsx';
 
 const homesById = new Map([...homes, ...UNIT_HOMES].map(home => [home.id, home]));
 const homesFor = ids => ids.map(id => homesById.get(id)).filter(Boolean);
@@ -181,7 +182,7 @@ export function FavoritesIndex({folders, recent, shared = {}, meId = null, sugge
   ];
   return <article className="favorites-page">
     <header className="favorites-header">
-      <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a la búsqueda', 'Voltar à busca')}><Icon name="back" size={20}/></button>
+      <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver a la búsqueda', 'Voltar à busca')}/>
       <div className="favorites-heading">
         <motion.h1 ref={title} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{say('Favoritos', 'Favoritos')}</motion.h1>
         <motion.button type="button" className="folder-chip favorites-new" onClick={() => setCreating(true)} {...riseIn(reduce, 1, 6)}>

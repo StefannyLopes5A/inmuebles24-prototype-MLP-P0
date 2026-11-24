@@ -5,6 +5,7 @@ import {Icon} from './App';
 import {EASE_FADE} from './listingPanelMotion';
 import {PhotoLightbox} from './PhotoLightbox';
 import {canMorph, morphGallery, visible} from './heroMorph';
+import {IconButton} from './IconButton.jsx';
 
 const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:not([tabindex="-1"])';
 function trap(event, container) {
@@ -58,12 +59,12 @@ export function useTour(video, src) {
 
 export function TourControls({tour, say}) {
   return <div className="pp-tour-controls">
-    <button type="button" className="compare-back pp-tour-button" onClick={tour.togglePause} aria-label={tour.paused ? say('Reproduzir tour virtual', 'Reproducir tour virtual') : say('Pausar tour virtual', 'Pausar tour virtual')}>
+    <IconButton className="compare-back pp-tour-button" onClick={tour.togglePause} label={tour.paused ? say('Reproduzir tour virtual', 'Reproducir tour virtual') : say('Pausar tour virtual', 'Pausar tour virtual')}>
       {tour.paused ? <PlayGlyph/> : <PauseGlyph/>}
-    </button>
-    <button type="button" className="compare-back pp-tour-button" onClick={tour.toggleMute} aria-pressed={!tour.muted} aria-label={tour.muted ? say('Ativar som', 'Activar sonido') : say('Desativar som', 'Silenciar')}>
+    </IconButton>
+    <IconButton className="compare-back pp-tour-button" onClick={tour.toggleMute} aria-pressed={!tour.muted} label={tour.muted ? say('Ativar som', 'Activar sonido') : say('Desativar som', 'Silenciar')}>
       <SoundGlyph muted={tour.muted}/>
-    </button>
+    </IconButton>
   </div>;
 }
 

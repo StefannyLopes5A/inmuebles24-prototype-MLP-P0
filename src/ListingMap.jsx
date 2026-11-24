@@ -9,6 +9,7 @@ import {ensurePoiLayers, PIN_BOX, POI_NEAR_SOURCE, pinUrls, revealNear} from './
 import {MapPlaceSearch, TRIP_MODES, modeIcon} from './MapPlaceSearch';
 import {poiIconUrl} from './pois';
 import {placeFromPoint} from './placeTrips';
+import {IconButton} from './IconButton.jsx';
 
 let protocolReady = false;
 function ensureProtocol() {
@@ -226,9 +227,7 @@ export default function ListingMap({center, language, say, preview = false}) {
   return <div className={`pp-map${preview ? ' is-preview' : ''}${place ? ' has-place' : ''}`}>
     <div ref={host} className="pp-map-canvas" role={preview ? undefined : 'region'} aria-hidden={preview || undefined} aria-label={preview ? undefined : say('Mapa com a localização aproximada', 'Mapa con la ubicación aproximada')}/>
     {!preview && <MapPlaceSearch center={center} language={language} say={say} place={place} mode={mode} resetKey={resetKey} onPlace={next => { setPlace(next); }} onMode={setMode} onClose={reset}/>}
-    {!preview && <button type="button" className="pp-map-reset" aria-label={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} title={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} onClick={reset}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M4 4.5v4.4h4.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-    </button>}
+    {!preview && <IconButton icon="reset" className="pp-map-reset" label={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} title={say('Redefinir busca e mapa', 'Restablecer búsqueda y mapa')} onClick={reset}/>}
     {!preview && <div className="pp-map-zoom">
       <button type="button" aria-label={say('Aproximar', 'Acercar')} onClick={() => mapRef.current?.zoomIn()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>
       <button type="button" aria-label={say('Afastar', 'Alejar')} onClick={() => mapRef.current?.zoomOut()}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg></button>

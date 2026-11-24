@@ -44,3 +44,16 @@ test('answers land in the filters; changing operation resets the budget', () => 
   const placed = normalizeSearch(applyRefineAnswer('area', refineOptions('area', open)[0].value, normalizeSearch(open)));
   assert.ok(placed.areas.length >= 1);
 });
+
+import {MAX_PLACES, togglePlaceList, placesFull, resolvePlace, suggestedLocations} from '../src/locationSearch.js';
+
+test('a search holds at most three places', () => {
+  const [a, b, c, d] = suggestedLocations(8).filter(place => place.kind === 'colonia');
+  let list = [];
+  for (const place of [a, b, c, d]) list = togglePlaceList(list, place);
+  assert.equal(MAX_PLACES, 3);
+  assert.deepEqual(list.map(place => place.key), [a, b, c].map(place => place.key));
+  assert.equal(placesFull(list, d), true);
+  assert.equal(togglePlaceList(list, a).length, 2);
+  assert.equal(normalizeSearch({places: [a, b, c, d]}).places.length, 3);
+});

@@ -35,3 +35,17 @@
   .mora-words[data-streaming] .mora-word{animation:none}
 }
 @media(forced-colors:active){.mora-thinking>span{background:none;-webkit-text-fill-color:currentColor;animation:none}}
+
+/* Mora channels: where to keep the conversation (app, WhatsApp). */
+.mora-channels{display:flex;flex-direction:column;gap:8px}
+.mora-channels-foot{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:8px}
+.mora-channels-foot p{margin:0;color:#6a6a6a;font-size:16px;line-height:24px;letter-spacing:-.31px}
+.mora-channels-links{display:flex;flex:none;gap:32px}
+.mora-channels-links button{display:inline-flex;align-items:center;gap:8px;padding:8px 0;border:0;background:none;color:#222;font-family:inherit;font-size:16px;line-height:24px;font-weight:600;letter-spacing:-.31px;cursor:pointer}
+.mora-channels-links button:hover{text-decoration:underline}
+.mora-channels-links button:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
+.mora-channels-note{margin:0;color:#6a6a6a;font-size:14px;line-height:20px}
+@media(max-width:700px){.mora-channels-foot{flex-direction:column;align-items:flex-start;gap:8px;padding-top:0}}
+/* In the search editor the channels sit under the sentence. */
+.mora-editor .mora-channels{margin:0 var(--home-page-gutter);padding:0 0 32px}
+.mora-editor .mora-channels-foot{padding-top:0}

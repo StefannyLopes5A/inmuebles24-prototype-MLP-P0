@@ -191,7 +191,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
     </div>;
   }
   return <div ref={root} className="search-flow-page home-evolution">
-    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert} cue={cue} onCue={onCue} chosen={chosen}/>
+    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert} cue={cue} onCue={onCue} homeChosen={chosen}/>
     <div className="flow-results-content" data-map-layout={layout} inert={mapFull} aria-hidden={mapFull||undefined}>
       <div className="flow-results-heading">
         <div className="flow-results-title">

@@ -35,6 +35,8 @@ import "./glass.css";
 import "./recorrido.css";
 import "./project-guide.css";
 import "./prototype-gate.css";
+import "./icon-button.css";
+import "./card-highlights.css";
 
 const finalUrl = migratePrototypeUrl(location.href);
 if (finalUrl) history.replaceState(history.state,"",finalUrl);

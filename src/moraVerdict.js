@@ -3,6 +3,7 @@ import {listingPrice} from './data.js';
 import {advertiserFor, advertiserHighlight, seed} from './listingAdvertiser.js';
 import {listingText} from './listingText.js';
 import {photoReading} from './moraInsights.js';
+import {listingHighlights} from './listingHighlights.js';
 
 const MAX_FACTS = 3;
 const MAX_SENTENCE = 150;
@@ -187,9 +188,25 @@ function priceFact(home, {facts, peers, search, short, say}, {pick}) {
   }
   if (facts.drop) {
     return {id:'price', icon:'price', polarity:'plus', weight:0.7, title:pick('drop', [[`O preço baixou ${short(facts.drop)}`, `El precio bajó ${short(facts.drop)}`], [`Já baixou ${short(facts.drop)}`, `Ya bajó ${short(facts.drop)}`], [`${short(facts.drop)} a menos que antes`, `${short(facts.drop)} menos que antes`]]), note:say(`Há ${facts.dropDays} dias`, `Hace ${facts.dropDays} días`),
-      phrase:say(`baixou ${short(facts.drop)} há ${facts.dropDays} dias`, `bajó ${short(facts.drop)} hace ${facts.dropDays} días`)};
+      phrase:say(`baixou ${short(facts.drop)} há ${facts.dropDays} dias`, `bajó ${short(facts.drop)} hace ${facts.dropDays} días`), dropOnly:true};
   }
   return {id:'fair', polarity:'fair', weight:0};
+}
+
+/** The card's highlights told in Mora's rows: a price drop and high demand both read as signals in the listing's favor. */
+function highlightFacts(home, short, say) {
+  const {drop, demand} = listingHighlights(home);
+  const facts = [];
+  if (drop) facts.push({id:'drop', icon:'trend-down', polarity:'plus', weight:1.2,
+    title:say(`Baixou ${drop.pct}% de preço`, `Bajó ${drop.pct}% de precio`),
+    note:say(`Há ${drop.days} dias, de ${short(drop.was)} para ${short(drop.price)}`, `Hace ${drop.days} días, de ${short(drop.was)} a ${short(drop.price)}`)});
+  if (demand) {
+    const times = demand.factor.toFixed(1).replace('.', ',');
+    facts.push({id:'demand', icon:'trend-up', polarity:'plus', weight:1.1,
+      title:say('Alta procura', 'Alta demanda'),
+      note:say(`${times}x mais visitas e favoritos que o bairro em ${demand.hours} h`, `${times}x más visitas y favoritos que el barrio en ${demand.hours} h`)});
+  }
+  return facts;
 }
 
 /** A search criterion the listing never mentions: one line, and the question Mora brings to the chat. */
@@ -239,7 +256,7 @@ export function listingVerdict(home, {facts, peers, search, fit, surroundings, a
   const catches = minus.slice(0, 2);
   const stance = catches.length >= 2 || catches.some(item => item.wait) ? 'wait' : catches.length ? 'but' : 'go';
   const leads = plus.slice(0, Math.max(1, MAX_FACTS - catches.length));
-  const order = ['remodeled', 'outdoor', 'penthouse', 'levels', 'loft', 'view', 'light', 'furnished', 'work', 'unfurnished', 'missing', 'around', 'gap', 'price', 'budget'];
+  const order = ['drop', 'demand', 'remodeled', 'outdoor', 'penthouse', 'levels', 'loft', 'view', 'light', 'furnished', 'work', 'unfurnished', 'missing', 'around', 'gap', 'price', 'budget'];
   const rank = item => order.indexOf(item.id);
   const shown = [...leads, ...catches].slice(0, MAX_FACTS).sort((a, b) => rank(a) - rank(b));
   const leadText = count => cap(join(leads.slice(0, count).sort((a, b) => rank(a) - rank(b)).map(item => item.phrase), and));
@@ -268,11 +285,20 @@ export function listingVerdict(home, {facts, peers, search, fit, surroundings, a
   const counts = Array.from({length:leads.length + 1}, (_, i) => leads.length - i);
   const tries = [...replies.filter(Boolean).flatMap(reply => counts.filter(count => count >= Math.min(1, leads.length)).map(count => [count, reply])), ...counts.map(count => [count, 0])];
   const sentence = tries.map(([count, reply]) => build(count, reply)).find(text => text.length <= MAX_SENTENCE) || build(0, false);
+  // The card's pills come first: a listing that shows one there says it here too. The drop replaces the price line that only said so.
+  const highlights = highlightFacts(home, short, say);
+  const hasDrop = highlights.some(item => item.id === 'drop');
+  const redundant = item => hasDrop && item.dropOnly;
+  const pick = ({id, icon, title, note, polarity, photo}) => ({id, icon, title, note, polarity, photo});
+  // The catches that set the stance stay; the highlights take the next slots, then whatever else was shown.
+  const kept = shown.filter(item => !redundant(item));
+  const cards = [...kept.filter(item => item.polarity === 'minus'), ...highlights, ...kept.filter(item => item.polarity !== 'minus')]
+    .slice(0, MAX_FACTS).sort((a, b) => rank(a) - rank(b));
   return {
     stance,
     sentence,
-    facts:shown.map(({id, icon, title, note, polarity}) => ({id, icon, title, note, polarity})),
-    candidates:byWeight(all).map(({id, icon, title, note, polarity, photo}) => ({id, icon, title, note, polarity, photo})),
+    facts:cards.map(({id, icon, title, note, polarity}) => ({id, icon, title, note, polarity})),
+    candidates:[...highlights, ...byWeight(all).filter(item => !redundant(item))].map(pick),
     question:attention?.action?.question || null,
   };
 }

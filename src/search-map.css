@@ -139,3 +139,6 @@ html[data-map-mode=full]{overflow:hidden}
   .map-shell[data-mode=mini],.map-shell[data-mode=mini]:has(.map-mini-trigger:hover),.map-shell[data-mode=mini]:has(.map-mini-trigger:focus-visible),.map-shell[data-tuck=true]{transform:none;transition:none}
 }
 @keyframes map-fade-in{from{opacity:0}to{opacity:1}}
+
+/* While the Mora editor is open, the floating map steps aside. */
+.search-flow-page:has(.mora-bar:is([data-view="edit"],[data-view="input"])) .map-shell[data-mode="mini"]{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 150ms ease,visibility 0s linear 150ms}

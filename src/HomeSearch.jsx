@@ -9,7 +9,7 @@ import {createHomeIntro, homeIntroFrame} from './homeIntro.js';
 import {playMenu, playSelection} from './homeMotion.js';
 import {CRITERIA, composeHomeDraft, criterionLabel, describeHomeQuery, homePhraseItems, homePhraseSegments, homeTypedArticle, releaseHomeTokenBefore, replaceHomePhraseItem, spliceHomeQuery, updateSearchNote} from './searchCriteria.js';
 import {patchHomeQueryForChip, patchHomeQueryForCriterion, patchHomeQueryForPlace, tidyBudgetCurrency} from './homeQuerySync.js';
-import {addressFromPlaces, areasFromPlaces, combinePlaces, searchLocations, suggestedLocations, visiblePlaces} from './locationSearch.js';
+import {addressFromPlaces, areasFromPlaces, combinePlaces, placesFull, searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch.js';
 import {LocationMenu} from './LocationMenu.jsx';
 import {HOME_COMPOSER_DEPART_MS} from './searchFlowMotion.js';
 import {homeQuerySuggestions, useTypingSuggest} from './homeQuerySuggest.js';
@@ -117,10 +117,10 @@ function StepButton({plus, disabled, label, onClick}) {
 }
 
 function placeSummary(places, view, t) {
-  if (places.length > 1) return `${places[0].label} +${places.length - 1}`;
+  if (places.length > 1) return 'Multilocation';
   if (places.length === 1) return places[0].label;
   if (view.address && !view.areas?.length) return view.address;
-  if (view.areas?.length > 1) return `${view.area} +${view.areas.length - 1}`;
+  if (view.areas?.length > 1) return 'Multilocation';
   if (!view.areas?.length || view.area === 'Ambas zonas') return t('Ciudad de México');
   return view.area;
 }
@@ -738,11 +738,8 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     if (layout === 'original') {
       const places = visiblePlaces(originalDraft);
       const active = places.some(item => item.key === place.key);
-      const next = active
-        ? places.filter(item => item.key !== place.key)
-        : place.kind === 'city' || place.kind === 'state'
-          ? [place]
-          : [...places.filter(item => item.kind !== 'city' && item.kind !== 'state'), place];
+      const next = togglePlaceList(places, place);
+      if (next === places) return;
       const nextAreas = areasFromPlaces(next);
       setOriginalDraft({...originalDraft, places:next, areas:nextAreas, area:nextAreas[0] || 'Ambas zonas', address:addressFromPlaces(next)});
       setOriginalChosen(current => {
@@ -757,6 +754,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     }
     const current = variant === 'home' ? placeList : visiblePlaces(search);
     const active = current.some(item => item.key === place.key);
+    if (!active && placesFull(current, place) && !(composer && (menuAnchor.current?.dataset.searchKey || '').startsWith('place:'))) return;
     const editing = menuAnchor.current?.dataset.searchKey || '';
     if (composer && editing.startsWith('place:') && editing !== `place:${place.key}`) {
       const previousKey = editing.slice('place:'.length);
@@ -785,11 +783,8 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       onChoose('area');
       return;
     }
-    const next = active
-      ? current.filter(item => item.key !== place.key)
-      : place.kind === 'city' || place.kind === 'state'
-        ? [place]
-        : [...current.filter(item => item.kind !== 'city' && item.kind !== 'state'), place];
+    const next = togglePlaceList(current, place);
+    if (next === current) return;
     setSearch({...search, places:next});
     onChoose('area');
   }

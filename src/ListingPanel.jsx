@@ -20,6 +20,7 @@ import {PanelContext, hasContext} from './PanelContext';
 import {CHECK_PATH, ChatTurn, MoraComposer, crossfade, placeOf, replyLine, typing, useMoraThread} from './moraChat';
 import {developmentFacts, developmentKind} from './development/listingFacts';
 import {UNITS, available} from './development/torreOlmo';
+import {IconButton} from './IconButton.jsx';
 import {
   CARD_RADIUS, CONTENT_DELAY, CONTENT_OUT, DISMISS_VELOCITY, EASE_FADE, FOCUS_DELAY, SHEET_DETENTS, SPRING_MORPH, SPRING_SHEET, SPRING_SIZE,
   cornerCss, insetWithin, lerpCorners, lerpRect, panelPlacement, readCorners, relativeRect, safeTop, scrollDelta,
@@ -927,10 +928,10 @@ export function ListingPanel({home, origin, search, pref, hasSearch = true, favo
       </div>
       <div className="lp-controls">
         {(previous || next) && <>
-          <button type="button" className="lp-control is-prev" disabled={!previous} onClick={() => go(previous)} aria-label={copy.say('Imóvel anterior', 'Inmueble anterior')}><Icon name="arrow" size={16}/></button>
-          <button type="button" className="lp-control is-next" disabled={!next} onClick={() => go(next)} aria-label={copy.say('Próximo imóvel', 'Inmueble siguiente')}><Icon name="arrow" size={16}/></button>
+          <IconButton icon="arrow" className="lp-control is-prev" disabled={!previous} onClick={() => go(previous)} label={copy.say('Imóvel anterior', 'Inmueble anterior')}/>
+          <IconButton icon="arrow" className="lp-control is-next" disabled={!next} onClick={() => go(next)} label={copy.say('Próximo imóvel', 'Inmueble siguiente')}/>
         </>}
-        <button ref={closeButton} type="button" className="lp-control is-close" onClick={onClose} aria-label={copy.say('Fechar', 'Cerrar')}><img src={asset('close')} alt=""/></button>
+        <IconButton ref={closeButton} icon="close" className="lp-control is-close" onClick={onClose} label={copy.say('Fechar', 'Cerrar')}/>
       </div>
     </div>
   </>, document.body);

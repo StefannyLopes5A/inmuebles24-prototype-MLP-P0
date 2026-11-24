@@ -4,6 +4,7 @@ import {Icon} from './App';
 import {contactMessage, contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow.js';
 import {ContactStage, ContactWho, Toggle} from './ListingPanel';
 import {markVisit} from './seekerSignals.js';
+import {IconButton} from './IconButton.jsx';
 
 const MORPH = {type:'spring', duration:0.45, bounce:0.1};
 const EASE = [0.2, 0.8, 0.2, 1];
@@ -78,7 +79,7 @@ function Contact({home, advertiser, search, language, intent, question, profile,
   const fieldErrors = ['name', 'phone'].filter(name => errors[name]);
 
   return <div ref={root} className="pp-contact" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); onClose(); } }}>
-    <div className="pp-contact-top"><button type="button" className="compare-back pp-contact-close" onClick={onClose} aria-label={say('Fechar contato', 'Cerrar contacto')}><Icon name="close" size={18}/></button></div>
+    <div className="pp-contact-top"><IconButton icon="close" className="compare-back pp-contact-close" onClick={onClose} label={say('Fechar contato', 'Cerrar contacto')}/></div>
     <ContactStage home={home} advertiser={advertiser} copy={{say, language}} reduce={reduce} sent={!!sent} visit={intent === 'visit'} reviews={false}>
       <form className="pp-contact-form" noValidate onSubmit={submit}>
         <div className="pp-contact-intents" role="group" aria-label={say('O que você quer fazer', 'Qué quieres hacer')}>

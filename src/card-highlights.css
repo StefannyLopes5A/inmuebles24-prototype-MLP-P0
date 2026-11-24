@@ -1,0 +1,31 @@
+/* Result card highlights: price-drop and high-demand pills, Mora's tooltips and the SEO line (Figma 13106:21120, 13106:20661, 13099:643053). */
+.discovery-open{text-align:left}
+.discovery-price-row{display:flex;align-items:center;gap:8px;min-width:0}
+.discovery-seo{display:block;padding-top:16px;color:#575763;font-size:12px;line-height:16.8px;text-align:left;text-transform:none;white-space:normal}
+.discovery-seo+.discovery-meta{padding-top:8px}
+.discovery-pill{position:relative;display:inline-flex;align-items:center;gap:4px;flex:none;box-sizing:border-box;padding:4px 12px;overflow:hidden;border:1px solid transparent;border-radius:24px;color:#111;font-size:12px;line-height:14px;font-weight:600;letter-spacing:.06px;text-shadow:none;white-space:nowrap}
+/* The photo's copy block ignores the pointer, so the pill opts back in to be hoverable. */
+.discovery-pill{pointer-events:auto}
+.discovery-pill>svg{flex:none;color:#07358f}
+.discovery-pill>*{position:relative;z-index:1}
+.discovery-pill.is-drop{background:linear-gradient(90deg,#f5f5fb,#f7ecee) padding-box,var(--mora-gradient) border-box}
+.discovery-pill.is-demand{display:flex;width:fit-content;margin-top:8px;background:linear-gradient(#fff,#fff) padding-box,var(--mora-gradient) border-box}
+.discovery-pill-label{--sweep-base:#111;color:#111;background-image:linear-gradient(90deg,var(--sweep-base) 30%,var(--motion-orange,#ff553b) 42%,var(--motion-blue,#07358f) 58%,var(--sweep-base) 70%);background-size:350% 100%;background-position:100% 50%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.discovery-card:is(:hover,:focus-within) .discovery-pill-label{animation:discovery-pill-text 1.8s cubic-bezier(.4,0,.2,1) 1 forwards}
+@keyframes discovery-pill-text{0%{background-position:100% 50%}60%,100%{background-position:0% 50%}}
+/* Mora's tooltip: white capsule with the Mora mark; the drop one sits over the photo's price row, the demand one over the details. */
+.discovery-tips{position:absolute;top:0;left:0;right:0;z-index:6;aspect-ratio:1;pointer-events:none}
+.discovery-tip{position:absolute;z-index:6;display:flex;align-items:center;gap:16px;box-sizing:border-box;left:12px;right:12px;padding:10px 16px;border:1px solid #d6d6d6;border-radius:999px;background:#fff;box-shadow:0 1px 1px #0000001a,0 6px 8px #00000024;color:#111;font-size:11px;line-height:14.3px;font-weight:500;letter-spacing:.06px;text-align:left;opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity 150ms ease,transform 150ms ease}
+.discovery-tip>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.discovery-tip>img{flex:none;width:24px;height:24px}
+.discovery-tip b{font-weight:700}
+.discovery-tip[data-kind=drop]{bottom:60px}
+.discovery-card>.discovery-tip[data-kind=demand]{bottom:34px}
+/* Hover tooltips are for a mouse; on touch the tap shows a toast instead. */
+@media(hover:hover) and (pointer:fine){
+.discovery-pill{cursor:pointer}
+.discovery-card:has(.discovery-pill[data-kind=drop]:hover) .discovery-tip[data-kind=drop],
+.discovery-card:has(.discovery-pill[data-kind=demand]:hover) .discovery-tip[data-kind=demand]{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){.discovery-card:is(:hover,:focus-within) .discovery-pill-label{animation:none}.discovery-tip{transition:none;transform:none}}
+@media(forced-colors:active){.discovery-pill{border-color:CanvasText}.discovery-pill-label{-webkit-text-fill-color:currentColor;background:none}.discovery-tip{border-color:CanvasText;background:Canvas}}

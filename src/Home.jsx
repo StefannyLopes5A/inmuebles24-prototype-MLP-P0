@@ -25,7 +25,8 @@ import {installHomeMotion} from './homeMotion.js';
 import {PropertyPreview, previewPhotoProps, usePropertyPreview} from './ideaPreview.jsx';
 import {useHoverIntent} from './listingPreload';
 import {listingCardTags} from './listingCardTags';
-import {ListingAgencyLogo, ListingTagList} from './ListingCardChrome';
+import {HighlightPill, HighlightTip, ListingAgencyLogo, ListingTagList} from './ListingCardChrome';
+import {highlightCopy, listingHighlights, listingSeo} from './listingHighlights.js';
 import {developmentFacts, developmentKind} from './development/listingFacts';
 
 const asset = name => `/assets/figma-home/${name}`;
@@ -223,23 +224,27 @@ function ListingPhotos({home}) {
   return <span className="discovery-slides">{photos.map((src, index) => <img className="discovery-slide" key={src} src={src} alt={index ? '' : home.imageAlt} loading="lazy"/>)}</span>;
 }
 
-export function RailListingCopy({home:h, videoRef}) {
+export function RailListingCopy({home:h, videoRef, detailed=false}) {
   const {t,language,money,currency}=useLanguage();
   const say=(br,es)=>language==='pt-BR'?br:es;
   const advertiser=advertiserFor(h);
   const kind=h.development?[developmentKind(language)]:[t(h.mode==='buy'?'Venta':'Renta'),t('Departamento')];
   const facts=h.development?developmentFacts(language):[t(areaLabel(h)),roomCount(h.beds,language),bathCount(h.baths,language)];
+  const copy=detailed?highlightCopy(listingHighlights(h),{say,money}):{};
   const dotted=items=>items.flatMap((item,index)=>index?[<span key={`dot-${index}`} className="discovery-separator" aria-hidden="true">•</span>,<span key={item}>{item}</span>]:[<span key={item}>{item}</span>]);
   return <>
-    <span className={"discovery-media"+(h.video?" has-video":"")+(h.development?" is-development":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong></span></span>
+    <span className={"discovery-media"+(h.video?" has-video":"")+(h.development?" is-development":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><span className="discovery-price-row"><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong>{copy.drop&&<HighlightPill kind="drop" copy={copy.drop}/>}</span></span></span>
+    {detailed&&<span className="discovery-seo">{listingSeo(h,language)}</span>}
     <span className="discovery-meta"><span className="discovery-meta-copy"><b title={`${h.street} · ${h.area}`}>{h.street} · {h.area}</b><span className="discovery-facts">{dotted(facts)}</span></span><ListingAgencyLogo home={h} say={say} alt={h.brokerLogo?h.broker:(advertiser.logo?advertiser.name:'')}/></span>
+    {copy.demand&&<HighlightPill kind="demand" copy={copy.demand}/>}
   </>;
 }
 
 export function HouseCard({home, saved, onLike, onOpen, contacted=false, search, pref='none', signal=null}) {
-  const {t,language}=useLanguage();
+  const {t,language,money}=useLanguage();
   const videoRef=useRef(null);
   const tags=useMemo(()=>listingCardTags(home,{search,pref,language,contacted,signal}),[home,search,pref,language,contacted,signal]);
+  const highlights=useMemo(()=>highlightCopy(listingHighlights(home),{say:(br,es)=>language==='pt-BR'?br:es,money}),[home,language,money]);
   const intent=useHoverIntent(home);
   const videoDelay=useRef(null);
   useEffect(()=>()=>clearTimeout(videoDelay.current),[]);
@@ -259,7 +264,11 @@ export function HouseCard({home, saved, onLike, onOpen, contacted=false, search,
   }
   return <article className="discovery-item" data-listing-id={home.listingId} data-home-id={home.id}>
     <div className="discovery-card" onPointerEnter={event=>{playVideo(event);intent.onPointerEnter(event);}} onPointerLeave={event=>{intent.onPointerLeave();if (event.pointerType!=='touch') stopVideo();}} onFocus={()=>{playVideo();intent.onFocus();}} onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) stopVideo();}}>
-      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef}/></button>
+      <button className="discovery-open" onClick={e=>onOpen(home,e)} aria-label={t('Explorar ')+home.street}><RailListingCopy home={home} videoRef={videoRef} detailed/></button>
+      {(highlights.drop||highlights.demand)&&<>
+        {highlights.drop&&<span className="discovery-tips" aria-hidden="true"><HighlightTip kind="drop" copy={highlights.drop}/></span>}
+        {highlights.demand&&<HighlightTip kind="demand" copy={highlights.demand}/>}
+      </>}
       {(tags.length>0||contacted)&&<span className="discovery-tags">
         {contacted&&<span className="discovery-tag is-contacted"><Icon name="check" size={12}/>{language==='pt-BR'?'Contato enviado':'Contacto enviado'}</span>}
         <ListingTagList tags={tags}/>

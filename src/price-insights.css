@@ -251,7 +251,7 @@ button.price-insights-area-name:hover{color:#f50}
 .search-faq-card:focus-visible{outline:2px solid #222;outline-offset:4px;border-radius:28px}
 .search-faq-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 680ms cubic-bezier(.45,.05,.2,1)}
 .search-faq-card.is-flipped .search-faq-inner{transform:rotateY(180deg)}
-.search-faq-face{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(#f5f5f5,#f5f5f5) padding-box,var(--mora-gradient) border-box;box-shadow:0 4px 16px #334d991f;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.search-faq-face{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(135deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,var(--mora-gradient) border-box;box-shadow:0 4px 16px #334d991f;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .search-faq-back{transform:rotateY(180deg)}
 .search-faq-copy{display:flex;flex-direction:column;gap:16px;min-height:0;overflow:auto}
 .search-faq-question{font-size:20px;line-height:normal;font-weight:600;color:#000;text-wrap:balance}

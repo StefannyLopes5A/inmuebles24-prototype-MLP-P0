@@ -11,6 +11,7 @@ import {FOLDER_NAME_MAX, cleanFolderName, savedCountLabel} from './favoriteLists
 import {BOARD_STAGES, cleanGuestEmail, stageName} from './boardModel';
 import {NOTE_MAX, activeMembers, can, isCollaborative, notesFor, reactionsFor} from './collaborativeLists';
 import {EASE_OUT, riseIn} from './favoriteMotion';
+import {IconButton} from './IconButton.jsx';
 
 const MoreIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>;
 const ShareIcon = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>;
@@ -42,8 +43,8 @@ function FolderMenu({items, menuClass = ''}) {
   if (!items.length) return null;
   const hidden = reduce ? {opacity:0} : {opacity:0, transform:'scale(0.95)'};
   return <div className="folder-menu-root" ref={root}>
-    <button ref={trigger} type="button" className="compare-back folder-menu-trigger" aria-haspopup="menu" aria-expanded={open} aria-controls={open ? menuId : undefined}
-      aria-label={say('Opciones de la lista', 'Opções da lista')} onClick={() => setOpen(value => !value)}><MoreIcon/></button>
+    <IconButton ref={trigger} className="compare-back folder-menu-trigger" aria-haspopup="menu" aria-expanded={open} aria-controls={open ? menuId : undefined}
+      label={say('Opciones de la lista', 'Opções da lista')} onClick={() => setOpen(value => !value)}><MoreIcon/></IconButton>
     <AnimatePresence>
       {open && <motion.div ref={menu} id={menuId} role="menu" className={`account-menu folder-menu${menuClass ? ` ${menuClass}` : ''}`} onKeyDown={onKeyDown}
         initial={hidden} animate={{opacity:1, transform:'scale(1)'}} exit={hidden} transition={{duration:reduce ? 0.15 : 0.18, ease:EASE_OUT}}>
@@ -276,7 +277,7 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
 
   const header = mode === 'member'
     ? <header className="favorites-header folder-page-header board-header">
-      <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a favoritos', 'Voltar para favoritos')}><Icon name="back" size={20}/></button>
+      <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver a favoritos', 'Voltar para favoritos')}/>
       <div className="board-title-row">
         <motion.h1 ref={heading} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{name || say('Lista de favoritos', 'Lista de favoritos')}</motion.h1>
         <div className="board-views" role="group" aria-label={say('Vista de la lista', 'Visualização da lista')}>
@@ -290,13 +291,13 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
           {board.guests.slice(0, 2).map(guest => <MemberAvatar key={guest.email} name={guest.email.split('@')[0]} size={36}/>)}
           <span className="board-people-plus" aria-hidden="true">+</span>
         </button>
-        <button type="button" className="board-icon compare-back" onClick={onShare} aria-label={say('Compartir enlace de la vista', 'Compartilhar link da visualização')}><ShareIcon/></button>
+        <IconButton className="board-icon compare-back" onClick={onShare} label={say('Compartir enlace de la vista', 'Compartilhar link da visualização')}><ShareIcon/></IconButton>
         <FolderMenu items={items} menuClass="board-menu"/>
       </div>
     </header>
     : <header className="favorites-header folder-page-header">
     <div className="folder-page-top">
-      <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver a favoritos', 'Voltar para favoritos')}><Icon name="back" size={20}/></button>
+      <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver a favoritos', 'Voltar para favoritos')}/>
       {mode === 'member' && <FolderMenu items={items}/>}
     </div>
     <motion.div {...riseIn(reduce, 0, 6)}>

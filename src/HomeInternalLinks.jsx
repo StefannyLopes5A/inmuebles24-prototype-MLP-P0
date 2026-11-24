@@ -30,6 +30,8 @@ const GROUPS = [
 ];
 
 const LINKS_PER_GROUP = 18;
+/** 3D illustrations for the pills of the related searches (Figma 13053:13292). */
+const PILL_IMAGE = {traits: '/assets/internal-links/features-bed.jpg', amenities: '/assets/internal-links/amenities-pool.jpg', nearby: '/assets/internal-links/nearby-neighborhood.jpg'};
 
 export function HomeInternalLinks({search, onSearch, onIntroDone, onChoose, onOpen, variant = 'home'}) {
   const {language, t} = useLanguage();
@@ -115,7 +117,7 @@ function ResultsLinks({related, search, onSearch, onOpen, say, pt}) {
 
   return <LinkTabs id="results-links-title" className="is-results" title={say('Buscas relacionadas', 'Búsquedas relacionadas')}
     subtitle={say(`Encontre ${noun} ${operation} por categorias`, `Encuentra ${noun} ${operation} por categorías`)}
-    groups={columns.map(group => ({...group, items: group.items.map(item => ({...item, onClick: () => apply(item.changes)}))}))}/>;
+    groups={columns.map(group => ({...group, image: PILL_IMAGE[group.id], items: group.items.map(item => ({...item, onClick: () => apply(item.changes)}))}))}/>;
 }
 
 /** Section from Figma 13043:12944: heading with arrows, one pill per group, and the selected group's links in a grid. */
@@ -134,7 +136,7 @@ function LinkTabs({id, className = '', title, subtitle, groups}) {
       onMove={direction => setIndex(Math.max(0, Math.min(groups.length - 1, at + direction)))}/>
     <div className="home-links-tabs" role="group" aria-label={title}>
       {groups.map((item, position) => <button key={item.id} type="button" className="home-pill home-city-tab"
-        aria-pressed={position === at} onClick={() => setIndex(position)}>{item.title}</button>)}
+        aria-pressed={position === at} onClick={() => setIndex(position)}>{item.image && <img className="home-city-tab-image" src={item.image} alt="" width="40" height="40" loading="lazy"/>}{item.title}</button>)}
     </div>
     <ul className="home-links-grid" key={group.id}>
       {group.items.map(item => <li key={item.id}>

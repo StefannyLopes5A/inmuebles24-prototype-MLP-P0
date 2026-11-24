@@ -3,6 +3,7 @@ import {matchingHomes, normalizeSearch} from './journey.js';
 import {propertyPhoto} from './data';
 import {useLanguage} from './i18n';
 import {savedSearchChips, savedSearchMeta, savedSearchTitle} from './savedSearches.js';
+import {IconButton} from './IconButton.jsx';
 
 export function SavedSearches({entries, onOpen, onRemove, onBack}) {
   const {language, money, currency} = useLanguage();
@@ -24,7 +25,7 @@ export function SavedSearches({entries, onOpen, onRemove, onBack}) {
   });
   return <article className="saved-searches">
     <header className="saved-searches-header">
-      <button className="compare-back" type="button" onClick={onBack} aria-label={say('Volver', 'Voltar')}><img src="/assets/saved-searches/back.svg" alt=""/></button>
+      <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver', 'Voltar')}/>
       <h1 ref={title} tabIndex={-1}>{say('Búsquedas guardadas', 'Buscas salvas')}</h1>
     </header>
     {cards.length ? <ul className="saved-searches-grid">

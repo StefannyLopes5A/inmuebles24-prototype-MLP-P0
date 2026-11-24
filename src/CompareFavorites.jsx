@@ -11,6 +11,7 @@ import {contactRecipient, contactValidation, createContactReceipt, normalizeCont
 import {EASE, EASE_IN_OUT, EASE_OUT, riseIn, useMediaQuery} from './favoriteMotion';
 import {SOFT_MOTION} from './homeIntro.js';
 import {markVisit} from './seekerSignals.js';
+import {IconButton} from './IconButton.jsx';
 
 const MAX_COLUMNS = 5;
 const COMPARING_MS = 600, SEND_MS = 2500, MORPH_MS = 280, SWEEP_MS = 600;
@@ -420,9 +421,7 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
   return <article className="compare-page" ref={page}>
     <header className="compare-page-header">
       <div className="compare-page-heading">
-        <button className="compare-back" type="button" onClick={onClose} aria-label={backLabel || say('Voltar para favoritos', 'Volver a favoritos')}>
-          <Icon name="back" size={20}/>
-        </button>
+        <IconButton icon="back" className="compare-back" onClick={onClose} label={backLabel || say('Voltar para favoritos', 'Volver a favoritos')}/>
         <div className={onBoard ? 'compare-title-row' : undefined}>
           <motion.div {...riseIn(reduce, 0, 6)}>
             <h1 ref={heading} tabIndex={-1}>{count ? say('Compare seus favoritos', 'Compara tus favoritos') : folderName}</h1>

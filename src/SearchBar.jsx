@@ -7,7 +7,7 @@ import {PROPERTY_TYPES,OPERATIONS,foldSearchText} from './homeSearchModel';
 import {CRITERIA,interpretSmartInput,smartDetailTokens,criterionLabel} from './searchCriteria';
 import {areas,homes,listingPrice,propertyPhoto} from './data';
 import {expansionOptions,addArea,matchingHomes} from './journey';
-import {searchLocations, suggestedLocations, visiblePlaces} from './locationSearch';
+import {searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch';
 import {LocationMenu} from './LocationMenu.jsx';
 import {MARKET_TOPICS,marketAnswer,marketQuestion,marketTopic} from './marketAnswers.js';
 import {readSeeker,writeSeeker} from './seekerSignals.js';
@@ -15,9 +15,11 @@ import {useLanguage,DEMO_MXN_PER_USD} from './i18n';
 import {measureBar,animateBar} from './searchFlowMotion';
 import {useReducedMotion} from 'motion/react';
 import {MoraSignature,MoraWords,wordCount} from './MoraVoice';
-import {nextRefineStep,isTooOpen,refineOptions,applyRefineAnswer} from './refineSteps.js';
+import {nextRefineStep,isTooOpen,refineOptions,applyRefineAnswer,specifiedSteps} from './refineSteps.js';
+import {hasChosenLocation} from './homeSearchModel';
+import {IconButton} from './IconButton.jsx';
+import {MoraChannels} from './MoraChannels.jsx';
 
-const chosen={mode:true,propertyType:true,beds:true,area:true,budget:true};
 const noop=()=>{};
 const asset=name=>`/assets/search-flow/${name}.svg`;
 const Chevron=()=> <img className="mora-chevron" src={asset('chevron')} alt=""/>;
@@ -48,14 +50,14 @@ function MoraMessage({headline,detail,note}) {
   </div>;
 }
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue,chosen={}}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue,homeChosen={}}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[filterMenu,setFilterMenu]=useState(null),[allFilters,setAllFilters]=useState(false);
   const [focused,setFocused]=useState(false),[message,setMessage]=useState('');
   const [filterEdges,setFilterEdges]=useState({start:true,end:true}),[filterPoint,setFilterPoint]=useState({start:false,end:false}),[locationTerm,setLocationTerm]=useState('');
   const [sentenceIntro,setSentenceIntro]=useState(false),[missingStreet,setMissingStreet]=useState('');
-  const [refineStep,setRefineStep]=useState(null),refineDone=useRef(new Set()),refineAsked=useRef(false),refineGuide=useRef(false);
+  const [touched,setTouched]=useState(()=>new Set()),[refineStep,setRefineStep]=useState(null),refineDone=useRef(new Set()),refineAsked=useRef(false),refineGuide=useRef(false);
   const bar=useRef(null),scroll=useRef(null),filterAnchor=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
   const current=useRef({search,view,draft,blocked,proactive});current.current={search,view,draft,blocked:blocked||allFilters,proactive};
   const prompted=useRef({region:false,work:false,moment:readSeeker().asked}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
@@ -142,8 +144,8 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     apply({...current.current.search,places:places.filter(item=>item.key!==place.key)});
   }
   function choosePlace(place) {
-    const active=places.some(item=>item.key===place.key);
-    const next=active?places.filter(item=>item.key!==place.key):place.kind==='city'||place.kind==='state'?[place]:[...places.filter(item=>item.kind!=='city'&&item.kind!=='state'),place];
+    const next=togglePlaceList(places,place);
+    if(next===places)return;
     apply({...current.current.search,places:next});
     closeFilterMenu(true);
   }
@@ -282,9 +284,9 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     const timer=setTimeout(()=>{
       const state=current.current;
       if(refineAsked.current||!state.proactive||state.view!=='collapsed'||state.blocked||pendingWork.current||document.hidden||document.querySelector('dialog[open]'))return;
-      if(!isTooOpen(state.search,chosen))return;
+      if(!isTooOpen(state.search,homeChosen))return;
       refineAsked.current=true;prompted.current.region=true;
-      setRefineStep(nextRefineStep(state.search,chosen,refineDone.current));transition('refine');
+      setRefineStep(nextRefineStep(state.search,homeChosen,refineDone.current));transition('refine');
     },900);
     return()=>clearTimeout(timer);
   },[]);
@@ -328,11 +330,15 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     refineDone.current.add(step);
     const next=applyRefineAnswer(step,value,current.current.search);
     apply(next);
-    const following=nextRefineStep(next,refineGuide.current?{}:chosen,refineDone.current);
+    const following=nextRefineStep(next,refineGuide.current?{}:homeChosen,refineDone.current);
     if(following){before.current=measureBar(bar.current);setRefineStep(following);}else collapse();
   }
   function chooseCredit(credit) {if(credit)writeSeeker({credit});collapse();}
   function askMarket(topic) {setQuestion(marketQuestion(topic,language));transition('answer');}
+  // A filter reads as active only while it holds a choice: cleared or never chosen, it stays pale in the editor sentence.
+  const known=specifiedSteps(search,homeChosen,new Set([...refineDone.current,...touched]));
+  const editorChoices={mode:known.mode,propertyType:known.propertyType,beds:known.beds,budget:known.budget,area:hasChosenLocation(search)};
+  const markTouched=key=>setTouched(current=>current.has(key)?current:new Set(current).add(key));
   const isEditor=view==='edit'||view==='input';
   const market=view==='answer'?marketTopic(question):null;
   const marketReply=market?marketAnswer(market,{mode:search.mode,price:search.budget,language}):null;
@@ -349,12 +355,13 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
         </div>{!filterEdges.start&&<button type="button" className={`mora-filter-nav is-prev${filterPoint.start?' is-shown':''}`} aria-label={say('Ver filtros anteriores','Ver filtros anteriores')} onClick={()=>revealFilters(-1)}><Chevron/></button>}{!filterEdges.end&&<button type="button" className={`mora-filter-nav is-next${filterPoint.end?' is-shown':''}`} aria-label={say('Ver mais filtros','Ver más filtros')} onClick={()=>revealFilters(1)}><Chevron/></button>}</div><button className="mora-more" onClick={()=>setAllFilters(true)}><img src={asset('tune')} alt=""/>{say('Mais filtros','Más filtros')}</button></div>
         {alert&&<button className={`btn-secondary mora-save ${alert.on?'is-on':''}`} aria-pressed={alert.on} onClick={alert.onToggle}>{alert.on?say('Busca salva','Búsqueda guardada'):say('Salvar busca','Guardar búsqueda')}</button>}
       </div>:<div className={`mora-expanded ${isEditor?'mora-editor':'mora-conversation'}`}>
-        <button className="mora-close" aria-label={say('Recolher barra de busca','Contraer barra de búsqueda')} onClick={event=>collapse(event.detail>0)}><img src={asset('close')} alt=""/></button>
+        <IconButton icon="close" className="mora-close" label={say('Recolher barra de busca','Contraer barra de búsqueda')} onClick={event=>collapse(event.detail>0)}/>
         {isEditor?<>
-          <HomeSearch variant="results" search={search} setSearch={apply} choices={chosen} onChoose={noop} skipIntro={!sentenceIntro} onIntroDone={sentenceReady} onSubmit={()=>process(draft,true)} openRequest={menuRequest}
+          <HomeSearch variant="results" search={search} setSearch={apply} choices={editorChoices} onChoose={markTouched} skipIntro={!sentenceIntro} onIntroDone={sentenceReady} onSubmit={()=>process(draft,true)} openRequest={menuRequest}
             extraContent={(search.criteria||[]).map(id=><button key={id} className="home-word-control is-chosen mora-extra-term" data-search-key={`criterion:${id}`} onClick={()=>removeCriterion(id)} aria-label={`${say('Remover','Quitar')} ${criterionLabel(id,language)}`}>{criterionLabel(id,language).toLowerCase()}<Icon name="close" size={24}/></button>)}
             detailContent={<SearchDetails value={draft} onChange={setDraft} language={language} placeholder={say('Digite para tirar dúvidas ou alterar a busca...','Escribe para resolver dudas o cambiar tu búsqueda...')} mobilePlaceholder={say('O que você procura ou quer saber?','¿Qué buscas o quieres saber?')} label={say('Pergunte ou altere sua busca','Pregunta o cambia tu búsqueda')} onSubmit={text=>process(text,true)} onSettle={text=>process(text,isCustomDraft(text))} settleDelay={text=>isCustomDraft(text)?1400:650} onFocus={()=>setFocused(true)} autoFocus={view==='input'} tokenMatcher={tokenMatcher}/>}/>
           <span className="sr-only" role="status">{message}</span>
+          <MoraChannels say={say}/>
         </>:<>
           {marketReply?<MoraMessage key={view+question} headline={marketReply.headline} detail={marketReply.detail} note={marketReply.note}/>
           :view==='moment'?<MoraMessage key={view} headline={say('Quer se mudar logo ou ainda está olhando?','¿Quieres mudarte pronto o todavía estás viendo?')} detail={say('Assim a imobiliária sabe como te atender. Não muda seus filtros.','Así la inmobiliaria sabe cómo atenderte. No cambia tus filtros.')}/>

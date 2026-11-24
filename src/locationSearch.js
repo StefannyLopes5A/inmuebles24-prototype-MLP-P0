@@ -204,6 +204,20 @@ export function placesInText(text) {
   return placeHits(text).map(hit => hit.place);
 }
 
+/** A search can hold at most this many places at once. */
+export const MAX_PLACES = 3;
+const isBroad = place => place.kind === 'city' || place.kind === 'state';
+/** True when adding this place would go past the limit; a city or state replaces the rest, so it always fits. */
+export const placesFull = (places, place) => !!place && !isBroad(place) && !places.some(item => item.key === place.key)
+  && places.filter(item => !isBroad(item)).length >= MAX_PLACES;
+/** The list after tapping a place: remove it if present, a city/state replaces the rest, and a fourth narrow place is refused (same list). */
+export function togglePlaceList(places, place) {
+  if (places.some(item => item.key === place.key)) return places.filter(item => item.key !== place.key);
+  if (isBroad(place)) return [place];
+  if (placesFull(places, place)) return places;
+  return [...places.filter(item => !isBroad(item)), place];
+}
+
 /** Text finds and manual chips share one list. An explicit city or state replaces narrower places. */
 export function combinePlaces(detectedPlaces = [], extraPlaces = [], hiddenKeys = []) {
   const hidden = new Set(hiddenKeys);
@@ -224,7 +238,7 @@ export function combinePlaces(detectedPlaces = [], extraPlaces = [], hiddenKeys 
   const combined = explicitBroad
     ? [...fromText, ...extras].filter(place => place.kind === 'city' || place.kind === 'state')
     : [...fromText, ...extras];
-  return combined.slice(0, 8);
+  return combined.slice(0, MAX_PLACES);
 }
 
 export function resolvePlace(kind, id) {

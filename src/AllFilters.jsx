@@ -4,7 +4,7 @@ import {BudgetPicker, HomePopover, LocationSearch} from './HomeSearch';
 import {PROPERTY_TYPES,OPERATIONS} from './homeSearchModel';
 import {CRITERIA,criterionLabel} from './searchCriteria';
 import {areas} from './data';
-import {searchLocations,suggestedLocations,visiblePlaces,resolvePlace} from './locationSearch';
+import {searchLocations,suggestedLocations,visiblePlaces,resolvePlace,togglePlaceList} from './locationSearch';
 import {LocationMenu} from './LocationMenu';
 import {prototypeResults} from './journey';
 import {useLanguage} from './i18n';
@@ -97,8 +97,7 @@ export function AllFilters({search, onChange, onClose, onSmartInput}) {
   }
   function addPlace(place) {
     if (!place || selected.some(item => item.key === place.key)) {setQuery('');return;}
-    const next = place.kind === 'city' || place.kind === 'state' ? [place] : [...selected.filter(item => item.kind !== 'city' && item.kind !== 'state'), place];
-    apply({places:next});
+    apply({places:togglePlaceList(selected, place)});
     setQuery('');
   }
   function chooseLocation(place) {

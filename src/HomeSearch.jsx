@@ -465,7 +465,7 @@ function StreamedWord({word, count}) {
   return count ? <span className="home-soft-ink">{word.chunks.map((chunk, index) => <React.Fragment key={index}><span className="home-soft-word" data-reveal-delay={index * word.revealStep}>{chunk.trimEnd()}</span>{chunk.match(/\s+$/)?.[0]}</React.Fragment>)}</span> : null;
 }
 
-export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onIntroDone, onStage, onSubmit, variant='home', detailContent, extraContent, openRequest, layout='inline'}) {
+export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onIntroDone, onStage, onSubmit, variant='home', detailContent, extraContent, openRequest, layout='original'}) {
   const {language, t, money, currency} = useLanguage();
   const say = (pt, es) => language === 'pt-BR' ? pt : es;
   const [open, setOpen] = useState(null);

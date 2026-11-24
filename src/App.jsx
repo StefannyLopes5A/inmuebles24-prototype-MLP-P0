@@ -68,8 +68,8 @@ export function App(){
  const [hiddenListings,setHiddenListings]=useState([]);
  const [recorridoUnitId,setRecorridoUnitId]=useState(null);
  const [guideOn]=useState(()=>guideEnabled(window.location.search)),[guideCue,setGuideCue]=useState(null),[guideContact,setGuideContact]=useState(null);
- const [searchLayout,setSearchLayout]=useState(()=>{try{const stored=sessionStorage.getItem('inmuebles24-v2-search-layout');return stored==='hybrid'||stored==='original'?stored:'inline'}catch{return 'inline'}});
- function chooseSearchLayout(next){const layout=next==='hybrid'||next==='original'?next:'inline';setSearchLayout(layout);try{sessionStorage.setItem('inmuebles24-v2-search-layout',layout)}catch{/* the choice stays for this view */}}
+ const [searchLayout,setSearchLayout]=useState(()=>{try{const stored=sessionStorage.getItem('inmuebles24-v2-search-layout');return stored==='hybrid'||stored==='inline'?stored:'original'}catch{return 'original'}});
+ function chooseSearchLayout(next){const layout=next==='hybrid'||next==='inline'?next:'original';setSearchLayout(layout);try{sessionStorage.setItem('inmuebles24-v2-search-layout',layout)}catch{/* the choice stays for this view */}}
  const saved=savedIds(folders);
  const [toast,setToast]=useState(null),[folderToast,setFolderToast]=useState(null),[picker,setPicker]=useState(null);
  const lastSearchChange=useRef({time:0,keys:''});

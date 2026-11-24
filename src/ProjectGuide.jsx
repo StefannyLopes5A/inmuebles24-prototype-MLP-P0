@@ -47,7 +47,7 @@ function Ring({target,onDone}) {
   </div>;
 }
 
-export function ProjectGuide({onAction, searchLayout='inline'}) {
+export function ProjectGuide({onAction, searchLayout='original'}) {
   const reduce=useReducedMotion();
   const [open,setOpen]=useState(false),[expanded,setExpanded]=useState(null);
   const [ring,setRing]=useState(null),[settling,setSettling]=useState(false),[idle,setIdle]=useState(false);

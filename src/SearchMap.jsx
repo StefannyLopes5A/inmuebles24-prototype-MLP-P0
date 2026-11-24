@@ -496,6 +496,35 @@ export default function SearchMap({mode, onMode, homes, hoveredId, saved, recent
     return () => {delete root.dataset.mapMode;};
   }, [shown, hidden]);
 
+  // Half mode stays pinned beside the results only down to the pagination; below it the map scrolls away with the page.
+  useEffect(() => {
+    const el=shell.current;
+    if (!el) return;
+    if (shown !== 'half' || hidden) { el.style.translate=''; return; }
+    let frame=0;
+    const apply=() => {
+      frame=0;
+      const pager=document.querySelector('.results-pager');
+      if (!pager) { el.style.translate=''; return; }
+      const base=rectFor('half', measureMetrics(probe.current));
+      const shift=Math.min(0, pager.getBoundingClientRect().bottom - (base.top + base.height));
+      el.style.translate=shift ? `0 ${shift}px` : '';
+    };
+    const schedule=() => { if (!frame) frame=requestAnimationFrame(apply); };
+    apply();
+    window.addEventListener('scroll', schedule, {passive:true});
+    window.addEventListener('resize', schedule);
+    // The grid can grow after the first paint (images, page changes), so the pager moves without a scroll.
+    const watch=typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+    watch?.observe(document.body);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule);
+      watch?.disconnect();
+      el.style.translate='';
+    };
+  }, [shown, hidden, width]);
+
   useLayoutEffect(() => {
     const el=shell.current, map=mapRef.current;
     if (!el) return;

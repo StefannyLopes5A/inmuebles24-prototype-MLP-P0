@@ -1,16 +1,16 @@
-import React, {useId, useMemo} from 'react';
+import React, {Suspense, lazy, useEffect, useId, useMemo, useRef, useState} from 'react';
 import {useLanguage} from './i18n';
 import {listingPrice} from './data';
 import {normalizeSearch} from './journey';
 import {pricePerM2} from './compareReading.js';
 import {coloniaVision, textOf} from './mapWidgetContent.js';
+import {regionLandmark} from './regionLandmark.js';
 import {insightMode, regionPhotos, regionSnapshot} from './priceInsights.js';
 import {PropertyPreview, previewPhotoProps, usePropertyPreview} from './ideaPreview.jsx';
 
+const RegionMap = lazy(() => import('./RegionMap.jsx'));
 const asset = name => `/assets/price-insights/${name}`;
 const FAN_SIZES = [114, 100, 114, 114];
-
-const capitalize = text => text ? text[0].toLocaleUpperCase('es-MX') + text.slice(1) : text;
 
 /** Results section from Figma 12900:13949 ("about the region"): the colonia's reading and its median, highest and lowest prices. */
 export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], onLike}) {
@@ -22,12 +22,23 @@ export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], o
   const photos = useMemo(() => regionPhotos(search), [key]);
   const id = useId();
   const previewApi = usePropertyPreview('region-property-preview');
+  // The map loads once the card is near the screen.
+  const mapSlot = useRef(null);
+  const [mapNear, setMapNear] = useState(false);
+  useEffect(() => {
+    const slot = mapSlot.current;
+    if (!slot || mapNear) return;
+    if (typeof IntersectionObserver === 'undefined') { setMapNear(true); return; }
+    const watch = new IntersectionObserver(entries => { if (entries.some(entry => entry.isIntersecting)) { setMapNear(true); watch.disconnect(); } }, {rootMargin: '300px'});
+    watch.observe(slot);
+    return () => watch.disconnect();
+  }, [mapNear, snapshot]);
   if (!snapshot) return null;
 
-  const {area, beds, median, medianPerM2, highest, lowest, representative} = snapshot;
+  const {area, beds, median, medianPerM2, highest, lowest} = snapshot;
   const vision = coloniaVision(area);
   const reading = vision?.copy.closed.map(part => textOf(part.text, language)).join('');
-  const quality = vision && capitalize(textOf(vision.neighbors.plus[0], language));
+  const landmark = regionLandmark(area, language);
   const house = ['house', 'condominium'].includes(current.propertyType);
   const noun = house ? 'casas' : say('apartamentos', 'departamentos');
   const scope = beds ? say(`${noun} de ${beds}+ quartos em ${area}`, `${noun} de ${beds}+ recámaras en ${area}`) : say(`${noun} em ${area}`, `${noun} en ${area}`);
@@ -85,9 +96,9 @@ export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], o
             <img src={asset('chevron-down.svg')} width="16" height="16" alt=""/>
           </button>
         </div>
-        <button type="button" className="region-featured-photo" aria-label={say(`Prévia de ${representative.title}`, `Vista previa de ${representative.title}`)} onClick={event => onOpen(representative, event)}>
-          <img src={representative.image} alt="" loading="lazy"/>
-          {quality && <span className="region-quality">{quality}</span>}
+        <button ref={mapSlot} type="button" className="region-featured-photo is-map" aria-label={action} onClick={() => applySearch({budget:median, minBudget:0})}>
+          {mapNear && <Suspense fallback={null}><RegionMap area={area} language={language}/></Suspense>}
+          <span className="region-quality">{landmark}</span>
         </button>
       </article>
       <div className="region-stats">

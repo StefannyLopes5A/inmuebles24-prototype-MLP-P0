@@ -57,3 +57,32 @@ test('a search holds at most three places', () => {
   assert.equal(togglePlaceList(list, a).length, 2);
   assert.equal(normalizeSearch({places: [a, b, c, d]}).places.length, 3);
 });
+
+import {limitPlaces, placeState, combinePlaces} from '../src/locationSearch.js';
+
+test('up to three places of any kind in one state; a state stands alone; another state starts over', () => {
+  const colonias = suggestedLocations(8).filter(place => place.kind === 'colonia');
+  const city = resolvePlace('city', 'cdmx');
+  const state = resolvePlace('state', 'cdmx');
+  let list = togglePlaceList([], colonias[0]);
+  list = togglePlaceList(list, city);
+  list = togglePlaceList(list, colonias[1]);
+  assert.deepEqual(list.map(place => place.kind), ['colonia', 'city', 'colonia']);
+  assert.equal(togglePlaceList(list, colonias[2]), list);
+  assert.deepEqual(togglePlaceList(list, state), [state]);
+  assert.deepEqual(togglePlaceList([state], colonias[0]).map(place => place.key), [colonias[0].key]);
+  const elsewhere = {kind: 'colonia', id: 'Otra', label: 'Otra', key: 'colonia~Otra', state: 'jal'};
+  assert.equal(placeState(colonias[0]), 'cdmx');
+  assert.deepEqual(togglePlaceList(list, elsewhere), [elsewhere]);
+  assert.deepEqual(limitPlaces([colonias[0], elsewhere, colonias[1]]).map(place => place.key), [colonias[0].key, colonias[1].key]);
+  assert.equal(combinePlaces([], colonias.slice(0, 5)).length, 3);
+});
+
+import {locationMenuChoices} from '../src/locationSearch.js';
+
+test('the location menu shows the chosen places, or suggestions when none is chosen; typing searches', () => {
+  const colonias = suggestedLocations(8).filter(place => place.kind === 'colonia');
+  assert.deepEqual(locationMenuChoices([], '').map(place => place.key), suggestedLocations(8).map(place => place.key));
+  assert.deepEqual(locationMenuChoices([colonias[0]], '').map(place => place.key), [colonias[0].key]);
+  assert.ok(locationMenuChoices([colonias[0]], 'polanco').some(place => place.label === 'Polanco'));
+});

@@ -109,6 +109,8 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
   const showNeighborhoods=safePage === 1 && ordered.length >= pageSize;
   const pagerSlots=(layout === 'half' ? width - Math.min(760, Math.max(360, width * 0.42)) : width) < 640 ? 3 : 5;
   const mapFull=mapProps.mode==='full'&&!mapProps.hidden;
+  // The floating map steps aside while the Mora editor is open.
+  const [editorOpen,setEditorOpen]=useState(false);
   const nearby=nearbyListings(search, ordered);
   useEffect(()=>{
     const onResize=()=>setWidth(viewportWidth());
@@ -191,7 +193,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
     </div>;
   }
   return <div ref={root} className="search-flow-page home-evolution">
-    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert} cue={cue} onCue={onCue} homeChosen={chosen}/>
+    <SearchBar search={search} onChange={onChange} pref={assistantProps.pref} onPref={assistantProps.onPref} onOpen={onOpen} blocked={blocked} proactive={!mapFull} alert={alert} cue={cue} onCue={onCue} homeChosen={chosen} onEditorChange={setEditorOpen}/>
     <div className="flow-results-content" data-map-layout={layout} inert={mapFull} aria-hidden={mapFull||undefined}>
       <div className="flow-results-heading">
         <div className="flow-results-title">
@@ -220,7 +222,7 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
     </div>
     <Suspense fallback={null}>
       <SearchMap mode={mapProps.mode} onMode={mapProps.onMode} homes={visible} hoveredId={hoveredId} saved={saved} recent={mapProps.recent} tuck={mapTucked}
-        areaLabel={mapAreaLabel(search,say)} hidden={mapProps.hidden} onOpenListing={mapProps.onOpenListing} onSave={onSave}
+        areaLabel={mapAreaLabel(search,say)} hidden={mapProps.hidden||(editorOpen&&mapProps.mode==='mini')} onOpenListing={mapProps.onOpenListing} onSave={onSave}
         search={search} pref={assistantProps.pref} signedIn={mapProps.signedIn} onLogin={mapProps.onLogin} onAskMora={mapProps.onAskMora}/>
     </Suspense>
   </div>;

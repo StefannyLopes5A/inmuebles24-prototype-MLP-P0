@@ -13,7 +13,8 @@ export const CRITERIA = [
   {id:'garden', pt:'Jardim', es:'Jardín', pattern:/\b(?:jardin(?:es)?|jardim(?:s)?)\b/},
   {id:'elevator', pt:'Elevador', es:'Elevador', pattern:/\b(?:elevador|ascensor)\b/},
   {id:'pets', pt:'Aceita pets', es:'Mascotas permitidas', pattern:/\bmascotas?\b|\bpet friendly\b|\baceita pets\b/},
-  {id:'patio', pt:'Pátio', es:'Patio', pattern:/\bpatios?\b/},
+  {id:'patio', pt:'Pátio', es:'Patio', pattern:/\bpatios?\b|\bquintal\b|\bquintais\b/},
+  {id:'bbq', pt:'Churrasqueira', es:'Asador', pattern:/\bchurrasqueiras?\b|\bparrillas?\b|\basadores?\b/},
   {id:'roof', pt:'Roof garden', es:'Roof garden', pattern:/\broof\s*garden\b|\bazotea\b/},
   {id:'gym', pt:'Academia', es:'Gimnasio', pattern:/\bgimnasio\b|\bgym\b|\bacademia\b/},
   {id:'party', pt:'Salão de festas', es:'Salón de fiestas', pattern:/\bsalon de (?:fiestas|eventos)\b|\bsalao de festas\b/},
@@ -34,6 +35,19 @@ export const normalizeCriteria = value => Array.isArray(value) ? [...new Set(val
 const isQuestion = text => /[?¿]/.test(text) || /^(?:como|qual|quais|onde|por que|o que|quanto|que|cual|cuales|donde|por que|cuanto|sera que|tem algum|hay algun)\b/.test(foldSearchText(text.trim()));
 
 /** The home input and result input must recognize the same explicit details, in the order they were typed. */
+/**
+ * Every amenity named in the text as a chip: pool, garden, patio, grill and the rest of the catalog.
+ * Furnishing and 24h security keep their own kinds; a question yields none.
+ */
+export function amenityTokens(text = '') {
+  if (isQuestion(text)) return [];
+  const base = detailTokens(text);
+  const extra = criterionMatches(text)
+    .filter(hit => !base.some(token => hit.start < token.end && token.start < hit.end))
+    .map(hit => ({start:hit.start, end:hit.end, text:text.slice(hit.start, hit.end), kind:'extra'}));
+  return [...base, ...extra].sort((a, b) => a.start - b.start);
+}
+
 export function criteriaFromText(text = '') {
   if (isQuestion(text)) return [];
   const ids = [];

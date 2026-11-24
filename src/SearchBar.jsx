@@ -7,7 +7,7 @@ import {PROPERTY_TYPES,OPERATIONS,foldSearchText} from './homeSearchModel';
 import {CRITERIA,interpretSmartInput,smartDetailTokens,criterionLabel} from './searchCriteria';
 import {areas,homes,listingPrice,propertyPhoto} from './data';
 import {expansionOptions,addArea,matchingHomes} from './journey';
-import {searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch';
+import {locationMenuChoices, searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch';
 import {LocationMenu} from './LocationMenu.jsx';
 import {MARKET_TOPICS,marketAnswer,marketQuestion,marketTopic} from './marketAnswers.js';
 import {readSeeker,writeSeeker} from './seekerSignals.js';
@@ -50,14 +50,14 @@ function MoraMessage({headline,detail,note}) {
   </div>;
 }
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue,homeChosen={}}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue,homeChosen={},onEditorChange}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[filterMenu,setFilterMenu]=useState(null),[allFilters,setAllFilters]=useState(false);
   const [focused,setFocused]=useState(false),[message,setMessage]=useState('');
   const [filterEdges,setFilterEdges]=useState({start:true,end:true}),[filterPoint,setFilterPoint]=useState({start:false,end:false}),[locationTerm,setLocationTerm]=useState('');
   const [sentenceIntro,setSentenceIntro]=useState(false),[missingStreet,setMissingStreet]=useState('');
-  const [touched,setTouched]=useState(()=>new Set()),[refineStep,setRefineStep]=useState(null),refineDone=useRef(new Set()),refineAsked=useRef(false),refineGuide=useRef(false);
+  const [touched,setTouched]=useState(()=>new Set()),[draftCriteria,setDraftCriteria]=useState([]),[refineStep,setRefineStep]=useState(null),refineDone=useRef(new Set()),refineAsked=useRef(false),refineGuide=useRef(false);
   const bar=useRef(null),scroll=useRef(null),filterAnchor=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
   const current=useRef({search,view,draft,blocked,proactive});current.current={search,view,draft,blocked:blocked||allFilters,proactive};
   const prompted=useRef({region:false,work:false,moment:readSeeker().asked}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
@@ -70,7 +70,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   const locale=pt?1:2;
   const places=visiblePlaces(search);
   const locationLabel=places.length>1?'Multilocation':places[0]?.label||say('Cidade do México','Ciudad de México');
-  const locationChoices=locationTerm.trim().length>=2?searchLocations(locationTerm,8):places.length?places:suggestedLocations(8);
+  const locationChoices=locationMenuChoices(places,locationTerm);
   const filters=[
     ['mode',OPERATIONS.find(([key])=>key===search.mode)?.[locale]],
     ['propertyType',PROPERTY_TYPES.find(([key])=>key===(search.propertyType||'apartment'))?.[locale]],
@@ -147,6 +147,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     const next=togglePlaceList(places,place);
     if(next===places)return;
     apply({...current.current.search,places:next});
+    setLocationTerm('');
     closeFilterMenu(true);
   }
   function applyMode(mode) {
@@ -179,7 +180,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   function collapse(withMotion=true,restoreFocus=true) {
     pendingMenu.current=null;
     awaitingSentence.current=false;setSentenceIntro(false);
-    if(['edit','input'].includes(view))process(draft,true,false);
+    if(['edit','input'].includes(view)){process(draft,true,false);setDraft('');appliedDraft.current='';lastProcessed.current='';setDraftCriteria([]);}
     setFocused(false);setMenuRequest(null);transition('collapsed',withMotion);
     if(restoreFocus)requestAnimationFrame(()=>{const target=trigger.current?.isConnected?trigger.current:bar.current?.querySelector('.mora-smart-trigger');target?.focus({preventScroll:true});});
   }
@@ -272,6 +273,8 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     if(parsed.street)beforeStreet.current={address:parsed.search.address,location:street&&activeSearch.address===street.address?street.location:{areas:activeSearch.areas,area:activeSearch.area,address:activeSearch.address}};
     else if(restore||street&&activeSearch.address!==street.address)beforeStreet.current=null;
     lastProcessed.current=text;appliedDraft.current=text;apply(parsed.search);
+    // What the typed text added stays in the text; it joins the sentence only once the editor is reopened.
+    setDraftCriteria((parsed.search.criteria||[]).filter(id=>!(base.criteria||[]).includes(id)));
     pendingWork.current=!!parsed.qualify;
     setMessage(say('Busca atualizada.','Búsqueda actualizada.'));
     if(allowConversation&&commit&&parsed.qualify){prompted.current.work=true;setFocused(false);transition('qualify');requestAnimationFrame(()=>bar.current?.querySelector('.mora-close')?.focus({preventScroll:true}));}
@@ -340,6 +343,8 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   const editorChoices={mode:known.mode,propertyType:known.propertyType,beds:known.beds,budget:known.budget,area:hasChosenLocation(search)};
   const markTouched=key=>setTouched(current=>current.has(key)?current:new Set(current).add(key));
   const isEditor=view==='edit'||view==='input';
+  useEffect(()=>{onEditorChange?.(isEditor);},[isEditor]);
+  useEffect(()=>()=>onEditorChange?.(false),[]);
   const market=view==='answer'?marketTopic(question):null;
   const marketReply=market?marketAnswer(market,{mode:search.mode,price:search.budget,language}):null;
   const focusedInput=isEditor&&focused;
@@ -358,7 +363,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
         <IconButton icon="close" className="mora-close" label={say('Recolher barra de busca','Contraer barra de búsqueda')} onClick={event=>collapse(event.detail>0)}/>
         {isEditor?<>
           <HomeSearch variant="results" search={search} setSearch={apply} choices={editorChoices} onChoose={markTouched} skipIntro={!sentenceIntro} onIntroDone={sentenceReady} onSubmit={()=>process(draft,true)} openRequest={menuRequest}
-            extraContent={(search.criteria||[]).map(id=><button key={id} className="home-word-control is-chosen mora-extra-term" data-search-key={`criterion:${id}`} onClick={()=>removeCriterion(id)} aria-label={`${say('Remover','Quitar')} ${criterionLabel(id,language)}`}>{criterionLabel(id,language).toLowerCase()}<Icon name="close" size={24}/></button>)}
+            extraContent={(search.criteria||[]).filter(id=>!draftCriteria.includes(id)).map(id=><button key={id} className="home-word-control is-chosen mora-extra-term" data-search-key={`criterion:${id}`} onClick={()=>removeCriterion(id)} aria-label={`${say('Remover','Quitar')} ${criterionLabel(id,language)}`}>{criterionLabel(id,language).toLowerCase()}<Icon name="close" size={24}/></button>)}
             detailContent={<SearchDetails value={draft} onChange={setDraft} language={language} placeholder={say('Digite para tirar dúvidas ou alterar a busca...','Escribe para resolver dudas o cambiar tu búsqueda...')} mobilePlaceholder={say('O que você procura ou quer saber?','¿Qué buscas o quieres saber?')} label={say('Pergunte ou altere sua busca','Pregunta o cambia tu búsqueda')} onSubmit={text=>process(text,true)} onSettle={text=>process(text,isCustomDraft(text))} settleDelay={text=>isCustomDraft(text)?1400:650} onFocus={()=>setFocused(true)} autoFocus={view==='input'} tokenMatcher={tokenMatcher}/>}/>
           <span className="sr-only" role="status">{message}</span>
           <MoraChannels say={say}/>

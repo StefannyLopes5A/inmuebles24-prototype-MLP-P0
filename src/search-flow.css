@@ -67,7 +67,7 @@ body:has(.search-flow-page) .home-header{border-bottom:1px solid #00000014}
 .mora-editor .home-search{padding:48px var(--home-page-gutter)}
 .mora-editor .home-search h1{transition:opacity 160ms ease;margin:0 0 24px}
 .mora-editor .home-sentence{width:calc(100% - 112px);max-width:1060px;min-height:92px;gap:12px;--home-sentence-size:40px;font-weight:600;line-height:1;transition:opacity 160ms ease}
-.mora-editor .home-detail-row{margin-top:48px;max-width:1120px}
+.mora-editor .home-detail-row{margin-top:24px;max-width:1120px}
 .mora-editor .home-details-editor{max-height:144px}
 .mora-extra-term{gap:8px}
 .mora-conversation{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding-right:calc(var(--home-page-gutter) + 72px)}
@@ -177,3 +177,6 @@ body[data-home-motion=holofote] .search-flow-page.home-evolution .neighborhood-i
 
 @media(max-width:700px){.flow-results-crumbs{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.flow-results-crumbs>span{display:inline}.flow-results-crumb-sep{margin-inline:6px}}
 .location-menu-item.is-disabled .location-menu-option{opacity:.4;cursor:not-allowed}
+
+/* The clear button in the location menu sits flat on the list. */
+.location-menu .location-menu-remove.icon-btn.icon-btn--solid{box-shadow:none}

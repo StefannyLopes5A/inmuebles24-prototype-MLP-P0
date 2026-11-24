@@ -7,9 +7,9 @@ import {SearchDetails} from './SearchDetails';
 import {PriceHistogram} from './PriceHistogram';
 import {createHomeIntro, homeIntroFrame} from './homeIntro.js';
 import {playMenu, playSelection} from './homeMotion.js';
-import {CRITERIA, composeHomeDraft, criterionLabel, describeHomeQuery, homePhraseItems, homePhraseSegments, homeTypedArticle, releaseHomeTokenBefore, replaceHomePhraseItem, spliceHomeQuery, updateSearchNote} from './searchCriteria.js';
+import {CRITERIA, amenityTokens, composeHomeDraft, criterionLabel, describeHomeQuery, homePhraseItems, homePhraseSegments, homeTypedArticle, releaseHomeTokenBefore, replaceHomePhraseItem, spliceHomeQuery, updateSearchNote} from './searchCriteria.js';
 import {patchHomeQueryForChip, patchHomeQueryForCriterion, patchHomeQueryForPlace, tidyBudgetCurrency} from './homeQuerySync.js';
-import {addressFromPlaces, areasFromPlaces, combinePlaces, placesFull, searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch.js';
+import {addressFromPlaces, areasFromPlaces, combinePlaces, locationMenuChoices, placesFull, searchLocations, suggestedLocations, togglePlaceList, visiblePlaces} from './locationSearch.js';
 import {LocationMenu} from './LocationMenu.jsx';
 import {HOME_COMPOSER_DEPART_MS} from './searchFlowMotion.js';
 import {homeQuerySuggestions, useTypingSuggest} from './homeQuerySuggest.js';
@@ -492,6 +492,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   const [extraCriteria, setExtraCriteria] = useState([]);
   const [hiddenCriteria, setHiddenCriteria] = useState([]);
   const [extraPlaces, setExtraPlaces] = useState([]);
+  const originalPicks = useRef({extra:[], hidden:[]});
   const [hiddenPlaceKeys, setHiddenPlaceKeys] = useState([]);
   const refs = useRef({});
   const menuAnchor = useRef(null);
@@ -635,7 +636,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   function typeOriginal(note) {
     const found = describeHomeQuery(note, areas, currency, DEMO_MXN_PER_USD);
     const base = {mode:'buy', propertyType:'house', beds:2, baths:1, budget:7_500_000, minBudget:0, areas:[], area:'Ambas zonas', address:'', places:[], criteria:[], fromIdea:false, note:''};
-    const composed = composeHomeDraft(base, found, {}, note);
+    const composed = composeHomeDraft(base, found, {}, note, [], [], originalPicks.current.extra, originalPicks.current.hidden);
     setOriginalDraft(composed);
     const nextFit = {
       ...(found.mode ? {mode:found.mode} : {}),
@@ -658,6 +659,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
     for (const key of Object.keys(nextFit)) onChoose(key);
   }
   function clearOriginal() {
+    originalPicks.current = {extra:[], hidden:[]};
     originalSweepTimers.current.forEach(clearTimeout);
     originalSweepTimers.current.clear();
     setOriginalSweep(new Set());
@@ -740,6 +742,9 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       const active = places.some(item => item.key === place.key);
       const next = togglePlaceList(places, place);
       if (next === places) return;
+      // Picks outlive the text: typing a detail must not wipe the places chosen in the menu.
+      const nextKeys = next.map(item => item.key);
+      originalPicks.current = {extra:next, hidden:[...new Set([...originalPicks.current.hidden.filter(key => !nextKeys.includes(key)), ...places.map(item => item.key).filter(key => !nextKeys.includes(key))])]};
       const nextAreas = areasFromPlaces(next);
       setOriginalDraft({...originalDraft, places:next, areas:nextAreas, area:nextAreas[0] || 'Ambas zonas', address:addressFromPlaces(next)});
       setOriginalChosen(current => {
@@ -771,13 +776,13 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       if (active) {
         setHiddenPlaceKeys(list => [...new Set([...list, place.key])]);
         setExtraPlaces(list => list.filter(item => item.key !== place.key));
-      } else if (place.kind === 'city' || place.kind === 'state') {
+      } else if (place.kind === 'state') {
         setHiddenPlaceKeys(list => [...new Set([...list, ...current.map(item => item.key)])]);
         setExtraPlaces([place]);
       } else {
-        const broad = current.filter(item => item.kind === 'city' || item.kind === 'state').map(item => item.key);
+        const broad = current.filter(item => item.kind === 'state').map(item => item.key);
         setHiddenPlaceKeys(list => [...new Set([...list.filter(key => key !== place.key), ...broad])]);
-        setExtraPlaces(list => [...list.filter(item => item.kind !== 'city' && item.kind !== 'state' && item.key !== place.key), place]);
+        setExtraPlaces(list => [...list.filter(item => item.kind !== 'state' && item.key !== place.key), place]);
       }
       setQuery(currentQuery => patchHomeQueryForPlace(currentQuery, place, !active, language));
       onChoose('area');
@@ -805,7 +810,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
   const parkingCount = view.parking || 1;
   const parkingLabel = `${parkingCount}+ ${say(parkingCount === 1 ? 'vaga' : 'vagas', parkingCount === 1 ? 'estacionamiento' : 'estacionamientos')}`;
   const activePlaces = layout === 'original' ? visiblePlaces(view) : variant === 'home' ? placeList : visiblePlaces(view);
-  const locationChoices = locationTerm.trim().length >= 2 ? searchLocations(locationTerm, 8) : activePlaces.length ? activePlaces : suggestedLocations(8);
+  const locationChoices = locationMenuChoices(activePlaces, locationTerm);
   const amenityIds = (view.criteria || []).filter(id => CRITERIA.some(item => item.id === id));
   const phraseItems = useMemo(() => variant === 'home' ? homePhraseItems(query) : [], [query, variant]);
   const filterKeys = useMemo(() => phraseItems.map(item => item.key), [phraseItems]);
@@ -1077,7 +1082,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
         </span>)}
       </div>
       <div className="home-detail-row">
-        {detailContent || (ready ? <SearchDetails value={layout === 'original' ? originalDraft.note : search.note} onChange={note => layout === 'original' ? typeOriginal(note) : setSearch(updateSearchNote(search, note))} language={language}/>
+        {detailContent || (ready ? <SearchDetails value={layout === 'original' ? originalDraft.note : search.note} onChange={note => layout === 'original' ? typeOriginal(note) : setSearch(updateSearchNote(search, note))} language={language} tokenMatcher={layout === 'original' ? amenityTokens : undefined}/>
           : <div className="home-detail-stream" aria-hidden="true"><StreamedWord word={intro.timeline.words.at(-1)} count={intro.words.at(-1).count}/>{intro.activeWord === parts.length - 1 && <span data-writing-tip/>}</div>)}
         {layout === 'original' && <span
           key={originalTake}
@@ -1108,7 +1113,7 @@ export function HomeSearch({search, setSearch, choices, onChoose, skipIntro, onI
       {open === 'beds' && <div className="home-bed-stepper"><StepButton label={say('Diminuir quartos', 'Reducir recámaras')} disabled={view.beds <= 1} onClick={() => change('beds', view.beds - 1)}/><output aria-live="polite" key={view.beds}>{view.beds}+</output><StepButton plus label={say('Aumentar quartos', 'Aumentar recámaras')} disabled={view.beds >= 10} onClick={() => change('beds', view.beds + 1)}/></div>}
       {open === 'baths' && <div className="home-bed-stepper"><StepButton label={say('Diminuir banheiros', 'Reducir baños')} disabled={bathCount <= 1} onClick={() => change('baths', bathCount - 1)}/><output aria-live="polite" key={bathCount}>{bathCount}+</output><StepButton plus label={say('Aumentar banheiros', 'Aumentar baños')} disabled={bathCount >= 10} onClick={() => change('baths', bathCount + 1)}/></div>}
       {open === 'parking' && <div className="home-bed-stepper"><StepButton label={say('Diminuir vagas', 'Reducir estacionamientos')} disabled={parkingCount <= 1} onClick={() => change('parking', parkingCount - 1)}/><output aria-live="polite" key={parkingCount}>{parkingCount}+</output><StepButton plus label={say('Aumentar vagas', 'Aumentar estacionamientos')} disabled={parkingCount >= 6} onClick={() => change('parking', parkingCount + 1)}/></div>}
-      {open === 'area' && <><LocationSearch label={say('Buscar localização', 'Buscar ubicación')} placeholder={say('Bairro, rua, metrô, escola…', 'Colonia, calle, metro, escuela…')} clearLabel={say('Limpar localização', 'Borrar ubicación')} value={locationTerm} onChange={setLocationTerm}/><LocationMenu label={t('Zona para vivir')} places={locationChoices} selectedKeys={activePlaces.map(place => place.key)} say={say} onChoose={(place, event) => {togglePlace(place);close(true, event.detail > 0);}} onRemove={togglePlace} empty={locationTerm.trim().length >= 2 && !locationChoices.length ? say('Nenhum lugar encontrado. Tente outro nome.', 'No encontramos ese lugar. Prueba otro nombre.') : null}/></>}
+      {open === 'area' && <><LocationSearch label={say('Buscar localização', 'Buscar ubicación')} placeholder={say('Bairro, rua, metrô, escola…', 'Colonia, calle, metro, escuela…')} clearLabel={say('Limpar localização', 'Borrar ubicación')} value={locationTerm} onChange={setLocationTerm}/><LocationMenu label={t('Zona para vivir')} places={locationChoices} selectedKeys={activePlaces.map(place => place.key)} say={say} onChoose={(place, event) => {togglePlace(place);setLocationTerm('');close(true, event.detail > 0);}} onRemove={togglePlace} empty={locationTerm.trim().length >= 2 && !locationChoices.length ? say('Nenhum lugar encontrado. Tente outro nome.', 'No encontramos ese lugar. Prueba otro nombre.') : null}/></>}
       {open === 'budget' && <BudgetPicker search={view} say={say} onChange={values => {if (layout === 'original') {setOriginalDraft(current => ({...current, ...values}));onChoose('budget');return;}if (variant === 'home') {dirty.current = true;setOverrides(current => ({...current, budget:values.budget, ...(values.minBudget != null ? {minBudget:values.minBudget} : {})}));syncQueryFromChip('budget', values.budget, `${money(values.budget)} ${currency}`);onChoose('budget');return;}setSearch({...search, ...values});onChoose('budget');}}/>}
     </HomePopover>
   </section>;

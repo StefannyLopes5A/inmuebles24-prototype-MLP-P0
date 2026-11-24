@@ -206,16 +206,40 @@ export function placesInText(text) {
 
 /** A search can hold at most this many places at once. */
 export const MAX_PLACES = 3;
-const isBroad = place => place.kind === 'city' || place.kind === 'state';
-/** True when adding this place would go past the limit; a city or state replaces the rest, so it always fits. */
-export const placesFull = (places, place) => !!place && !isBroad(place) && !places.some(item => item.key === place.key)
-  && places.filter(item => !isBroad(item)).length >= MAX_PLACES;
-/** The list after tapping a place: remove it if present, a city/state replaces the rest, and a fourth narrow place is refused (same list). */
+/** A state covers everything inside it, so it stands alone. */
+const isState = place => place.kind === 'state';
+/** The state a place belongs to. The catalog is Ciudad de México only, so a place without one is in it. */
+export const placeState = place => place.state || 'cdmx';
+/** True when adding this place would go past the limit; a state replaces the rest, so it always fits. */
+export const placesFull = (places, place) => !!place && !isState(place) && !places.some(item => item.key === place.key)
+  && places.filter(item => !isState(item)).length >= MAX_PLACES;
+/**
+ * The list after tapping a place. A search holds up to three places in one state, in any mix of cities, colonias,
+ * streets and points of interest. Tapping a chosen place removes it; a state replaces the rest; a place from another
+ * state starts a new selection; a state already chosen gives way to a narrower place; a fourth place is refused (same list).
+ */
 export function togglePlaceList(places, place) {
   if (places.some(item => item.key === place.key)) return places.filter(item => item.key !== place.key);
-  if (isBroad(place)) return [place];
-  if (placesFull(places, place)) return places;
-  return [...places.filter(item => !isBroad(item)), place];
+  if (isState(place)) return [place];
+  const sameState = places.filter(item => !isState(item) && placeState(item) === placeState(place));
+  if (sameState.length < places.filter(item => !isState(item)).length) return [place];
+  if (sameState.length >= MAX_PLACES) return places;
+  return [...sameState, place];
+}
+/**
+ * What the location menu lists. Typing searches the catalog; otherwise it shows the places already chosen (each
+ * removable) or, with none chosen, the suggestions. Suggestions never sit next to a selection.
+ */
+export function locationMenuChoices(selected, term, limit = 8) {
+  if (String(term || '').trim().length >= 2) return searchLocations(term, limit);
+  return selected.length ? selected : suggestedLocations(limit);
+}
+
+/** Keeps a list within the rules: one state (the first place's) and at most three places. */
+export function limitPlaces(places) {
+  const first = places.find(item => !isState(item));
+  const list = first ? places.filter(item => isState(item) || placeState(item) === placeState(first)) : places;
+  return list.slice(0, MAX_PLACES);
 }
 
 /** Text finds and manual chips share one list. An explicit city or state replaces narrower places. */
@@ -234,11 +258,11 @@ export function combinePlaces(detectedPlaces = [], extraPlaces = [], hiddenKeys 
     seen.add(place.key);
     fromText.push(place);
   }
-  const explicitBroad = extras.some(place => place.kind === 'city' || place.kind === 'state');
+  const explicitBroad = extras.some(isState);
   const combined = explicitBroad
-    ? [...fromText, ...extras].filter(place => place.kind === 'city' || place.kind === 'state')
+    ? [...fromText, ...extras].filter(isState)
     : [...fromText, ...extras];
-  return combined.slice(0, MAX_PLACES);
+  return limitPlaces(combined);
 }
 
 export function resolvePlace(kind, id) {

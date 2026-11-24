@@ -192,7 +192,10 @@ export function ListingReviews({home, advertiser, language, say, compact = false
       : <>
           <div className="pp-rating-row">
             <div className="pp-rating-overall">
-              <h3>{say('Avaliação geral', 'Calificación general')}</h3>
+              <div className="pp-hood-card-head">
+                <p className="pp-hood-mora"><img src="/assets/hood/mora.svg" alt="" width="20" height="20"/>Mora</p>
+                <h3>{say('Avaliação geral', 'Calificación general')}</h3>
+              </div>
               <ol aria-label={say('Distribuição das notas', 'Distribución de calificaciones')}>{spread.map((share, i) => <li key={i}>
                 <small>{5 - i}</small>
                 <i aria-hidden="true"><b style={{width:`${share}%`}}/></i>

@@ -13,6 +13,7 @@ export const GUIDE_STOPS = [
       {id:'original-search', label:'Home original search', layout:'original', target:'.home-search'},
       {id:'mora-answer', label:'Search conversation', target:'.mora-bar'},
       {id:'mora-suggest', label:'Neighborhood suggestion', target:'.mora-bar'},
+      {id:'mora-refine', label:'Search refinement', target:'.mora-bar'},
     ],
   },
   {

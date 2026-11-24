@@ -15,6 +15,7 @@ import {useLanguage,DEMO_MXN_PER_USD} from './i18n';
 import {measureBar,animateBar} from './searchFlowMotion';
 import {useReducedMotion} from 'motion/react';
 import {MoraSignature,MoraWords,wordCount} from './MoraVoice';
+import {nextRefineStep,isTooOpen,refineOptions,applyRefineAnswer} from './refineSteps.js';
 
 const chosen={mode:true,propertyType:true,beds:true,area:true,budget:true};
 const noop=()=>{};
@@ -47,13 +48,14 @@ function MoraMessage({headline,detail,note}) {
   </div>;
 }
 
-export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue}) {
+export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proactive=true,request,askPrompt,alert,cue,onCue,chosen={}}) {
   const {language,money,currency}=useLanguage(),pt=language==='pt-BR',say=(br,es)=>pt?br:es;
   const [view,setView]=useState('collapsed'),[draft,setDraft]=useState(''),[question,setQuestion]=useState('');
   const [menuRequest,setMenuRequest]=useState(null),[filterMenu,setFilterMenu]=useState(null),[allFilters,setAllFilters]=useState(false);
   const [focused,setFocused]=useState(false),[message,setMessage]=useState('');
   const [filterEdges,setFilterEdges]=useState({start:true,end:true}),[filterPoint,setFilterPoint]=useState({start:false,end:false}),[locationTerm,setLocationTerm]=useState('');
   const [sentenceIntro,setSentenceIntro]=useState(false),[missingStreet,setMissingStreet]=useState('');
+  const [refineStep,setRefineStep]=useState(null),refineDone=useRef(new Set()),refineAsked=useRef(false),refineGuide=useRef(false);
   const bar=useRef(null),scroll=useRef(null),filterAnchor=useRef(null),before=useRef(null),animation=useRef(noop),animateNext=useRef(true),trigger=useRef(null);
   const current=useRef({search,view,draft,blocked,proactive});current.current={search,view,draft,blocked:blocked||allFilters,proactive};
   const prompted=useRef({region:false,work:false,moment:readSeeker().asked}), pendingWork=useRef(/home\s*office|trabalhar em casa|trabajar en casa/i.test(search.note));
@@ -201,6 +203,7 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     trigger.current=null;
     if(cue.view==='answer')setQuestion(marketQuestion('notary',language));
     if(cue.view==='suggest')prompted.current.region=true;
+    if(cue.view==='refine'){refineGuide.current=true;refineAsked.current=true;refineDone.current=new Set();setRefineStep(nextRefineStep(current.current.search,{},refineDone.current)||'area');}
     if(cue.view==='qualify'){prompted.current.work=true;pendingWork.current=false;}
     if(cue.view==='moment'){prompted.current.moment=true;writeSeeker({asked:true});}
     transition(cue.view);
@@ -273,6 +276,18 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
   }
   const isCustomDraft=text=>interpretSmartInput(text,search,currency,areas,DEMO_MXN_PER_USD,false,streetsFor(search)).kind==='draft';
 
+  // A search that arrives too open starts a short Mora conversation: location, operation, type, rooms, price, amenities.
+  useEffect(()=>{
+    if(refineAsked.current)return;
+    const timer=setTimeout(()=>{
+      const state=current.current;
+      if(refineAsked.current||!state.proactive||state.view!=='collapsed'||state.blocked||pendingWork.current||document.hidden||document.querySelector('dialog[open]'))return;
+      if(!isTooOpen(state.search,chosen))return;
+      refineAsked.current=true;prompted.current.region=true;
+      setRefineStep(nextRefineStep(state.search,chosen,refineDone.current));transition('refine');
+    },900);
+    return()=>clearTimeout(timer);
+  },[]);
   // Prompts follow a pause after actual browsing, never a timer on load or an interrupted edit.
   useEffect(()=>{
     function onScroll() {
@@ -309,6 +324,13 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
     writeSeeker({move});
     if(search.mode!=='rent')transition('credit');else collapse();
   }
+  function chooseRefine(step,value) {
+    refineDone.current.add(step);
+    const next=applyRefineAnswer(step,value,current.current.search);
+    apply(next);
+    const following=nextRefineStep(next,refineGuide.current?{}:chosen,refineDone.current);
+    if(following){before.current=measureBar(bar.current);setRefineStep(following);}else collapse();
+  }
   function chooseCredit(credit) {if(credit)writeSeeker({credit});collapse();}
   function askMarket(topic) {setQuestion(marketQuestion(topic,language));transition('answer');}
   const isEditor=view==='edit'||view==='input';
@@ -336,12 +358,14 @@ export function SearchBar({search,onChange,pref,onPref,onOpen,blocked=false,proa
         </>:<>
           {marketReply?<MoraMessage key={view+question} headline={marketReply.headline} detail={marketReply.detail} note={marketReply.note}/>
           :view==='moment'?<MoraMessage key={view} headline={say('Quer se mudar logo ou ainda está olhando?','¿Quieres mudarte pronto o todavía estás viendo?')} detail={say('Assim a imobiliária sabe como te atender. Não muda seus filtros.','Así la inmobiliaria sabe cómo atenderte. No cambia tus filtros.')}/>
+          :view==='refine'&&refineStep?<MoraMessage key={view+refineStep} headline={{area:say('Em qual região você quer morar?','¿En qué zona quieres vivir?'),mode:say('Você quer comprar ou alugar?','¿Quieres comprar o rentar?'),propertyType:say('Que tipo de imóvel você procura?','¿Qué tipo de inmueble buscas?'),beds:say('Quantos quartos você precisa?','¿Cuántas recámaras necesitas?'),budget:say('Qual o valor máximo que você quer pagar?','¿Cuál es el máximo que quieres pagar?'),criteria:say('Algo que não pode faltar?','¿Algo que no puede faltar?')}[refineStep]} detail={say('Cada resposta ajusta seus filtros.','Cada respuesta ajusta tus filtros.')}/>
           :view==='credit'?<MoraMessage key={view} headline={say('Já tem financiamento, vai pagar à vista, ou ainda não chegou nisso?','¿Ya tienes crédito, vas de contado, o aún no llegas a eso?')} detail={say('Só vai junto quando você pedir contato.','Solo va cuando pidas contacto.')}/>
           :view==='street'?<MoraMessage key={view+missingStreet} headline={say(`Não há anúncios em ${missingStreet}.`,`No hay anuncios en ${missingStreet}.`)} detail={say('Posso buscar em bairros próximos da sua busca.','Puedo buscar en colonias cercanas a tu búsqueda.')}/>
           :<MoraMessage key={view+question} headline={view==='suggest'?say('Você também pode gostar de imóveis nesses bairros.','También podrían gustarte inmuebles en estos barrios.'):view==='qualify'?say('Como você gostaria de trabalhar em casa?','¿Cómo te gustaría trabajar en casa?'):answerType==='area'?say('Vamos explorar os bairros dentro da sua busca.','Exploremos los barrios dentro de tu búsqueda.'):answerType==='price'&&cheapest?say(`As opções começam em ${money(listingPrice(cheapest))} ${currency}.`,`Las opciones empiezan en ${money(listingPrice(cheapest))} ${currency}.`):matches.length?say(`Encontrei ${matches.length} imóveis dentro dos seus filtros.`,`Encontré ${matches.length} inmuebles dentro de tus filtros.`):say('Podemos ajustar sua busca para encontrar mais opções.','Podemos ajustar tu búsqueda para encontrar más opciones.')}
             detail={view==='qualify'?say('Quer um canto para trabalhar ou um ambiente só para isso?','¿Buscas un rincón para trabajar o un ambiente solo para eso?'):view==='answer'?(answerType==='area'?say('Você pode incluir outro bairro mantendo o orçamento e os demais filtros.','Puedes incluir otro barrio manteniendo el presupuesto y los demás filtros.'):say('Posso ajudar com preços, bairros e filtros. Os detalhes de planta e disponibilidade precisam ser confirmados no anúncio.','Puedo ayudar con precios, barrios y filtros. Confirma la distribución y disponibilidad en el anuncio.')):null}/>}
           <div className="mora-replies">
             {marketReply&&<>{MARKET_TOPICS.filter(topic=>topic!==market).map(topic=><button className="mora-pill" key={topic} onClick={()=>askMarket(topic)}>{marketQuestion(topic,language)}</button>)}<button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Continuar explorando','Seguir explorando')}</button></>}
+            {view==='refine'&&refineStep&&<>{refineOptions(refineStep,search,language).map(option=><button className="mora-pill mora-pill-quiet" key={option.value.key||option.value} onClick={()=>chooseRefine(refineStep,option.value)}>{option.amount?`${money(option.value)} ${currency}`:option.label}</button>)}<button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Agora não','Ahora no')}</button></>}
             {view==='moment'&&<><button className="mora-pill" onClick={()=>chooseMoment('asap')}>{say('O quanto antes','Lo antes posible')}</button><button className="mora-pill" onClick={()=>chooseMoment('months')}>{say('Nos próximos meses','En los próximos meses')}</button><button className="mora-pill" onClick={()=>chooseMoment('exploring')}>{say('Só estou explorando','Solo estoy explorando')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>chooseMoment(null)}>{say('Agora não','Ahora no')}</button></>}
             {view==='credit'&&<><button className="mora-pill" onClick={()=>chooseCredit('credit')}>{say('Com financiamento','Con crédito')}</button><button className="mora-pill" onClick={()=>chooseCredit('cash')}>{say('À vista','De contado')}</button><button className="mora-pill" onClick={()=>chooseCredit('open')}>{say('Ainda não cheguei nisso','Aún no llego a eso')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>chooseCredit(null)}>{say('Agora não','Ahora no')}</button></>}
             {view==='street'&&<>{options.map(option=><button className="mora-pill" key={option.area} onClick={()=>chooseArea(option.area)}>{option.area}<span>+{option.additional}</span></button>)}<button className="mora-pill" onClick={()=>expand('area')}>{say('Escolher bairros','Elegir colonias')}</button><button className="mora-pill mora-pill-quiet" onClick={()=>collapse()}>{say('Nenhuma dessas opções','Ninguna de estas opciones')}</button></>}

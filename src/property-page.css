@@ -559,7 +559,7 @@
 .pp-rating-by.mora-signature,.pp-rating-by.mora-signature strong{justify-content:center;color:#e45244}
 .pp-rating-by img{width:16px;height:16px}
 .pp-rating-row{display:flex;align-items:center;gap:32px;margin:0 0 48px}
-.pp-rating-overall{display:flex;flex:0 1 415px;flex-direction:column;gap:24px;width:415px;max-width:100%;min-width:0;padding:24px;border:1px solid #ededed;border-radius:24px}
+.pp-rating-overall{display:flex;flex:0 1 415px;flex-direction:column;gap:24px;width:415px;max-width:100%;min-width:0;padding:24px;border:2px solid transparent;border-radius:24px;background:linear-gradient(#fff,#fff) padding-box,var(--mora-gradient) border-box}
 .pp-rating-tags{display:flex;flex:1;flex-direction:column;gap:24px;min-width:0}
 .pp-rating-row h3{margin:0;color:#222;font-size:16px;line-height:20px;font-weight:600;letter-spacing:-.31px}
 .pp-rating-tags h3{font-size:14px;line-height:18px;letter-spacing:-.57px}
@@ -783,7 +783,7 @@
   .pp-places li{flex-wrap:wrap;align-items:flex-start}
   .pp-place-times{flex-basis:100%;padding-left:32px}
   .pp-hood h3{font-size:18px;line-height:22px}
-  .pp-hood-card{padding:20px}
+  .pp-hood-card,.pp-rating-overall{padding:20px}
   .pp-hood-stats{grid-template-columns:minmax(0,1fr)}
   .pp-hood-stats li::before{display:none}
 }

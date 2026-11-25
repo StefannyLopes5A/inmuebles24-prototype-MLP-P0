@@ -902,3 +902,18 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 .pp-contact .lp-message{padding:16px}
 .pp-contact .lp-toggles{margin-top:24px;gap:8px}
 .pp-contact .lp-toggle{min-height:36px}
+
+/* Share dialog: link only (copy, WhatsApp, system sheet). */
+.share-menu{display:flex;flex-direction:column;gap:20px}
+.share-head{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:16px}
+.share-head img{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#f2f2f2}
+.share-head-title{margin:0;font-size:16px;line-height:20px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.share-head-price{margin:4px 0 0;font-size:14px;line-height:18px;color:var(--folder-muted);font-variant-numeric:tabular-nums}
+.share-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.share-channel{display:flex;align-items:center;gap:12px;min-width:0;min-height:64px;padding:0 20px;border:1px solid #ddd;border-radius:12px;background:#fff;color:var(--folder-ink);font-size:16px;line-height:20px;font-weight:600;text-align:left;transition:background-color .16s ease,border-color .16s ease,transform .16s ease-out}
+.share-channel svg{flex:none}
+.share-channel:active{transform:scale(.98)}
+@media(hover:hover) and (pointer:fine){.share-channel:hover{background:var(--folder-hover);border-color:#b0b0b0}}
+@media(max-width:700px){.share-channel{gap:10px;min-height:56px;padding:0 14px;font-size:15px}}
+@media(max-width:380px){.share-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.share-channel{transition:none}.share-channel:active{transform:none}}

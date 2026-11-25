@@ -20,11 +20,14 @@ import {MoraEntry} from './MoraEntry.jsx';
 import {sortSignal} from './resultSort';
 import './property-page.css';
 import {IconButton} from './IconButton.jsx';
+import {AnimatePresence} from 'motion/react';
+import {ShareDialog} from './ShareDialog.jsx';
 
 const ListingMap = lazy(() => import('./ListingMap'));
 const MORA_MARK = '/assets/mini-listing/mora.svg';
 
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
+const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>;
 const HideIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2.5 12S6.2 6.5 12 6.5 21.5 12 21.5 12 17.8 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.2"/><path d="M4 20 20 4"/></svg>;
 const NAV_SECTIONS = [
   {id:'pp-photos', pt:'Fotos', es:'Fotos'},
@@ -89,6 +92,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
   const title = useRef(null), intro = useRef(null), card = useRef(null), openGallery = useRef(null);
   const [contact, setContact] = useState(null);
+  const [sharing, setSharing] = useState(false);
   const [stuck, setStuck] = useState(false);
   const [arrival] = useState(() => document.documentElement.dataset.heroMorph === 'forward' ? 'morph' : 'plain');
   const story = useMemo(() => listingStory(home), [home]);
@@ -169,12 +173,15 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   }
 
   return <>
+  <AnimatePresence>{sharing && <ShareDialog key="share" home={home} url={window.location.href} say={say} title={`${home.street}, ${home.area}`}
+    price={`${money(price)} ${currency}${home.mode === 'rent' ? say(' / mês', ' / mes') : ''}`} onClose={() => setSharing(false)}/>}</AnimatePresence>
   <article className="property-page pp" data-arrival={arrival}>
     <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav} fee={facts.fee} money={money} currency={currency}
       price={<>{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</>}/>
     <div className="pp-top">
       <IconButton icon="back" className="compare-back" onClick={onClose} label={say('Voltar à busca', 'Volver a la búsqueda')}/>
       <div className="pp-top-actions">
+        <IconButton className="compare-back pp-share" onClick={() => setSharing(true)} label={say('Compartilhar', 'Compartir')}><ShareIcon/></IconButton>
         {onLike && <IconButton className="compare-back pp-save" aria-pressed={isSaved} onClick={() => onLike(home)} label={isSaved ? say('Salvo nos favoritos', 'Guardado en favoritos') : say('Salvar nos favoritos', 'Guardar en favoritos')}><Heart filled={isSaved}/></IconButton>}
         <IconButton className="compare-back pp-hide" aria-pressed={hidden} onClick={() => onHide?.(home)} label={hidden ? say('Mostrar anúncio', 'Mostrar anuncio') : say('Ocultar anúncio', 'Ocultar anuncio')}><HideIcon/></IconButton>
       </div>

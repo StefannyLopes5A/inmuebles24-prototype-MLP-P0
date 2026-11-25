@@ -148,7 +148,8 @@ const [saved,setSaved]=useState(()=>normalizeSaved(stored().saved,KNOWN_HOMES));
      case 'sign-in':if(account.signedIn)showAccountToast(say('Ya tienes sesión iniciada','Você já está com login feito'));else openLogin();return;
      case 'favorite':guideResults();guideAfter(()=>document.querySelector('.flow-listings .discovery-like'),button=>button.click());return;
      case 'save-search':guideResults();guideAfter(()=>document.querySelector('.mora-save'),button=>button.click());return;
-     case 'favorites-page':openFavorites();return;
+     case 'mora-search':guideResults();return;
+     case 'mora-listing':guideListing();return;
      default:
    }
  }

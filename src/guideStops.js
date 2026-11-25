@@ -12,11 +12,35 @@ export const GUIDE_STOPS = [
   },
   {
     id:'results',
-    title:'Results bar',
+    title:'Search results page',
     body:'The first cell is the location input. Operation and property type sit with the quick filters, and the filter panel opens from “Más filtros”.',
     actions:[
       {id:'results', label:'Results bar', target:'.mora-bar'},
       {id:'all-filters', label:'Filter panel', target:'.all-filters-dialog'},
+    ],
+  },
+  {
+    id:'listing',
+    title:'Listing page',
+    body:'The photo gallery, the facts, Mora’s price verdict, the location map and the agency reviews, with similar properties at the end.',
+    actions:[{id:'listing', label:'Open a listing', target:'.pp-gallery'}],
+  },
+  {
+    id:'map',
+    title:'Map',
+    body:'A floating card opens the map as a full-screen page, with the price on every pin. Back returns to the list.',
+    actions:[
+      {id:'map-float', label:'Floating map card', target:'.map-float'},
+      {id:'map-full', label:'Open full-screen map', target:'.rm-page'},
+    ],
+  },
+  {
+    id:'mora',
+    title:'Mora',
+    body:'Mora’s entry point closes the results page and the listing page with a question about what is left. It only offers the app or WhatsApp; the conversation is simulated and nothing is sent.',
+    actions:[
+      {id:'mora-search', label:'Entry on the search page', target:'.mora-entry-search'},
+      {id:'mora-listing', label:'Entry on the listing page', target:'.pp-ask-section'},
     ],
   },
   {
@@ -29,25 +53,10 @@ export const GUIDE_STOPS = [
     ],
   },
   {
-    id:'map',
-    title:'Map',
-    body:'A floating card opens the map as a full-screen page, with the price on every pin. Back returns to the list.',
-    actions:[
-      {id:'map-float', label:'Floating map card', target:'.map-float'},
-      {id:'map-full', label:'Open full-screen map', target:'.rm-page'},
-    ],
-  },
-  {
     id:'primary',
     title:'Primary market',
     body:'Desarrollos is an operation of its own. Torre Olmo reads as any other listing, with the default card and the default listing page.',
     actions:[{id:'development', label:'Open Desarrollos', target:'[data-home-id="torre-olmo"]'}],
-  },
-  {
-    id:'listing',
-    title:'Listing page',
-    body:'The photo gallery, the facts, Mora’s price verdict, the location map and the agency reviews, with similar properties at the end.',
-    actions:[{id:'listing', label:'Open a listing', target:'.pp-gallery'}],
   },
   {
     id:'seo',
@@ -61,25 +70,19 @@ export const GUIDE_STOPS = [
   },
   {
     id:'contact',
-    title:'Contact',
+    title:'Lead generation',
     body:'The contact form grows inside the price card of the listing page and ends in a confirmation. Nothing is sent.',
     actions:[{id:'contact', label:'Open the contact form', target:'.lp-stage'}],
   },
   {
     id:'sign-in',
-    title:'Sign-in',
+    title:'Login triggers',
     body:'Saving a favorite or a search asks you to sign in first, with a message that says why. The simulated login accepts any button.',
     actions:[
       {id:'sign-in', label:'Sign in'},
       {id:'favorite', label:'Save a favorite', target:'.account-login'},
       {id:'save-search', label:'Save a search', target:'.account-login'},
     ],
-  },
-  {
-    id:'favorites',
-    title:'Favorites',
-    body:'A flat list of the homes you saved. There are no folders, comparison or sharing in this version.',
-    actions:[{id:'favorites-page', label:'Open favorites', target:'.favorites-page'}],
   },
 ];
 

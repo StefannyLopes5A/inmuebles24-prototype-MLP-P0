@@ -133,7 +133,7 @@
 .lp-mora.is-page .lp-mora-working{font-size:18px;line-height:20px;font-weight:600;letter-spacing:-.44px}
 .lp-mora.is-page .lp-mora-note{margin:0;font-size:13px;line-height:18px;letter-spacing:-.08px;color:#6a6a6a}
 .lp-read{display:grid;gap:24px}
-.lp-read:has(.lp-read-group:nth-child(2)){grid-template-columns:1fr 1fr}
+.lp-read:has(.lp-read-group + .lp-read-group){grid-template-columns:1fr 1fr}
 .lp-read-group h3{margin:0 0 12px;font-size:14px;line-height:18px;font-weight:600;letter-spacing:-.57px;color:#6a6a6a}
 .lp-read-group ul{display:grid;gap:16px;margin:0;padding:0;list-style:none}
 .lp-read-group li{display:flex;align-items:flex-start;gap:16px}
@@ -862,3 +862,35 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 @media(min-width:701px){
   .pp-offer-levels .pp-mora-pill{margin-left:18px}
 }
+
+/* Mora highlights: the card's "Mejor precio" tag and high-demand pill, worn by their rows in "A favor" */
+.lp-highlight{display:inline-flex;align-items:center;gap:4px;flex:none;box-sizing:border-box;padding:5px 12px;border:1px solid transparent;border-radius:99px;font-size:12px;line-height:14px;font-weight:600;white-space:nowrap}
+.lp-highlight.is-price{background:linear-gradient(210.54deg,#07358f 34.3%,#804566 73.2%,#ff553b 108.1%);color:#fff}
+.lp-highlight.is-demand{background:linear-gradient(#fff,#fff) padding-box,var(--mora-gradient,linear-gradient(90deg,#07358f,#ff553b)) border-box;color:#111}
+.lp-highlight.is-demand .lp-glyph{color:#07358f}
+.lp-read-copy>.lp-highlight{align-self:flex-start;margin-top:8px}
+
+/* Fair price score: opened by the price pill */
+.pp-fair{margin:16px 0 8px;padding:20px 24px 16px;border:1px solid var(--pp-line);border-radius:16px;background:#fff}
+.pp-fair-head{display:flex;align-items:center;gap:16px}
+.pp-fair-score{display:flex;align-items:baseline;gap:2px;font-size:40px;line-height:44px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pp-fair-score small{font-size:16px;line-height:20px;font-weight:500;color:var(--pp-muted);letter-spacing:0}
+.pp-fair-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pp-fair-copy b{font-size:16px;line-height:22px;font-weight:600}
+.pp-fair-copy span{font-size:14px;line-height:20px;color:var(--pp-muted)}
+.pp-fair-rule{position:relative;height:40px;margin-top:20px}
+.pp-fair-track{position:absolute;left:0;right:0;bottom:6px;display:flex;height:8px;border-radius:99px;overflow:hidden}
+.pp-fair-track i{display:block;height:100%}
+.pp-fair-track i:nth-child(1){flex:0 0 38%;background:#e6e6e6}
+.pp-fair-track i:nth-child(2){flex:0 0 24%;background:#222}
+.pp-fair-track i:nth-child(3){flex:1;background:#e6e6e6}
+.pp-fair-median{position:absolute;left:50%;bottom:2px;width:2px;height:16px;margin-left:-1px;border-radius:1px;background:#222;opacity:0}
+.pp-fair-marker{position:absolute;left:var(--x);bottom:0;width:20px;height:20px;margin-left:-10px;border:3px solid #fff;border-radius:50%;background:#ff553b;box-shadow:0 0 0 1px #0000002e,0 2px 6px #00000033;animation:pp-fair-in .7s cubic-bezier(.22,1,.36,1) both}
+.pp-fair-marker em{position:absolute;bottom:calc(100% + 6px);left:50%;translate:-50% 0;font-style:normal;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pp-fair[data-band=review] .pp-fair-marker,.pp-fair[data-band=below] .pp-fair-marker{background:#07358f}
+.pp-fair-scale{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;line-height:16px;color:var(--pp-muted)}
+.pp-fair-scale span:nth-child(2){font-variant-numeric:tabular-nums;text-align:center}
+.pp-fair-note{margin:12px 0 0;font-size:12px;line-height:16px;color:var(--pp-muted)}
+@keyframes pp-fair-in{from{left:50%;opacity:0}to{left:var(--x);opacity:1}}
+@media(prefers-reduced-motion:reduce){.pp-fair-marker{animation:none}}
+@media(max-width:480px){.pp-fair{padding:16px}.pp-fair-score{font-size:32px;line-height:36px}.pp-fair-scale span:nth-child(2){flex:1}}

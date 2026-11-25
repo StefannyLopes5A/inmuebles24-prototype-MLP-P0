@@ -9,9 +9,11 @@ import {ModalShell} from './ModalShell';
 import {ReactionButtons} from './InviteLayer';
 import {FOLDER_NAME_MAX, cleanFolderName, savedCountLabel} from './favoriteLists';
 import {BOARD_STAGES, cleanGuestEmail, stageName} from './boardModel';
-import {NOTE_MAX, activeMembers, can, isCollaborative, notesFor, reactionsFor} from './collaborativeLists';
+import {activeMembers, can, isCollaborative, notesFor, reactionsFor} from './collaborativeLists';
 import {EASE_OUT, riseIn} from './favoriteMotion';
 import {IconButton} from './IconButton.jsx';
+import {ListingFeedback, NoteTrigger} from './ListingFeedback.jsx';
+import {FolderViews, getFolderView, rememberFolderView} from './FolderViews.jsx';
 
 const MoreIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>;
 const ShareIcon = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>;
@@ -105,22 +107,6 @@ function MembersDialog({name, members, meId, canRemove, onRemove, onInvite, onCl
   </>}</ModalShell>;
 }
 
-function NoteField({homeId, mine, onSave}) {
-  const {say} = useSay();
-  const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState(mine || '');
-  const fieldId = useId();
-  if (!editing) return <button type="button" className="folder-note-add" onClick={() => {setValue(mine || ''); setEditing(true);}}>
-    {mine ? say('Editar mi nota', 'Editar minha nota') : say('Agregar nota', 'Adicionar nota')}
-  </button>;
-  return <form className="folder-note-form" onSubmit={event => {event.preventDefault(); onSave(homeId, value); setEditing(false);}}>
-    <label htmlFor={fieldId} className="sr-only">{say('Tu nota', 'Sua nota')}</label>
-    <input id={fieldId} value={value} maxLength={NOTE_MAX} placeholder={say('Ej. Me encanta la luz', 'Ex. Adoro a luz')} autoFocus
-      onChange={event => setValue(event.target.value)} onKeyDown={event => {if (event.key === 'Escape') {event.stopPropagation(); setEditing(false);}}}/>
-    <button type="submit" className="folder-primary">{say('Guardar', 'Salvar')}</button>
-  </form>;
-}
-
 const SHARE_HINT_KEY = 'inmuebles24-v2-share-hint-seen';
 const readHintSeen = () => {try {return sessionStorage.getItem(SHARE_HINT_KEY) === '1';} catch {return false;}};
 
@@ -164,7 +150,7 @@ function CollabStrip({home, record, meId, onReact, onNote}) {
     {notes.length > 0 && <ul className="folder-notes" aria-label={say('Notas', 'Notas')}>
       {notes.map(note => <li key={note.member}><MemberAvatar name={note.name} left={note.left} self={note.member === meId} size={22}/><span><b>{note.member === meId ? say('Tú', 'Você') : note.name}</b> {note.text}</span></li>)}
     </ul>}
-    <NoteField homeId={home.id} mine={notes.find(note => note.member === meId)?.text} onSave={onNote}/>
+    <NoteTrigger street={home.street} mine={notes.find(note => note.member === meId)?.text} onSave={text => onNote(home.id, text)}/>
   </div>;
 }
 
@@ -244,22 +230,12 @@ function StagesDialog({labels, onSave, onClose}) {
   </ModalShell>;
 }
 
-export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, guests:[]}, record, meId, me, sender, search, saved = [], receipts = [], onLike, onBack, onOpen, onCompare, onExplore, onInvite, onReact, onNote,
-  onRename, onLeave, onRemoveMember, onRevoke, onDelete, onCopy, onDismiss, onJoin, onLogin, onMove, onStages, onAddGuest, onRemoveGuest, onShare, onDuplicate}) {
-  const {language, say} = useSay();
-  const reduce = useReducedMotion();
-  const heading = useRef(null);
+/** The list's people, share link and options. Shared by the list, table and comparison views so the actions never disappear. */
+export function FolderActions({name, board, record, meId, me, onShare, onDuplicate, onRename, onStages, onAddGuest, onRemoveGuest, onLeave, onRevoke, onDelete}) {
+  const {say} = useSay();
   const [dialog, setDialog] = useState(null);
-  useLayoutEffect(() => {heading.current?.focus({preventScroll:true});}, []);
-  const shared = isCollaborative(record);
   const owner = !record || can(record, meId, 'rename');
-  const members = (record ? activeMembers(record) : me ? [{id:me.id, name:me.name, role:'owner'}] : []).map(member => ({...member, self:member.id === meId}));
-  const inviter = sender?.name || say('Alguien', 'Alguém');
-  const chipLabel = members.length > 1
-    ? `${say('Personas en la lista', 'Pessoas na lista')}: ${members.map(member => member.id === meId ? say('tú', 'você') : member.name).join(', ')}`
-    : say('Invitar a esta lista', 'Convidar para esta lista');
-
-  const items = mode !== 'member' ? [] : [
+  const items = [
     {id:'people', label:say('Ver miembros', 'Ver membros'), run:() => setDialog('members')},
     ...(owner ? [
       {id:'stages', label:say('Editar etapas', 'Editar etapas'), run:() => setDialog('stages')},
@@ -274,31 +250,60 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
   const peopleLabel = guestCount
     ? say(`Ver miembros, ${guestCount} ${guestCount === 1 ? 'invitado' : 'invitados'}`, `Ver membros, ${guestCount} ${guestCount === 1 ? 'convidado' : 'convidados'}`)
     : say('Agregar o ver miembros', 'Adicionar ou ver membros');
+  return <>
+    <div className="board-tools">
+      <button type="button" className="board-people" onClick={() => setDialog('members')} aria-label={peopleLabel}>
+        <MemberAvatar name={me?.name || 'Tú'} self size={36}/>
+        {board.guests.slice(0, 2).map(guest => <MemberAvatar key={guest.email} name={guest.email.split('@')[0]} size={36}/>)}
+        <span className="board-people-plus" aria-hidden="true">+</span>
+      </button>
+      <IconButton className="board-icon compare-back" onClick={onShare} label={say('Compartir enlace de la vista', 'Compartilhar link da visualização')}><ShareIcon/></IconButton>
+      <FolderMenu items={items} menuClass="board-menu"/>
+    </div>
+    <AnimatePresence>
+      {dialog === 'rename' && <RenameDialog key="rename" name={name} onSave={onRename} onClose={() => setDialog(null)}/>}
+      {dialog === 'stages' && <StagesDialog key="stages" labels={board.labels} onSave={onStages} onClose={() => setDialog(null)}/>}
+      {dialog === 'members' && <BoardMembersDialog key="board-members" name={name} guests={board.guests} onAdd={onAddGuest} onRemove={onRemoveGuest} onClose={() => setDialog(null)}/>}
+    </AnimatePresence>
+  </>;
+}
+
+export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, guests:[]}, record, meId, me, sender, search, saved = [], receipts = [], onLike, onBack, onOpen, onCompare, onExplore, onInvite, onReact, onNote,
+  onRename, onLeave, onRemoveMember, onRevoke, onDelete, onCopy, onDismiss, onJoin, onLogin, onMove, onStages, onAddGuest, onRemoveGuest, onShare, onDuplicate, onVote, onComment}) {
+  const {language, say} = useSay();
+  const reduce = useReducedMotion();
+  const heading = useRef(null);
+  const [dialog, setDialog] = useState(null);
+  const [view, setView] = useState(getFolderView);
+  const chooseView = next => {
+    if (next === 'compare') {onCompare(); return;}
+    rememberFolderView(next);
+    setView(next);
+  };
+  useLayoutEffect(() => {heading.current?.focus({preventScroll:true});}, []);
+  const shared = isCollaborative(record);
+  const owner = !record || can(record, meId, 'rename');
+  const members = (record ? activeMembers(record) : me ? [{id:me.id, name:me.name, role:'owner'}] : []).map(member => ({...member, self:member.id === meId}));
+  const inviter = sender?.name || say('Alguien', 'Alguém');
+  const chipLabel = members.length > 1
+    ? `${say('Personas en la lista', 'Pessoas na lista')}: ${members.map(member => member.id === meId ? say('tú', 'você') : member.name).join(', ')}`
+    : say('Invitar a esta lista', 'Convidar para esta lista');
 
   const header = mode === 'member'
     ? <header className="favorites-header folder-page-header board-header">
       <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver a favoritos', 'Voltar para favoritos')}/>
       <div className="board-title-row">
         <motion.h1 ref={heading} tabIndex={-1} {...riseIn(reduce, 0, 6)}>{name || say('Lista de favoritos', 'Lista de favoritos')}</motion.h1>
-        <div className="board-views" role="group" aria-label={say('Vista de la lista', 'Visualização da lista')}>
-          <button type="button" aria-pressed="true">{say('Tablero', 'Quadro')}</button>
-          <button type="button" aria-pressed="false" onClick={onCompare}>{say('Comparar', 'Comparar')}</button>
+        <div className="board-actions">
+          <FolderViews active={view} onSelect={chooseView}/>
+          <FolderActions name={name} board={board} record={record} meId={meId} me={me} onShare={onShare} onDuplicate={onDuplicate}
+            onRename={onRename} onStages={onStages} onAddGuest={onAddGuest} onRemoveGuest={onRemoveGuest} onLeave={onLeave} onRevoke={onRevoke} onDelete={onDelete}/>
         </div>
-      </div>
-      <div className="board-tools">
-        <button type="button" className="board-people" onClick={() => setDialog('members')} aria-label={peopleLabel}>
-          <MemberAvatar name={me?.name || 'Tú'} self size={36}/>
-          {board.guests.slice(0, 2).map(guest => <MemberAvatar key={guest.email} name={guest.email.split('@')[0]} size={36}/>)}
-          <span className="board-people-plus" aria-hidden="true">+</span>
-        </button>
-        <IconButton className="board-icon compare-back" onClick={onShare} label={say('Compartir enlace de la vista', 'Compartilhar link da visualização')}><ShareIcon/></IconButton>
-        <FolderMenu items={items} menuClass="board-menu"/>
       </div>
     </header>
     : <header className="favorites-header folder-page-header">
     <div className="folder-page-top">
       <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver a favoritos', 'Voltar para favoritos')}/>
-      {mode === 'member' && <FolderMenu items={items}/>}
     </div>
     <motion.div {...riseIn(reduce, 0, 6)}>
       {mode === 'preview' && <p className="folder-page-eyebrow"><MemberAvatar name={sender?.name} size={24}/>{say(`${inviter} te invitó a su lista`, `${inviter} te convidou para a lista`)}</p>}
@@ -320,7 +325,7 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
     <h2>{say('Esta invitación ya no está activa', 'Este convite não está mais ativo')}</h2>
     <p>{say('Quien te invitó desactivó el enlace o eliminó la lista. Pídele uno nuevo.', 'Quem te convidou desativou o link ou excluiu a lista. Peça um novo.')}</p>
   </div>;
-  else if (mode === 'member') body = <FolderBoard homes={homes} board={board} receipts={receipts} search={search} saved={saved} onLike={onLike} onOpen={onOpen} onMove={onMove}/>;
+  else if (mode === 'member' && view === 'table') body = <FolderBoard homes={homes} board={board} receipts={receipts} search={search} saved={saved} onLike={onLike} onOpen={onOpen} onMove={onMove}/>;
   else if (mode === 'deleted') body = <div className="favorites-empty folder-page-notice">
     <h2>{say('Esta lista fue eliminada', 'Esta lista foi excluída')}</h2>
     <p>{say('Su dueño la eliminó. Puedes guardar una copia con los inmuebles para seguir viéndolos.', 'O dono a excluiu. Você pode guardar uma cópia com os imóveis para continuar vendo.')}</p>
@@ -337,7 +342,9 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
   else body = <div className="folder-grid">
     {homes.map((home, index) => <motion.div key={home.id} className="folder-grid-item" {...riseIn(reduce, Math.min(index + 1, 8))}>
       <HouseCard home={home} search={search} saved={saved.includes(home.id)} contacted={receipts.some(receipt => receipt.propertyId === home.id)} onLike={onLike} onOpen={onOpen}/>
-      {shared && mode === 'member' && can(record, meId, 'react') && <CollabStrip home={home} record={record} meId={meId} onReact={onReact} onNote={onNote}/>}
+      {mode === 'member' && (shared
+        ? can(record, meId, 'react') && <CollabStrip home={home} record={record} meId={meId} onReact={onReact} onNote={onNote}/>
+        : <ListingFeedback home={home} board={board} me={me} onVote={onVote} onComment={onComment}/>)}
     </motion.div>)}
   </div>;
 
@@ -349,9 +356,6 @@ export function FolderPage({mode, name, homes, board = {stages:{}, labels:{}, gu
       <button type="button" className="folder-primary" onClick={onJoin}>{say('Unirme a la lista', 'Entrar na lista')}</button>
     </div>}
     <AnimatePresence>
-      {dialog === 'rename' && <RenameDialog key="rename" name={name} onSave={onRename} onClose={() => setDialog(null)}/>}
-      {dialog === 'stages' && <StagesDialog key="stages" labels={board.labels} onSave={onStages} onClose={() => setDialog(null)}/>}
-      {dialog === 'members' && mode === 'member' && <BoardMembersDialog key="board-members" name={name} guests={board.guests} onAdd={onAddGuest} onRemove={onRemoveGuest} onClose={() => setDialog(null)}/>}
       {dialog === 'members' && mode !== 'member' && <MembersDialog key="members" name={name} members={members} meId={meId} canRemove={!!record && can(record, meId, 'removeMember')}
         onRemove={onRemoveMember} onInvite={onInvite} onClose={() => setDialog(null)}/>}
     </AnimatePresence>

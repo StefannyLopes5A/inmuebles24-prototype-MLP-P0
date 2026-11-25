@@ -23,6 +23,7 @@ const GLYPHS = {
   unmet:'M7 7l10 10M17 7 7 17',
   'trend-down':'M3 7l6 6 4-4 8 8M21 11v6h-6',
   'trend-up':'M3 17l6-6 4 4 8-8M15 7h6v6',
+  demand:'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5Z',
   unknown:'M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2M12 18h.01',
   remodel:'M14.5 4.5l5 5M4 20l1.2-4.6L15.7 4.9a1.8 1.8 0 0 1 2.5 0l.9.9a1.8 1.8 0 0 1 0 2.5L8.6 18.8 4 20Z',
   outdoor:'M12 4V2.5M12 21.5V20M4 12H2.5M21.5 12H20M6.3 6.3 5.2 5.2M18.8 18.8l-1.1-1.1M6.3 17.7l-1.1 1.1M18.8 5.2l-1.1 1.1M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
@@ -277,7 +278,8 @@ function PriceBars({bars, delay, reduce, short}) {
 function PageReading({reading, delay, reduce, short, say, onAsk, onPhoto}) {
   const groups = [['plus', say('A favor', 'A favor')], ['minus', say('Para pesar', 'A considerar')]].filter(([kind]) => reading[kind].length);
   if (!groups.length) return null;
-  return <div className="lp-read">{groups.map(([kind, title], g) => <section key={kind} className="lp-read-group" aria-label={title}>
+  return <div className="lp-read">
+    {groups.map(([kind, title], g) => <section key={kind} className="lp-read-group" aria-label={title}>
     <h3>{title}</h3>
     <ul>{reading[kind].map((row, i) => <motion.li key={row.id} initial={reduce ? false : {opacity:0, y:6}} animate={{opacity:1, y:0}}
       transition={reduce ? {duration:0} : {duration:0.32, ease:EASE_FADE, delay:delay + (g * 3 + i) * 0.06}}>
@@ -289,11 +291,13 @@ function PageReading({reading, delay, reduce, short, say, onAsk, onPhoto}) {
           {row.note}
           {row.ask && onAsk && <>{row.note && '. '}<button type="button" className="lp-tile-action" onClick={() => onAsk(row.ask.question)}>{row.ask.label}</button></>}
         </span>}
+        {row.tag && <span className={`lp-highlight is-${row.tag.kind}`}>{row.tag.kind === 'demand' && <Glyph name="trend-up" size={14}/>}{row.tag.label}</span>}
       </div>
       {row.photo && onPhoto && <button type="button" className="lp-read-photo" onClick={event => onPhoto(row.photo.index, event.currentTarget)}
         aria-label={say(`Ver foto: ${row.title}`, `Ver foto: ${row.title}`)}><img src={row.photo.src} alt=""/></button>}
     </motion.li>)}</ul>
-  </section>)}</div>;
+  </section>)}
+  </div>;
 }
 
 /**

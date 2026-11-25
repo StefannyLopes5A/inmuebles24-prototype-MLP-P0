@@ -12,6 +12,7 @@ import {contactValidation, createContactReceipt, normalizeContactProfile} from '
 import {advertiserFor, advertiserReviews} from './listingAdvertiser';
 import {shortMoney} from './moraAnalysis';
 import {marketQuestion} from './marketAnswers.js';
+import {topicQuestion} from './moraTopics.js';
 import {sectionFollowUps} from './selectionAsk.js';
 import {markVisit} from './seekerSignals.js';
 import {MoraInsight} from './MoraInsight';
@@ -423,7 +424,7 @@ function PanelContent({home, titleId, base, navigated, compact, reading, initial
   </label>;
   const usual = home.mode === 'rent'
     ? [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('guarantee', copy.language), say('Tem custos além do aluguel?', '¿Hay gastos además de la renta?')]
-    : [say('Ainda está disponível?', '¿Sigue disponible?'), marketQuestion('notary', copy.language), marketQuestion('credit', copy.language)];
+    : [say('Ainda está disponível?', '¿Sigue disponible?'), topicQuestion('fair', copy.language), marketQuestion('notary', copy.language)];
   // A pill's chat offers that section's own next questions, and drops the ones already asked.
   const followUps = initialAction?.section ? sectionFollowUps(initialAction.section, home, copy.language).filter(item => !turns.some(turn => turn.follow === item.id)) : null;
   const quick = followUps ? followUps.map(item => ({line:item.label, follow:item.id}))

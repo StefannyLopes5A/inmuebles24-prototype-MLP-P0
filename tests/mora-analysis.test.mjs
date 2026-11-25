@@ -282,7 +282,10 @@ test('the listing page card keeps the mini-listing sentence and sorts every find
     for (const fact of analysis.verdict.facts) {
       if (fact.id === 'around' || fact.id === 'price') continue;
       const side = fact.polarity === 'plus' ? reading.plus : reading.minus;
-      if (side.length < 4) assert.ok(side.some(row => row.id === fact.id), `${home.id}: the card's ${fact.id} reaches the page`);
+      if (side.length < 4) {
+        assert.ok(side.some(row => row.id === fact.id), `${home.id}: the card's ${fact.id} reaches the page`);
+        if (fact.id === 'drop' || fact.id === 'demand') assert.ok(side.find(row => row.id === fact.id).tag?.label, `${home.id}: ${fact.id} wears its card tag`);
+      }
     }
     for (const row of rows) {
       assert.ok(row.title && !/\d\s?(m|km)\b/.test(row.title), `${home.id}: ${row.title}`);

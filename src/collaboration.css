@@ -124,8 +124,11 @@
 .folder-menu .account-menu-item[data-danger]{color:#c13515}
 .folder-menu .account-menu-item:focus-visible{outline:none;background:#f7f7f7}
 
-.folder-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:48px 16px}
-.folder-grid-item{min-width:0}
+.folder-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:48px 16px}
+.folder-grid-item{min-width:0;display:flex;flex-direction:column}
+/* Cards in a row end at the same height (the high-demand pill makes some taller), so the feedback blocks line up. */
+.folder-grid-item>:first-child{margin-bottom:20px}
+.folder-grid-item>.folder-feedback{margin-top:auto}
 .folder-page .folder-grid .folder-grid-item .discovery-item{width:100%;flex-basis:auto;min-width:0}
 .folder-collab{display:flex;flex-direction:column;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--folder-line)}
 .folder-collab .invite-reactions{gap:6px}
@@ -165,7 +168,10 @@
   .folder-primary.is-danger:not(:disabled):hover{background:#a12c11}
 }
 
-@media(max-width:1200px){
+@media(max-width:1350px){
+  .folder-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:1100px){
   .folder-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:950px){
@@ -218,3 +224,21 @@
   .member-avatar,.account-inline-provider,.share-together,.share-channel,.reaction-chip,.members-chip,.folder-chip{transition:none}
   :is(.account-inline-provider,.share-together,.share-channel,.reaction-chip,.members-chip,.folder-chip):active{transform:none}
 }
+
+/* List view: a vote and a note under each card */
+.folder-feedback{display:flex;flex-direction:column;gap:12px;margin-top:12px;padding:16px;border-radius:16px;background:#f7f7f7}
+.folder-feedback-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.folder-feedback-count{font-size:14px;line-height:20px;color:#6a6a6a}
+.folder-votes{display:flex;gap:8px}
+.folder-vote{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid transparent;border-radius:99px;background:#fff;color:#222;font:inherit;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;box-shadow:0 0 0 1px #0000000a,0 2px 8px #0000000f}
+.folder-vote[aria-pressed=true]{border-color:#111}
+.folder-vote:focus-visible{outline:2px solid #222;outline-offset:2px}
+.folder-feedback-notes{display:flex;flex-direction:column;gap:16px;margin:0;padding:12px 0 0;border-top:1px solid var(--folder-line);list-style:none}
+.folder-feedback-notes li{display:flex;align-items:flex-start;gap:12px}
+.folder-feedback-notes p{margin:0;font-size:14px;line-height:20px;color:#222;overflow-wrap:anywhere}
+.folder-feedback-notes p+p{margin-top:2px;font-size:15px;line-height:22px}
+.folder-feedback-notes small{font-size:13px;color:#6a6a6a}
+.folder-feedback-face{position:relative;flex:none}
+.folder-feedback-face .member-avatar{box-shadow:none}
+.folder-feedback-vote{position:absolute;right:-4px;bottom:-4px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fff;color:#222;box-shadow:0 0 0 1px #0000001a}
+@media(hover:hover) and (pointer:fine){.folder-vote:hover{box-shadow:0 0 0 1px #00000024,0 2px 8px #0000000f}}

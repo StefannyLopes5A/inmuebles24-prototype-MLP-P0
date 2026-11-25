@@ -1,3 +1,5 @@
+import {listingHighlights, highlightCopy} from './listingHighlights.js';
+
 const minutesOf = time => Number(String(time).match(/\d+/)?.[0]);
 const first = text => text ? `${text.charAt(0).toLowerCase()}${text.slice(1)}` : '';
 
@@ -65,6 +67,17 @@ const PLUS_ORDER = ['drop', 'demand', 'outdoor', 'remodeled', 'furnished', 'comm
 const MINUS_ORDER = ['budget', 'price', 'beds', 'zone', 'unfurnished', 'work', 'missing', 'gap'];
 const MAX_ROWS = 4;
 
+/** The tag each highlight row wears: `drop` earns "Mejor precio"; `demand` keeps the card's pill label. */
+function pageTags(home, say) {
+  const marks = listingHighlights(home);
+  if (!marks.drop && !marks.demand) return {};
+  const copy = highlightCopy(marks, {say, money:amount => amount});
+  const tags = {};
+  if (copy.drop) tags.drop = {kind:'price', label:say('Melhor preço', 'Mejor precio')};
+  if (copy.demand) tags.demand = {kind:'demand', label:copy.demand.label};
+  return tags;
+}
+
 /**
  * The listing page's card: the mini-listing's sentence on top, so the reading is recognizable, and below it everything
  * Mora found, sorted into what helps and what to weigh. The page has room, so each row carries its evidence:
@@ -74,9 +87,12 @@ export function detailReading(analysis, {home, search, places, gallery, short, s
   if (!analysis?.verdict) return null;
   const candidates = analysis.verdict.candidates || analysis.verdict.facts;
   const rows = [];
+  // The card's "Mejor precio" tag and high-demand pill ride on their own rows in "A favor".
+  const tags = pageTags(home, say);
   for (const fact of candidates) {
     if (fact.id === 'around' || fact.id === 'price') continue;
     const row = {...fact};
+    if (tags[fact.id]) row.tag = tags[fact.id];
     if (fact.photo && gallery?.[fact.photo - 1]) row.photo = {index:fact.photo - 1, src:gallery[fact.photo - 1].src};
     else delete row.photo;
     if (fact.id === 'gap' && analysis.attention?.action) row.ask = analysis.attention.action;

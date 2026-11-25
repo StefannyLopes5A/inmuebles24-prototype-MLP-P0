@@ -5,6 +5,7 @@ import {homes, listingPrice, propertyPhoto} from './data';
 import {similarListings} from './listingStory.js';
 import {MARKET_TOPICS, marketAnswer, marketQuestion, marketTopic} from './marketAnswers.js';
 import {followUpReading, sectionReading} from './selectionAsk.js';
+import {listingTopic, nextTopics, topicQuestion, topicReading} from './moraTopics.js';
 import {MoraThinking, MoraWords, wordCount} from './MoraVoice';
 import {VISIT_MOMENTS, leadLine, markVisit, readSeeker, visitMomentLabel} from './seekerSignals.js';
 import {SOFT_MOTION} from './homeIntro.js';
@@ -39,10 +40,10 @@ export function replyLine(advertiser, say) {
  * proposes; anything else waits for the person to confirm before it reaches the agency.
  * A turn that brings its own `reply` was answered by the page that asked (the tour's inventory and camera).
  */
-function moraReply(turn, say, advertiser, agency = AGENCY, home = null, language = 'es-MX', similar = null) {
+function moraReply(turn, say, advertiser, agency = AGENCY, home = null, language = 'es-MX', similar = null, search = null) {
   const [br, es] = agency;
   if (turn.reply) return {widget:turn.action ? 'scene' : null, text:turn.reply};
-  if (turn.kind === 'visit' || (turn.kind === 'ask' && /visit/i.test(turn.text))) return {widget:'moment', text:say(`Claro! Para quando você gostaria de ir? Eu passo seu interesse e a ${br} te propõe o horário.`, `¡Claro! ¿Para cuándo te gustaría ir? Le paso tu interés y la ${es} te propone el horario.`)};
+  if (turn.kind === 'visit' || (turn.kind === 'ask' && /visit/i.test(turn.text) && listingTopic(turn.text) !== 'brief')) return {widget:'moment', text:say(`Claro! Para quando você gostaria de ir? Eu passo seu interesse e a ${br} te propõe o horário.`, `¡Claro! ¿Para cuándo te gustaría ir? Le paso tu interés y la ${es} te propone el horario.`)};
   if (turn.kind === 'intention') return {widget:'slot', text:turn.slot?.note
     ? say(`Perfeito, vai do jeitinho que você escreveu. Confira antes de eu enviar:`, `Perfecto, va tal cual lo escribiste. Revísalo antes de que lo envíe:`)
     : say('Perfeito. Confira sua intenção de visita:', 'Perfecto. Revisa tu intención de visita:')};
@@ -82,6 +83,11 @@ function moraReply(turn, say, advertiser, agency = AGENCY, home = null, language
     const more = answer.ask ? [] : MARKET_TOPICS.filter(item => item !== topic && item !== (home.mode === 'rent' ? 'credit' : 'guarantee'));
     return {widget:answer.ask ? 'card' : more.length ? 'topics' : null, topics:more, text:`${answer.headline} ${answer.detail}${ask}`, note:answer.note, think:say('Revisando referências da CDMX…', 'Revisando referencias de CDMX…')};
   }
+  // The rest of what Mora reads about a listing: price score, time on the market, trend, monthly cost, parecidos, gaps,
+  // surroundings, vibe, commute, demand, visit questions and budget. A topic the listing cannot answer falls through.
+  const listingKind = turn.kind === 'ask' && home ? listingTopic(turn.text) : null;
+  const reading = listingKind ? topicReading(listingKind, home, {language, search: search || {}}) : null;
+  if (reading) return {widget:'chips', topics:nextTopics(listingKind), text:reading.text, note:reading.note, think:say('Revisando o imóvel e a região…', 'Revisando el inmueble y la zona…')};
   if (turn.kind === 'agency-sent') {
     const next = offer(['Enquanto você espera', 'Mientras esperas']);
     return {widget:next.widget, text:agencySentLine(advertiser, say) + next.text};
@@ -232,7 +238,7 @@ function AgencyQuestionCard({home, question, advertiser, agency, agencyState, re
 export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduce, copy, search, onAsk, onAgencyAction, onOpenHome, alternatives}) {
   const {say, language} = copy;
   const similar = onOpenHome && SIMILAR_KINDS.includes(turn.kind) ? (alternatives ? alternatives(home) : listingAlternatives(home, search, say)) : null;
-  const {text:reply, widget, note, topics, think:replyThink} = moraReply(turn, say, advertiser, agency, home, language, similar);
+  const {text:reply, widget, note, topics, think:replyThink} = moraReply(turn, say, advertiser, agency, home, language, similar, search);
   const card = widget === 'card';
   const agencyState = turn.agencyState || 'pending';
   const done = MORA_THINK_MS + (wordCount(reply) - 1) * SOFT_MOTION.wordStep + SOFT_MOTION.fade;
@@ -272,7 +278,8 @@ export function ChatTurn({turn, home, advertiser, agency = AGENCY, active, reduc
           onChange={source => onAsk(say('Quero outro momento', 'Quiero otro momento'), source, 'visit')}/>}
         {widget === 'similar-offer' && <SimilarOffer active={active} reduce={reduce} say={say} onAsk={onAsk}/>}
         {widget === 'similar' && <SimilarList items={similar.items} label={similar.label} copy={copy} onOpen={onOpenHome}/>}
-        {widget === 'topics' && <TopicChips topics={topics} active={active} reduce={reduce} language={language} say={say} onAsk={onAsk}/>}
+        {widget === 'topics' && <TopicChips topics={topics} label={topic => marketQuestion(topic, language)} active={active} reduce={reduce} say={say} onAsk={onAsk}/>}
+        {widget === 'chips' && <TopicChips topics={topics} label={topic => topicQuestion(topic, language)} active={active} reduce={reduce} say={say} onAsk={onAsk}/>}
       </Grow>}
     </div>
   </motion.li>;
@@ -291,10 +298,10 @@ function SimilarOffer({active, reduce, say, onAsk}) {
 }
 
 /** After a general answer, the other market questions, one tap each. */
-function TopicChips({topics, active, reduce, language, say, onAsk}) {
+function TopicChips({topics, label, active, reduce, say, onAsk}) {
   return <AnimatePresence initial={false}>{active && <Collapse key="topics" reduce={reduce}>
     <div className="lp-moment-row" role="group" aria-label={say('Outras dúvidas', 'Otras dudas')}>
-      {topics.map(topic => <button key={topic} type="button" className="lp-moment" onClick={event => onAsk(marketQuestion(topic, language), event.currentTarget)}>{marketQuestion(topic, language)}</button>)}
+      {topics.map(topic => <button key={topic} type="button" className="lp-moment" onClick={event => onAsk(label(topic), event.currentTarget)}>{label(topic)}</button>)}
     </div>
   </Collapse>}</AnimatePresence>;
 }

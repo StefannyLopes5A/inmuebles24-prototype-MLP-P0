@@ -14,6 +14,11 @@ const LABEL_MAX = 28;
 const EMAIL_MAX = 80;
 const GUEST_MAX = 12;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NOTE_MAX = 140;
+export const SELF = 'me';
+const VOTES = new Set(['up', 'down']);
+
+const cleanNote = value => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, NOTE_MAX).trim();
 
 export const cleanStageLabel = value => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, LABEL_MAX);
 
@@ -49,17 +54,32 @@ export function normalizeBoard(raw, homeIds = []) {
       if (guests.length >= GUEST_MAX) break;
     }
   }
-  if (!Object.keys(stages).length && !Object.keys(labels).length && !guests.length) return undefined;
+  const actors = new Set([SELF, ...guests.map(guest => guest.email)]);
+  const feedback = {};
+  if (raw?.feedback && typeof raw.feedback === 'object') {
+    for (const [id, entry] of Object.entries(raw.feedback)) {
+      if (!allowed.has(id) || !entry || typeof entry !== 'object') continue;
+      const votes = {}, notes = {};
+      for (const [actor, kind] of Object.entries(entry.votes || {})) if (actors.has(actor) && VOTES.has(kind)) votes[actor] = kind;
+      for (const [actor, note] of Object.entries(entry.notes || {})) {
+        const text = cleanNote(note?.text);
+        if (actors.has(actor) && text) notes[actor] = {text, at:Number.isFinite(note.at) ? note.at : 0};
+      }
+      if (Object.keys(votes).length || Object.keys(notes).length) feedback[id] = {votes, notes};
+    }
+  }
+  if (!Object.keys(stages).length && !Object.keys(labels).length && !guests.length && !Object.keys(feedback).length) return undefined;
   return {
     ...(Object.keys(stages).length ? {stages} : {}),
     ...(Object.keys(labels).length ? {labels} : {}),
     ...(guests.length ? {guests} : {}),
+    ...(Object.keys(feedback).length ? {feedback} : {}),
   };
 }
 
 export function readBoard(folder) {
   const board = normalizeBoard(folder?.board, folder?.homeIds || []) || {};
-  return {stages:board.stages || {}, labels:board.labels || {}, guests:board.guests || []};
+  return {stages:board.stages || {}, labels:board.labels || {}, guests:board.guests || [], feedback:board.feedback || {}};
 }
 
 export function writeBoard(folder, board) {
@@ -100,16 +120,87 @@ export function withLabels(folder, labels) {
   return writeBoard(folder, {...board, labels:next});
 }
 
-export function withGuest(folder, email) {
+const hash = text => {
+  let value = 2166136261;
+  for (const char of String(text)) value = Math.imul(value ^ char.codePointAt(0), 16777619);
+  return value >>> 0;
+};
+
+const GUEST_NOTES = {
+  'es-MX':['Me gustó bastante. ¿Podemos visitarlo el sábado?', 'La ubicación me convence. ¿Qué incluye el mantenimiento?', 'Se ve muy bien. ¿Será negociable el precio?'],
+  'pt-BR':['Gostei bastante. Dá para visitar no sábado?', 'A localização me convence. O que o condomínio inclui?', 'Parece ótimo. O preço é negociável?'],
+};
+
+/** "steh.lopes@…" reads "Steh": the first word of the part before the @. */
+export function guestName(email) {
+  const word = String(email || '').split('@')[0].split(/[._\-+]/)[0];
+  return word ? `${word.charAt(0).toUpperCase()}${word.slice(1)}` : '';
+}
+
+/** Adds the first feedback of a vote or a note; each person keeps one of each per listing. */
+export function withVote(folder, homeId, actor, kind) {
+  if (!folder?.homeIds?.includes(homeId) || !VOTES.has(kind)) return folder;
+  const board = readBoard(folder);
+  const entry = board.feedback[homeId] || {votes:{}, notes:{}};
+  const votes = {...entry.votes};
+  if (votes[actor] === kind) delete votes[actor];
+  else votes[actor] = kind;
+  return writeBoard(folder, {...board, feedback:{...board.feedback, [homeId]:{...entry, votes}}});
+}
+
+export function withComment(folder, homeId, actor, text, at = Date.now()) {
+  if (!folder?.homeIds?.includes(homeId)) return folder;
+  const board = readBoard(folder);
+  const entry = board.feedback[homeId] || {votes:{}, notes:{}};
+  const notes = {...entry.notes};
+  const clean = cleanNote(text);
+  if (clean) notes[actor] = {text:clean, at};
+  else delete notes[actor];
+  return writeBoard(folder, {...board, feedback:{...board.feedback, [homeId]:{...entry, notes}}});
+}
+
+/** What one listing carries: vote counts, what the person voted, and the notes newest first. */
+export function feedbackFor(board, homeId) {
+  const entry = board?.feedback?.[homeId] || {votes:{}, notes:{}};
+  const kinds = Object.values(entry.votes);
+  return {
+    up:kinds.filter(kind => kind === 'up').length,
+    down:kinds.filter(kind => kind === 'down').length,
+    mine:entry.votes[SELF] || null,
+    votes:entry.votes,
+    notes:Object.entries(entry.notes).map(([actor, note]) => ({actor, ...note})).sort((a, b) => b.at - a.at),
+  };
+}
+
+/**
+ * Adding someone to the list simulates them answering: one listing, a thumbs up and a short note from a few hours ago.
+ * The note is a fixed line, never anything the person typed, and nothing is sent to anyone.
+ */
+export function withGuest(folder, email, {language = 'es-MX', now = Date.now()} = {}) {
   const clean = cleanGuestEmail(email);
   const board = readBoard(folder);
   if (!clean || board.guests.some(guest => guest.email === clean)) return {folder, added:false};
-  return {folder:writeBoard(folder, {...board, guests:[...board.guests, {email:clean}]}), added:true};
+  let next = writeBoard(folder, {...board, guests:[...board.guests, {email:clean}]});
+  const ids = folder.homeIds || [];
+  if (ids.length) {
+    const seed = hash(clean);
+    const homeId = ids[seed % ids.length];
+    const pool = GUEST_NOTES[language] || GUEST_NOTES['es-MX'];
+    next = withVote(next, homeId, clean, 'up');
+    next = withComment(next, homeId, clean, pool[(seed >>> 4) % pool.length], now - (1 + (seed >>> 8) % 5) * 3600000);
+  }
+  return {folder:next, added:true};
 }
 
 export function withoutGuest(folder, email) {
   const board = readBoard(folder);
-  return writeBoard(folder, {...board, guests:board.guests.filter(guest => guest.email !== email)});
+  const feedback = {};
+  for (const [id, entry] of Object.entries(board.feedback)) {
+    const {[email]:_vote, ...votes} = entry.votes;
+    const {[email]:_note, ...notes} = entry.notes;
+    feedback[id] = {votes, notes};
+  }
+  return writeBoard(folder, {...board, guests:board.guests.filter(guest => guest.email !== email), feedback});
 }
 
 export function stageName(stage, labels, say) {

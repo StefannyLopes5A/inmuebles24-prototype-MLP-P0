@@ -11,6 +11,7 @@ import {contactRecipient, contactValidation, createContactReceipt, normalizeCont
 import {EASE, EASE_IN_OUT, EASE_OUT, riseIn, useMediaQuery} from './favoriteMotion';
 import {SOFT_MOTION} from './homeIntro.js';
 import {markVisit} from './seekerSignals.js';
+import {FolderViews, rememberFolderView} from './FolderViews.jsx';
 import {IconButton} from './IconButton.jsx';
 
 const MAX_COLUMNS = 5;
@@ -272,7 +273,7 @@ function Composer({recipients, profile, mobile, reduce, morph, pending, onCancel
     </form>;
 }
 
-export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare, onBoard, chipActions = false, startContact = null}) {
+export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHide, onShowAll, receipts = [], profile, onProfile, onReceipts, intro = false, onIntroSeen, onClose, onOpen, onExplore, backLabel, onShare, onBoard, actions = null, chipActions = false, startContact = null}) {
   const {language, compactMoney, say} = useSay();
   const reduce = useReducedMotion();
   const mobile = useMediaQuery('(max-width: 700px)');
@@ -433,9 +434,9 @@ export function CompareFavorites({folderName, meta, homes, hiddenIds = [], onHid
               <a href={shareUrl} target="_blank" rel="noopener noreferrer">{shareUrl.replace(/^https?:\/\//, '')}</a>
             </p>}
           </motion.div>
-          {onBoard && <div className="board-views" role="group" aria-label={say('Visualização da lista', 'Vista de la lista')}>
-            <button type="button" aria-pressed="false" onClick={onBoard}>{say('Quadro', 'Tablero')}</button>
-            <button type="button" aria-pressed="true">{say('Comparar', 'Comparar')}</button>
+          {onBoard && <div className="board-actions">
+            <FolderViews active="compare" onSelect={view => {rememberFolderView(view); onBoard();}}/>
+            {actions}
           </div>}
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
 import {SectionInsight} from './SectionInsight.jsx';
+import {FairPriceScore} from './FairPriceScore.jsx';
 import {Icon} from './App';
 import {homes, listingPrice} from './data';
 import {DEMO_MXN_PER_USD, useLanguage} from './i18n';
@@ -156,7 +157,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
     const top = el.getBoundingClientRect().top + window.scrollY - header - 24;
     window.scrollTo({top, behavior:reduce ? 'instant' : 'smooth'});
   };
-  const priceQuestion = say('É um bom preço?', '¿Es un buen precio?');
+  const priceQuestion = say('Pontuação de preço justo', 'Puntaje de precio justo');
   const crumbs = [
     say(home.mode === 'rent' ? 'Alugar' : 'Venda', home.mode === 'rent' ? 'Renta' : 'Venta'),
     say('Apartamento', 'Departamento'),
@@ -224,6 +225,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
             <p className="pp-intro-amount">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>
             <button type="button" className="pp-mora-pill" aria-expanded={openInsights.has('price')} onClick={event => toggleInsight('price')}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{priceQuestion}</span></button>
           </div>
+          {openInsights.has('price') && <FairPriceScore home={home} money={money} currency={currency} say={say}/>}
           {insightFor('price')}
           <p className="pp-intro-fees"><span>{say('Condomínio', 'Mantenimiento')} {money(facts.fee)}</span><span className="pp-intro-fee-dot" aria-hidden="true">·</span><span>{say('IPTU', 'Predial')} {say('a confirmar', 'por confirmar')}</span></p>
         </div>
@@ -254,9 +256,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       <section className="pp-section" aria-labelledby="pp-about-title">
         <div className="pp-about-head">
           <h2 id="pp-about-title" className="pp-section-title">{say('Sobre este imóvel', 'Acerca de este inmueble')}</h2>
-          <button type="button" className="pp-mora-pill" aria-expanded={openInsights.has('description')} onClick={() => toggleInsight('description')}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{say('O que vale olhar de perto', 'Qué vale mirar de cerca')}</span></button>
         </div>
-        {insightFor('description')}
         <Description paragraphs={story.description(language)} home={home} advertiser={advertiser} say={say}/>
       </section>
 

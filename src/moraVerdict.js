@@ -197,14 +197,13 @@ function priceFact(home, {facts, peers, search, short, say}, {pick}) {
 function highlightFacts(home, short, say) {
   const {drop, demand} = listingHighlights(home);
   const facts = [];
-  if (drop) facts.push({id:'drop', icon:'trend-down', polarity:'plus', weight:1.2,
+  if (drop) facts.push({id:'drop', icon:'price', polarity:'plus', weight:1.2,
     title:say(`Baixou ${drop.pct}% de preço`, `Bajó ${drop.pct}% de precio`),
     note:say(`Há ${drop.days} dias, de ${short(drop.was)} para ${short(drop.price)}`, `Hace ${drop.days} días, de ${short(drop.was)} a ${short(drop.price)}`)});
   if (demand) {
-    const times = demand.factor.toFixed(1).replace('.', ',');
-    facts.push({id:'demand', icon:'trend-up', polarity:'plus', weight:1.1,
+    facts.push({id:'demand', icon:'demand', polarity:'plus', weight:1.1,
       title:say('Alta procura', 'Alta demanda'),
-      note:say(`${times}x mais visitas e favoritos que o bairro em ${demand.hours} h`, `${times}x más visitas y favoritos que el barrio en ${demand.hours} h`)});
+      note:say('Muita gente está vendo e salvando. Se gostou, vale entrar em contato logo.', 'Mucha gente la está viendo y guardando. Si te gustó, conviene contactar pronto.')});
   }
   return facts;
 }

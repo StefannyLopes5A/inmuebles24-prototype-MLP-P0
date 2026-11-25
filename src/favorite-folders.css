@@ -40,8 +40,8 @@
 .folder-name-field{position:relative;border:1px solid var(--folder-field);border-radius:8px;padding:26px 48px 8px 12px;transition:border-color .16s ease,box-shadow .16s ease}
 .folder-name-field:focus-within{border-color:var(--folder-ink);box-shadow:0 0 0 1px var(--folder-ink)}
 .folder-name-field label{position:absolute;top:8px;left:12px;font-size:12px;line-height:16px;color:#6a6a6a;pointer-events:none}
-.folder-name-field input{display:block;width:100%;padding:0;border:0;background:transparent;color:var(--folder-ink);font-size:16px;line-height:22px}
-.folder-name-field input:focus,.folder-name-field input:focus-visible{outline:none}
+.folder-name-field :is(input,textarea){display:block;resize:none;font-family:inherit;width:100%;padding:0;border:0;background:transparent;color:var(--folder-ink);font-size:16px;line-height:22px}
+.folder-name-field :is(input,textarea):focus,.folder-name-field :is(input,textarea):focus-visible{outline:none}
 .folder-clear{position:absolute;top:50%;right:12px;width:24px;height:24px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:var(--folder-line);color:var(--folder-ink);transform:translateY(-50%)}
 .folder-clear:active{transform:translateY(-50%) scale(.94)}
 .folder-count{margin:8px 0 0;font-size:12px;line-height:16px;font-weight:600;color:#6a6a6a}

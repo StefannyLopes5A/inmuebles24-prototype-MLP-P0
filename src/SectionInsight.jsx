@@ -12,11 +12,16 @@ const WORKING = {
 const WORKING_MS = 1100;
 
 // Figures carry the answer, so they read heavier than the sentence around them: prices, shares and spans of time.
-const KEY = /[+−-]?\$\s?\d(?:[\d.,]*\d)?(?:\s?[MK]\b)?(?:\s?MXN)?|[+−-]?\d(?:[\d.,]*\d)?\s?%|\d+(?:[.,]\d+)?\s(?:dias?|días?|anos?|años?|meses|mes|m²)/giu;
+const KEY = /[+−-]?\$\s?\d(?:[\d.,]*\d)?(?:\s?[MK]\b)?(?:\s?MXN)?|[+−-]?\d(?:[\d.,]*\d)?\s?%|\d+(?:[.,]\d+)?\s(?:dias?|días?|anos?|años?|meses|mes|m²|min)/giu;
 
 /** The sentence as words, each flagged when it falls inside a figure. */
-function wordsOf(text) {
+function wordsOf(text, marks = []) {
   const spans = [...text.matchAll(KEY)].map(match => [match.index, match.index + match[0].length]);
+  // Phrases a reading marks itself (the pros and cons) read heavy like the figures.
+  for (const mark of marks) {
+    const at = text.indexOf(mark);
+    if (at >= 0) spans.push([at, at + mark.length]);
+  }
   const words = [];
   for (const match of text.matchAll(/\S+/g)) {
     const start = match.index, end = start + match[0].length;
@@ -30,12 +35,12 @@ function wordsOf(text) {
  * It thinks first (the same sweep as the page's own reading), then inks the sentence in. It wears the page verdict's
  * voice (`lp-mora-lead`) and stays on the page: no panel, no chat.
  */
-export function SectionInsight({section, home, language, id}) {
-  const reading = sectionReading(section, home, language);
+export function SectionInsight({section, home, language, id, reading:given = null}) {
+  const reading = given || sectionReading(section, home, language);
   const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion:reduce)').matches;
   const [ready, setReady] = useState(reduce);
   const [streaming, setStreaming] = useState(!reduce);
-  const words = reading ? wordsOf(reading.text) : [];
+  const words = reading ? wordsOf(reading.text, reading.marks) : [];
   useEffect(() => {
     if (ready || !reading) return undefined;
     const timer = setTimeout(() => setReady(true), WORKING_MS);

@@ -19,7 +19,7 @@ import {playHomeTransition} from './searchFlowMotion';
 import {HomePopover} from './HomeSearch';
 import {SORTS,canonicalSort,sortLabel,sortResults,sortSignal} from './resultSort';
 import {ResultsPager} from './ResultsPager.jsx';
-import {resultsPageSize} from './resultsPager.js';
+import {resultsBlockSize, resultsPageSize} from './resultsPager.js';
 
 const SearchMap=lazy(()=>import('./SearchMap.jsx'));
 const SPLIT_MIN = 951;
@@ -106,7 +106,10 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
   const pageCount=Math.max(1, Math.ceil(ordered.length / pageSize));
   const safePage=Math.min(page, pageCount);
   const pageItems=ordered.slice((safePage - 1) * pageSize, safePage * pageSize);
-  const showNeighborhoods=safePage === 1 && ordered.length >= pageSize;
+  const blockSize=resultsBlockSize(columns);
+  const firstBlock=pageItems.slice(0, blockSize), secondBlock=pageItems.slice(blockSize);
+  // The rail sits between the two blocks of four rows; a page with only one block has nothing to separate.
+  const showNeighborhoods=secondBlock.length > 0;
   const pagerSlots=(layout === 'half' ? width - Math.min(760, Math.max(360, width * 0.42)) : width) < 640 ? 3 : 5;
   const mapFull=mapProps.mode==='full'&&!mapProps.hidden;
   // The floating map steps aside while the Mora editor is open.
@@ -186,9 +189,9 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
     title.focus({preventScroll:true});
     window.scrollTo({top:Math.max(0, top),behavior});
   }
-  function renderGrid(items){
+  function renderGrid(items,part='a'){
     if(!items.length)return null;
-    return <div key={`${gridKey}-${safePage}`} className={`results-grid flow-grid ${updating?'is-updating':''}`} aria-busy={updating}>
+    return <div key={`${gridKey}-${safePage}-${part}`} className={`results-grid flow-grid ${updating?'is-updating':''}`} aria-busy={updating}>
       {items.map((home,index)=><div className="flow-result-item" key={home.id} style={{'--result-order':Math.min(index,7)}} {...hoverProps(home.id)}><HouseCard home={home} search={search} pref={assistantProps.pref} signal={sortSignal(home,sort,language)} contacted={receipts.some(receipt=>receipt.propertyId===home.id)} saved={saved.includes(home.id)} onLike={onSave} onOpen={onOpen}/></div>)}
     </div>;
   }
@@ -206,12 +209,13 @@ export function ResultsFlowPage({search,onChange,visible,saved,onSave,onOpen,rec
         {assistantProps.pref!=='none'&&<button onClick={()=>assistantProps.onPref('none')}>{assistantProps.pref==='extra'?say('Prioridade: 3+ quartos','Prioridad: 3+ recámaras'):say('Preferência: espaço na sala','Preferencia: espacio en la sala')}<Icon name="close" size={14}/></button>}
       </div>}
       <div className={'flow-results-workspace'+(reflowing?' is-map-reflow':'')}><section className="flow-listings" aria-label={t('Todos los resultados')}>
-        {renderGrid(pageItems)}
-        <ResultsPager page={safePage} pages={pageCount} slots={pagerSlots} onPage={goToPage} say={say}/>
-        <NearbyResults homes={nearby} saved={saved} onLike={onSave} onOpen={onOpen} receipts={receipts} search={search} pref={assistantProps.pref}/>
+        {renderGrid(firstBlock,'a')}
         {showNeighborhoods&&<NeighborhoodRail
           onSelect={(area,mode)=>onChange({...search,mode,area,areas:[area],address:'',...(mode==='rent'?{budget:28000}:mode!==search.mode?{budget:7500000}:{})})}
         />}
+        {renderGrid(secondBlock,'b')}
+        <ResultsPager page={safePage} pages={pageCount} slots={pagerSlots} onPage={goToPage} say={say}/>
+        <NearbyResults homes={nearby} saved={saved} onLike={onSave} onOpen={onOpen} receipts={receipts} search={search} pref={assistantProps.pref}/>
         {ordered.length>0&&<PriceInsights search={search} onChange={onChange}/>}
         {ordered.length>0&&<RegionInsights search={search} onChange={onChange} onOpen={onOpen} onGuide={()=>mapProps.onMode('full')} saved={saved} onLike={onSave}/>}
         {ordered.length>0&&<NearbyPlaces search={search} onMap={()=>mapProps.onMode('full')} onCostOfLiving={()=>reveal('.cost-of-living')}/>}

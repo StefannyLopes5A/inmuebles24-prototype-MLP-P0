@@ -1,8 +1,13 @@
-/** One results page is four rows of the current grid. */
-export const RESULTS_PAGE_ROWS = 4;
+/** A results page is two blocks of four rows of the current grid, with the neighborhood rail between them. */
+export const RESULTS_BLOCK_ROWS = 4;
+export const RESULTS_PAGE_ROWS = RESULTS_BLOCK_ROWS * 2;
 
 /** Page numbers visible at once, matching the Figma strip (12900:16548). */
 export const PAGER_WINDOW = 5;
+
+export function resultsBlockSize(columns) {
+  return Math.max(1, columns) * RESULTS_BLOCK_ROWS;
+}
 
 export function resultsPageSize(columns) {
   return Math.max(1, columns) * RESULTS_PAGE_ROWS;

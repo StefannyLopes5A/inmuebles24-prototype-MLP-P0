@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {pagerWindow, resultsPageSize} from '../src/resultsPager.js';
+import {pagerWindow, resultsBlockSize, resultsPageSize} from '../src/resultsPager.js';
 
-test('a results page is four rows of the current grid', () => {
-  assert.equal(resultsPageSize(4), 16);
-  assert.equal(resultsPageSize(1), 4);
-  assert.equal(resultsPageSize(0), 4);
+test('a results page is two blocks of four rows of the current grid', () => {
+  assert.equal(resultsBlockSize(4), 16);
+  assert.equal(resultsPageSize(4), 32, 'two blocks of four rows');
+  assert.equal(resultsPageSize(1), 8);
+  assert.equal(resultsPageSize(0), 8);
 });
 
 test('the pager shows every page when they fit, and centers the current one when they do not', () => {

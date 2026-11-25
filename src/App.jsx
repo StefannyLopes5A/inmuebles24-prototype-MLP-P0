@@ -10,6 +10,7 @@ import {readContactProfile,writeContactProfile} from './contactProfile.js';
 import {Home,HomeHeader} from './Home';
 import {ResultsFlowPage} from './ResultsFlowPage';
 import {ProjectGuide} from './ProjectGuide';
+import {VersionSwitcher} from './VersionSwitcher';
 import {guideEnabled} from './guideStops.js';
 import {captureHomeTransition} from './searchFlowMotion';
 import {cardPhoto,morphFromListing,morphPending,morphToListing,settlePop} from './heroMorph';
@@ -172,5 +173,6 @@ const showResults=page!=='home'&&page!=='listing'&&page!=='favorites'&&page!=='s
  <AnimatePresence>{accountToast&&<AccountToast key="account-toast" text={accountToast.text} onHold={()=>clearTimeout(toastTimer.current)} onRelease={()=>armToast(3000)}/>}</AnimatePresence>
  <AnimatePresence>{loginOpen&&<LoginDialog key="login" reason={loginReason} onSignIn={signIn} onClose={closeLogin}/>}</AnimatePresence>
  {guideOn&&<ProjectGuide onAction={guideAction}/>}
+ <VersionSwitcher aboveGuide={guideOn}/>
  </div>;
 }

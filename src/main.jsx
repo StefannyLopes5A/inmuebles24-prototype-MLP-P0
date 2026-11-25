@@ -29,6 +29,7 @@ import "./glass.css";
 import "./prototype-gate.css";
 import "./icon-button.css";
 import "./project-guide.css";
+import "./version-switcher.css";
 import "./results-map.css";
 import "./location-field.css";
 import "./card-highlights.css";

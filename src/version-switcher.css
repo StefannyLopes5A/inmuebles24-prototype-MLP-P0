@@ -1,0 +1,11 @@
+/* Version switcher: reuses the presenter guide's stage; only the lift, list and link pill are its own. */
+.pg.vs[data-above-guide]{--pg-bottom:calc(var(--pg-edge) + 68px + env(safe-area-inset-bottom,0px))}
+.vs-list{margin:10px 0 0;padding:0 16px 0 64px;font-size:14px;line-height:20px;color:#ffffffb8;opacity:0;transform:translateY(6px);transition:opacity 90ms ease-out,transform 90ms ease-out}
+.pg-item[data-expanded] .vs-list{opacity:1;transform:none;transition:opacity 220ms ease-out 60ms,transform 280ms var(--pg-ease) 60ms}
+.vs-list li+li{margin-top:4px}
+.vs a.pg-pill{display:inline-flex;align-items:center;text-decoration:none}
+@media(max-width:600px){.vs-list{padding-left:60px}}
+@media(max-width:340px){.vs-list{padding-left:28px}}
+@media(prefers-reduced-motion:reduce){.vs-list,.pg-item[data-expanded] .vs-list{transform:none;transition:opacity 150ms ease-out}}
+/* The guide sizes its fab glyph at 14×28; this one is a 26×26 square. */
+.pg-fab.vs-fab svg{width:26px;height:26px}

@@ -387,8 +387,8 @@
 @media(forced-colors:active){.pp-offer-main{border-color:CanvasText;background:Canvas}.pp-offer-level[aria-pressed=true]{border-color:Highlight}}
 
 .pp-aside{grid-column:4;grid-row:1 / span 8;align-self:start;position:sticky;top:calc(var(--flow-header-height,97px) + var(--pp-nav-height,0px) + 24px);display:grid;transition:top 240ms var(--pp-ease)}
-.pp-card{position:relative;padding:24px;border:1px solid #ddd;border-radius:12px;background:#fff;transition:box-shadow 200ms ease}
-.pp-card.is-stuck{box-shadow:0 6px 16px #0000001f}
+.pp-card{position:relative;padding:24px;border:1px solid #ddd;border-radius:24px;background:#fff;box-shadow:0 6px 16px #0000001a;transition:box-shadow 200ms ease}
+.pp-card.is-stuck{box-shadow:0 8px 24px #00000026}
 .pp-card-price{margin:0;font-size:22px;line-height:26px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .pp-card-price small{font-size:16px;font-weight:400}
 .pp-card-signal{margin:8px 0 0;font-size:14px;line-height:20px;color:var(--pp-muted)}
@@ -874,3 +874,31 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 @keyframes pp-fair-in{from{left:50%;opacity:0}to{left:var(--x);opacity:1}}
 @media(prefers-reduced-motion:reduce){.pp-fair-marker{animation:none}}
 @media(max-width:480px){.pp-fair{padding:16px}.pp-fair-score{font-size:32px;line-height:36px}.pp-fair-scale span:nth-child(2){flex:1}}
+/* Closed price card: orange "Solicitar visita", outlined WhatsApp button, 10px terms. */
+.pp-card-whatsapp{gap:8px;font-size:16px;font-weight:600}
+.pp-card-whatsapp svg{flex:none}
+.pp-card-terms,.pp-contact .lp-compose-share{margin:12px 0 0;font-size:10px;line-height:14px;color:#6a6a6a;text-align:left}
+.pp-contact-close{width:44px;height:44px;background:#fff;box-shadow:0 2px 12px #00000026}
+/* Open form: name, WhatsApp and message are three separate fields. */
+.pp-contact .lp-entry{gap:12px}
+.pp-contact .lp-entry .lp-fieldset{display:grid;gap:12px;border:0;border-radius:0}
+.pp-contact .lp-entry .lp-float,.pp-contact .lp-entry .lp-float:first-child,.pp-contact .lp-entry .lp-float:last-child,.pp-contact .lp-entry .lp-float:only-child{border:1px solid #d7d7dd;border-radius:16px}
+.pp-contact .lp-float+.lp-float{border-top:1px solid #d7d7dd}
+.pp-contact .lp-float input{font-size:15px;font-weight:400}
+.pp-contact .lp-float>span{font-size:15px;font-weight:400}
+.pp-contact .lp-float:focus-within{border-color:#222;box-shadow:0 0 0 1px #222}
+.pp-contact .lp-entry .lp-who{border:1px solid #d7d7dd;border-radius:16px}
+.pp-contact .lp-entry>.lp-message.lp-message,.pp-contact .lp-entry>.lp-message:not(:last-child){border:1px solid #d7d7dd;border-radius:16px}
+.pp-contact .lp-message:focus-within{border-color:#222;box-shadow:0 0 0 1px #222}
+.pp-contact .lp-message-label{font-size:12px;font-weight:400;color:#6a6a6a}
+.pp-contact .lp-message-text{border-radius:0;font-size:15px;line-height:1.6}
+/* The focus ring belongs to the whole message box (.lp-message), never to the textarea inside it. */
+.pp-contact .lp-message-text,.pp-contact .lp-message-text:focus,.pp-contact .lp-message-text:focus-visible{outline:none;box-shadow:none}
+.pp-contact .lp-message-text{margin-top:0}
+/* One focus ring for name, WhatsApp and message: a 1px dark border plus a 1px ring, 2px in all. */
+.pp-contact .lp-entry :is(.lp-float,.lp-message):focus-within{border-color:#222;box-shadow:0 0 0 1px #222;outline:none}
+.pp-contact .lp-float input:focus,.pp-contact .lp-float input:focus-visible{outline:none;box-shadow:none}
+/* Figma 13165:646732: 16px inside the box, 24px between the message and the pills, 8px between pills, pills 36px tall. */
+.pp-contact .lp-message{padding:16px}
+.pp-contact .lp-toggles{margin-top:24px;gap:8px}
+.pp-contact .lp-toggle{min-height:36px}

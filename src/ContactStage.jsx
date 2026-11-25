@@ -19,8 +19,8 @@ export function HostLogo({advertiser, say}) {
 
 // Form and sent share one stage: the photo, the agency and its trust facts grow in place instead of a new screen.
 const STAGE = {
-  form:{art:[150, 100], photo:[68, 80, -18], host:[44, 22, 16], value:15, label:12, cell:[8, 14]},
-  sent:{art:[180, 124], photo:[88, 104, -22], host:[56, 30, 24], value:20, label:13, cell:[12, 20]},
+  form:{art:[150, 100], photo:[80, 80, -18], host:[44, 22, 16], value:15, label:12, cell:[8, 14]},
+  sent:{art:[180, 124], photo:[104, 104, -22], host:[56, 30, 24], value:20, label:13, cell:[12, 20]},
 };
 
 export function ContactStage({home, advertiser, copy, reduce, sent, visit = false, reviews = true, children}) {

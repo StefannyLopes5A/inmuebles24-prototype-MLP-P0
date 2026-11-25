@@ -23,31 +23,30 @@ export function contactValidation({profile, channel, message}) {
   return errors;
 }
 
-export function contactMessage({home, search = {}, type, question = '', language = 'es-MX'}) {
+/** The draft is only the greeting for this listing. A question sent from the questions section follows it on its own line. */
+export function contactMessage({home, question = '', language = 'es-MX'}) {
   const pt = language === 'pt-BR';
-  const intent = contactIntent(type);
-  const action = intent === 'visit'
-    ? (pt ? 'Tenho interesse em visitar' : 'Me interesa visitar')
-    : (pt ? 'Tenho interesse em' : 'Me interesa');
-  const price = new Intl.NumberFormat('es-MX', {maximumFractionDigits: 0}).format(search.budget || (home.mode === 'rent' ? home.rent : home.price));
-  const operation = home.mode === 'rent' ? (pt ? 'alugar' : 'rentar') : (pt ? 'comprar' : 'comprar');
-  const regions = (search.areas?.length ? search.areas : [search.area]).filter(area => area && area !== 'Ambas zonas');
-  const location = regions.length ? regions.join(', ') : (pt ? 'Cidade do México' : 'Ciudad de México');
-  const beds = search.beds || home.beds;
-  const context = pt
-    ? `Busco ${operation} em ${location}, até $${price} MXN, com pelo menos ${beds} ${beds === 1 ? 'quarto' : 'quartos'}.`
-    : `Busco ${operation} en ${location}, hasta $${price} MXN, con al menos ${beds} ${beds === 1 ? 'recámara' : 'recámaras'}.`;
-  const inquiry = question.trim() || (intent === 'visit'
-    ? (pt ? 'Podem confirmar a disponibilidade e sugerir horários para uma visita?' : '¿Pueden confirmar la disponibilidad y proponer horarios para una visita?')
-    : (pt ? 'Podem confirmar a disponibilidade e as condições do anúncio?' : '¿Pueden confirmar la disponibilidad y las condiciones del anuncio?'));
-  const preference = search.pref === 'extra'
-    ? (pt ? 'Prefiro 3 ou mais quartos para ter flexibilidade para trabalhar em casa.' : 'Prefiero 3 o más recámaras para tener flexibilidad para trabajar desde casa.')
-    : search.pref === 'open'
-      ? (pt ? 'Um espaço de trabalho na sala me atende; gostaria de confirmar se a distribuição permite.' : 'Me sirve un espacio de trabajo en la sala; quisiera confirmar si la distribución lo permite.')
-      : '';
-  const note = search.note?.trim();
-  return `${pt ? 'Olá' : 'Hola'}, ${action.toLowerCase()} ${home.street}, ${home.area} (${pt ? 'anúncio' : 'anuncio'} ${home.listingId}).\n\n${context}${preference ? `\n${preference}` : ''}${note ? `\n${pt ? 'Também procuro' : 'También busco'}: ${note.slice(0, 300)}` : ''}\n\n${inquiry}`.slice(0, 1400);
+  const greeting = pt
+    ? `Olá, tenho interesse em ${home.street}, ${home.area} (anúncio ${home.listingId}).`
+    : `Hola, me interesa ${home.street}, ${home.area} (anuncio ${home.listingId}).`;
+  return [greeting, question.trim()].filter(Boolean).join('\n').slice(0, 1400);
 }
+
+/** The WhatsApp mask of the listing contact card: +52 55 1234 5678 in Spanish, +55 11 91234-5678 in Portuguese. */
+const PHONE = {es:{code:'52', groups:[2, 4, 4], join:[' ', ' ']}, pt:{code:'55', groups:[2, 5, 4], join:[' ', '-']}};
+const phoneFormat = language => PHONE[language === 'pt-BR' ? 'pt' : 'es'];
+export function maskPhone(value, language) {
+  const {code, groups, join} = phoneFormat(language);
+  const digits = String(value || '').replace(/\D/g, '');
+  const rest = (digits.startsWith(code) ? digits.slice(code.length) : digits).slice(0, groups.reduce((sum, size) => sum + size, 0));
+  if (!rest) return '';
+  let at = 0;
+  const parts = groups.map(size => { const part = rest.slice(at, at + size); at += size; return part; }).filter(Boolean);
+  return `+${code} ${parts.map((part, index) => index ? `${join[index - 1]}${part}` : part).join('')}`;
+}
+export const phonePrefix = language => `+${phoneFormat(language).code} `;
+export const phoneCodeLength = language => phoneFormat(language).code.length;
+
 
 export function createContactReceipt({home, broker, intent, channel, message, profile, id, createdAt}) {
   const errors = contactValidation({profile, channel, message});

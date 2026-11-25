@@ -64,8 +64,5 @@ export function CostOfLiving({search, onPrices}) {
         </li>;
       })}
     </ul>
-    <p className="cost-of-living-note">{say(
-      'Médias ilustrativas para a região e o tamanho; o consumo real varia. O condomínio vem dos anúncios do catálogo.',
-      'Promedios ilustrativos para la zona y el tamaño; el consumo real varía. El mantenimiento sale de los anuncios del catálogo.')}</p>
   </section>;
 }

@@ -205,7 +205,6 @@ button.price-insights-area-name:hover{color:#f50}
 .cost-card-copy{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;max-width:100%}
 .cost-card-copy h3{margin:0;font-size:16px;line-height:22px;font-weight:600;letter-spacing:-.3125px;color:#222}
 .cost-card-copy p{margin:0;font-size:14px;line-height:20px;letter-spacing:-.1504px;color:#6a6a6a;text-wrap:pretty}
-.cost-of-living-note{margin:0;font-size:13px;line-height:18px;letter-spacing:-.0762px;color:#6a6a6a}
 @container (max-width:1100px){.cost-of-living-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container (max-width:640px){
   .cost-of-living-head{flex-direction:column;align-items:flex-start;gap:8px}

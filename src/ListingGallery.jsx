@@ -5,7 +5,6 @@ import {Icon} from './App';
 import {EASE_FADE} from './listingPanelMotion';
 import {PhotoLightbox} from './PhotoLightbox';
 import {canMorph, morphGallery, visible} from './heroMorph';
-import {IconButton} from './IconButton.jsx';
 
 const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:not([tabindex="-1"])';
 function trap(event, container) {
@@ -31,55 +30,13 @@ function mosaicPhotos(gallery) {
   return picked.filter(Boolean);
 }
 
-const PauseGlyph = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx=".8"/><rect x="9.5" y="2.5" width="3" height="11" rx=".8"/></svg>;
-const PlayGlyph = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.5 2.6v10.8a.6.6 0 0 0 .9.5l8.6-5.4a.6.6 0 0 0 0-1L5.4 2.1a.6.6 0 0 0-.9.5Z"/></svg>;
-const SoundGlyph = ({muted}) => <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-  <path d="M2.5 7v4h3l4 3.5v-11L5.5 7Z" fill="currentColor"/>
-  {muted ? <path d="M12.5 7l4 4m0-4-4 4"/> : <path d="M12.5 6.2a4 4 0 0 1 0 5.6M14.6 4.2a7 7 0 0 1 0 9.6"/>}
-</svg>;
-
-/** Plays the tour muted and on loop while it is on screen; reduced motion starts it paused. */
-export function useTour(video, src) {
-  const [playing, setPlaying] = useState(false);
-  const [paused, setPaused] = useState(() => matchMedia('(prefers-reduced-motion:reduce)').matches);
-  const [muted, setMuted] = useState(true);
-  useEffect(() => {
-    const el = video.current;
-    if (!el || paused) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) el.play()?.then(() => setPlaying(true)).catch(() => {});
-      else el.pause();
-    }, {threshold:0.25});
-    observer.observe(el);
-    return () => { observer.disconnect(); el.pause(); };
-  }, [paused, src, video]);
-  useEffect(() => { if (video.current) video.current.muted = muted; }, [muted, video]);
-  return {playing, paused, muted, togglePause: () => setPaused(!paused), toggleMute: () => setMuted(!muted)};
-}
-
-export function TourControls({tour, say}) {
-  return <div className="pp-tour-controls">
-    <IconButton className="compare-back pp-tour-button" onClick={tour.togglePause} label={tour.paused ? say('Reproduzir tour virtual', 'Reproducir tour virtual') : say('Pausar tour virtual', 'Pausar tour virtual')}>
-      {tour.paused ? <PlayGlyph/> : <PauseGlyph/>}
-    </IconButton>
-    <IconButton className="compare-back pp-tour-button" onClick={tour.toggleMute} aria-pressed={!tour.muted} label={tour.muted ? say('Ativar som', 'Activar sonido') : say('Desativar som', 'Silenciar')}>
-      <SoundGlyph muted={tour.muted}/>
-    </IconButton>
-  </div>;
-}
-
 function Mosaic({home, gallery, onOpen, say}) {
   const tiles = useMemo(() => mosaicPhotos(gallery), [gallery]);
-  const video = useRef(null);
-  const tour = useTour(video, gallery.video);
-  const playing = tour.playing;
   return <div className="pp-mosaic" data-count={tiles.length}>
-    {tiles.map((photo, i) => { const target = i === 0 && gallery.video ? 'tour' : photo.index; return <button key={photo.src} type="button" className="pp-tile" data-photo-index={target} onClick={event => onOpen(target, event.currentTarget)}
-      aria-label={target === 'tour' ? say(`Ver tour virtual de ${home.street}`, `Ver tour virtual de ${home.street}`) : i === 0 ? say(`Ver fotos de ${home.street}`, `Ver fotos de ${home.street}`) : say(`Ver foto ${photo.index + 1} de ${gallery.photos.length}`, `Ver foto ${photo.index + 1} de ${gallery.photos.length}`)}>
+    {tiles.map((photo, i) => <button key={photo.src} type="button" className="pp-tile" data-photo-index={photo.index} onClick={event => onOpen(photo.index, event.currentTarget)}
+      aria-label={i === 0 ? say(`Ver fotos de ${home.street}`, `Ver fotos de ${home.street}`) : say(`Ver foto ${photo.index + 1} de ${gallery.photos.length}`, `Ver foto ${photo.index + 1} de ${gallery.photos.length}`)}>
       <img src={photo.src} alt={i === 0 ? home.imageAlt : ''} loading={i ? 'lazy' : 'eager'} decoding="async" draggable={false}/>
-      {i === 0 && gallery.video && <video ref={video} className={`pp-tile-video${playing ? ' is-playing' : ''}`} src={gallery.video} muted loop playsInline preload="metadata" aria-hidden="true"/>}
-    </button>; })}
-    {gallery.video && <TourControls tour={tour} say={say}/>}
+    </button>)}
     <button type="button" className="pp-show-all" onClick={event => onOpen(null, event.currentTarget)}><GridIcon/>{say('Mostrar todas as fotos', 'Mostrar todas las fotos')}</button>
   </div>;
 }
@@ -98,16 +55,6 @@ function Strip({home, gallery, onOpen, say}) {
   </div>;
 }
 
-/** The tour loops muted while it is on screen; sound only starts when the person asks for it. */
-function TourPlayer({src, poster, say}) {
-  const video = useRef(null);
-  const tour = useTour(video, src);
-  return <div className="pp-tour" data-photo="tour" tabIndex={-1}>
-    <video ref={video} className="pp-index-video" src={src} poster={poster} muted loop playsInline preload="metadata" aria-label={say('Tour virtual do imóvel', 'Tour virtual del inmueble')}/>
-    <TourControls tour={tour} say={say}/>
-  </div>;
-}
-
 export function GalleryIndex({home, gallery, focus, morph, closing, onClose, onClosed, say, language}) {
   const reduce = useReducedMotion();
   const pt = language === 'pt-BR';
@@ -116,10 +63,7 @@ export function GalleryIndex({home, gallery, focus, morph, closing, onClose, onC
   const [viewer, setViewer] = useState(null);
   const ordered = useMemo(() => gallery.categories.flatMap(category => category.photos), [gallery]);
   const label = category => pt ? category.pt : category.es;
-  const sections = useMemo(() => [
-    ...(gallery.video ? [{id:'tour', es:'Tour virtual', pt:'Tour virtual', video:gallery.video, photos:[]}] : []),
-    ...gallery.categories,
-  ], [gallery]);
+  const sections = gallery.categories;
 
   useLayoutEffect(() => {
     const root = document.documentElement, previous = root.style.overflow;
@@ -195,28 +139,24 @@ export function GalleryIndex({home, gallery, focus, morph, closing, onClose, onC
         <button ref={back} type="button" className="pp-index-back" onClick={onClose} aria-label={say('Voltar ao anúncio', 'Volver al anuncio')}><Icon name="back" size={18}/></button>
       </div>
       <div className="pp-index-body">
-        <h2 className="pp-index-title">{say('Tour pelo imóvel', 'Recorrido por el inmueble')}</h2>
+        <h2 className="pp-index-title">{say('Fotos do imóvel', 'Fotos del inmueble')}</h2>
         <ul className="pp-index-previews">
           {sections.map(section => <li key={section.id}>
             <button type="button" className="pp-index-preview" aria-current={active === section.id ? 'true' : undefined} onClick={() => jump(section.id)}>
-              <span className="pp-index-preview-photo">{section.video
-                ? <><img src={ordered[0]?.src} alt=""/><span className="pp-index-play" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M4 2.5v9l7.5-4.5z"/></svg></span></>
-                : <img src={section.photos[0].src} alt="" loading="lazy"/>}</span>
+              <span className="pp-index-preview-photo"><img src={section.photos[0].src} alt="" loading="lazy"/></span>
               <span className="pp-index-preview-label">{label(section)}</span>
             </button>
           </li>)}
         </ul>
         {sections.map(section => <section key={section.id} className="pp-index-section" data-category={section.id} aria-labelledby={`pp-cat-${section.id}`}>
           <h3 id={`pp-cat-${section.id}`} className={`pp-index-heading${active === section.id ? ' is-active' : ''}`}>{label(section)}</h3>
-          {section.video
-            ? <div className="pp-index-grid"><TourPlayer src={section.video} poster={ordered[0]?.src} say={say}/></div>
-            : <div className="pp-index-grid">
+          <div className="pp-index-grid">
               {section.photos.map((photo, i) => <button key={photo.src} type="button" data-photo={photo.index} className={`pp-index-photo${section.id === 'general' && i === 0 ? ' is-wide' : ''}`}
                 onClick={event => openViewer(photo, event.currentTarget)}
                 aria-label={say(`${label(section)}, foto ${i + 1} de ${section.photos.length}. Abrir em tela cheia`, `${label(section)}, foto ${i + 1} de ${section.photos.length}. Abrir en pantalla completa`)}>
                 <img src={photo.src} alt={photo.index === 0 ? home.imageAlt : ''} loading={i < 3 || photo.index === focus ? 'eager' : 'lazy'} decoding="async" draggable={false}/>
               </button>)}
-            </div>}
+            </div>
         </section>)}
       </div>
     </motion.div>

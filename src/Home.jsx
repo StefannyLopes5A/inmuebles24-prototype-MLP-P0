@@ -15,7 +15,7 @@ import {HomeCityGuide} from './HomeCityGuide.jsx';
 import {HomeBrokers} from './HomeBrokers.jsx';
 import {HomeInternalLinks} from './HomeInternalLinks.jsx';
 import {RailHeading, useRailScroll} from './DiscoveryRail.jsx';
-import {canStartHomeSearch, hasChosenLocation} from './homeSearchModel.js';
+import {hasChosenLocation} from './homeSearchModel.js';
 import {areas} from './data';
 import {DEMO_MXN_PER_USD} from './i18n';
 import {describeHomeQuery} from './searchCriteria.js';
@@ -27,7 +27,6 @@ import {useHoverIntent} from './listingPreload';
 import {listingCardTags} from './listingCardTags';
 import {HighlightPill, HighlightTip, ListingAgencyLogo, ListingTagList} from './ListingCardChrome';
 import {highlightCopy, listingHighlights, listingSeo} from './listingHighlights.js';
-import {developmentFacts, developmentKind} from './development/listingFacts';
 
 const asset = name => `/assets/figma-home/${name}`;
 
@@ -228,12 +227,12 @@ export function RailListingCopy({home:h, videoRef, detailed=false, pills=true}) 
   const {t,language,money,currency}=useLanguage();
   const say=(br,es)=>language==='pt-BR'?br:es;
   const advertiser=advertiserFor(h);
-  const kind=h.development?[developmentKind(language)]:[t(h.mode==='buy'?'Venta':'Renta'),t('Departamento')];
-  const facts=h.development?developmentFacts(language):[t(areaLabel(h)),roomCount(h.beds,language),bathCount(h.baths,language)];
+  const kind=[t(h.mode==='buy'?'Venta':'Renta'),t('Departamento')];
+  const facts=[t(areaLabel(h)),roomCount(h.beds,language),bathCount(h.baths,language)];
   const copy=detailed&&pills?highlightCopy(listingHighlights(h),{say,money}):{};
   const dotted=items=>items.flatMap((item,index)=>index?[<span key={`dot-${index}`} className="discovery-separator" aria-hidden="true">•</span>,<span key={item}>{item}</span>]:[<span key={item}>{item}</span>]);
   return <>
-    <span className={"discovery-media"+(h.video?" has-video":"")+(h.development?" is-development":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><span className="discovery-price-row"><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong>{copy.drop&&<HighlightPill kind="drop" copy={copy.drop}/>}</span></span></span>
+    <span className={"discovery-media"+(h.video?" has-video":"")}><ListingPhotos home={h}/>{h.video&&<video ref={videoRef} className="discovery-video" src={h.video} muted loop playsInline preload="none" aria-hidden="true" onPlaying={e=>e.currentTarget.parentElement.classList.add('is-playing')} onPause={e=>e.currentTarget.parentElement.classList.remove('is-playing')}/>}<span className="discovery-copy"><span className="discovery-kind">{dotted(kind)}</span><span className="discovery-price-row"><strong>{money(listingPrice(h))} <small>{currency}{h.mode==='rent'?' / '+t('mes'):''}</small></strong>{copy.drop&&<HighlightPill kind="drop" copy={copy.drop}/>}</span></span></span>
     {detailed&&<span className="discovery-seo">{listingSeo(h,language)}</span>}
     <span className="discovery-meta"><span className="discovery-meta-copy"><b title={`${h.street} · ${h.area}`}>{h.street} · {h.area}</b><span className="discovery-facts">{dotted(facts)}</span></span><ListingAgencyLogo home={h} say={say} alt={h.brokerLogo?h.broker:(advertiser.logo?advertiser.name:'')}/></span>
     {copy.demand&&<HighlightPill kind="demand" copy={copy.demand}/>}
@@ -251,8 +250,6 @@ export function HouseCard({home, saved, onLike, onOpen, contacted=false, search,
   function playVideo(event) {
     if (event?.pointerType==='touch' || !home.video || !canPlayHoverVideo()) return;
     const start=()=>{const el=videoRef.current;if (el?.paused) el.play()?.catch(()=>{});};
-    // The development's film is a render; a short dwell keeps a pass over the grid from starting it.
-    if (home.development) {clearTimeout(videoDelay.current);videoDelay.current=setTimeout(start,400);return;}
     start();
   }
   function stopVideo() {
@@ -314,12 +311,12 @@ function IdeaCards({cards,heading,onRunSearch,onOpen,saved,onLike,variant='sugge
   return <section className="idea-section" data-idea-variant={variant} aria-label={heading}><div className="idea-heading"><h2>{heading}</h2>{variant==='suggestions'&&<div className="rail-controls"><button type="button" className="icon-button" aria-label={t('Anterior: ')+heading} disabled={position.start} onClick={()=>move(-1)}><Icon name="back"/></button><button type="button" className="icon-button" aria-label={t('Siguiente: ')+heading} disabled={position.end||cards.length<2} onClick={()=>move(1)}><Icon name="arrow"/></button></div>}</div><div className={`idea-rail${variant==='recent'?' idea-rail--static':infiniteLoop?'':' idea-rail--scroll'}`} ref={rail} tabIndex={variant==='recent'?undefined:0} aria-label={heading} onScroll={infiniteLoop?loopScroll:variant==='recent'?undefined:measure}>{railCards.map(({card,key})=><article className="idea-card" data-clickable key={key} tabIndex={0} aria-label={t(card.queryLead)} onClick={event=>cardActivate(event,card)} onKeyDown={event=>{if(event.target.closest('.idea-photo'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();runCard(card);}}}>{card.recent&&<span className="idea-recent-mark" aria-hidden="true"><Icon name="history" size={18}/></span>}<div className="idea-bottom"><div className="photo-stack">{card.previewItems.map(h=><button type="button" className="idea-photo" key={h.id} aria-label={t('Vista previa de ')+h.street} {...previewPhotoProps(h,previewApi)}><img src={propertyPhoto(h)} alt={h.imageAlt} loading="lazy"/></button>)}</div></div><span className="idea-title">{t(card.queryLead)}</span></article>)}</div><PropertyPreview api={previewApi} saved={saved} onLike={onLike} onOpen={onOpen}/></section>;
 }
 
-export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],choices,onChoose,skipIntro,onIntroDone,signedIn=false,searchHistory=[],recent=[],onLogin,searchLayout='original'}) {
+export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],signedIn=false,searchHistory=[],recent=[],onLogin}) {
   const {t,currency,language}=useLanguage();
   const say=(pt,es)=>language==='pt-BR'?pt:es;
   const motionRoot=useRef(null);
   useLayoutEffect(()=>installHomeMotion(motionRoot.current),[]);
-  const [{stage,animate},setStage]=useState({stage:3,animate:false});
+  const stage=3,animate=false;
   const mode=search.mode==='rent'?'rent':'buy';
   const collections=inspirationCollections(mode);
   const byId=Object.fromEntries(collections.map(collection=>[collection.id,collection]));
@@ -349,22 +346,15 @@ export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],
   const ideaCards=signedIn?recentCards:suggestionCards;
   const ideaHeading=signedIn?say('Suas buscas recentes','Tus búsquedas recientes'):t('Sugerencia de búsquedas');
   const common={saved,onLike,onOpen,receipts};
-  function runIdeaSearch(card){onIntroDone();onChoose('template');onSearch({...card.search,fromIdea:!!card.search.fromIdea});}
-  function openNeighborhood(area,nextMode){onIntroDone();onChoose('template');onSearch({...search,mode:nextMode,propertyType:'apartment',criteria:[],minBudget:0,budget:nextMode==='rent'?28000:7500000,area,areas:[area],address:'',fromIdea:false});}
-  function submit(next){
-    if (searchLayout === 'original') {
-      const source = next && typeof next === 'object' ? next : search;
-      if (!hasChosenLocation(source)) return;
-      onSearch({...source, area: source.area || 'Ambas zonas', fromIdea: false});
-      return;
-    }
-    const detected = describeHomeQuery(search.note, areas, currency, DEMO_MXN_PER_USD);
-    if (!canStartHomeSearch(search.note, detected)) return;
-    onSearch({...search, area: search.area || 'Ambas zonas', address: '', fromIdea: false});
+  function runIdeaSearch(card){onSearch({...card.search,fromIdea:!!card.search.fromIdea});}
+  function openNeighborhood(area,nextMode){onSearch({...search,mode:nextMode,propertyType:'apartment',criteria:[],minBudget:0,budget:nextMode==='rent'?28000:7500000,area,areas:[area],address:'',fromIdea:false});}
+  function submit(){
+    if (!Array.isArray(search.places) || !search.places.length) return;
+    onSearch({...search, area: search.area || 'Ambas zonas', fromIdea: false});
   }
   return <div ref={motionRoot} className="discovery-home home-evolution" data-home-session={signedIn?'member':'guest'} data-intro-stage={stage} data-intro-animate={animate}>
     <div className="home-firstfold">
-    <HomeSearch search={search} setSearch={setSearch} choices={choices} onChoose={onChoose} skipIntro={skipIntro} onIntroDone={onIntroDone} onStage={setStage} onSubmit={submit} layout={searchLayout}/>
+    <HomeSearch search={search} setSearch={setSearch} onSubmit={submit}/>
     <div className="home-ideas-reveal" inert={stage<1}>
       <IdeaCards key={`${search.mode}-${signedIn}-${ideaCards[0]?.id||'ideas'}`} cards={ideaCards} heading={ideaHeading} variant={signedIn?'recent':'suggestions'} infiniteLoop={false} saved={saved} onLike={onLike} onOpen={onOpen} onRunSearch={runIdeaSearch}/>
     </div>
@@ -376,18 +366,18 @@ export function Home({search,setSearch,onSearch,saved,onLike,onOpen,receipts=[],
           {memberRails.map((collection,index)=><InspirationRail key={collection.title} {...collection} compact={index>0} search={search} {...common}/>)}
           <NeighborhoodRail onSelect={openNeighborhood}/>
           {memberAfterPrice.map(collection=><InspirationRail key={collection.title} {...collection} compact search={search} {...common}/>)}
-          <HomePopularCities search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+          <HomePopularCities search={search} onSearch={onSearch}/>
         </>
         : <>
-          <HomePopularCities search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+          <HomePopularCities search={search} onSearch={onSearch}/>
           {guestRails.map((collection,index)=><InspirationRail key={collection.title} {...collection} compact={index>0} search={search} {...common}/>)}
           <NeighborhoodRail onSelect={openNeighborhood}/>
         </>}
       <HomeBlog/>
-      <HomeCityGuide search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
-      <HomeBrokers search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+      <HomeCityGuide search={search} onSearch={onSearch}/>
+      <HomeBrokers search={search} onSearch={onSearch}/>
       <InspirationRail {...closingRail} compact search={search} {...common}/>
-      <HomeInternalLinks search={search} onSearch={onSearch} onIntroDone={onIntroDone} onChoose={onChoose}/>
+      <HomeInternalLinks search={search} onSearch={onSearch}/>
     </div>
   </div>;
 }

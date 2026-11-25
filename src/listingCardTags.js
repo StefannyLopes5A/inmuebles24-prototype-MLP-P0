@@ -3,7 +3,6 @@ import {seed} from './listingAdvertiser.js';
 import {listingText} from './listingText.js';
 import {photoReading} from './moraInsights.js';
 import {listingHighlights} from './listingHighlights.js';
-export {DEMAND_CONTACTS} from './listingHighlights.js';
 
 export const LISTING_TAG_LIMIT = 2;
 const NEW_LISTING_DAYS = 14;
@@ -66,12 +65,10 @@ export function listingCardTags(home, {search, pref = 'none', language = 'es-MX'
     candidates.push({id:'new', priority:72, label:say('Anúncio novo', 'Anuncio nuevo')});
   }
 
-  if (home.video && !home.development) {
+  if (home.video) {
     candidates.push({id:'tour', priority:50, label:say('Tour virtual', 'Tour virtual')});
   }
 
   const ranked = candidates.sort((a, b) => b.priority - a.priority);
-  // A development's 3D tour always takes the first slot; the second follows the usual order.
-  if (home.development) return [{id:'tour3d', label:'Tour 3D', shimmer:true}, ...ranked].slice(0, Math.max(1, limit));
   return ranked.slice(0, limit);
 }

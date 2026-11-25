@@ -1,6 +1,5 @@
 import React, {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
-import {SectionInsight} from './SectionInsight.jsx';
 import {FairPriceScore} from './FairPriceScore.jsx';
 import {Icon} from './App';
 import {homes, listingPrice} from './data';
@@ -14,16 +13,10 @@ import {detailReading} from './moraDetail';
 import {ListingGallery} from './ListingGallery';
 import {Amenities, Description, Host, Location, Neighborhood, Specs} from './ListingSections';
 import {ListingReviews} from './ListingReviews';
-import {ListingOffers} from './ListingOffers';
-import {ListingCosts} from './ListingCosts';
-import {offerIdeas} from './offerIdeas';
-import {ListingPriceHistory} from './ListingPriceHistory';
-import {priceHistory} from './priceHistory';
 import {SimilarListings} from './SimilarListings';
 import {HomeInternalLinks} from './HomeInternalLinks';
-import {ListingSimilarPrices} from './ListingSimilarPrices';
 import {ListingContactCard} from './ListingContact';
-import {ListingAskMora} from './ListingAskMora.jsx';
+import {MoraEntry} from './MoraEntry.jsx';
 import {sortSignal} from './resultSort';
 import './property-page.css';
 import {IconButton} from './IconButton.jsx';
@@ -32,19 +25,17 @@ const ListingMap = lazy(() => import('./ListingMap'));
 const MORA_MARK = '/assets/mini-listing/mora.svg';
 
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
-const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>;
 const HideIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2.5 12S6.2 6.5 12 6.5 21.5 12 21.5 12 17.8 17.5 12 17.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.2"/><path d="M4 20 20 4"/></svg>;
 const NAV_SECTIONS = [
   {id:'pp-photos', pt:'Fotos', es:'Fotos'},
   {id:'pp-amenities', pt:'Comodidades', es:'Comodidades'},
-  {id:'pp-costs', pt:'Custos', es:'Costos', buyOnly:true},
   {id:'pp-location', pt:'Localização', es:'Ubicación'},
   {id:'pp-reviews', pt:'Avaliações', es:'Reseñas'},
 ];
 const headerHeight = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--flow-header-height')) || 0;
 
 /** Sticky anchors once the intro scrolls away; price and the main contact join them once the card is gone too. */
-function ListingNav({intro, card, price, advertiser, onContact, say, hasCosts, fee, money, currency}) {
+function ListingNav({intro, card, price, advertiser, onContact, say, fee, money, currency}) {
   const nav = useRef(null);
   const [state, setState] = useState({show:false, compact:false});
   useEffect(() => {
@@ -78,7 +69,7 @@ function ListingNav({intro, card, price, advertiser, onContact, say, hasCosts, f
   return <div ref={nav} className={`pp-nav${state.show ? ' is-visible' : ''}`} inert={!state.show}>
     <div className="pp-nav-inner">
       <nav className="pp-nav-links" aria-label={say('Seções do anúncio', 'Secciones del anuncio')}>
-        {NAV_SECTIONS.filter(section => hasCosts || !section.buyOnly).map(section => <a key={section.id} href={`#${section.id}`} onClick={event => { event.preventDefault(); jump(section.id); }}>{say(section.pt, section.es)}</a>)}
+        {NAV_SECTIONS.map(section => <a key={section.id} href={`#${section.id}`} onClick={event => { event.preventDefault(); jump(section.id); }}>{say(section.pt, section.es)}</a>)}
       </nav>
       <div className={`pp-nav-cta${state.compact ? ' is-visible' : ''}`} inert={!state.compact}>
         <div className="pp-nav-price">
@@ -92,28 +83,24 @@ function ListingNav({intro, card, price, advertiser, onContact, say, hasCosts, f
 }
 
 /** The full listing: Airbnb-style page built from the catalog plus a stable invented story. Contact grows inside the price card. */
-export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', favorites = [], saved = [], receipts = [], hidden = false, onLike, onShare, onHide, onFavorite, onCompare, onOpenListing, onMore, onSearch, onClose, onAskSection, profile, onProfile, onReceipt, receipt}) {
+export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', saved = [], receipts = [], hidden = false, onLike, onHide, onOpenListing, onMore, onSearch, onClose, onAskSection, profile, onProfile, onReceipt, receipt}) {
   const {language, money, compactMoney, currency} = useLanguage(), pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
   const title = useRef(null), intro = useRef(null), card = useRef(null), openGallery = useRef(null);
   const [contact, setContact] = useState(null);
-  const [stuck, setStuck] = useState(false), [copied, setCopied] = useState(false), copyTimer = useRef(0);
+  const [stuck, setStuck] = useState(false);
   const [arrival] = useState(() => document.documentElement.dataset.heroMorph === 'forward' ? 'morph' : 'plain');
-  useEffect(() => () => clearTimeout(copyTimer.current), []);
   const story = useMemo(() => listingStory(home), [home]);
   const advertiser = useMemo(() => advertiserFor(home, agencies.logos), [home]);
   const similar = useMemo(() => similarListings(home, homes), [home]);
   const linkSearch = useMemo(() => ({...search, mode:home.mode === 'rent' ? 'rent' : 'buy', area:home.area, areas:home.area ? [home.area] : [], address:'', propertyType:'apartment'}), [search, home.mode, home.area]);
-  const offers = useMemo(() => offerIdeas(home), [home]);
-  const history = useMemo(() => priceHistory(home, story.neighborhood?.(language)), [home, story, language]);
   const signal = sortSignal(home, sort, language, {long:true});
-  const favoriteIds = favorites.map(item => item.id).join(',');
   const reading = useMemo(() => ({
-    options:{search, pref, favorites:favorites.filter(item => item.id !== home.id), stage:'deciding', language, money, short},
-    signature:JSON.stringify(['detail', search, pref, favoriteIds, language, currency]),
+    options:{search, pref, favorites:[], stage:'deciding', language, money, short},
+    signature:JSON.stringify(['detail', search, pref, language, currency]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [home.id, search, pref, favoriteIds, language, currency]);
+  }), [home.id, search, pref, language, currency]);
   const detail = useCallback(analysis => detailReading(analysis, {home, search, places:story.location.places, gallery:story.gallery.photos, short, say}),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [home, search, story, language, currency]);
@@ -121,7 +108,6 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   const [openInsights, setOpenInsights] = useState(() => new Set());
   const toggleInsight = section => setOpenInsights(current => { const next = new Set(current); if (!next.delete(section)) next.add(section); return next; });
   useEffect(() => { setOpenInsights(new Set()); }, [home.id]);
-  const insightFor = section => openInsights.has(section) ? <SectionInsight section={section} home={home} language={language}/> : null;
   const price = listingPrice(home);
   const isSaved = saved.includes(home.id);
 
@@ -168,13 +154,6 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
   ];
   const reviewsFromContact = () => { toReviews(); document.getElementById('pp-reviews')?.focus({preventScroll:true}); };
 
-  async function share() {
-    if (onShare) { onShare(home); return; }
-    try { await navigator.clipboard.writeText(window.location.href); } catch { return; }
-    setCopied(true);
-    clearTimeout(copyTimer.current);
-    copyTimer.current = setTimeout(() => setCopied(false), 2000);
-  }
 
   function contactFromNav() {
     const layout = document.querySelector('.pp-layout');
@@ -191,13 +170,11 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
 
   return <>
   <article className="property-page pp" data-arrival={arrival}>
-    <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav} hasCosts={home.mode === 'buy' && price > 0} fee={facts.fee} money={money} currency={currency}
+    <ListingNav intro={intro} card={card} advertiser={advertiser} say={say} onContact={contactFromNav} fee={facts.fee} money={money} currency={currency}
       price={<>{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</>}/>
     <div className="pp-top">
       <IconButton icon="back" className="compare-back" onClick={onClose} label={say('Voltar à busca', 'Volver a la búsqueda')}/>
       <div className="pp-top-actions">
-        <span className="pp-copied" role="status" data-visible={copied || undefined}>{copied ? say('Link copiado', 'Enlace copiado') : ''}</span>
-        <IconButton className="compare-back" onClick={share} label={say('Compartilhar', 'Compartir')}><ShareIcon/></IconButton>
         {onLike && <IconButton className="compare-back pp-save" aria-pressed={isSaved} onClick={() => onLike(home)} label={isSaved ? say('Salvo nos favoritos', 'Guardado en favoritos') : say('Salvar nos favoritos', 'Guardar en favoritos')}><Heart filled={isSaved}/></IconButton>}
         <IconButton className="compare-back pp-hide" aria-pressed={hidden} onClick={() => onHide?.(home)} label={hidden ? say('Mostrar anúncio', 'Mostrar anuncio') : say('Ocultar anúncio', 'Ocultar anuncio')}><HideIcon/></IconButton>
       </div>
@@ -226,7 +203,6 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
             <button type="button" className="pp-mora-pill" aria-expanded={openInsights.has('price')} onClick={event => toggleInsight('price')}><img src={MORA_MARK} alt="" width="16" height="16"/><span>{priceQuestion}</span></button>
           </div>
           {openInsights.has('price') && <FairPriceScore home={home} money={money} currency={currency} say={say}/>}
-          {insightFor('price')}
           <p className="pp-intro-fees"><span>{say('Condomínio', 'Mantenimiento')} {money(facts.fee)}</span><span className="pp-intro-fee-dot" aria-hidden="true">·</span><span>{say('IPTU', 'Predial')} {say('a confirmar', 'por confirmar')}</span></p>
         </div>
         <Host advertiser={advertiser} onReviews={toReviews} say={say}/>
@@ -235,7 +211,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       <section className="pp-section pp-mora-section" aria-labelledby="pp-mora-title">
         <h2 id="pp-mora-title" className="sr-only">{say('Análise da Mora', 'Análisis de Mora')}</h2>
         <MoraOpening home={home} reading={reading} detail={detail} short={short} say={say} onAsk={question => openContact('message', question)}
-          note={say('A Mora lê o anúncio, a zona e a sua busca. Confirme os detalhes com a imobiliária.', 'Mora lee el anuncio, la zona y tu búsqueda. Confirma los detalles con la inmobiliaria.')}
+          note={say('A Mora lê o anúncio, o preço e a sua busca. Confirme os detalhes com a imobiliária.', 'Mora lee el anuncio, el precio y tu búsqueda. Confirma los detalles con la inmobiliaria.')}
           onPhoto={(index, element) => openGallery.current?.(index, element)}/>
       </section>
 
@@ -262,20 +238,9 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
 
       <section id="pp-amenities" className="pp-section" aria-labelledby="pp-amenities-title">
         <h2 id="pp-amenities-title" className="pp-section-title">{say('O que este lugar oferece', 'Lo que ofrece este lugar')}</h2>
-        <Amenities amenities={story.amenities} gallery={story.gallery} language={language} say={say} onRoom={(index, element) => openGallery.current?.(index, element)}/>
+        <Amenities amenities={story.amenities} language={language} say={say}/>
       </section>
 
-      {home.mode === 'buy' && price > 0 && <section id="pp-costs" className="pp-section" aria-labelledby="pp-costs-title">
-        <ListingCosts key={home.id} price={price} money={money} currency={currency} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('costs')} insight={insightFor('costs')}/>
-      </section>}
-
-      {history && <section id="pp-history" className="pp-section" aria-labelledby="pp-history-title">
-        <ListingPriceHistory key={home.id} history={history} money={money} currency={currency} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('history')} insight={insightFor('history')}/>
-      </section>}
-
-      {offers && <section id="pp-offers" className="pp-section" aria-labelledby="pp-offers-title">
-        <ListingOffers ideas={offers} money={money} language={language} say={say} onAsk={ask => toggleInsight(ask.section)} expanded={openInsights.has('offer')} insight={insightFor('offer')}/>
-      </section>}
     </div>
 
     <div className="pp-rest">
@@ -291,10 +256,8 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
       </section>
 
       <section className="pp-section pp-ask-section" aria-labelledby="pp-ask-title">
-        <ListingAskMora home={home} language={language} say={say}/>
+        <MoraEntry id="pp-ask-title" title={say('Ficou com alguma dúvida?', '¿Te quedó alguna duda?')} say={say}/>
       </section>
-
-      <ListingSimilarPrices home={home} money={money} compactMoney={compactMoney} currency={currency} say={say} onOpen={item => onOpenListing?.(item)}/>
 
       {similar.length > 0 && <section className="pp-section" aria-labelledby="pp-similar-title">
         <div className="pp-similar-head">

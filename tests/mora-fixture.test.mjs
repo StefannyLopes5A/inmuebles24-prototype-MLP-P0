@@ -10,11 +10,12 @@ const home = homes.find(item => item.id === 'buy-151031662');
 const search = {mode:'buy', area:'Narvarte Poniente', areas:['Narvarte Poniente'], budget:7500000, minBudget:0, beds:2, criteria:[], note:''};
 const options = {search, hasSearch:true, language:'es-MX'};
 
-test('the fixture replaces only the description and the price widget', () => {
+test('the fixture replaces only the price widget and never the written summary', () => {
   resetMoraSession();
   const base = moraAnalysis(home, options);
   const read = withFixture(base, fixture, options);
-  assert.equal(read.synthesis, fixture.output.synthesis);
+  assert.equal(read.synthesis, base.synthesis);
+  assert.doesNotMatch(read.synthesis, /Metro|Etiopía/);
   assert.equal(read.modules.length, base.modules.length);
   read.modules.forEach((module, i) => {
     if (module.kind !== 'opportunity') assert.equal(module, base.modules[i]);

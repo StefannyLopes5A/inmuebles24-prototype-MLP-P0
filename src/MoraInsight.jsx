@@ -3,7 +3,6 @@ import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
 import {homes, propertyPhoto} from './data';
 import {moraAnalysis} from './moraAnalysis';
 import {withFixture} from './moraFixture.js';
-import {developmentAnalysis, unitAnalysis} from './development/moraDevelopment.js';
 import {EASE_FADE, MORA_LINE_SWAP, MORA_WORK, SPRING_SETTLE, SPRING_SIZE} from './listingPanelMotion';
 import {SOFT_MOTION} from './homeIntro.js';
 
@@ -51,9 +50,7 @@ function useMoraCycle(home, options, signature) {
     const timers = [];
     let analysis = null;
     try {
-      analysis = options?.unit
-        ? unitAnalysis(options.unit, options)
-        : home.development ? developmentAnalysis(options) : withFixture(moraAnalysis(home, options), FIXTURES[home.id], options);
+      analysis = withFixture(moraAnalysis(home, options), FIXTURES[home.id], options);
     } catch { analysis = null; }
     const lines = analysis?.workingLines || [];
     // The tiles take their final shape right away, as skeletons, so the panel never sits half empty while Mora works.
@@ -149,13 +146,6 @@ function Skeleton({shape}) {
     <i className="lp-skel lp-photo-proof"/>
     <div className="lp-tile-copy lp-skel-copy"><p className="lp-tile-title"><Bar width="86%" height={12}/></p><p><Bar width="64%"/></p></div>
   </div>;
-  if (shape.kind === 'neighborhood') return <>
-    <p className="lp-tile-title lp-skel-copy"><Bar width="78%" height={12}/></p>
-    <p className="lp-hood-chips"><Bar width={88} height={24}/><Bar width={96} height={24}/></p>
-    {shape.rows > 0 && <ul className="lp-places">{Array.from({length:shape.rows}, (_, i) => <li key={i} className="lp-skel-row">
-      <Bar width={16} height={16}/><b><Bar width={`${48 + (i * 17) % 30}%`}/></b><Bar width={64}/>
-    </li>)}</ul>}
-  </>;
   if (shape.kind === 'attention') return <div className="lp-attention">
     <Bar width={16} height={16}/>
     <div className="lp-tile-copy lp-skel-copy">
@@ -172,7 +162,7 @@ function Body({delay, reduce, children}) {
   return <motion.div className="lp-module-body" initial={reduce ? false : {opacity:0, y:4}} animate={{opacity:1, y:0}} transition={{duration:reduce ? 0 : 0.28, ease:EASE_FADE, delay:reduce ? 0 : delay}}>{children}</motion.div>;
 }
 
-function Module({home, module, delay, reduce, short, say, onFavorite, onCompare, onAsk, onPhoto}) {
+function Module({home, module, delay, reduce, short, say, onAsk, onPhoto}) {
   if (module.kind === 'opportunity') return <Body delay={delay} reduce={reduce}>
     <div className="lp-tile-head">
       <div className="lp-tile-copy">
@@ -183,35 +173,11 @@ function Module({home, module, delay, reduce, short, say, onFavorite, onCompare,
     </div>
     {module.ruler && <Ruler ruler={module.ruler} delay={delay + 0.16} reduce={reduce} short={short} say={say}/>}
   </Body>;
-  if (module.kind === 'favorites') {
-    const saved = module.favoriteIds.map(id => homes.find(home => home.id === id)).filter(Boolean);
-    return <Body delay={delay} reduce={reduce}>
-      <div className="lp-favorites">
-        <span className="lp-avatars">{saved.map((item, i) => <motion.button type="button" key={item.id} className="lp-avatar" onClick={() => onFavorite(item.id)} aria-label={say(`Abrir favorito ${item.street}`, `Abrir favorito ${item.street}`)}
-          initial={reduce ? false : {opacity:0, transform:'translateX(-6px)'}} animate={{opacity:1, transform:'translateX(0px)'}} transition={{duration:0.2, ease:EASE_FADE, delay:reduce ? 0 : delay + 0.1 + i * 0.05}}>
-          <img src={propertyPhoto(item)} alt=""/>
-        </motion.button>)}</span>
-        <p className="lp-tile-title">{module.text}</p>
-        {onCompare && saved.length > 0 && <button type="button" className="lp-favorites-compare" onClick={() => onCompare([home.id, ...saved.map(item => item.id)])}
-          aria-label={saved.length === 1 ? say(`Comparar com ${saved[0].street}`, `Comparar con ${saved[0].street}`) : say(`Comparar com ${saved.length} favoritos`, `Comparar con ${saved.length} favoritos`)}>
-          {say('Comparar', 'Comparar')}
-        </button>}
-      </div>
-    </Body>;
-  }
   if (module.kind === 'photos') return <Body delay={delay} reduce={reduce}>
     <button type="button" className="lp-photos" onClick={() => onPhoto?.(module.index ?? Math.max(0, (module.photo || 1) - 1))}>
       <img src={module.image} alt=""/>
       <span className="lp-tile-title">{module.text}</span>
     </button>
-  </Body>;
-  if (module.kind === 'neighborhood') return <Body delay={delay} reduce={reduce}>
-    <p className="lp-tile-title">{module.text}</p>
-    {(module.plus?.length || module.minus?.length) ? <p className="lp-hood-chips">
-      {(module.plus || []).map(label => <span className="lp-hood-chip" key={label}>{label}</span>)}
-      {(module.minus || []).map(label => <span className="lp-hood-chip is-minus" key={label}>{label}</span>)}
-    </p> : null}
-    {module.items?.length ? <Places items={module.items}/> : null}
   </Body>;
   if (module.kind === 'text' || module.kind === 'results') return <Body delay={delay} reduce={reduce}>
     <p className="lp-tile-title">{module.text}</p>
@@ -308,7 +274,7 @@ export function MoraOpening({reading, ...props}) {
   return <MoraInsight {...props} options={reading.options} signature={reading.signature} variant="page"/>;
 }
 
-export function MoraInsight({home, options, signature, short, say, onFavorite, onCompare, onAsk, onPhoto, exclude, label, note, variant, onVerdict, detail, folded = false}) {
+export function MoraInsight({home, options, signature, short, say, onAsk, onPhoto, exclude, label, note, variant, onVerdict, detail, folded = false}) {
   const reduce = useReducedMotion();
   const state = useMoraCycle(home, options, signature);
   const ready = state.status === 'ready';
@@ -357,7 +323,7 @@ export function MoraInsight({home, options, signature, short, say, onFavorite, o
       {slots.length > 0 && <ul className="lp-modules" aria-hidden={ready ? undefined : true}>
         {slots.map((slot, i) => <Tile key={`${slot.kind}-${i}`} index={i} kind={ready ? slot.priceClass : undefined} reduce={instant}>
           {ready
-            ? <Module key="ready" home={home} module={slot} delay={MORA_LINE_SWAP.duration + i * 0.08} reduce={instant} short={short} say={say} onFavorite={onFavorite} onCompare={onCompare} onAsk={onAsk} onPhoto={onPhoto}/>
+            ? <Module key="ready" home={home} module={slot} delay={MORA_LINE_SWAP.duration + i * 0.08} reduce={instant} short={short} say={say} onAsk={onAsk} onPhoto={onPhoto}/>
             : <Skeleton key="skeleton" shape={slot}/>}
         </Tile>)}
       </ul>}

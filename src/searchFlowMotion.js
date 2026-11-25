@@ -90,7 +90,7 @@ export function playHomeTransition(root) {
       const animation = el.animate(frames,{delay,duration,easing:ease,fill:'both',...options});
       animations.push(animation); return animation;
     };
-    const controls = [...destination.querySelectorAll('.mora-filter'),destination.querySelector('.mora-more'),destination.querySelector('.mora-smart-trigger')].filter(Boolean);
+    const controls = [...destination.querySelectorAll('.mora-filter'),destination.querySelector('.mora-more'),destination.querySelector('.lf-bar')].filter(Boolean);
     const items = controls.map(button => {
       const inner = document.createElement('span'); inner.className = 'transition-control-content';
       inner.append(...button.childNodes); button.append(inner); return inner;

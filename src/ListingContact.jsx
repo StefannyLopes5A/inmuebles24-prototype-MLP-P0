@@ -2,7 +2,7 @@ import React, {useEffect, useId, useRef, useState} from 'react';
 import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
 import {contactMessage, contactValidation, createContactReceipt, normalizeContactProfile} from './contactFlow.js';
-import {ContactStage, ContactWho, Toggle} from './ListingPanel';
+import {ContactStage, ContactWho, Toggle} from './ContactStage';
 import {markVisit} from './seekerSignals.js';
 import {IconButton} from './IconButton.jsx';
 

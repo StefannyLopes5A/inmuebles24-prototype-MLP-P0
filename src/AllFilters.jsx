@@ -3,8 +3,8 @@ import {Icon} from './App';
 import {BudgetPicker, HomePopover, LocationSearch} from './HomeSearch';
 import {PROPERTY_TYPES,OPERATIONS} from './homeSearchModel';
 import {CRITERIA,criterionLabel} from './searchCriteria';
-import {areas} from './data';
-import {searchLocations,suggestedLocations,visiblePlaces,resolvePlace,togglePlaceList} from './locationSearch';
+import {searchLocations,suggestedLocations,searchPoiLocations,suggestedPoiLocations,visiblePlaces,togglePlaceList} from './locationSearch';
+import {COMMUTE_MINUTES,COMMUTE_MODES,DEFAULT_COMMUTE} from './commute';
 import {LocationMenu} from './LocationMenu';
 import {prototypeResults} from './journey';
 import {useLanguage} from './i18n';
@@ -12,9 +12,9 @@ import {lockContactScroll} from './contactFlow';
 const DIALOG_TYPES = ['apartment', 'house', 'condominium', 'commercial', 'any'];
 const POPULAR = ['pool', 'balcony', 'elevator', 'pets', 'patio', 'roof'];
 const GROUPS = [
-  ['leisure', 'Área de lazer', 'Área de ocio', ['gym', 'party', 'cinema', 'padel', 'tennis', 'coworking', 'gourmet']],
-  ['convenience', 'Conveniências', 'Conveniencias', ['furnished', 'unfurnished', 'aircon', 'storage', 'service']],
-  ['functional', 'Funcional', 'Funcional', ['accessible', 'floors', 'terrace', 'beach', 'garden']],
+  ['essentials', 'Essenciais', 'Esenciales', ['furnished', 'unfurnished', 'aircon', 'storage', 'service', 'accessible', 'floors']],
+  ['leisure', 'Área de lazer', 'Área de ocio', ['gym', 'party', 'cinema', 'padel', 'tennis', 'coworking', 'gourmet', 'bbq']],
+  ['outdoor', 'Espaços externos', 'Espacios exteriores', ['terrace', 'garden', 'beach']],
   ['security', 'Segurança', 'Seguridad', ['security', 'gated']],
 ];
 const BUILT_RANGES = [[50, 100], [100, 150], [150, 200], [200, 300], [300, 450]];
@@ -49,7 +49,7 @@ const ICONS = {
 
 function CriterionIcon({id}) {
   if (!ICONS[id]) return null;
-  return <svg className="criterion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[id]}</svg>;
+  return <svg className="criterion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[id]}</svg>;
 }
 
 function Stepper({label, value, min, max, decrease, increase, onChange}) {
@@ -79,14 +79,17 @@ function AreaRange({title, note, min, max, ranges, least, most, minName, maxName
   </div>;
 }
 
-export function AllFilters({search, onChange, onClose, onSmartInput}) {
+export function AllFilters({search, onChange, onClose}) {
   const {language} = useLanguage(), pt = language === 'pt-BR', say = (br, es) => pt ? br : es;
   const dialog = useRef(null), previous = useRef(document.activeElement), locationAnchor = useRef(null);
   const labelId = useId();
   const [query, setQuery] = useState('');
   const [locationOpen, setLocationOpen] = useState(false);
+  const [poiOpen, setPoiOpen] = useState(false), [poiQuery, setPoiQuery] = useState(''), poiAnchor = useRef(null);
   const [more, setMore] = useState(() => (search.criteria || []).some(id => !POPULAR.includes(id) && !id.startsWith('text:')));
   const selected = visiblePlaces(search);
+  const commute = search.commute;
+  const poiChoices = poiQuery.trim().length >= 2 ? searchPoiLocations(poiQuery, 8) : suggestedPoiLocations(8);
   const locationChoices = query.trim().length >= 2 ? searchLocations(query, 8) : suggestedLocations(8);
   useEffect(() => {const node = dialog.current; node.showModal(); const unlock = lockContactScroll(document); return () => {node.close(); unlock(); previous.current?.focus({preventScroll:true});};}, []);
   const apply = values => onChange({...search, ...values, ideaLabel:null});
@@ -109,12 +112,6 @@ export function AllFilters({search, onChange, onClose, onSmartInput}) {
   function removePlace(place) {
     apply({places:selected.filter(item => item.key !== place.key)});
   }
-  function toggleArea(area) {
-    const place = resolvePlace('colonia', area);
-    if (!place) return;
-    if (selected.some(item => item.key === place.key)) removePlace(place);
-    else addPlace(place);
-  }
   function openLocation(event) {
     locationAnchor.current = event.currentTarget;
     setQuery('');
@@ -123,20 +120,23 @@ export function AllFilters({search, onChange, onClose, onSmartInput}) {
   function clearFilters() {
     apply({
       places:[], areas:[], area:'Ambas zonas', address:'', propertyType:'any', beds:1, baths:1, parking:0,
-      minSize:0, maxSize:0, minLot:0, maxLot:0, criteria:[], tour3d:false, minBudget:0, note:'',
+      minSize:0, maxSize:0, minLot:0, maxLot:0, criteria:[], minBudget:0, note:'', commute:undefined,
       budget:search.mode === 'rent' ? 28000 : 7500000,
     });
-    setQuery('');
+    setQuery(''); setPoiQuery('');
+  }
+  function choosePoi(place) {
+    apply({commute:{poi:place, mode:commute?.mode || DEFAULT_COMMUTE.mode, minutes:commute?.minutes || DEFAULT_COMMUTE.minutes}});
+    setPoiQuery('');
+    setPoiOpen(false);
   }
   const count = prototypeResults(search).length;
   const chipLabel = id => id === 'pool' && !pt ? 'Alberca' : criterionLabel(id, language);
-  const grouped = new Set([...POPULAR, ...GROUPS.flatMap(group => group[3])]);
-  const leftover = CRITERIA.filter(item => !grouped.has(item.id)).map(item => item.id);
-  const groups = [['popular', 'Populares', 'Populares', POPULAR], ...(more ? [...GROUPS, ...(leftover.length ? [['other', 'Outros', 'Otros', leftover]] : [])] : [])]
+  const groups = [['popular', 'Populares', 'Populares', POPULAR], ...(more ? GROUPS : [])]
     .map(([id, br, es, ids]) => [id, say(br, es), ids.filter(value => CRITERIA.some(item => item.id === value))]);
   const criterionChip = id => <button type="button" key={id} aria-pressed={search.criteria?.includes(id) || false} onClick={() => toggleCriterion(id)}><CriterionIcon id={id}/>{chipLabel(id)}</button>;
   const locationSummary = selected.length ? selected.map(place => place.label).join(', ') : say('Buscar cidade, bairro ou rua', 'Buscar ciudad, colonia o calle');
-  return <dialog className="all-filters-dialog" ref={dialog} aria-labelledby="all-filters-title" onCancel={event => {event.preventDefault(); if (locationOpen) {setLocationOpen(false);return;} onClose();}} onClick={event => {if (event.target === dialog.current) {const box = dialog.current.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose();}}}>
+  return <dialog className="all-filters-dialog" ref={dialog} aria-labelledby="all-filters-title" onCancel={event => {event.preventDefault(); if (poiOpen) {setPoiOpen(false);return;} if (locationOpen) {setLocationOpen(false);return;} onClose();}} onClick={event => {if (event.target === dialog.current) {const box = dialog.current.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) onClose();}}}>
     <header><div><h2 id="all-filters-title">{say('Todos os filtros', 'Todos los filtros')}</h2><p>{say('Sua busca se atualiza a cada alteração.', 'Tu búsqueda se actualiza con cada cambio.')}</p></div><button className="icon-button" onClick={onClose} aria-label={say('Fechar filtros', 'Cerrar filtros')}><Icon name="close"/></button></header>
     <div className="all-filters-body">
       <fieldset><legend>{say('Operação', 'Operación')}</legend><div className="all-filter-options">{OPERATIONS.map(([id, br, es]) => <button key={id} type="button" aria-pressed={search.mode === id} onClick={() => apply({mode:id, ...(id !== search.mode ? {minBudget:0, budget:id === 'buy' ? 7500000 : 28000} : {})})}>{say(br, es)}</button>)}</div></fieldset>
@@ -148,7 +148,7 @@ export function AllFilters({search, onChange, onClose, onSmartInput}) {
             <span className={selected.length ? '' : 'is-empty'}>{locationSummary}</span>
           </button>
         </div>
-        <HomePopover open={locationOpen} anchor={locationAnchor.current} container={dialog.current} label={say('Localização', 'Ubicación')} kind="area" variant="area" onClose={() => setLocationOpen(false)}>
+        <HomePopover open={locationOpen} anchor={locationAnchor.current} container={dialog.current} label={say('Localização', 'Ubicación')} kind="area" variant="area" fit onClose={() => setLocationOpen(false)}>
           <LocationSearch label={say('Buscar localização', 'Buscar ubicación')} placeholder={say('Bairro, rua, metrô, escola…', 'Colonia, calle, metro, escuela…')} clearLabel={say('Limpar localização', 'Borrar ubicación')} value={query} onChange={setQuery}/>
           <LocationMenu label={say('Localização', 'Ubicación')} places={locationChoices} selectedKeys={selected.map(place => place.key)} say={say} onChoose={chooseLocation} onRemove={removePlace} empty={query.trim().length >= 2 && !locationChoices.length ? say('Nenhum lugar encontrado. Tente outro nome.', 'No encontramos ese lugar. Prueba otro nombre.') : null}/>
         </HomePopover>
@@ -162,16 +162,31 @@ export function AllFilters({search, onChange, onClose, onSmartInput}) {
       </fieldset>
       <fieldset className="area-filters"><legend>{say('Área', 'Área')}</legend>
         <AreaRange title={say('Área construída', 'Área construida')} least={say('Mínima', 'Mínima')} most={say('Máxima', 'Máxima')} min={search.minSize || 0} max={search.maxSize || 0} ranges={BUILT_RANGES} minName={say('Área construída, mínima', 'Área construida, mínima')} maxName={say('Área construída, máxima', 'Área construida, máxima')} onChange={({min, max}) => apply({minSize:min, maxSize:max})}/>
-        <AreaRange title={say('Área total', 'Área total')} note={say('Só filtra anúncios que publicam a área total.', 'Solo filtra anuncios que publican el área total.')} least={say('Mínima', 'Mínima')} most={say('Máxima', 'Máxima')} min={search.minLot || 0} max={search.maxLot || 0} ranges={LOT_RANGES} minName={say('Área total, mínima', 'Área total, mínima')} maxName={say('Área total, máxima', 'Área total, máxima')} onChange={({min, max}) => apply({minLot:min, maxLot:max})}/>
+        <AreaRange title={say('Área total', 'Área total')} least={say('Mínima', 'Mínima')} most={say('Máxima', 'Máxima')} min={search.minLot || 0} max={search.maxLot || 0} ranges={LOT_RANGES} minName={say('Área total, mínima', 'Área total, mínima')} maxName={say('Área total, máxima', 'Área total, máxima')} onChange={({min, max}) => apply({minLot:min, maxLot:max})}/>
       </fieldset>
       <fieldset><legend>{say('Faixa de preço', 'Rango de precio')}</legend><BudgetPicker search={search} onChange={apply} say={say}/></fieldset>
-      <label className="all-filter-switch"><span><strong>{say('Só com tour 3D', 'Solo con tour 3D')}</strong><small>{say('Empreendimentos que você percorre em 3D, unidade por unidade.', 'Desarrollos que recorres en 3D, unidad por unidad.')}</small></span><input type="checkbox" role="switch" checked={search.tour3d === true} onChange={event => apply({tour3d:event.target.checked})}/></label>
       <fieldset className="characteristic-filters"><legend>{say('Características', 'Características')}</legend>
         {groups.map(([id, title, ids]) => <div className="characteristic-group" key={id}><h3>{title}</h3><div className="all-filter-options">{ids.map(criterionChip)}</div></div>)}
-        <button type="button" className="characteristic-more" aria-expanded={more} onClick={() => setMore(open => !open)}>{more ? say('Ver menos', 'Ver menos') : say('Ver mais', 'Ver más')}</button>
+        <button type="button" className="characteristic-more" aria-expanded={more} onClick={() => setMore(open => !open)}>{more ? say('Ver menos', 'Ver menos') : say('Ver mais', 'Ver más')}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
       </fieldset>
-      <fieldset className="neighborhood-filters"><legend>{say('Bairros', 'Barrios')}</legend><p>{say('Sem seleção: toda a Cidade do México.', 'Sin selección: toda Ciudad de México.')}</p><div className="all-filter-options">{areas.filter(area => area !== 'Ambas zonas').map(area => <button key={area} type="button" aria-pressed={selected.some(place => place.kind === 'colonia' && place.id === area)} onClick={() => toggleArea(area)}>{area}</button>)}</div></fieldset>
-      <button className="all-filter-natural" onClick={() => {onClose(); onSmartInput();}}><img src="/assets/mini-listing/mora.svg" alt=""/>{say('Não encontrou um filtro? Descreva o que procura.', '¿No encuentras un filtro? Describe lo que buscas.')}<Icon name="arrow"/></button>
+      <fieldset className="commute-filters"><legend>{say('Tempo de deslocamento', 'Tiempo de traslado')}</legend>
+        <p className="all-filter-sub">{say('Estimado em linha reta a partir da posição aproximada do imóvel; não é um trajeto.', 'Estimado en línea recta desde la posición aproximada del inmueble; no es una ruta.')}</p>
+        <div className="location-filter-field commute-poi">
+          <button type="button" className="location-filter-control" ref={poiAnchor} aria-haspopup="dialog" aria-expanded={poiOpen} aria-label={commute ? `${say('Ponto de interesse', 'Punto de interés')}: ${commute.poi.label}` : say('Ponto de interesse', 'Punto de interés')} onClick={() => {setPoiQuery(''); setPoiOpen(open => !open);}}>
+            <Icon name="pin" size={18}/>
+            <span className={commute ? '' : 'is-empty'}>{commute ? commute.poi.label : say('Ponto de interesse', 'Punto de interés')}</span>
+          </button>
+          {commute && <button type="button" className="commute-poi-clear" aria-label={say('Remover ponto de interesse', 'Quitar punto de interés')} onClick={() => apply({commute:undefined})}><Icon name="close" size={16}/></button>}
+          <HomePopover open={poiOpen} anchor={poiAnchor.current} container={dialog.current} label={say('Ponto de interesse', 'Punto de interés')} kind="area" variant="area" fit onClose={() => setPoiOpen(false)}>
+            <LocationSearch label={say('Buscar ponto de interesse', 'Buscar punto de interés')} placeholder={say('Ponto de interesse', 'Punto de interés')} clearLabel={say('Limpar busca', 'Borrar búsqueda')} value={poiQuery} onChange={setPoiQuery}/>
+            <LocationMenu label={say('Pontos de interesse', 'Puntos de interés')} places={poiChoices} selectedKeys={commute ? [commute.poi.key] : []} say={say} onChoose={choosePoi} onRemove={() => {apply({commute:undefined}); setPoiOpen(false);}} empty={poiQuery.trim().length >= 2 && !poiChoices.length ? say('Nenhum ponto encontrado. Tente outro nome.', 'No encontramos ese punto. Prueba otro nombre.') : null}/>
+          </HomePopover>
+        </div>
+        {commute && <div className="commute-options">
+          <div className="characteristic-group"><h3>{say('Como você vai', 'Cómo te mueves')}</h3><div className="all-filter-options">{COMMUTE_MODES.map(([id, br, es]) => <button key={id} type="button" aria-pressed={commute.mode === id} onClick={() => apply({commute:{...commute, mode:id}})}>{say(br, es)}</button>)}</div></div>
+          <div className="characteristic-group"><h3>{say('Tempo máximo', 'Tiempo máximo')}</h3><div className="all-filter-options">{COMMUTE_MINUTES.map(minutes => <button key={minutes} type="button" aria-pressed={commute.minutes === minutes} onClick={() => apply({commute:{...commute, minutes}})}>{minutes} min</button>)}</div></div>
+        </div>}
+      </fieldset>
     </div>
     <footer>
       <button type="button" className="all-filters-clear" onClick={clearFilters}>{say('Limpar filtros', 'Limpiar filtros')}</button>

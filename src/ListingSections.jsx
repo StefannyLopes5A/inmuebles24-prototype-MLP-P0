@@ -134,24 +134,9 @@ function roomSpaces(gallery) {
   return ROOM_IDS.map(id => byId.get(id)).filter(room => room?.photos.length);
 }
 
-export function Amenities({amenities, gallery, language, say, onRoom}) {
+export function Amenities({amenities, language, say}) {
   const pt = language === 'pt-BR';
-  const rooms = roomSpaces(gallery);
-  const countLabel = count => count === 1 ? say('1 foto', '1 foto') : say(`${count} fotos`, `${count} fotos`);
   return <div className="pp-amenities">
-    {rooms.length > 0 && <ul className="pp-rooms" aria-label={say('Explorar por espaço', 'Explorar por espacio')}>
-      {rooms.map(room => {
-        const name = pt ? room.pt : room.es;
-        const count = countLabel(room.photos.length);
-        return <li key={room.id}>
-          <button type="button" className="pp-room" onClick={event => onRoom?.(room.photos[0].index, event.currentTarget)}>
-            <span className="pp-room-photo" data-photo-index={room.photos[0].index}><img src={room.photos[0].src} alt=""/></span>
-            <span className="pp-room-name">{name}</span>
-            <span className="pp-room-count">{count}</span>
-          </button>
-        </li>;
-      })}
-    </ul>}
     {GROUPS.map(([group, br, es]) => {
       const items = amenities.filter(item => item.group === group);
       if (!items.length) return null;

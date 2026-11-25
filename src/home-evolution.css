@@ -18,9 +18,18 @@
 .home-search[data-layout=original] .home-start-slot{margin-left:auto}
 .home-evolution[data-home-session=guest] .home-search[data-layout=original]{padding-bottom:96px}
 /* Smaller filter phrase leaves room for the open details field to read as the next step. */
-.home-search[data-layout=original] .home-sentence{--home-sentence-size:34px}
-@media(max-width:1100px){.home-search[data-layout=original] .home-sentence{--home-sentence-size:30px}}
-@media(max-width:700px){.home-search[data-layout=original] .home-sentence{--home-sentence-size:26px}}
+/* The sentence uses the same size as the location placeholder under it. */
+.home-search[data-layout=original] .home-sentence{--home-sentence-size:var(--home-query-size)}
+/* Entrance: the phrase groups ink in one after the other, then the location row, like the home sentence reading in. */
+.home-search[data-layout=original] .home-phrase-group{animation:home-phrase-in 620ms cubic-bezier(.25,.1,.25,1) backwards}
+.home-search[data-layout=original] .home-sentence-line>.home-phrase-group:nth-child(2){animation-delay:240ms}
+.home-search[data-layout=original] .home-detail-row{animation:home-phrase-in 620ms cubic-bezier(.25,.1,.25,1) 520ms backwards}
+/* The pickers read in black first, then a light pass (orange, blue) crosses them and they settle in the suggested gray, next to the black words. */
+.home-search[data-layout=original] .home-word-control:not(.is-chosen) .home-choice-label{animation:home-picker-reveal 900ms linear 480ms backwards}
+.home-search[data-layout=original] .home-sentence-line>.home-phrase-group:nth-child(2) .home-word-control:not(.is-chosen) .home-choice-label{animation-delay:720ms}
+@keyframes home-picker-reveal{from{background-image:linear-gradient(90deg,var(--home-suggested) 30%,var(--motion-orange,#f50) 42%,var(--motion-blue,#1b4aa8) 58%,#171717 70%);background-size:350% 100%;background-repeat:no-repeat;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}to{background-image:linear-gradient(90deg,var(--home-suggested) 30%,var(--motion-orange,#f50) 42%,var(--motion-blue,#1b4aa8) 58%,#171717 70%);background-size:350% 100%;background-repeat:no-repeat;background-position:0% 50%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}}
+@keyframes home-phrase-in{from{opacity:0;transform:translateY(6px);filter:blur(3px)}to{opacity:1;transform:none;filter:blur(0)}}
+@media(prefers-reduced-motion:reduce){.home-search[data-layout=original] .home-phrase-group,.home-search[data-layout=original] .home-detail-row,.home-search[data-layout=original] .home-choice-label{animation:none}}
 @media(hover:hover) and (pointer:fine){.home-search[data-layout=original] .home-word-control:hover span{color:#ffd3be}}
 .home-composer{--home-composer-cta-height:48px;--home-composer-copy-size:40px;--home-composer-copy-weight:600;--home-composer-copy-line:1.15;position:relative;display:flex;flex-direction:column;gap:36px;width:100%;max-width:none}
 .home-composer>.home-skip-intro{top:-8px}

@@ -1,8 +1,8 @@
 import listings from './real-listings.json' with {type:'json'};
 import {advertiserFor} from './listingAdvertiser.js';
-import {TORRE_OLMO_HOME} from './development/torreOlmo.js';
+import {PRIMARY_MARKET_HOME} from './primaryMarket.js';
 
-export const homes = [...listings, TORRE_OLMO_HOME].map(h=>({...h, imageAlt:`${h.title} · ${h.area}`, reason:h.size>=20?h.reason:`${h.beds} recámaras · Superficie por confirmar`}));
+export const homes = [...listings, PRIMARY_MARKET_HOME].map(h=>({...h, imageAlt:`${h.title} · ${h.area}`, reason:h.size>=20?h.reason:`${h.beds} recámaras · Superficie por confirmar`}));
 export const isDevelopment = h => h?.development === true;
 export const areaLabel = h => h.size >= 20 ? `${h.size} m²` : 'Superficie por confirmar';
 export const money = n => new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN', maximumFractionDigits:0}).format(n);

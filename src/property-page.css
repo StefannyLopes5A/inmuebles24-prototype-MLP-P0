@@ -836,26 +836,6 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 .pp-about-head~.pp-insight{margin-bottom:24px}
 .pp-section.pp-mora-section{padding-top:0}
 .lp-mora.is-page .lp-mora-synthesis .lp-word.is-key{font-weight:600}
-/* Questions for Mora under the listing */
-.pp-ask-mora{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:24px;align-items:start;padding:32px;border:2px solid transparent;border-radius:24px;background:linear-gradient(135deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,var(--mora-gradient) border-box}
-.pp-ask-mora-mark{display:block;margin-top:6px}
-.pp-ask-mora-main{display:flex;flex-direction:column;gap:24px;min-width:0}
-.pp-ask-mora h2{margin:0;padding-top:6px;color:#222;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.92px;text-wrap:balance}
-.pp-ask-mora-chips{display:flex;flex-wrap:wrap;gap:12px}
-.pp-ask-mora-chip{min-height:48px;padding:12px 24px;border:1px solid rgba(0,0,0,.06);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 2px 12px rgba(0,0,0,.04);color:#222;font-size:16px;line-height:24px;font-weight:600;letter-spacing:-.31px;cursor:pointer;transition:background-color 150ms ease,transform 120ms ease}
-.pp-ask-mora-chip:hover{background:rgba(255,255,255,.95)}
-.pp-ask-mora-chip:active{transform:scale(.98)}
-.pp-ask-mora-chip[aria-pressed=true]{border-color:#222}
-.pp-ask-mora-chip:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
-.pp-ask-mora-answer:empty{display:none}
-.pp-ask-mora-answer p{margin:0;color:#222;font-size:16px;line-height:24px;letter-spacing:-.31px}
-@media(max-width:700px){
-  .pp-ask-mora{grid-template-columns:1fr;row-gap:16px;padding:24px 20px}
-  .pp-ask-mora h2{padding-top:0;font-size:18px;line-height:22px}
-  .pp-ask-mora-chip{min-height:44px;padding:10px 18px;font-size:14px}
-}
-@media(prefers-reduced-transparency:reduce){.pp-ask-mora-chip{background:#fff;box-shadow:none}}
-
 .pp-section.pp-ask-section{margin-top:32px;margin-bottom:32px}
 
 /* The Mora pill stands 24px from the group of offer levels (the row's 6px gap plus 18px). */

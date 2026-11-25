@@ -41,15 +41,15 @@ test('multi-area criteria, context and selected property round-trip through shar
   assert.equal(readJourney('/results/').page, 'results');
 });
 
-test('compare favorites is a shareable route that keeps search and omits saved ids', () => {
-  const search = normalizeSearch({...DEFAULT_SEARCH, areas:['Narvarte Poniente'], note:'Trabalho de casa'});
-  const state = {page:'compare', search, pref:'extra', propertyId:null};
-  const url = journeyUrl(state);
-  assert.deepEqual(readJourney(url), state);
-  assert.match(url, /view=compare/);
-  assert.equal(url.includes('saved'), false);
-  assert.equal(url.includes('property='), false);
-  assert.equal(readJourney('/?view=compare&mode=buy&areas=Narvarte+Poniente&budget=7500000&beds=2').page, 'compare');
+test('favorites is a flat page and the removed folder, compare and invite views fall back to home', () => {
+  const search = normalizeSearch({...DEFAULT_SEARCH, areas:['Narvarte Poniente']});
+  const url = journeyUrl({page:'favorites', search});
+  assert.match(url, /view=favorites/);
+  assert.equal(readJourney(url).page, 'favorites');
+  assert.equal(url.includes('list='), false);
+  assert.equal(url.includes('invite='), false);
+  for (const view of ['compare', 'folder'])
+    assert.equal(readJourney(`/?view=${view}&mode=buy&areas=Narvarte+Poniente&budget=7500000&beds=2`).page, 'home');
 });
 
 test('legacy separate preference is canonicalized to the current three-bedroom priority', () => {
@@ -148,20 +148,17 @@ test('URL serialization ignores contact identity and normalizes duplicate areas'
   assert.deepEqual(readJourney(url).search.areas, ['Narvarte Poniente']);
 });
 
-test('map mode survives results and listing routes but stays out of other views', () => {
+test('the full-screen map is a results-only view; other map modes and routes drop it', () => {
   const at = url => readJourney(new URL(url, 'https://example.test'));
   const property = prototypeResults(DEFAULT_SEARCH)[0].id;
-  for (const map of ['half', 'full']) {
-    const results = journeyUrl({page:'results', search:DEFAULT_SEARCH, map});
-    assert.equal(new URL(results, 'https://example.test').searchParams.get('map'), map);
-    assert.equal(at(results).map, map);
-    assert.equal(at(journeyUrl({page:'listing', search:DEFAULT_SEARCH, propertyId:property, map})).map, map);
-  }
-  assert.equal(at(journeyUrl({page:'results', search:DEFAULT_SEARCH, map:'mini'})).map, undefined);
-  assert.doesNotMatch(journeyUrl({page:'results', search:DEFAULT_SEARCH, map:'mini'}), /map=/);
+  const url = journeyUrl({page:'results', search:DEFAULT_SEARCH, map:'full'});
+  assert.match(url, /map=full/);
+  assert.equal(at(url).map, 'full');
+  assert.doesNotMatch(journeyUrl({page:'results', search:DEFAULT_SEARCH}), /map=/);
+  assert.doesNotMatch(journeyUrl({page:'listing', search:DEFAULT_SEARCH, propertyId:property, map:'full'}), /map=/);
   assert.doesNotMatch(journeyUrl({page:'favorites', search:DEFAULT_SEARCH, map:'full'}), /map=/);
-  assert.equal(at('/?view=favorites&map=full').map, undefined);
-  assert.equal(at('/?view=results&map=giant').map, undefined);
+  assert.equal(at('/?view=results&map=half').map, undefined);
+  assert.equal(at('/?view=listing&map=full').map, undefined);
 });
 
 test('baths, parking and published area narrow the catalog without inventing missing measures', () => {

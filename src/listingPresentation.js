@@ -2,12 +2,11 @@ import details from './listing-details.json' with {type:'json'};
 import {listingPrice} from './data.js';
 import {matchingHomes} from './journey.js';
 import {criterionLabel, matchesCriteria} from './searchCriteria.js';
-
-import {GALLERY} from './development/torreOlmo.js';
+import {PRIMARY_MARKET_GALLERY} from './primaryMarket.js';
 
 export function listingDetails(home) {
-  // Parking and floor change per unit, so a development leaves them to the unit view.
-  if (home.development) return {gallery:GALLERY.map(photo => photo.src), parking:null, pets:true, floor:null};
+  // The primary-market listing keeps its own photos; parking and floor depend on the unit.
+  if (home.development) return {gallery:PRIMARY_MARKET_GALLERY, parking:null, pets:true, floor:null};
   return details[home.id] || {gallery:[home.image], parking:null, pets:null, floor:null};
 }
 

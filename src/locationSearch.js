@@ -326,11 +326,12 @@ export function suggestedLocations(limit = 8) {
 }
 
 /** Suggestions from the catalog only: the city, its colonias, listing streets and mapped places. */
-export function searchLocations(query, limit = 8) {
+export function searchLocations(query, limit = 8, accept) {
   const folded = foldSearchText(String(query || '').trim());
   if (folded.length < 2) return [];
   const hits = [];
   for (const place of PLACES) {
+    if (accept && !accept(place)) continue;
     const at = place.labelFold.indexOf(folded);
     const aliasAt = at < 0 ? place.folded.indexOf(folded) : -1;
     if (at < 0 && aliasAt < 0) continue;
@@ -340,4 +341,23 @@ export function searchLocations(query, limit = 8) {
   }
   hits.sort((a, b) => a.rank - b.rank || a.boost - b.boost || a.place.label.localeCompare(b.place.label, 'es'));
   return hits.slice(0, limit).map(({place}) => present(place));
+}
+
+const POI_KINDS = new Set(['metro', 'university', 'hospital', 'school', 'poi']);
+/** A mapped point of interest: metro, university, hospital, school or any other mapped place. Never a colonia, street or city. */
+export const isPoiPlace = place => POI_KINDS.has(place?.kind);
+
+/** The point-of-interest field searches mapped places only. */
+export function searchPoiLocations(query, limit = 8) {
+  return searchLocations(query, limit, isPoiPlace);
+}
+
+/** Points to offer before anyone types: a few metro stations, universities, hospitals and schools that sit in a catalog colonia. */
+export function suggestedPoiLocations(limit = 8) {
+  const mix = [['metro', 3], ['university', 2], ['hospital', 2], ['school', 1]];
+  const picks = mix.flatMap(([kind, count]) => PLACES
+    .filter(place => place.kind === kind && place.areas?.length)
+    .sort((a, b) => a.label.localeCompare(b.label, 'es'))
+    .slice(0, count));
+  return picks.slice(0, limit).map(present);
 }

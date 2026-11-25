@@ -1,23 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {cardAgencyLogo} from './data';
 import {advertiserFor} from './listingAdvertiser';
 import {agencyServiceTooltip, agencyTopService} from './listingCardTags';
 
 const SEAL_PATH = 'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z';
 
-const BOX_PATH = 'M21 8 12 3 3 8m18 0v8l-9 5m9-13-9 5m0 8-9-5V8m9 13v-8M3 8l9 5';
-
-function TourTag({label}) {
-  // Each card starts its pass at its own moment, so a grid never flashes in sync.
-  const [delay] = useState(() => `${(Math.random() * 1.5).toFixed(2)}s`);
-  return <span className="discovery-tag is-tour3d" style={{'--shimmer-delay':delay}}>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={BOX_PATH}/></svg>
-    {label}
-  </span>;
-}
-
 export function ListingTagList({tags}) {
-  return tags.map(tag => tag.shimmer ? <TourTag key={tag.id} label={tag.label}/> : <span className="discovery-tag" data-tag={tag.id} key={tag.id}>{tag.label}</span>);
+  return tags.map(tag => <span className="discovery-tag" data-tag={tag.id} key={tag.id}>{tag.label}</span>);
 }
 
 export function ListingAgencyLogo({home, say, logoSrc, alt, imageClass = 'discovery-agency-logo'}) {

@@ -1,10 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {canStartSearch, canStartHomeSearch, hasChosenLocation, detailTokens, foldSearchText, priceDistribution, parseBudgetAmount} from '../src/homeSearchModel.js';
-import {homeQuerySuggestions} from '../src/homeQuerySuggest.js';
 import {IDEA_RECENT_CARD_LIMIT, demoRecentIdeaCards, ideaSuggestionCards, recordSearchHistory, shouldRecordSearch} from '../src/searchHistory.js';
 import {CITY_EXPLORE_LINKS, POPULAR_HOME_CITIES, cityLinkBudget, cityLinkImage} from '../src/popularHomeCities.js';
-import {patchHomeQueryForChip, patchHomeQueryForCriterion, patchHomeQueryForPlace} from '../src/homeQuerySync.js';
 import {composeHomeDraft, describeHomeQuery, homePhraseItems, homePhraseSegments, homeTypedArticle, releaseHomeTokenBefore, releaseLastHomeToken, replaceHomePhraseItem, replaceHomeQueryTail, spliceHomeQuery, splitHomeQuery} from '../src/searchCriteria.js';
 import {areas} from '../src/data.js';
 import {createDetailHistory} from '../src/detailHistory.js';
@@ -52,32 +50,6 @@ test('both explicit mandatory choices are required; suggestions and optional fil
   assert.equal(canStartSearch({mode:true,propertyType:true}), true);
 });
 
-test('home filter chips rewrite the natural-language query', () => {
-  const areas = ['Ambas zonas', 'Roma Norte', 'Narvarte Poniente'];
-  const base = 'casa con 3 recamaras en Roma Norte';
-  assert.equal(patchHomeQueryForChip(base, 'beds', 4, {language: 'es', areas}), 'casa con 4 recámaras en Roma Norte');
-  assert.equal(patchHomeQueryForChip('casa con baño en Roma Norte', 'baths', 2, {language: 'es', areas}), 'casa con 2 baños en Roma Norte');
-  assert.equal(patchHomeQueryForChip('casa com banheiro', 'baths', 1, {language: 'pt-BR', areas}), 'casa com 1 banheiro');
-  assert.equal(patchHomeQueryForChip('casa con garaje en Roma Norte', 'parking', 2, {language: 'es', areas}), 'casa con 2 estacionamientos en Roma Norte');
-  assert.equal(patchHomeQueryForChip('casa com vaga', 'parking', 1, {language: 'pt-BR', areas}), 'casa com 1 vaga');
-  assert.equal(patchHomeQueryForChip(base, 'propertyType', 'condominium', {language: 'es', areas}), 'casa en condominio con 3 recamaras en Roma Norte');
-  assert.equal(patchHomeQueryForChip(base, 'area', 'Narvarte Poniente', {language: 'es', areas}), 'casa con 3 recamaras en Narvarte Poniente');
-  assert.match(patchHomeQueryForChip(base, 'budget', 40_000, {language: 'es', areas, budgetLabel: '$40,000 MXN'}), /hasta \$40,000 MXN/);
-  const priced = patchHomeQueryForChip('casa hasta $8,500,000 MXN en Polanco', 'budget', 8_600_000, {language: 'es', areas, budgetLabel: '$8,600,000 MXN'});
-  assert.equal(priced, 'casa hasta $8,600,000 MXN en Polanco');
-  assert.equal(patchHomeQueryForChip(priced, 'budget', 8_700_000, {language: 'es', areas, budgetLabel: '$8,700,000 MXN'}), 'casa hasta $8,700,000 MXN en Polanco');
-  assert.equal(patchHomeQueryForChip('casa hasta $8,500,000 MXN MXN MXN', 'budget', 8_600_000, {language: 'es', areas, budgetLabel: '$8,600,000 MXN'}), 'casa hasta $8,600,000 MXN');
-  assert.equal(patchHomeQueryForChip('casa hasta $8,500,000 MXN MXN en Polanco MXN MXN', 'budget', 8_600_000, {language: 'es', areas, budgetLabel: '$8,600,000 MXN'}), 'casa hasta $8,600,000 MXN en Polanco');
-  assert.equal(splitHomeQuery('casa hasta $8,500,000 MXN MXN MXN en Polanco').tail.includes('MXN'), false);
-  const pool = patchHomeQueryForCriterion('departamento en Polanco', 'pool', true, 'es');
-  assert.match(foldSearchText(pool), /piscina/);
-  assert.equal(patchHomeQueryForCriterion(pool, 'pool', false, 'es'), 'departamento en Polanco');
-  const withStreet = patchHomeQueryForPlace('departamento en Polanco', {label:'Narvarte Poniente'}, true, 'es');
-  assert.match(withStreet, /en Narvarte Poniente/);
-  assert.equal(patchHomeQueryForPlace(withStreet, {label:'Narvarte Poniente'}, false, 'es'), 'departamento en Polanco');
-  assert.equal(patchHomeQueryForPlace('departamento en Narvarte Poniente y Polanco cerca del metro', {label:'Polanco'}, false, 'es'), 'departamento en Narvarte Poniente cerca del metro');
-});
-
 test('home search stays locked until a location is chosen; the suggested city does not count', () => {
   assert.equal(hasChosenLocation({area:'Ambas zonas', areas:[], places:[], address:''}), false);
   assert.equal(hasChosenLocation({area:'Roma Norte', areas:['Roma Norte'], places:[]}), true);
@@ -88,7 +60,6 @@ test('home search stays locked until a location is chosen; the suggested city do
 });
 
 test('home composer unlocks search when the description names a location', () => {
-  assert.equal(homeQuerySuggestions('es').length, 3);
   const bare = describeHomeQuery('departamento con 3 recámaras', areas);
   assert.equal(canStartHomeSearch('departamento con 3 recámaras', bare), false);
   const located = describeHomeQuery('departamento en Roma Norte', areas);
@@ -358,4 +329,9 @@ test('detail history groups contiguous typing but splits caret moves, pauses and
   assert.equal(h.undo().text,'ab');
   assert.equal(h.undo().text,'');
   h.reset('restored');assert.equal(h.undo(),null);assert.equal(h.redo(),null);
+});
+
+test('the home search starts only with a chosen place; operation and property type never unlock it', () => {
+  assert.equal(hasChosenLocation({mode:'buy', propertyType:'house'}), false);
+  assert.equal(hasChosenLocation({places:[{kind:'colonia', id:'Roma Norte', key:'colonia~Roma Norte'}]}), true);
 });

@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {countInRange, insightListings, insightMode, nearbyAreaPrices, regionArea, regionPhotos, regionSnapshot} from '../src/priceInsights.js';
 import {homes, listingPrice} from '../src/data.js';
-import {PLACE_CATEGORIES, placesNear} from '../src/nearbyPlaces.js';
 import {COST_ITEMS, livingCosts} from '../src/costOfLiving.js';
 import {searchFaq} from '../src/searchFaq.js';
 import {MIN_RELATED_LINKS, relatedLinkChanges, relatedSearches} from '../src/relatedSearches.js';
@@ -69,24 +68,6 @@ test('total is the median listing price; m² is a smaller per-meter figure', () 
   assert.equal(total.value, Math.round(prices.length % 2 ? prices[mid] : (prices[mid - 1] + prices[mid]) / 2));
   const [m2] = nearbyAreaPrices(narvarte, {metric:'m2'});
   assert.ok(m2.value > 0 && m2.value < total.value);
-});
-
-test('nearby places mix categories around the colonia, nearest first, with walking slower than driving', () => {
-  const places = placesNear(narvarte);
-  assert.equal(places.area, 'Narvarte Poniente');
-  assert.equal(places.items.length, 12);
-  assert.ok(new Set(places.items.map(place => place.categoria)).size >= 6);
-  assert.equal(new Set(places.items.map(place => place.name)).size, places.items.length);
-  assert.ok(places.items.every((place, index, list) => !index || list[index - 1].meters <= place.meters));
-  assert.ok(places.items.every(place => place.walk >= place.drive && place.drive >= 1));
-  assert.deepEqual(Object.keys(places.counts), PLACE_CATEGORIES);
-});
-
-test('nearby places keep only the chosen categories and hide empty ones', () => {
-  const metro = placesNear(narvarte, {categories:['metro']});
-  assert.ok(metro.items.length > 0 && metro.items.every(place => place.categoria === 'metro'));
-  assert.equal(placesNear(narvarte, {categories:[]}).items.length, 0);
-  assert.equal(placesNear({mode:'buy', areas:['Santa Fe']}).counts.metro, 0);
 });
 
 test('living costs take maintenance from published fees and label every other figure as an estimate', () => {

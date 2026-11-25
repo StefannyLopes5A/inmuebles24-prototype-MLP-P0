@@ -97,7 +97,6 @@ export function relatedLinkSearch(search, changes = {}) {
     minLot: 0,
     maxLot: 0,
     minBudget: 0,
-    tour3d: false,
     places: undefined,
     propertyType: 'apartment',
     ...changes,

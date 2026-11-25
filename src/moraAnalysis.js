@@ -223,54 +223,15 @@ function favoritesModule(home, favorites, {say}) {
   };
 }
 
-const DECLARED_PLACE = /(trabajo|trabalho|oficina|escrit[oó]rio)\s+(?:en|em|na|no)\s+([\p{Lu}][\p{L}]+(?:\s[\p{Lu}][\p{L}]+)?)/u;
-const MENTIONS_SCHOOL = /\b(hij[oa]s?|niñ[oa]s?|escuelas?|colegios?|filh[oa]s?|crianças?|escolas?)\b/iu;
-const PLACE_KINDS = [['metro', 'transport'], ['escola', 'education'], ['parque', 'green'], ['supermercado', 'grocery'], ['cafe', 'food'], ['hospital', 'health'], ['bar_restaurante', 'restaurant'], ['comercio', 'shop']];
-const MAX_PLACES = 5;
-const MAX_WALK = 18;
 export const placeName = (category, name) => category === 'metro' ? `Metro ${name.split('/')[0].replace(/\s+L\d+$/, '').trim()}` : name;
-/** Car minutes to a place the person declared. Seeded per listing, shared with the fact sheet so both say the same number. */
+/** Car minutes to a place the person declared. Seeded per listing; the offline fact sheet still reads it. */
 export const declaredMinutes = (home, place) => 12 + seed(`${home.id}|${place}`) % 24;
-
-/** Places the person declared come first; real nearby points follow, and schools only when they were mentioned. */
-function surroundingsModule(home, search, {say}) {
-  const items = [];
-  const note = search?.note || '';
-  const declared = note.match(DECLARED_PLACE);
-  if (declared) {
-    const office = /oficina|escrit/i.test(declared[1]);
-    const minutes = declaredMinutes(home, declared[2]);
-    items.push({icon:'work', minutes,
-      place:office ? say(`Seu escritório em ${declared[2]}`, `Tu oficina en ${declared[2]}`) : say(`Seu trabalho em ${declared[2]}`, `Tu trabajo en ${declared[2]}`),
-      time:say(`${minutes} min de carro`, `${minutes} min en auto`),
-      text:office
-      ? say(`${minutes} min de carro até seu escritório em ${declared[2]}`, `${minutes} min en auto a tu oficina en ${declared[2]}`)
-      : say(`${minutes} min de carro até seu trabalho em ${declared[2]}`, `${minutes} min en auto a tu trabajo en ${declared[2]}`)});
-  }
-  const point = homeCoordinates(home);
-  const schools = MENTIONS_SCHOOL.test(note);
-  for (const [category, icon] of PLACE_KINDS) {
-    if (category === 'escola' && !schools) continue;
-    const poi = nearbyPois(point, poisFor(null, [category]), {radius:2500, limit:1})[0];
-    if (!poi) continue;
-    const meters = Math.round(poi.properties.meters * 1.3);
-    const walk = travelMinutes(meters, 'walk');
-    if (walk > MAX_WALK) continue;
-    const name = placeName(category, poi.properties.name);
-    items.push({icon, minutes:walk, place:name, time:say(`${walk} min a pé`, `${walk} min a pie`), text:say(`${walk} min a pé até ${name}`, `${walk} min caminando a ${name}`)});
-  }
-  const picked = items.slice(0, MAX_PLACES);
-  if (!picked.length) return null;
-  const metro = picked.find(item => item.icon === 'transport');
-  return {kind:'surroundings', items:picked.map(({icon, place, time, text}) => ({icon, place, time, text})), strength:declared ? 0.7 : metro && metro.minutes <= 8 ? 0.6 : 0.3};
-}
 
 const join = (parts, and) => parts.length < 2 ? parts[0] || '' : `${parts.slice(0, -1).join(', ')} ${and} ${parts[parts.length - 1]}`;
 
 const FOCUS_LINE = {
   photos:['Vendo as fotos…', 'Viendo las fotos…'],
   text:['Lendo o que o anúncio diz…', 'Leyendo lo que dice el anuncio…'],
-  neighborhood:['Vendo como se vive no bairro…', 'Viendo cómo se vive en la colonia…'],
   results:['Situando entre os seus resultados…', 'Ubicándolo entre tus resultados…'],
   favorites:['Comparando com os seus favoritos…', 'Comparando con tus favoritos…'],
   attention:['Separando o que vale perguntar antes de visitar…', 'Separando lo que vale preguntar antes de visitar…'],
@@ -290,7 +251,8 @@ export function moraAnalysis(home, {search = {}, pref = 'none', favorites = [], 
     const fit = hasSearch ? searchFit(home, search, pref, {language, money, short}) : null;
     const attention = attentionModule(fit, tools);
     const favoritesInsight = hasSearch ? favoritesModule(home, favorites, tools) : null;
-    const surroundings = surroundingsModule(home, hasSearch ? search : null, tools);
+    // Neighborhood and commute are not part of what Mora answers in this version; the page sections carry them.
+    const surroundings = null;
     const reading = selectReading(home, {
       say, search:hasSearch ? search : null, pref, home, facts, peers, stage, language,
       priceModule:marketModule(home, facts, kind, peers, tools),

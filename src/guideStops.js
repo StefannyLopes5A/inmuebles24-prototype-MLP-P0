@@ -1,93 +1,88 @@
 /**
- * The presenter's guide: ten stops through the prototype. English only, on purpose; the product it points to keeps
+ * The presenter's guide: ten stops through the MLP prototype. English only, on purpose; the product it points to keeps
  * its own language. Each action is resolved by App, and `target` is what the ring outlines once the stage folds away.
+ * Every stop points to something that is in this version (P0); nothing here opens a removed feature.
  */
 export const GUIDE_STOPS = [
   {
-    id:'mora',
-    title:'Mora, deterministic and not',
-    body:'Home builds the search as a sentence. In results, Mora also answers questions and can step in on her own.',
+    id:'home',
+    title:'Home search',
+    body:'One sentence with two filters, the operation and the property type, and a location input that only takes places. The search starts once a place is chosen.',
+    actions:[{id:'home', label:'Open home', target:'.home-search'}],
+  },
+  {
+    id:'results',
+    title:'Results bar',
+    body:'The first cell is the location input. Operation and property type sit with the quick filters, and the filter panel opens from “Más filtros”.',
     actions:[
-      {id:'hybrid-search', label:'Home hybrid search', layout:'hybrid', target:'.home-search'},
-      {id:'inline-search', label:'Home free search', layout:'inline', target:'.home-search'},
-      {id:'original-search', label:'Home original search', layout:'original', target:'.home-search'},
-      {id:'mora-answer', label:'Search conversation', target:'.mora-bar'},
-      {id:'mora-suggest', label:'Neighborhood suggestion', target:'.mora-bar'},
-      {id:'mora-refine', label:'Search refinement', target:'.mora-bar'},
+      {id:'results', label:'Results bar', target:'.mora-bar'},
+      {id:'all-filters', label:'Filter panel', target:'.all-filters-dialog'},
+    ],
+  },
+  {
+    id:'price',
+    title:'Price signals',
+    body:'Cards carry the price-drop pill, and the fair-price sort puts the best-priced homes first. The listing page explains the score.',
+    actions:[
+      {id:'sort-price', label:'Sort by fair price', target:'.flow-sort'},
+      {id:'mora-price', label:'Price verdict on a listing', target:'.pp-mora-section'},
     ],
   },
   {
     id:'map',
     title:'Map',
-    body:'The full map, with Mora’s reading on the left. Her cards only appear on desktop, from 951 px.',
-    actions:[{id:'map-full', label:'Open full map', target:'.map-shell[data-mode="full"]'}],
-  },
-  {
-    id:'scarcity',
-    title:'Scarcity',
-    body:'Tags on the card create urgency. High demand shows when a listing already has many recent contacts.',
+    body:'A floating card opens the map as a full-screen page, with the price on every pin. Back returns to the list.',
     actions:[
-      {id:'grid', label:'Grid', target:'.discovery-tag[data-tag="demand"]'},
-      {id:'sort-rarity', label:'Rarity', target:'.discovery-tag[data-tag="signal"]'},    ],
-  },
-  {
-    id:'mini-listing',
-    title:'Mini listing',
-    body:'The summary grows out of the card, in its own row. Every contact state lives in that panel.',
-    actions:[{id:'mini-listing', label:'Open a listing', target:'.lp-shell'}],
-  },
-  {
-    id:'context',
-    title:'Mora in context',
-    body:'Mora adds a reading where you already are. Selecting a sentence on a listing calls her too.',
-    actions:[
-      {id:'context-panel', label:'In the panel', target:'.lp-shell .lp-mora'},
-      {id:'context-listing', label:'Full listing', target:'.lp-mora'},
-      {id:'context-map', label:'On the map', target:'.map-widget-stack'},
+      {id:'map-float', label:'Floating map card', target:'.map-float'},
+      {id:'map-full', label:'Open full-screen map', target:'.rm-page'},
     ],
-  },
-  {
-    id:'sign-in',
-    title:'Sign-in incentives',
-    body:'Saving, sharing, and alerts ask you to sign in. The third save without an account shows the invite.',
-    actions:[
-      {id:'sign-in', label:'Sign in'},
-      {id:'favorites', label:'Favorites', target:'.discovery-like'},
-      {id:'share-list', label:'Share a list', target:'.share-favorites-chip, .members-chip'},
-    ],
-  },
-  {
-    id:'profiling',
-    title:'Profiling',
-    body:'During search, Mora asks where you are in the move. Your filters stay the same.',
-    actions:[
-      {id:'ask-moment', label:'When are you moving?', target:'.mora-bar'},
-      {id:'ask-credit', label:'Do you have credit?', target:'.mora-bar'},
-      {id:'ask-work', label:'Working from home', target:'.mora-bar'},
-    ],
-  },
-  {
-    id:'compare',
-    title:'Compare favorites',
-    body:'Saved homes side by side, and what stands out in each one.',
-    actions:[{id:'compare', label:'Compare favorites', target:'.compare-rail'}],
-  },
-  {
-    id:'batch',
-    title:'Leads in batches',
-    body:'One message to several agencies, from the same comparison.',
-    actions:[{id:'batch', label:'Message several agencies', target:'.compare-composer'}],
   },
   {
     id:'primary',
     title:'Primary market',
-    body:'Torre Olmo opens as a 3D tour of the building and its units. The model runs on desktop.',
-    actions:[{id:'tour', label:'Open 3D tour', target:'.recorrido-page'}],
+    body:'Desarrollos is an operation of its own. Torre Olmo reads as any other listing, with the default card and the default listing page.',
+    actions:[{id:'development', label:'Open Desarrollos', target:'[data-home-id="torre-olmo"]'}],
+  },
+  {
+    id:'listing',
+    title:'Listing page',
+    body:'The photo gallery, the facts, Mora’s price verdict, the location map and the agency reviews, with similar properties at the end.',
+    actions:[{id:'listing', label:'Open a listing', target:'.pp-gallery'}],
+  },
+  {
+    id:'seo',
+    title:'SEO content',
+    body:'City and neighborhood blocks on the home and the results page, and neighborhood life on the listing. Mora does not answer about neighborhoods.',
+    actions:[
+      {id:'seo-home', label:'Home blocks', target:'.home-city-guide'},
+      {id:'seo-results', label:'Results blocks', target:'.region-insights'},
+      {id:'seo-listing', label:'Neighborhood life', target:'#pp-neighborhood'},
+    ],
+  },
+  {
+    id:'contact',
+    title:'Contact',
+    body:'The contact form grows inside the price card of the listing page and ends in a confirmation. Nothing is sent.',
+    actions:[{id:'contact', label:'Open the contact form', target:'.lp-stage'}],
+  },
+  {
+    id:'sign-in',
+    title:'Sign-in',
+    body:'Saving a favorite or a search asks you to sign in first, with a message that says why. The simulated login accepts any button.',
+    actions:[
+      {id:'sign-in', label:'Sign in'},
+      {id:'favorite', label:'Save a favorite', target:'.account-login'},
+      {id:'save-search', label:'Save a search', target:'.account-login'},
+    ],
+  },
+  {
+    id:'favorites',
+    title:'Favorites',
+    body:'A flat list of the homes you saved. There are no folders, comparison or sharing in this version.',
+    actions:[{id:'favorites-page', label:'Open favorites', target:'.favorites-page'}],
   },
 ];
 
-export const GUIDE_FOLDER_NAME = 'Guide';
-export const GUIDE_COMPARE_SIZE = 4;
 const GUIDE_KEY = 'inmuebles24-v2-guide';
 
 /** `?guide=off` hides the guide for this session and `?guide=on` brings it back; the journey URL drops the param. */
@@ -102,9 +97,4 @@ export function guideEnabled(search = '', store = safeSession()) {
 
 function safeSession() {
   try { return typeof sessionStorage === 'undefined' ? null : sessionStorage; } catch { return null; }
-}
-
-/** A folder worth comparing: the first one with three or more homes. */
-export function comparableFolder(folders = []) {
-  return folders.find(folder => folder.homeIds.length >= 3) || null;
 }

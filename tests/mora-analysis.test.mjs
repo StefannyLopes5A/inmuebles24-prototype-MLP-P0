@@ -16,7 +16,8 @@ test('the analysis is stable per listing and keeps every widget that has data', 
     const first = moraAnalysis(home, {search, favorites:homes.slice(0, 4)});
     assert.deepEqual(moraAnalysis(home, {search, favorites:homes.slice(0, 4)}), first, home.id);
     assert.ok(first.modules.some(module => module.kind === 'opportunity'), `${home.id}: price`);
-    assert.ok(first.modules.some(module => module.kind === 'neighborhood' || module.kind === 'surroundings'), `${home.id}: location`);
+    assert.ok(first.modules.every(module => module.kind !== 'neighborhood' && module.kind !== 'surroundings'), `${home.id}: Mora does not answer about the neighborhood`);
+    assert.equal(first.surroundings, null, home.id);
     const photos = first.modules.find(module => module.kind === 'photos');
     if (photos) {
       assert.match(photos.text, /por las fotos,/i, home.id);
@@ -24,7 +25,7 @@ test('the analysis is stable per listing and keeps every widget that has data', 
     }
     assert.doesNotMatch(first.synthesis, /en la foto \d+|no hay recámara|poca luz/i, `${home.id}: ${first.synthesis}`);
     assert.equal(first.modules.filter(module => module.kind === 'opportunity' || module.dimension === 'price').length, 1, `${home.id}: two price modules`);
-    assert.equal(new Set(first.dimensions).size, 2, `${home.id}: ${first.synthesis}`);
+    assert.ok(first.dimensions.length >= 1 && new Set(first.dimensions).size <= 2 && !first.dimensions.includes('neighborhood') && !first.dimensions.includes('commute'), `${home.id}: ${first.synthesis}`);
     assert.ok((first.modules.find(module => module.items?.length)?.items.length ?? 0) <= 5, home.id);
     assert.match(first.synthesis, /\.$/, home.id);
     assert.ok(first.workingLines.length >= 1 && first.workingLines.length <= 2, home.id);
@@ -50,7 +51,7 @@ test('search fit is a count of up to six criteria, and unknown facts never count
   assert.match(over.label, /arriba de tu presupuesto$/);
 });
 
-test('without an active search Mora skips fit and favorites, keeping market and surroundings', () => {
+test('without an active search Mora skips fit and favorites, keeping the market reading', () => {
   const analysis = moraAnalysis(torres, {search, favorites:homes.slice(0, 4), hasSearch:false});
   assert.equal(analysis.match, undefined);
   assert.ok(analysis.modules.every(module => module.kind !== 'favorites'));
@@ -118,9 +119,9 @@ test('sale syntheses do not repeat one mold more than four times and seen needs 
   resetMoraSession();
   const plain = {mode:'buy', areas:['Narvarte Poniente'], budget:7500000, minBudget:0, beds:2, criteria:[], note:''};
   const molds = new Map();
-  for (const home of homes.filter(item => item.mode === 'buy')) {
+  for (const home of homes.filter(item => item.mode === 'buy' && !item.development)) {
     const analysis = moraAnalysis(home, {search:plain});
-    assert.equal(new Set(analysis.dimensions).size, 2, home.id);
+    assert.ok(analysis.dimensions.length >= 1 && new Set(analysis.dimensions).size <= 2, home.id);
     assert.equal(analysis.modules.some(module => module.kind === 'results'), false, home.id);
     if (photoReading(home)) {
       const photos = analysis.modules.find(module => module.kind === 'photos');
@@ -184,19 +185,6 @@ test('met criteria come first and the synthesis concludes instead of repeating t
     assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b), home.id);
     assert.doesNotMatch(analysis.synthesis, /Coincide con \d+ de \d+/, home.id);
   }
-});
-
-test('surroundings name real places, put the declared one first and skip schools unless mentioned', () => {
-  const places = home => moraAnalysis(home, {search:{...search, note:'trabajo en oficina en Reforma'}}).modules.find(module => module.items?.length);
-  for (const home of homes.slice(0, 30)) {
-    const module = places(home);
-    if (!module) continue;
-    assert.equal(module.items[0].icon, 'work', home.id);
-    assert.match(module.items[0].text, /a tu oficina en Reforma/);
-    assert.ok(module.items.every(item => item.icon !== 'education' && !/del barrio|cercana/i.test(item.text)), home.id);
-  }
-  const withKids = homes.slice(0, 30).map(home => moraAnalysis(home, {search:{...search, note:'tengo dos hijos'}}).modules.find(module => module.items?.length));
-  assert.ok(withKids.some(module => module?.items.some(item => item.icon === 'education')));
 });
 
 test('advertiser trust signals are stable per advertiser', () => {
@@ -299,7 +287,8 @@ test('the listing page card keeps the mini-listing sentence and sorts every find
       if (row.ask) assert.ok(row.ask.question, home.id);
     }
   }
-  assert.ok(bars > 0 && commute > 0 && photos > 0, `${bars} ${commute} ${photos}`);
+  assert.ok(bars > 0 && photos > 0, `${bars} ${photos}`);
+  assert.equal(commute, 0, 'the page reading carries no commute rows');
   const quiet = homes.map(home => detailReading(moraAnalysis(home, {search:{...search, note:''}}), {home, search, places:[], gallery:[], short, say}));
   assert.ok(quiet.every(reading => !reading.plus.some(row => row.id === 'commute')));
 });

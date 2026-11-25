@@ -15,7 +15,7 @@ export function fixtureApplies(fixture, {search, hasSearch = true, language = 'e
   return persona.search.zones.every(zone => areas.includes(zone)) && (!search?.budget || search.budget === persona.search.maxPrice);
 }
 
-/** Only the description and the price widget read the fixture; every other module stays as the analysis built it. */
+/** Only the price widget reads the fixture. The written summary is not used: it names metro and neighborhood facts Mora no longer answers. */
 export function withFixture(analysis, fixture, options = {}) {
   if (!analysis || !fixtureApplies(fixture, options)) return analysis;
   const {output, factSheet:sheet} = fixture;
@@ -44,5 +44,5 @@ export function withFixture(analysis, fixture, options = {}) {
       },
     };
   });
-  return {...analysis, synthesis:output.synthesis, modules, fixture:fixture.meta?.listingId};
+  return {...analysis, modules, fixture:fixture.meta?.listingId};
 }

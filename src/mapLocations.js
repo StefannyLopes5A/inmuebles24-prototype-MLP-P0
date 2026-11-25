@@ -1,4 +1,3 @@
-import {LOT} from './development/buildingConfig.js';
 
 /** Same fixed demo rate as `DEMO_MXN_PER_USD` in i18n.jsx, which node tests cannot import. */
 const MXN_PER_USD = 20;
@@ -75,8 +74,6 @@ export function neighborhoodCentroid(home) {
 
 /** Deterministic spread inside the colonia so pins of the same area don't stack. */
 export function homeCoordinates(home) {
-  // A development has a surveyed lot; the pin must sit where the 3D city is centred.
-  if (home?.development) return [LOT.lon, LOT.lat];
   const [lng, lat] = neighborhoodCentroid(home);
   const seed = hash(home?.id);
   const angle = (seed % 3600) / 3600 * Math.PI * 2;

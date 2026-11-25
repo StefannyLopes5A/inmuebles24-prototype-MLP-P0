@@ -1,40 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {homes} from '../src/data.js';
-import {DEMAND_CONTACTS, highlightCopy, listingHighlights, listingSeo} from '../src/listingHighlights.js';
+import {highlightCopy, listingHighlights, listingSeo} from '../src/listingHighlights.js';
 import {moraAnalysis} from '../src/moraAnalysis.js';
-import {recentContacts} from '../src/resultSort.js';
 
 const listings = homes.filter(home => !home.development);
 const say = (br, es) => es;
 const money = value => `$${value}`;
 
-test('some listings carry a price drop, some high demand, some both, some neither', () => {
-  const states = new Set(listings.map(home => {
-    const {drop, demand} = listingHighlights(home);
-    return `${!!drop}|${!!demand}`;
-  }));
-  assert.deepEqual([...states].sort(), ['false|false', 'false|true', 'true|false', 'true|true']);
-  const plain = listings.filter(home => !listingHighlights(home).drop && !listingHighlights(home).demand);
+test('some listings carry a price drop and the rest carry none; demand signals are not part of this version', () => {
+  const states = new Set(listings.map(home => `${!!listingHighlights(home).drop}|${!!listingHighlights(home).demand}`));
+  assert.deepEqual([...states].sort(), ['false|false', 'true|false']);
+  const plain = listings.filter(home => !listingHighlights(home).drop);
   assert.ok(plain.length > listings.length / 3);
 });
 
-test('highlights are stable and follow the contact count and the published drop', () => {
+test('highlights are stable and follow the published drop', () => {
   for (const home of listings) {
     assert.deepEqual(listingHighlights(home), listingHighlights(home));
-    assert.equal(!!listingHighlights(home).demand, recentContacts(home) >= DEMAND_CONTACTS, home.id);
     const {drop} = listingHighlights(home);
     if (drop) assert.ok(drop.pct >= 1 && drop.was > drop.price && drop.days > 0, home.id);
   }
 });
 
 test('pill and tooltip copy name the figures', () => {
-  const home = listings.find(item => listingHighlights(item).drop && listingHighlights(item).demand);
+  const home = listings.find(item => listingHighlights(item).drop);
   const copy = highlightCopy(listingHighlights(home), {say, money});
   assert.match(copy.drop.label, /^\d+%$/);
   assert.match(copy.drop.tip.join(''), /^Bajó \d+% de precio hace \d+ días/);
-  assert.match(copy.demand.label, /\d,\dx más visualizaciones/);
-  assert.match(copy.demand.tip.join(''), /^Alta competitividad: \d,\dx más visitas y favoritos/);
+  assert.equal(copy.demand, null);
   assert.deepEqual(highlightCopy({drop: null, demand: null}, {say, money}), {drop: null, demand: null});
 });
 

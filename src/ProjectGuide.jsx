@@ -47,7 +47,7 @@ function Ring({target,onDone}) {
   </div>;
 }
 
-export function ProjectGuide({onAction, searchLayout='original'}) {
+export function ProjectGuide({onAction}) {
   const reduce=useReducedMotion();
   const [open,setOpen]=useState(false),[expanded,setExpanded]=useState(null);
   const [ring,setRing]=useState(null),[settling,setSettling]=useState(false),[idle,setIdle]=useState(false);
@@ -144,7 +144,7 @@ export function ProjectGuide({onAction, searchLayout='original'}) {
               <div className="pg-detail-inner">
                 <p className="pg-body">{stop.body}</p>
                 <div className="pg-actions">
-                  {stop.actions.map((action,actionIndex)=><button type="button" key={action.id} className="pg-pill" data-primary={(action.layout?searchLayout===action.layout:actionIndex===0)||undefined} onClick={()=>act(action)}>{action.label}</button>)}
+                  {stop.actions.map((action,actionIndex)=><button type="button" key={action.id} className="pg-pill" data-primary={actionIndex===0||undefined} onClick={()=>act(action)}>{action.label}</button>)}
                 </div>
               </div>
             </div>

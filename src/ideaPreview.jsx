@@ -1,14 +1,12 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {areaLabel, listingPrice, propertyPhoto} from './data.js';
-import {developmentFacts, developmentKind} from './development/listingFacts.js';
 import {Icon} from './App.jsx';
 import {bathCount, roomCount, useLanguage} from './i18n.jsx';
 import {playIdeaPreview} from './homeMotion.js';
 
 function ListingCopy({home: h}) {
   const {t, language, money, currency} = useLanguage();
-  if (h.development) return <><span>{developmentKind(language)}</span><strong>{money(listingPrice(h))} <small>{currency}</small></strong><b>{h.street} · {h.area}</b><span>{developmentFacts(language).join(' · ')}</span></>;
   return <><span>{t(h.mode === 'buy' ? 'Venta' : 'Renta')} · {t('Departamento')}</span><strong>{money(listingPrice(h))} <small>{currency}{h.mode === 'rent' ? ' / ' + t('mes') : ''}</small></strong><b>{h.street} · {h.area}</b><span>{t(areaLabel(h))} · {roomCount(h.beds, language)} · {bathCount(h.baths, language)}</span></>;
 }
 

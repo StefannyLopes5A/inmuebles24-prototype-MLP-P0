@@ -5,7 +5,6 @@ import {marketAnswer, marketQuestion, marketTopic} from '../src/marketAnswers.js
 import {SORTS, canonicalSort, sortLabel, sortResults, sortSignal} from '../src/resultSort.js';
 import {leadLine, markVisit, normalizeSeeker, readSeeker, visitMomentLabel, writeSeeker} from '../src/seekerSignals.js';
 import {DEFAULT_SEARCH, alertKey, journeyUrl, prototypeResults, readJourney} from '../src/journey.js';
-import {readSharedFolders, shareFolder, SHARED_LIMIT} from '../src/collaborativeLists.js';
 import {listingCardTags} from '../src/listingCardTags.js';
 import {interpretSmartInput, matchStreet, smartDetailTokens, streetName} from '../src/searchCriteria.js';
 import {areas} from '../src/data.js';
@@ -45,16 +44,15 @@ test('the bar answers a market question without touching filters', () => {
 });
 
 test('sorting keeps exact matches ahead and orders by each signal', () => {
-  assert.deepEqual(SORTS, ['recommended', 'price', 'rarity']);
+  assert.deepEqual(SORTS, ['recommended', 'price']);
   assert.equal(canonicalSort('nope'), 'recommended');
   assert.equal(canonicalSort('contacts'), 'recommended');
+  assert.equal(canonicalSort('rarity'), 'recommended');
   assert.equal(sortLabel('price'), 'Precio justo');
   const items = homes.filter(home => home.mode === 'buy').slice(0, 20);
   const exact = new Set(items.slice(10).map(home => home.id));
   const byPrice = sortResults(items, 'price', exact);
   assert.deepEqual(new Set(byPrice.slice(0, 10).map(home => home.id)), exact);
-  const byRarity = sortResults(items, 'rarity').map(home => peerFacts(home).count);
-  assert.deepEqual(byRarity, [...byRarity].sort((a, b) => a - b));
   const deltas = sortResults(items, 'price').map(home => marketFacts(home).delta ?? Infinity);
   assert.deepEqual(deltas, [...deltas].sort((a, b) => a - b));
   assert.deepEqual(sortResults(items, 'recommended'), items);
@@ -64,8 +62,7 @@ test('sort signals only appear for the active sort and when the signal is real',
   const cheap = homes.find(home => (marketFacts(home).delta ?? 0) < -0.03);
   assert.equal(sortSignal(cheap, 'price'), 'Por debajo de la mediana');
   assert.equal(sortSignal(cheap, 'recommended'), null);
-  const rare = homes.find(home => peerFacts(home).count <= 2);
-  assert.match(sortSignal(rare, 'rarity', 'es-MX', {long:true}), /parecido/);
+  assert.equal(sortSignal(cheap, 'rarity'), null);
 });
 
 test('the sort signal takes the slot after a perfect match on the card', () => {
@@ -75,29 +72,17 @@ test('the sort signal takes the slot after a perfect match on the card', () => {
 });
 
 test('sort lives in the route only on results and listing, and is omitted when recommended', () => {
-  const url = journeyUrl({page:'results', search:DEFAULT_SEARCH, sort:'rarity'});
-  assert.match(url, /sort=rarity/);
-  assert.equal(readJourney(new URL(url, 'https://local.test')).sort, 'rarity');
+  const url = journeyUrl({page:'results', search:DEFAULT_SEARCH, sort:'price'});
+  assert.match(url, /sort=price/);
+  assert.equal(readJourney(new URL(url, 'https://local.test')).sort, 'price');
   assert.doesNotMatch(journeyUrl({page:'results', search:DEFAULT_SEARCH, sort:'recommended'}), /sort=/);
-  assert.doesNotMatch(journeyUrl({page:'home', search:DEFAULT_SEARCH, sort:'rarity'}), /sort=/);
+  assert.doesNotMatch(journeyUrl({page:'home', search:DEFAULT_SEARCH, sort:'price'}), /sort=/);
 });
 
 test('an alert belongs to the search, not to its order or free text', () => {
   const base = alertKey(DEFAULT_SEARCH);
   assert.equal(alertKey({...DEFAULT_SEARCH, note:'algo'}), base);
   assert.notEqual(alertKey({...DEFAULT_SEARCH, budget:DEFAULT_SEARCH.budget + 1000}), base);
-});
-
-test('a shared folder is a local snapshot of valid listings, newest first and capped', () => {
-  const ids = homes.slice(0, 2).map(home => home.id);
-  const shared = shareFolder({}, {id:'list-casa', name:'Casa', homeIds:[...ids, 'unknown']}, 10);
-  assert.deepEqual(readSharedFolders(shared, new Set(ids))['list-casa'].homeIds, ids);
-  assert.equal(shareFolder(shared, {id:'recent', name:'x', homeIds:ids}), shared);
-  let many = {};
-  for (let index = 0; index < SHARED_LIMIT + 3; index++) many = shareFolder(many, {id:`list-${index}`, name:`F${index}`, homeIds:ids}, index);
-  const kept = Object.keys(readSharedFolders(many));
-  assert.equal(kept.length, SHARED_LIMIT);
-  assert.equal(kept[0], `list-${SHARED_LIMIT + 2}`);
 });
 
 test('seeker signals are validated and feed a lead line that skips the current listing', () => {

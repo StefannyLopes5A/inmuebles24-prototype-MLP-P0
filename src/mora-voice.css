@@ -36,16 +36,46 @@
 }
 @media(forced-colors:active){.mora-thinking>span{background:none;-webkit-text-fill-color:currentColor;animation:none}}
 
-/* Mora channels: where to keep the conversation (app, WhatsApp). */
-.mora-channels{display:flex;flex-direction:column;gap:8px}
-.mora-channels-foot{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:8px}
-.mora-channels-foot p{margin:0;color:#6a6a6a;font-size:16px;line-height:24px;letter-spacing:-.31px}
-.mora-channels-links{display:flex;flex:none;gap:32px}
-.mora-channels-links button{display:inline-flex;align-items:center;gap:8px;padding:8px 0;border:0;background:none;color:#222;font-family:inherit;font-size:16px;line-height:24px;font-weight:600;letter-spacing:-.31px;cursor:pointer}
-.mora-channels-links button:hover{text-decoration:underline}
-.mora-channels-links button:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
-.mora-channels-note{margin:0;color:#6a6a6a;font-size:14px;line-height:20px}
-@media(max-width:700px){.mora-channels-foot{flex-direction:column;align-items:flex-start;gap:8px;padding-top:0}}
-/* In the search editor the channels sit under the sentence. */
-.mora-editor .mora-channels{margin:0 var(--home-page-gutter);padding:0 0 32px}
-.mora-editor .mora-channels-foot{padding-top:0}
+/* Mora entry point (Figma: Rediseño del listado 2025). */
+.me{display:flex;align-items:flex-start;gap:24px;padding:32px;border:2px solid transparent;border-radius:24px;background:linear-gradient(174.8deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,var(--mora-gradient) border-box;font-family:var(--app-font,inherit)}
+.me-mark{flex:none;padding-top:6px}
+.me-mark img{display:block;width:40px;height:40px}
+.me-body{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px}
+.me-title{margin:0;color:#222;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.92px;text-wrap:balance}
+.me-title>span{display:block}
+.me-actions{display:flex;flex:none;gap:24px}
+.me-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;min-height:48px;padding:12px 24px;border-radius:999px;font:600 16px/20px var(--app-font,inherit);letter-spacing:-.3125px;white-space:nowrap;cursor:pointer}
+.me-app{border:1px solid #222;background:transparent;color:#222}
+.me-whatsapp{gap:16px;border:1px solid #ff925c;background:linear-gradient(#f50,#ffad85);color:#fff}
+.me-button:hover{filter:brightness(.97)}
+/* The title reads in word by word like the home sentence: each word is a 620ms soft ink-in, 110ms after the previous one. */
+.me-button{font-weight:600}
+.me-word{display:inline-block;animation:me-word-in 620ms cubic-bezier(.25,.1,.25,1) calc(520ms + var(--me-i,0) * 110ms) backwards}
+/* Once the words are in, the home's light pass for a chosen filter crosses the whole title as one phrase: orange, then blue, then back to the title color. */
+.me-title{-webkit-background-clip:text;background-clip:text;animation:me-title-sweep 760ms linear calc(1040ms + var(--me-n,10) * 110ms)}
+/* The gradient only exists while the pass runs: clipped to the text from the first frame, it would paint every word at once and ignore their fade-in. */
+@keyframes me-title-sweep{from{background-image:linear-gradient(90deg,#222 30%,var(--motion-orange,#f50) 42%,var(--motion-blue,#1b4aa8) 58%,#222 70%);background-size:350% 100%;background-repeat:no-repeat;background-position:100% 50%;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 0 #ff550000)}35%{filter:drop-shadow(0 0 4px #07358f38)}65%{filter:drop-shadow(0 0 4px #ff553b38)}to{background-image:linear-gradient(90deg,#222 30%,var(--motion-orange,#f50) 42%,var(--motion-blue,#1b4aa8) 58%,#222 70%);background-size:350% 100%;background-repeat:no-repeat;background-position:0% 50%;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 0 #ff550000)}}
+@keyframes me-word-in{from{opacity:0;transform:translateY(2px);filter:blur(2px)}to{opacity:1;transform:none;filter:blur(0)}}
+@media(prefers-reduced-motion:reduce){.me-word,.me-title{animation:none}}
+.me-button:active{transform:scale(.98)}
+.me-button:focus-visible,.me-chip:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
+.me-chips{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:12px}
+.me-chip{min-height:44px;padding:10px 20px;border:1px solid #0000000f;border-radius:999px;background:#ffffffb3;color:#222;font:600 15px/22px var(--app-font,inherit);letter-spacing:-.31px;cursor:pointer}
+.me-chip:hover{background:#fffffff2}
+.me-chip[aria-pressed=true]{border-color:#222}
+.me-note{flex:1 0 100%;margin:0;color:#6a6a6a;font-size:14px;line-height:20px}
+.me-note:empty{display:none}
+.mora-entry-search{display:grid;grid-template-rows:1fr;padding:24px var(--home-page-gutter) 0;animation:mes-in 560ms cubic-bezier(.22,1,.36,1) 200ms both}
+.mora-entry-search.is-closing{animation:mes-out 320ms cubic-bezier(.4,0,.2,1) both}
+.mora-entry-search-inner{min-height:0;overflow:hidden;padding:3px;margin:-3px}
+.mora-entry-search .me{max-width:none;width:100%}
+.me{position:relative}
+.me.is-closable{padding-right:72px}
+.me-close{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:#222;cursor:pointer}
+.me-close:hover{background:#0000000f}
+.me-close:focus-visible{outline:2px solid #222;outline-offset:-2px}
+@keyframes mes-in{from{grid-template-rows:0fr;padding-top:0;opacity:0;transform:translateY(-10px)}to{grid-template-rows:1fr;padding-top:24px;opacity:1;transform:none}}
+@keyframes mes-out{from{grid-template-rows:1fr;padding-top:24px;opacity:1}to{grid-template-rows:0fr;padding-top:0;opacity:0}}
+@media(prefers-reduced-motion:reduce){.mora-entry-search{animation:none}}
+@media(max-width:700px){.me{gap:16px;padding:24px 20px}.me.is-closable{padding-right:20px}.me.is-closable .me-title{padding-right:40px}.me-close{top:8px;right:8px}.me-title{font-size:18px;line-height:24px}.me-body{flex-direction:column;align-items:flex-start}.me-actions{width:100%;gap:12px}.me-button{flex:1;padding:12px 16px}}
+@media(prefers-reduced-transparency:reduce){.me-chip{background:#fff}}

@@ -226,56 +226,6 @@ function textCandidates(home, ctx) {
   return out;
 }
 
-function neighborhoodCandidates(home, ctx) {
-  const vision = coloniaVision(home.area);
-  if (!vision) return [];
-  const {say} = ctx;
-  const quiet = vision.neighbors?.quiet ?? 60;
-  const park = (vision.nearby?.pois || []).find(item => item.kind === 'green');
-  const parkMin = park?.walk;
-  const parks = vision.nearby?.parks;
-  const band = vision.safetyBand || (vision.feelSafe >= 70 ? 'high' : vision.feelSafe >= 48 ? 'mid' : 'low');
-  const versus = band === 'high' ? say('acima', 'por encima') : band === 'low' ? say('abaixo', 'por debajo') : say('perto', 'cerca');
-  let clause;
-  let detail;
-  let mold;
-  if (quiet >= 68 && parkMin && parkMin <= 10) {
-    mold = 'neighborhood:quiet-park';
-    clause = say(`rua mais calma que a média de ${home.area}, com parque a ${parkMin} min`, `calle más tranquila que el promedio de ${home.area}, con parque a ${parkMin} min`);
-    detail = say(`Rua mais calma que a média de ${home.area}, com parque a ${parkMin} min.`, `Calle más tranquila que el promedio de ${home.area}, con parque a ${parkMin} min.`);
-  } else if (quiet < 50) {
-    mold = 'neighborhood:noise';
-    clause = say(`mais ruído noturno que a média de ${home.area}`, `más ruido nocturno que el promedio de ${home.area}`);
-    detail = say(`Mais ruído noturno que a média de ${home.area}.`, `Más ruido nocturno que el promedio de ${home.area}.`);
-  } else if (parkMin && parkMin <= 10 && parks >= 3) {
-    mold = 'neighborhood:parks';
-    clause = say(`${parks} parques na zona; o mais perto fica a ${parkMin} min`, `${parks} parques en la zona; el más cercano queda a ${parkMin} min`);
-    detail = say(`${parks} parques na zona; o mais perto fica a ${parkMin} min.`, `${parks} parques en la zona; el más cercano queda a ${parkMin} min.`);
-  } else {
-    mold = `neighborhood:safety-${band}`;
-    clause = say(`em ${vision.alcaldia}, a percepção de segurança fica ${versus} da média da CDMX`, `en ${vision.alcaldia}, la percepción de seguridad queda ${versus} del promedio de CDMX`);
-    detail = say(`Em ${vision.alcaldia}, a percepção de segurança fica ${versus} da média da CDMX.`, `En ${vision.alcaldia}, la percepción de seguridad queda ${versus} del promedio de CDMX.`);
-  }
-  const plus = (vision.neighbors?.plus || []).slice(0, 1).map(item => textOf(item, ctx.language));
-  const minus = (vision.neighbors?.minus || []).slice(0, 1).map(item => textOf(item, ctx.language));
-  return [candidate(home, ctx, {
-    dimension:'neighborhood', mold, clause, confidence:0.8,
-    module:{kind:'neighborhood', dimension:'neighborhood', text:detail, plus, minus},
-  })];
-}
-
-function commuteCandidate(home, ctx) {
-  const surroundings = ctx.surroundings;
-  const first = surroundings?.items?.[0];
-  if (!first) return [];
-  return [candidate(home, ctx, {
-    dimension:'commute', mold:first.icon === 'work' ? 'commute:work' : `commute:${first.icon}`,
-    clause:first.text.replace(/\.$/, '').charAt(0).toLowerCase() + first.text.replace(/\.$/, '').slice(1),
-    confidence:first.icon === 'work' ? 0.7 : 0.85,
-    module:{...surroundings, dimension:'commute'},
-  })];
-}
-
 function priceCandidate(home, ctx) {
   const {facts, peers, say, priceModule} = ctx;
   if (!priceModule || facts?.delta == null) return [];
@@ -464,8 +414,6 @@ export function selectReading(home, ctx) {
   const ranked = [
     ...photoCandidates(home, ctx),
     ...textCandidates(home, ctx),
-    ...neighborhoodCandidates(home, ctx),
-    ...commuteCandidate(home, ctx),
     ...priceCandidate(home, ctx),
     ...resultsCandidate(home, ctx),
     ...favoritesCandidate(home, ctx),

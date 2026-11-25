@@ -21,7 +21,7 @@ export const visible = el => {
 export const cardPhoto = (id, scope = document) => [...scope.querySelectorAll(`[data-home-id="${CSS.escape(String(id))}"] .discovery-media`)].find(visible) || null;
 
 /** The listing page's cover: the mosaic's first tile on desktop, the first strip photo on mobile. */
-export const listingCover = () => [...document.querySelectorAll('.recorrido-cover, .pp-mosaic .pp-tile:first-child, .pp-strip-photo:first-child')].find(visible) || null;
+export const listingCover = () => [...document.querySelectorAll('.pp-mosaic .pp-tile:first-child, .pp-strip-photo:first-child')].find(visible) || null;
 
 function run(source, update, findTarget, direction, name = NAME, flag = 'heroMorph') {
   if (!canMorph() || !visible(source)) { update(); return; }

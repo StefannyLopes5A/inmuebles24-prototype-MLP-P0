@@ -1,10 +1,6 @@
 import {marketFacts} from './moraAnalysis.js';
 import {seed} from './listingAdvertiser.js';
-import {recentContacts} from './resultSort.js';
 
-/** Scarcity only reads as scarce on about one card in four. */
-export const DEMAND_CONTACTS = 12;
-export const DEMAND_HOURS = 48;
 const none = Object.freeze({drop:null, demand:null});
 
 /**
@@ -19,10 +15,7 @@ export function listingHighlights(home) {
   const drop = market.drop && seed(`drop|${home.id}`) % 4 === 0
     ? {amount:market.drop, pct:Math.max(1, Math.round(market.drop / (market.price + market.drop) * 100)), days:market.dropDays, price:market.price, was:market.price + market.drop, comparables:market.comparables, delta:market.delta}
     : null;
-  const demand = recentContacts(home) >= DEMAND_CONTACTS
-    ? {factor:2 + (seed(`demand|${home.id}`) % 25) / 10, hours:DEMAND_HOURS}
-    : null;
-  return drop || demand ? {drop, demand} : none;
+  return drop ? {drop, demand:null} : none;
 }
 
 const factor = value => value.toFixed(1).replace('.', ',');

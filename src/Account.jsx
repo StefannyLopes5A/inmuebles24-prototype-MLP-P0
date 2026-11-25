@@ -106,10 +106,9 @@ export function InlineLogin({titleId, homes = [], title, text, cancelLabel, onSi
 export function LoginDialog({onSignIn, onClose, reason = null}) {
   const say = useSay();
   const heading = {
-    favorite: say('Para seguir guardando tus favoritos, inicia sesión o crea tu cuenta', 'Para continuar salvando seus favoritos, entre ou crie sua conta'),
+    favorite: say('Para guardar este inmueble en favoritos, inicia sesión o crea tu cuenta', 'Para salvar este imóvel nos favoritos, entre ou crie sua conta'),
     search: say('Para guardar esta búsqueda, inicia sesión o crea tu cuenta', 'Para salvar esta busca, entre ou crie sua conta'),
     personalize: say('Para personalizar tu experiencia, inicia sesión o crea tu cuenta', 'Para personalizar sua experiência, entre ou crie sua conta'),
-    share: say('Para compartir tu lista, inicia sesión o crea tu cuenta', 'Para compartilhar sua lista, entre ou crie sua conta'),
   }[reason] || say('Inicia sesión o regístrate', 'Entrar ou cadastrar-se');
   const titleId = useId();
   const present = useIsPresent();

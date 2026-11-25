@@ -13,7 +13,7 @@ const asset = name => `/assets/price-insights/${name}`;
 const FAN_SIZES = [114, 100, 114, 114];
 
 /** Results section from Figma 12900:13949 ("about the region"): the colonia's reading and its median, highest and lowest prices. */
-export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], onLike}) {
+export function RegionInsights({search, onChange, onOpen, saved = [], onLike}) {
   const {language, money} = useLanguage();
   const pt = language === 'pt-BR', say = (br, es) => pt ? br : es;
   const current = normalizeSearch(search);
@@ -79,7 +79,6 @@ export function RegionInsights({search, onChange, onOpen, onGuide, saved = [], o
           {reading && <p>{reading}</p>}
         </div>
       </div>
-      <button type="button" className="btn-secondary region-guide" onClick={onGuide}>{say('Mostrar guia do bairro', 'Mostrar guía del barrio')}</button>
     </article>
     <div className="region-prices">
       <article className="region-card region-featured" aria-labelledby={`${id}-median`}>

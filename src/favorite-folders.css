@@ -64,6 +64,7 @@
 /* Favorites index */
 .favorites-page{width:100%;margin:0;padding:24px var(--home-page-gutter,48px) 72px;box-sizing:border-box}
 .favorites-header{margin-bottom:32px}
+.favorites-header .compare-back{margin-bottom:24px}
 .favorites-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px}
 .favorites-header h1{margin:0;font-size:32px;line-height:1.2;font-weight:600;color:var(--folder-ink);outline:none}
 .favorites-new{gap:8px;flex:none}
@@ -116,4 +117,11 @@
 
 /* Flat favorites list */
 .favorites-count{margin:0;font-size:15px;line-height:20px;color:var(--folder-muted)}
-.favorites-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),340px));justify-content:start;gap:40px 24px}
+.favorites-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:40px 20px;align-items:start}
+.favorites-list>li{min-width:0}
+/* The carousel gives every card a fixed width; in this grid the column sets it. */
+.favorites-list .discovery-item{width:100%;flex:none;min-width:0}
+@media(max-width:1180px){.favorites-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){.favorites-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.favorites-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 12px}}
+@media(max-width:420px){.favorites-list{grid-template-columns:minmax(0,1fr)}}

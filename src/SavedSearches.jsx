@@ -1,9 +1,10 @@
-import React, {useLayoutEffect, useRef} from 'react';
+import React, {lazy, Suspense, useLayoutEffect, useRef} from 'react';
 import {matchingHomes, normalizeSearch} from './journey.js';
-import {propertyPhoto} from './data';
 import {useLanguage} from './i18n';
 import {savedSearchChips, savedSearchMeta, savedSearchTitle} from './savedSearches.js';
 import {IconButton} from './IconButton.jsx';
+
+const RegionMap = lazy(() => import('./RegionMap.jsx'));
 
 export function SavedSearches({entries, onOpen, onRemove, onBack}) {
   const {language, money, currency} = useLanguage();
@@ -20,7 +21,7 @@ export function SavedSearches({entries, onOpen, onRemove, onBack}) {
       title:savedSearchTitle(search, language),
       meta:savedSearchMeta(matches.length, entry.savedAt, language),
       chips:savedSearchChips(search, {language, money, currency}),
-      photo:matches[0] ? propertyPhoto(matches[0]) : '',
+      area:search.areas?.[0] || search.area || '',
     };
   });
   return <article className="saved-searches">
@@ -31,14 +32,14 @@ export function SavedSearches({entries, onOpen, onRemove, onBack}) {
     {cards.length ? <ul className="saved-searches-grid">
       {cards.map(card => <li key={card.key}>
         <article className="saved-search-card">
-          {card.photo ? <img className="saved-search-photo" src={card.photo} alt=""/> : <div className="saved-search-photo saved-search-photo-empty" aria-hidden="true"/>}
+          <div className="saved-search-map" aria-hidden="true"><Suspense fallback={null}><RegionMap area={card.area} language={language}/></Suspense></div>
           <div className="saved-search-body">
             <div>
               <h2>{card.title}</h2>
               <p>{card.meta}</p>
             </div>
             <ul className="saved-search-chips">{card.chips.map((chip, index) => <li key={`${index}-${chip}`}>{chip}</li>)}</ul>
-            <button type="button" className="saved-search-open" onClick={() => onOpen(card.search)}>{say('Ver resultados', 'Ver resultados')}</button>
+            <button type="button" className="btn-secondary saved-search-open" onClick={() => onOpen(card.search)}>{say('Ver resultados', 'Ver resultados')}</button>
           </div>
           <button type="button" className="saved-search-remove" aria-label={say(`Quitar búsqueda: ${card.title}`, `Remover busca: ${card.title}`)} onClick={() => onRemove(card.key)}><img src="/assets/saved-searches/trash.svg" alt=""/></button>
         </article>

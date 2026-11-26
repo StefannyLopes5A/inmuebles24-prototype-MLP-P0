@@ -77,5 +77,5 @@
 @keyframes mes-in{from{grid-template-rows:0fr;padding-top:0;opacity:0;transform:translateY(-10px)}to{grid-template-rows:1fr;padding-top:24px;opacity:1;transform:none}}
 @keyframes mes-out{from{grid-template-rows:1fr;padding-top:24px;opacity:1}to{grid-template-rows:0fr;padding-top:0;opacity:0}}
 @media(prefers-reduced-motion:reduce){.mora-entry-search{animation:none}}
-@media(max-width:700px){.me{gap:16px;padding:24px 20px}.me.is-closable{padding-right:20px}.me.is-closable .me-title{padding-right:40px}.me-close{top:8px;right:8px}.me-title{font-size:18px;line-height:24px}.me-body{flex-direction:column;align-items:flex-start}.me-actions{width:100%;gap:12px}.me-button{flex:1;padding:12px 16px}}
+@media(max-width:700px){.me{gap:16px;padding:24px 20px}.me.is-closable{padding-right:20px}.me.is-closable .me-title{padding-right:40px}.me-close{top:8px;right:8px}.me-title{font-size:18px;line-height:24px}.me{flex-wrap:wrap;align-items:center}.me-body{display:contents}.me-title{flex:1;min-width:0;margin:0}.me-actions,.me-chips,.me-note{flex:0 0 100%;width:100%}.me-actions{flex-direction:column;gap:12px}.me-button{width:100%;flex:none;padding:12px 16px}}
 @media(prefers-reduced-transparency:reduce){.me-chip{background:#fff}}

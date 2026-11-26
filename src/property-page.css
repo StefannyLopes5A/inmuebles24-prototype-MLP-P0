@@ -710,7 +710,11 @@
 }
 @media(max-width:900px){
   .pp-rating-row{flex-direction:column;align-items:stretch}
-  .pp-rating-overall{width:100%}
+  .pp-rating-overall{flex:none;width:100%}
+  /* The highlights become a swipeable row that bleeds to the screen edges. */
+  .pp-rating-tags ul{flex-wrap:nowrap;gap:12px;margin-inline:calc(-1 * var(--home-page-gutter));padding:2px var(--home-page-gutter);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:var(--home-page-gutter);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .pp-rating-tags ul::-webkit-scrollbar{display:none}
+  .pp-rating-tags li{flex:none;scroll-snap-align:start;white-space:nowrap}
   .pp-reviews{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
 }
 @media(max-width:950px){
@@ -770,7 +774,10 @@
   .pp-ask h2{font-size:18px;line-height:22px}
   .pp-ask-send{width:100%;padding-inline:16px}
   .pp-place-times{gap:16px}
-  .pp-similar{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}
+  /* Similar listings: a swipeable row that bleeds to the screen edges, the next card peeking in. */
+  .pp-similar{display:flex;gap:12px;margin-inline:calc(-1 * var(--home-page-gutter));padding:0 var(--home-page-gutter) 4px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:var(--home-page-gutter);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .pp-similar::-webkit-scrollbar{display:none}
+  .listing-route .pp .pp-similar .discovery-item{flex:0 0 min(72vw,300px);width:min(72vw,300px);scroll-snap-align:start}
   .pp-index-bar{height:64px;padding:0 12px}
   .pp-index-body{padding:0 16px 64px}
   .pp-index-previews{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:16px 12px;margin-bottom:40px}
@@ -778,8 +785,6 @@
   .pp-index-heading{position:static;color:#222;font-weight:600}
 }
 @media(max-width:520px){
-  .pp-similar{grid-template-columns:minmax(0,1fr)}
-  .pp-similar>:nth-child(n+5){display:none}
   .pp-places li{flex-wrap:wrap;align-items:flex-start}
   .pp-place-times{flex-basis:100%;padding-left:32px}
   .pp-hood h3{font-size:18px;line-height:22px}
@@ -917,3 +922,6 @@ html[data-gallery-morph="back"]::view-transition-group(gallery-photo){animation-
 @media(max-width:700px){.share-channel{gap:10px;min-height:56px;padding:0 14px;font-size:15px}}
 @media(max-width:380px){.share-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.share-channel{transition:none}.share-channel:active{transform:none}}
+
+/* Mobile points of interest: one column, five places, "Ver más" for the rest. */
+.pp-places-more{width:100%;margin-top:16px}

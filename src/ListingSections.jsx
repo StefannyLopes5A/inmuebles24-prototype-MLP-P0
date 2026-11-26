@@ -5,6 +5,7 @@ import {seed} from './listingAdvertiser';
 import {SPRING_SIZE} from './listingPanelMotion';
 import {poiIconUrl} from './pois';
 import {travelMinutes} from './compareReading';
+import {useMediaQuery} from './favoriteMotion';
 
 const ListingMap = lazy(() => import('./ListingMap'));
 const asset = name => `/assets/mini-listing/${name}.svg`;
@@ -225,6 +226,8 @@ export function Neighborhood({home, location, neighborhood, language, say}) {
   const pt = language === 'pt-BR';
   const hood = neighborhood?.(language);
   const reduce = useReducedMotion();
+  const phone = useMediaQuery('(max-width: 700px)');
+  const [morePlaces, setMorePlaces] = useState(false);
   const hasNearby = NEARBY_KINDS.some(([id]) => location.counts?.[id] > 0);
   if (!hood && !location.places.length && !hasNearby) return null;
   const name = hood?.name || home.area;
@@ -242,16 +245,22 @@ export function Neighborhood({home, location, neighborhood, language, say}) {
         </ul>}
       </div>
       <div className={`pp-hood-grid${location.places.length ? '' : ' is-card-only'}`}>
-        {location.places.length > 0 && <div className={`pp-hood-places${location.places.length > 5 ? '' : ' is-single'}`}>
-          {(location.places.length > 5 ? [location.places.slice(0, 5), location.places.slice(5, PLACE_LIMIT)] : [location.places.slice(0, PLACE_LIMIT)]).map(column => <ul key={column[0].name} className="pp-places">{column.map(place => <li key={place.categoria + place.name}>
+        {location.places.length > 0 && (() => {
+          const total = Math.min(location.places.length, PLACE_LIMIT);
+          const columns = phone ? [location.places.slice(0, morePlaces ? total : 5)] : location.places.length > 5 ? [location.places.slice(0, 5), location.places.slice(5, PLACE_LIMIT)] : [location.places.slice(0, PLACE_LIMIT)];
+          const renderPlace = place => <li key={place.categoria + place.name}>
             <img src={poiIconUrl(place.categoria)} alt="" width="20" height="20"/>
             <span className="pp-place-copy"><b title={place.name}>{place.name}</b><small>{pt ? place.kind[0] : place.kind[1]}</small></span>
             <span className="pp-place-times">
               <span><img src={HOOD_ICON('walk')} alt="" width="16" height="16"/>{place.minutes} min<span className="sr-only"> {say('a pé', 'a pie')}</span></span>
               <span><img src={HOOD_ICON('car')} alt="" width="16" height="16"/>{carMinutes(place)} min<span className="sr-only"> {say('de carro', 'en auto')}</span></span>
             </span>
-          </li>)}</ul>)}
-        </div>}
+          </li>;
+          return <div className={`pp-hood-places${phone || location.places.length <= 5 ? ' is-single' : ''}`}>
+            {columns.map(column => <ul key={column[0].name} id="pp-places-list" className="pp-places">{column.map(renderPlace)}</ul>)}
+            {phone && total > 5 && <button type="button" className="btn-secondary pp-places-more" aria-expanded={morePlaces} aria-controls="pp-places-list" onClick={() => setMorePlaces(open => !open)}>{morePlaces ? say('Ver menos', 'Ver menos') : say('Ver mais', 'Ver más')}</button>}
+          </div>;
+        })()}
         {hood && <div className="pp-hood-card-slot"><div className="pp-hood-card">
           <div className="pp-hood-card-head">
             <p className="pp-hood-mora"><img src={HOOD_ICON('mora')} alt="" width="20" height="20"/>Mora</p>

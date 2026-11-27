@@ -27,7 +27,10 @@ export function SavedSearches({entries, onOpen, onRemove, onBack}) {
   return <article className="saved-searches">
     <header className="saved-searches-header">
       <IconButton icon="back" className="compare-back" onClick={onBack} label={say('Volver', 'Voltar')}/>
-      <h1 ref={title} tabIndex={-1}>{say('Búsquedas guardadas', 'Buscas salvas')}</h1>
+      <div className="favorites-heading">
+        <h1 ref={title} tabIndex={-1}>{say('Búsquedas guardadas', 'Buscas salvas')}</h1>
+        {cards.length > 0 && <p className="favorites-count">{spanish ? (cards.length === 1 ? '1 búsqueda guardada' : `${cards.length} búsquedas guardadas`) : (cards.length === 1 ? '1 busca salva' : `${cards.length} buscas salvas`)}</p>}
+      </div>
     </header>
     {cards.length ? <ul className="saved-searches-grid">
       {cards.map(card => <li key={card.key}>

@@ -1,5 +1,6 @@
 .saved-searches{width:100%;box-sizing:border-box;padding:32px var(--home-page-gutter,96px) 48px}
-.saved-searches-header h1{margin:20px 0 0;font-size:32px;line-height:38.4px;font-weight:590;letter-spacing:-0.55px;color:#111;outline:none}
+.saved-searches-header .favorites-heading{margin-top:20px}
+.saved-searches-header h1{margin:0;font-size:32px;line-height:38.4px;font-weight:590;letter-spacing:-0.55px;color:#111;outline:none}
 .saved-searches-grid{display:grid;grid-template-columns:1fr;gap:24px;margin:24px 0 0;padding:0;list-style:none}
 .saved-search-card{position:relative;display:flex;border:1px solid #e6e6e6;border-radius:16px;background:#fff;overflow:hidden}
 .saved-search-map{position:relative;flex:none;align-self:flex-start;width:200px;aspect-ratio:1;margin:20px 0 20px 20px;border-radius:12px;overflow:hidden;background:#f2f2f2}

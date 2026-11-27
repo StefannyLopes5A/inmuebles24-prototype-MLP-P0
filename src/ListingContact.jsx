@@ -2,7 +2,7 @@ import React, {useEffect, useId, useRef, useState} from 'react';
 import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
 import {Icon} from './App';
 import {contactMessage, contactValidation, createContactReceipt, maskPhone, normalizeContactProfile, phoneCodeLength, phonePrefix} from './contactFlow.js';
-import {ContactStage, ContactWho, Toggle} from './ContactStage';
+import {ContactStage, Toggle} from './ContactStage';
 import {markVisit} from './seekerSignals.js';
 import {IconButton} from './IconButton.jsx';
 
@@ -26,17 +26,11 @@ const VISIT_TOGGLES = [
   [['O quanto antes', 'Gostaria de visitar o quanto antes.'], ['Lo antes posible', 'Me gustaría visitarlo lo antes posible.']],
 ];
 
-function validPhone(profile) {
-  const errors = contactValidation({profile, channel:'whatsapp', message:'x'.repeat(10)});
-  return !errors.name && !errors.phone;
-}
-
 /** Form and confirmation share the mini-listing's contact stage and fields, so the photo, agency and trust facts grow in place when it sends. */
-function Contact({home, advertiser, search, language, intent, question, profile, sent, onIntent, onSent, onClose, onReviews, reduce, say}) {
+function Contact({home, advertiser, search, language, intent, question, profile, sent, onIntent, onSent, onClose, onReviews, onMessages, reduce, say}) {
   const id = useId();
   const root = useRef(null);
   const [data, setData] = useState(() => normalizeContactProfile(profile));
-  const [editing, setEditing] = useState(() => !validPhone(profile));
   const [message, setMessage] = useState(() => contactMessage({home, search, type:intent, question, language}));
   const [edited, setEdited] = useState(false);
   const [errors, setErrors] = useState({});
@@ -53,17 +47,12 @@ function Contact({home, advertiser, search, language, intent, question, profile,
     setErrors(current => ({...current, message:undefined}));
     setMessage(current => current.includes(line) ? current.replace(`\n${line}`, '').replace(line, '').trim() : `${current.trim()}\n${line}`);
   }
-  function edit() {
-    setEditing(true);
-    setTimeout(() => root.current?.querySelector('.lp-fieldset input')?.focus({preventScroll:true}), 220);
-  }
   function submit(event) {
     event.preventDefault();
     const body = message.trim().slice(0, 1400);
     const next = contactValidation({profile:data, channel:'whatsapp', message:body});
     setErrors(next);
     if (Object.keys(next).length) {
-      if (next.name || next.phone) setEditing(true);
       requestAnimationFrame(() => root.current?.querySelector('[aria-invalid="true"]')?.focus());
       return;
     }
@@ -81,7 +70,6 @@ function Contact({home, advertiser, search, language, intent, question, profile,
       } : {onChange: event => set(name, event.target.value)})}/>
     <span>{label}</span>
   </label>;
-  const fade = {initial:{opacity:0}, animate:{opacity:1}, exit:{opacity:0}, transition:{duration:0.18, ease:EASE}};
   const fieldErrors = ['name', 'phone'].filter(name => errors[name]);
 
   return <div ref={root} className="pp-contact" onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); onClose(); } }}>
@@ -89,16 +77,11 @@ function Contact({home, advertiser, search, language, intent, question, profile,
     <ContactStage home={home} advertiser={advertiser} copy={{say, language}} reduce={reduce} sent={!!sent} visit reviews={false}>
       <form className="pp-contact-form" noValidate onSubmit={submit}>
         <div className="lp-entry">
-          <AnimatePresence mode="wait" initial={false}>
-            {editing
-              ? <motion.div key="fields" {...fade}>
-                <div className="lp-fieldset">
-                  {field('name', say('Seu nome', 'Tu nombre'), 'text', 'name')}
-                  {field('phone', 'WhatsApp', 'tel', 'tel')}
-                </div>
-              </motion.div>
-              : <ContactWho key="reuse" name={data.name} phone={data.phone} onEdit={edit} say={say} fade={fade}/>}
-          </AnimatePresence>
+          {/* A saved contact fills both fields, which stay editable in place. */}
+          <div className="lp-fieldset">
+            {field('name', say('Seu nome', 'Tu nombre'), 'text', 'name')}
+            {field('phone', 'WhatsApp', 'tel', 'tel')}
+          </div>
           <div className={`lp-message${errors.message ? ' is-invalid' : ''}`}>
             <textarea id={`${id}-message`} className="lp-message-text" aria-label={say('Sua mensagem', 'Tu mensaje')} value={message} rows={3} maxLength={1400}
               aria-invalid={!!errors.message} aria-describedby={errors.message ? `${id}-message-error` : undefined}
@@ -118,15 +101,15 @@ function Contact({home, advertiser, search, language, intent, question, profile,
         </div>
       </form>
     </ContactStage>
-    <AnimatePresence initial={false}>{sent && <motion.button key="done" type="button" className="mini-secondary pp-contact-done" onClick={onReviews}
+    <AnimatePresence initial={false}>{sent && <motion.button key="done" type="button" className="mini-secondary pp-contact-done" onClick={onMessages || onReviews}
       initial={reduce ? {opacity:0} : {opacity:0, y:8}} animate={{opacity:1, y:0}} transition={reduce ? {duration:0.15} : {duration:0.3, ease:EASE, delay:0.4}}>
-      {say('Ver avaliações', 'Ver reseñas')}
+      {onMessages ? say('Ver mensagens', 'Ver mensajes') : say('Ver avaliações', 'Ver reseñas')}
     </motion.button>}</AnimatePresence>
   </div>;
 }
 
 /** The price card on the full listing. Contact grows inside it instead of opening the mini-listing panel. */
-export function ListingContactCard({home, advertiser, search, language, contact, onContact, onClose, onReviews, profile, onProfile, onReceipt, receipt, stuck, price, fee, say}) {
+export function ListingContactCard({home, advertiser, search, language, contact, onContact, onClose, onReviews, onMessages, profile, onProfile, onReceipt, receipt, stuck, price, fee, say}) {
   const reduce = useReducedMotion();
   const [sent, setSent] = useState(null);
   const card = useRef(null);
@@ -156,7 +139,7 @@ export function ListingContactCard({home, advertiser, search, language, contact,
           <p className="pp-card-terms">{say('Ao enviar, você aceita os Termos e condições de uso e as Políticas de privacidade.', 'Al enviar, aceptas los Términos y condiciones de uso y las Políticas de privacidad.')}</p>
           {receipt && <p className="pp-card-receipt"><Icon name="check" size={16}/>{say('Contato simulado registrado', 'Contacto simulado registrado')}</p>}
         </> : <Contact home={home} advertiser={advertiser} search={search} language={language} intent={contact?.intent || lastIntent.current} question={contact?.question || ''}
-          profile={profile} sent={sent} reduce={reduce} say={say} onClose={close} onReviews={onReviews}
+          profile={profile} sent={sent} reduce={reduce} say={say} onClose={close} onReviews={onReviews} onMessages={onMessages}
           onIntent={intent => onContact(intent, contact?.question || '')}
           onSent={(next, data) => { if (next.intent === 'visit') markVisit(next.propertyId); onReceipt(next); onProfile(normalizeContactProfile(data)); setSent(next); }}/>}
       </motion.div>

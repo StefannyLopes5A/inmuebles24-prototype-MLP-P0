@@ -224,6 +224,8 @@ export function readJourney(locationLike = {}) {
   const params = url.searchParams;
   const page = params.get('view') === 'favorites' ? 'favorites'
     : params.get('view') === 'saved' ? 'saved'
+    : params.get('view') === 'messages' ? 'messages'
+    : params.get('view') === 'history' ? 'history'
     : params.get('view') === 'listing' ? 'listing'
     : params.get('view') === 'results' || /^\/(results|resultados)\/?$/.test(url.pathname) ? 'results'
     : 'home';
@@ -255,6 +257,8 @@ export function readJourney(locationLike = {}) {
 export function journeyUrl({page = 'home', search = DEFAULT_SEARCH, pref = 'none', propertyId = null, sort = 'recommended', map = 'list'} = {}) {
   const current = normalizeSearch(search);
   const view = page === 'saved' ? 'saved'
+    : page === 'messages' ? 'messages'
+    : page === 'history' ? 'history'
     : page === 'favorites' ? 'favorites'
     : page === 'listing' && knownProperties.has(propertyId) ? 'listing'
     : page === 'results' || page === 'listing' ? 'results'

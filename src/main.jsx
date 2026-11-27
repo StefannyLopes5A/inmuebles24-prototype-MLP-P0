@@ -21,6 +21,7 @@ import "./mini-listing.css";
 import "./favorite-folders.css";
 import "./account.css";
 import "./saved-searches.css";
+import "./messages.css";
 import "./catalog-footer.css";
 import "./mobile-polish.css";
 import "./listing-panel.css";

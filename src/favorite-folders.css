@@ -117,11 +117,10 @@
 
 /* Flat favorites list */
 .favorites-count{margin:0;font-size:15px;line-height:20px;color:var(--folder-muted)}
-.favorites-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:40px 20px;align-items:start}
+.favorites-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px 20px;align-items:start}
 .favorites-list>li{min-width:0}
 /* The carousel gives every card a fixed width; in this grid the column sets it. */
 .favorites-list .discovery-item{width:100%;flex:none;min-width:0}
-@media(max-width:1180px){.favorites-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:900px){.favorites-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){.favorites-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 12px}}
 @media(max-width:420px){.favorites-list{grid-template-columns:minmax(0,1fr)}}

@@ -86,7 +86,7 @@ function ListingNav({intro, card, price, advertiser, onContact, say, fee, money,
 }
 
 /** The full listing: Airbnb-style page built from the catalog plus a stable invented story. Contact grows inside the price card. */
-export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', saved = [], receipts = [], hidden = false, onLike, onHide, onOpenListing, onMore, onSearch, onClose, onAskSection, profile, onProfile, onReceipt, receipt}) {
+export function PropertyDetail({home, search, pref = 'none', sort = 'recommended', saved = [], receipts = [], hidden = false, onLike, onHide, onOpenListing, onMore, onSearch, onClose, onAskSection, profile, onProfile, onReceipt, receipt, onMessages}) {
   const {language, money, compactMoney, currency} = useLanguage(), pt = language === 'pt-BR';
   const say = (br, es) => pt ? br : es;
   const short = amount => shortMoney(currency === 'USD' ? amount / DEMO_MXN_PER_USD : amount);
@@ -229,7 +229,7 @@ export function PropertyDetail({home, search, pref = 'none', sort = 'recommended
 
       <aside ref={card} className="pp-aside" aria-label={say('Preço e contato', 'Precio y contacto')}>
         <ListingContactCard home={home} advertiser={advertiser} search={search} language={language} contact={contact} stuck={stuck}
-          onContact={openContact} onClose={() => setContact(null)} onReviews={reviewsFromContact} profile={profile} onProfile={onProfile} onReceipt={onReceipt} receipt={receipt} say={say}
+          onContact={openContact} onClose={() => setContact(null)} onReviews={reviewsFromContact} onMessages={onMessages} profile={profile} onProfile={onProfile} onReceipt={onReceipt} receipt={receipt} say={say}
           price={<><p className="pp-card-price">{money(price)} {currency}{home.mode === 'rent' && <small> / {say('mês', 'mes')}</small>}</p>{signal && <p className="pp-card-signal">{signal}</p>}</>}
           fee={<p className="pp-card-fee">{home.mode === 'rent'
             ? say(`+ ${money(facts.fee)} de condomínio · ${money(price + facts.fee)} ${currency} por mês no total`, `+ ${money(facts.fee)} de mantenimiento · ${money(price + facts.fee)} ${currency} al mes en total`)

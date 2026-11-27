@@ -283,3 +283,8 @@ body .search-flow-page .flow-listings .discovery-section:is(.nearby-results,.nei
 .region-featured-photo.is-map{border:4px solid #fff;box-shadow:0 4px 14px #00000021;background:#e9ece6}
 .region-featured-photo .region-map{position:absolute;inset:0}
 .region-featured-photo.is-map:hover .region-map{filter:brightness(.97)}
+
+/* "Mostrar guía del barrio": secondary button at the foot of the about card. */
+.region-guide{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.region-guide-note{margin:0;min-height:18px;font-size:13px;line-height:18px;color:#6a6a6a}
+.region-guide-note:empty{display:none}

@@ -37,15 +37,15 @@
 @media(forced-colors:active){.mora-thinking>span{background:none;-webkit-text-fill-color:currentColor;animation:none}}
 
 /* Mora entry point (Figma: Rediseño del listado 2025). */
-.me{display:flex;align-items:flex-start;gap:24px;padding:32px;border:2px solid transparent;border-radius:24px;background:linear-gradient(174.8deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,var(--mora-gradient) border-box;font-family:var(--app-font,inherit)}
-.me-mark{flex:none;padding-top:6px}
-.me-mark img{display:block;width:40px;height:40px}
+.me{display:flex;align-items:flex-start;gap:24px;padding:32px;border:2px solid transparent;border-radius:24px;background:linear-gradient(174.8deg,#f4f5fc 0%,#f0f0fb 60%,#fbefee 100%) padding-box,linear-gradient(270deg,#ff553b 0%,#ffcc8e 100%) border-box;font-family:var(--app-font,inherit)}
+.me-mark{flex:none}
+.me-mark img{display:block;width:54px;height:54px}
 .me-body{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px}
 .me-title{margin:0;color:#222;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.92px;text-wrap:balance}
 .me-title>span{display:block}
 .me-actions{display:flex;flex:none;gap:24px}
+.me-whatsapp{min-width:234px}
 .me-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;min-height:48px;padding:12px 24px;border-radius:999px;font:600 16px/20px var(--app-font,inherit);letter-spacing:-.3125px;white-space:nowrap;cursor:pointer}
-.me-app{border:1px solid #222;background:transparent;color:#222}
 .me-whatsapp{gap:16px;border:1px solid #ff925c;background:linear-gradient(#f50,#ffad85);color:#fff}
 .me-button:hover{filter:brightness(.97)}
 /* The title reads in word by word like the home sentence: each word is a 620ms soft ink-in, 110ms after the previous one. */
@@ -79,3 +79,5 @@
 @media(prefers-reduced-motion:reduce){.mora-entry-search{animation:none}}
 @media(max-width:700px){.me{gap:16px;padding:24px 20px}.me.is-closable{padding-right:20px}.me.is-closable .me-title{padding-right:40px}.me-close{top:8px;right:8px}.me-title{font-size:18px;line-height:24px}.me{flex-wrap:wrap;align-items:center}.me-body{display:contents}.me-title{flex:1;min-width:0;margin:0}.me-actions,.me-chips,.me-note{flex:0 0 100%;width:100%}.me-actions{flex-direction:column;gap:12px}.me-button{width:100%;flex:none;padding:12px 16px}}
 @media(prefers-reduced-transparency:reduce){.me-chip{background:#fff}}
+
+@media(max-width:700px){.me-mark img{width:40px;height:40px}.me-whatsapp{min-width:0}}

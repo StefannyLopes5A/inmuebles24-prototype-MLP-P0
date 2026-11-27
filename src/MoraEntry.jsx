@@ -12,16 +12,15 @@ function words(line, offset) {
 
 export function MoraEntry({id, title, questions = [], say, className = '', onClose}) {
   const [asked, setAsked] = useState(null);
-  const [channel, setChannel] = useState('');
-  const subtitle = say('Continue a conversa com a Mora.', 'Sigue la conversación con Mora.');
-  const where = channel === 'app' ? say('o app', 'la app') : say('o WhatsApp', 'WhatsApp');
+  const [channel, setChannel] = useState(false);
+  const subtitle = say('Continue a conversa com a Bianca no WhatsApp.', 'Sigue la conversación con Bianca en WhatsApp.');
+  const where = say('o WhatsApp', 'WhatsApp');
   return <div className={`me ${onClose ? 'is-closable ' : ''}${className}`.trim()}>
-    <span className="me-mark"><img src="/assets/mora-entry/mora-logo.svg" alt="" width="40" height="40"/></span>
+    <span className="me-mark"><img src="/assets/mora-entry/ai-assistant.svg" alt="" width="54" height="54"/></span>
     <div className="me-body">
       <h2 className="me-title" id={id} style={{'--me-n': `${title} ${subtitle}`.split(/\s+/).filter(Boolean).length}}>{[title, subtitle].map((line, row, lines) => <span key={row}>{words(line, lines.slice(0, row).join(' ').split(/\s+/).filter(Boolean).length)}</span>)}</h2>
       <div className="me-actions">
-        <button type="button" className="me-button me-app" onClick={() => setChannel('app')}>{say('No app', 'En la app')}</button>
-        <button type="button" className="me-button me-whatsapp" onClick={() => setChannel('whatsapp')}><img src="/assets/mora-entry/whatsapp.svg" alt="" width="20" height="20"/>{say('No WhatsApp', 'En WhatsApp')}</button>
+        <button type="button" className="me-button me-whatsapp" onClick={() => setChannel(true)}><img src="/assets/mora-entry/whatsapp.svg" alt="" width="20" height="20"/>{say('No WhatsApp', 'En WhatsApp')}</button>
       </div>
       {questions.length > 0 && <div className="me-chips" role="group" aria-labelledby={id}>
         {questions.map(item => <button key={item[1]} type="button" className="me-chip" aria-pressed={asked === item} onClick={() => setAsked(asked === item ? null : item)}>{say(...item)}</button>)}

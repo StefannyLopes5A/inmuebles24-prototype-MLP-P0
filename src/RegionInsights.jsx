@@ -21,6 +21,7 @@ export function RegionInsights({search, onChange, onOpen, saved = [], onLike}) {
   const snapshot = useMemo(() => regionSnapshot(search), [key]);
   const photos = useMemo(() => regionPhotos(search), [key]);
   const id = useId();
+  const [guideNote, setGuideNote] = useState(false);
   const previewApi = usePropertyPreview('region-property-preview');
   // The map loads once the card is near the screen.
   const mapSlot = useRef(null);
@@ -78,6 +79,10 @@ export function RegionInsights({search, onChange, onOpen, saved = [], onLike}) {
           <h2 id={`${id}-about`}>{say(`Conheça tudo sobre como é viver em ${area}`, `Conoce todo sobre cómo es vivir en ${area}`)}</h2>
           {reading && <p>{reading}</p>}
         </div>
+      </div>
+      <div className="region-guide">
+        <button type="button" className="btn-secondary" onClick={() => setGuideNote(true)}>{say('Mostrar guia do bairro', 'Mostrar guía del barrio')}</button>
+        <p className="region-guide-note" role="status">{guideNote ? say('Disponível fora deste protótipo.', 'Disponible fuera de este prototipo.') : ''}</p>
       </div>
     </article>
     <div className="region-prices">

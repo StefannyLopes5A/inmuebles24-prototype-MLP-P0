@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
 import {SOFT_MOTION} from './homeIntro.js';
 
-export const MORA_MARK = '/assets/mini-listing/mora.svg';
+export const MORA_MARK = '/assets/mora-entry/ai-assistant-mark.svg';
 /** One full pass of the thinking gradient, so the line is read before the sentence replaces it. */
 export const MORA_THINK = 1800;
 
@@ -12,7 +12,7 @@ const seen = new Set();
 export function MoraSignature({context, working = false, className = ''}) {
   return <p className={`mora-signature ${className}`.trim()}>
     <img className={working ? 'is-working' : undefined} src={MORA_MARK} alt=""/>
-    <strong>Mora</strong>
+    <strong>Bianca</strong>
     {context && <span>{context}</span>}
   </p>;
 }

@@ -263,7 +263,7 @@ export function Neighborhood({home, location, neighborhood, language, say}) {
         })()}
         {hood && <div className="pp-hood-card-slot"><div className="pp-hood-card">
           <div className="pp-hood-card-head">
-            <p className="pp-hood-mora"><img src={HOOD_ICON('mora')} alt="" width="20" height="20"/>Mora</p>
+            <p className="pp-hood-mora"><img src={'/assets/mora-entry/ai-assistant-mark.svg'} alt="" width="20" height="20"/>Bianca</p>
             <h4>{say('O que os vizinhos valorizam', 'Lo que valoran los vecinos')}</h4>
           </div>
           <motion.ul className="pp-hood-bars" initial="hidden" whileInView="show" viewport={{once:true, amount:0.6}}

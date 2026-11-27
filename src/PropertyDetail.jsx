@@ -24,7 +24,7 @@ import {AnimatePresence} from 'motion/react';
 import {ShareDialog} from './ShareDialog.jsx';
 
 const ListingMap = lazy(() => import('./ListingMap'));
-const MORA_MARK = '/assets/mini-listing/mora.svg';
+const MORA_MARK = '/assets/mora-entry/ai-assistant-mark.svg';
 
 const Heart = ({filled}) => <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" className={`pp-save-heart${filled ? ' is-on' : ''}`}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>;
 const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>;

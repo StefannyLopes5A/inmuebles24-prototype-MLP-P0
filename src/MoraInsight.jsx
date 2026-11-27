@@ -294,8 +294,8 @@ export function MoraInsight({home, options, signature, short, say, onAsk, onPhot
       <motion.div className="lp-mora-card" initial={false} animate={{height:voiceHeight}} transition={instant ? {duration:0} : SPRING_SIZE}>
         <div ref={voice} className="lp-mora-body">
           <p className="lp-mora-status">
-            <img className={`lp-mora-mark${ready || reduce ? '' : ' is-working'}`} src="/assets/mini-listing/mora.svg" alt=""/>
-            <strong>Mora</strong>
+            <img className={`lp-mora-mark${ready || reduce ? '' : ' is-working'}`} src="/assets/mora-entry/ai-assistant-mark.svg" alt=""/>
+            <strong>Bianca</strong>
             {label && <span className="lp-mora-label">{label}</span>}
           </p>
           <div className="lp-mora-lead">

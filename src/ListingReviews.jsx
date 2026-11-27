@@ -90,7 +90,7 @@ function MoraDigest({id, total, summary, shown, say}) {
     </div>
     <p className="mora-signature pp-rating-by">
       <img className={working ? 'is-working' : undefined} src={MORA_MARK} alt=""/>
-      <strong>Mora</strong>
+      <strong>Bianca</strong>
       {landed && <span>{say(`leu as ${total} avaliações`, `leyó las ${total} reseñas`)}</span>}
     </p>
   </div>;
@@ -193,7 +193,7 @@ export function ListingReviews({home, advertiser, language, say, compact = false
           <div className="pp-rating-row">
             <div className="pp-rating-overall">
               <div className="pp-hood-card-head">
-                <p className="pp-hood-mora"><img src="/assets/hood/mora.svg" alt="" width="20" height="20"/>Mora</p>
+                <p className="pp-hood-mora"><img src="/assets/mora-entry/ai-assistant-mark.svg" alt="" width="20" height="20"/>Bianca</p>
                 <h3>{say('Avaliação geral', 'Calificación general')}</h3>
               </div>
               <ol aria-label={say('Distribuição das notas', 'Distribución de calificaciones')}>{spread.map((share, i) => <li key={i}>

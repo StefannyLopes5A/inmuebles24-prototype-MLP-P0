@@ -148,7 +148,7 @@ export function AccountToast({text, onHold, onRelease}) {
 }
 
 const MENU = [
-  [{id:'favorites', icon:'heart', es:'Favoritos', br:'Favoritos'}, {id:'messages', icon:'message', es:'Mensajes', br:'Mensagens'}, {id:'saved', icon:'search', es:'Búsquedas guardadas', br:'Buscas salvas'}, {id:'history', icon:'history', es:'Historial', br:'Histórico'}, {id:'profile', icon:'user', es:'Perfil', br:'Perfil'}, {id:'notifications', icon:'bell', es:'Notificaciones', br:'Notificações'}],
+  [{id:'favorites', icon:'heart', es:'Favoritos', br:'Favoritos'}, {id:'messages', icon:'message', es:'Mensajes', br:'Mensagens'}, {id:'saved', icon:'search', es:'Búsquedas guardadas', br:'Buscas salvas'}, {id:'history', icon:'history', es:'Historial', br:'Histórico'}, {id:'hidden', icon:'hidden', es:'Descartados', br:'Descartados'}, {id:'profile', icon:'user', es:'Perfil', br:'Perfil'}, {id:'notifications', icon:'bell', es:'Notificaciones', br:'Notificações'}],
   [{id:'settings', icon:'settings', es:'Configuración de la cuenta', br:'Configurações da conta'}, {id:'help', icon:'help', es:'Centro de ayuda', br:'Central de ajuda'}],
   [{id:'logout', icon:'logout', es:'Cerrar sesión', br:'Sair da conta'}],
 ];
@@ -199,7 +199,7 @@ export function AccountMenu({onSelect}) {
         {MENU.map((group, groupIndex) => <React.Fragment key={groupIndex}>
           {groupIndex > 0 && <div className="account-menu-divider" role="separator"/>}
           {group.map(item => <button key={item.id} type="button" role="menuitem" tabIndex={-1} className="account-menu-item"
-            onClick={() => {dismiss(!['favorites', 'saved', 'messages', 'history'].includes(item.id)); onSelect(item.id);}}>
+            onClick={() => {dismiss(!['favorites', 'saved', 'messages', 'history', 'hidden'].includes(item.id)); onSelect(item.id);}}>
             <Icon name={item.icon} size={20}/>{say(item.es, item.br)}
           </button>)}
         </React.Fragment>)}

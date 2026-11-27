@@ -397,7 +397,7 @@
 .pp-card .mini-primary,.pp-card .mini-secondary{min-height:48px;padding:12px 16px;border-radius:999px;font-size:16px;transition:transform 200ms var(--pp-ease),filter 180ms ease}
 .pp-card .mini-secondary{background:#fff;border:1px solid var(--pp-ink);color:var(--pp-ink)}
 .pp-card .mini-primary:active,.pp-card .mini-secondary:active{transform:scale(.96)}
-.pp-card-receipt{display:flex;align-items:center;gap:8px;margin:16px 0 0;font-size:13px;line-height:18px;color:var(--pp-muted)}
+.pp-card-receipt{display:flex;align-items:center;gap:8px;margin:16px 0 0;font-size:13px;line-height:18px;color:#0b8a44;font-weight:600}
 
 /* Contact inside the card */
 .pp-contact{position:relative;container-type:inline-size;--lp-line:#ebebeb}

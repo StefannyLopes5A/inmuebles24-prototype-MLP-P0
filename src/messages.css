@@ -22,7 +22,7 @@
 .msg-details>div>span{font-size:12px;line-height:16.8px;color:#111}
 .msg-agency{display:grid;place-items:center;flex:none;width:40px;height:40px;border:1px solid rgba(0,0,0,.08);border-radius:20px;background:#fff;overflow:hidden;font-size:13px;font-weight:600;color:#111}
 .msg-agency img{width:100%;height:100%;object-fit:contain}
-.msg-pill{display:flex;align-items:center;justify-content:center;gap:16px;width:100%;min-height:44px;padding:8px 12px;border:1px solid #ededed;border-radius:24px;background:#fff;color:#111;font:inherit;font-size:12px;line-height:16px;font-weight:600;letter-spacing:-0.4px}
+.msg-pill{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:34px;padding:8px 12px;border:1px solid #ededed;border-radius:24px;background:#fff;color:#111;font:inherit;font-size:12px;line-height:16px;font-weight:600;letter-spacing:-0.4px}
 .msg-pill svg{flex:none}
 .msg-pill:focus-visible,.msg-answer:focus-visible,.msg-open:focus-visible{outline:2px solid #b43c00;outline-offset:3px}
 .msg-question p{margin:0 0 10px;font-size:14px;line-height:20px;color:#111}
@@ -47,8 +47,9 @@
 .msg-star:focus-visible{outline:2px solid #b43c00;outline-offset:2px}
 @media(hover:hover) and (pointer:fine){.msg-star:hover{background:#f7f7f7}}
 
-.msg-pill.is-contacted{border-color:#ff5000;box-shadow:inset 0 0 0 1px #ff5000}
-.msg-pill.is-visited{border-color:#1a7f4b;box-shadow:inset 0 0 0 1px #1a7f4b;color:#14633a}
+.msg-pill.is-contacted{color:#3957bd}
+.msg-pill.is-unanswered{color:#b8521e}
+.msg-pill.is-visited{color:#167f3d}
 
 .msg-reactions{display:flex;flex-wrap:wrap;gap:6px}
 .msg-reaction{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border:1px solid #d9d9d9;border-radius:999px;background:#fff;color:#222;font:inherit;font-size:14px;line-height:20px;font-weight:600}

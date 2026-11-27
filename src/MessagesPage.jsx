@@ -64,9 +64,10 @@ function MessageCard({receipt, home, saved, onLike, onOpen, language, money, say
   const advertiser = advertiserFor(home);
   const visit = receipt.intent === 'visit';
   // Confirming the agency answered turns the request into a done contact; confirming the visit turns it into a done visit.
-  const stage = visited === true ? 'visited' : replied === true ? 'contacted' : 'sent';
+  const stage = visited === true ? 'visited' : replied === true ? 'contacted' : replied === false ? 'unanswered' : 'sent';
   const pill = stage === 'visited' ? say('Visita realizada', 'Visita realizada')
-    : stage === 'contacted' ? say('Contacto realizado', 'Contato realizado')
+    : stage === 'contacted' ? say('Contacto respondido', 'Contato respondido')
+    : stage === 'unanswered' ? say('Contacto no respondido', 'Contato não respondido')
     : visit ? say('Visita solicitada', 'Visita solicitada') : say('Mensaje enviado', 'Mensagem enviada');
   const details = [home.size >= 20 ? `${home.size} m²` : null, say(`${home.beds} recámaras`, `${home.beds} quartos`), home.baths ? say(`${home.baths} baños`, `${home.baths} banheiros`) : null].filter(Boolean);
   return <article className="msg-card" data-home-id={home.id}>
@@ -85,8 +86,12 @@ function MessageCard({receipt, home, saved, onLike, onOpen, language, money, say
         <span className="msg-agency" aria-hidden="true">{advertiser.logo ? <img src={advertiser.logo} alt=""/> : advertiser.initials}</span>
       </div>
       <button type="button" className={`msg-pill is-${stage}`} aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          {stage === 'contacted' ? <><circle cx="8" cy="8" r="6.2"/><path d="m5.3 8.2 1.9 1.9 3.5-3.7"/></>
+            : stage === 'unanswered' ? <><circle cx="8" cy="8" r="6.2"/><path d="m3.6 3.6 8.8 8.8"/></>
+            : <><rect x="2.2" y="3.2" width="11.6" height="10.6" rx="1.6"/><path d="M2.2 6.6h11.6M5.4 1.9v2.6M10.6 1.9v2.6"/>{stage === 'visited' && <path d="m5.8 10.2 1.5 1.4 2.9-3"/>}</>}
+        </svg>
         <span>{pill}</span>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
       </button>
     </div>
     {open && <ModalShell labelledBy={titleId} panelClassName="msg-panel" onClose={() => setOpen(false)}>{close => <>
